@@ -1,0 +1,40 @@
+---
+import Layout from "../../components/Layout.astro";
+import data from "../../data/morse.json";
+import { textToMorse } from "../../utils/morse";
+
+export function getStaticPaths() {
+  return data.phrases.map(([slug, phrase]) => ({ params: { slug }, props: { phrase, slug } }));
+}
+
+const { phrase, slug } = Astro.props;
+const morse = textToMorse(phrase, data.morseMap, " ");
+const title = `${phrase} in Morse code`;
+const description = `See how to write ${phrase} in Morse code. Copy it and use it for learning and practice.`;
+---
+<Layout title={title} description={description}>
+  <h1>{phrase} in Morse code</h1>
+  <p class="muted"><span class="k">{phrase}</span> → <span class="k">{morse}</span></p>
+
+  <div class="card">
+    <button id="copy">Copy Morse</button>
+    <p class="muted" style="margin-top:10px">If you’re learning, try starting at a slow speed and increase WPM gradually.</p>
+  </div>
+
+  <p class="muted">Explore: <a href="/phrases/sos/">SOS</a> • <a href="/morse-code/a/">alphabet</a> • <a href="/">translator</a></p>
+
+  <script define:vars={{ morse }}>
+    const btn = document.getElementById("copy");
+    btn.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(morse); btn.textContent="Copied!"; setTimeout(()=>btn.textContent="Copy Morse", 1200); } catch {}
+    });
+  </script>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      { "@type":"Question", "name": `How do you write ${phrase} in Morse code?`, "acceptedAnswer": { "@type":"Answer", "text": `${phrase} in Morse code is ${morse}.` } }
+    ]
+  })}></script>
+</Layout>

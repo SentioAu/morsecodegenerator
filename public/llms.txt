@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# MorseCodeGenerator.com
+# Static educational Morse code tools and reference pages.

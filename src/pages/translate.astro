@@ -1,0 +1,13 @@
+---
+import Layout from "../components/Layout.astro";
+const title = "Text to Morse Translator";
+const description = "Convert text to Morse code (and Morse to text). Copy results instantly.";
+---
+<Layout title={title} description={description}>
+  <h1>Text to Morse Translator</h1>
+  <p class="muted">Paste text, convert to Morse, and copy. Use “/” for word breaks if you want a visible separator.</p>
+  <div class="card">
+    <p><a href="/">Use the quick translator on the homepage</a>.</p>
+    <p class="muted">Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/phrases/sos/">common phrases</a>.</p>
+  </div>
+</Layout>

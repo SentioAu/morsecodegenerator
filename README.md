@@ -1,1 +1,1 @@
-# morsecodegenerator
+# MorseCodeGenerator.com (Static Astro)

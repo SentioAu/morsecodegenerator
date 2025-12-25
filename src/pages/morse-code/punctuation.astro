@@ -1,0 +1,23 @@
+---
+import Layout from "../../components/Layout.astro";
+import data from "../../data/morse.json";
+const map = data.morseMap;
+const punct = Object.entries(map).filter(([k]) => !/^[A-Z0-9]$/.test(k) && k !== " " && k !== "/");
+const title = "Punctuation in Morse Code";
+const description = "Reference table for common Morse code punctuation marks, including period, comma, question mark, and more.";
+---
+<Layout title={title} description={description}>
+  <h1>Punctuation in Morse code</h1>
+  <div class="card">
+    <table>
+      <thead><tr><th>Symbol</th><th>Morse</th></tr></thead>
+      <tbody>
+        {punct.map(([k,v]) => <tr><td class="k">{k}</td><td class="k">{v}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <style>
+    table{ width:100%; border-collapse: collapse;}
+    th,td{ padding:10px; border-bottom:1px solid rgba(127,127,127,.25); text-align:left;}
+  </style>
+</Layout>

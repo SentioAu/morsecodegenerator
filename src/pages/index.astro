@@ -1,0 +1,79 @@
+---
+import Layout from "../components/Layout.astro";
+import data from "../data/morse.json";
+import { buildReverseMap, textToMorse } from "../utils/morse";
+const map = data.morseMap;
+const reverse = buildReverseMap(map);
+const title = "Morse Code Generator – Translate Text to Morse + Audio Tools";
+const description = "Fast, free Morse code translator. Convert text to Morse, copy, learn the alphabet, and practice common phrases.";
+---
+<Layout title={title} description={description}>
+  <h1>Morse Code Generator</h1>
+  <p class="muted">Translate text to Morse code instantly, learn the alphabet, and practice common phrases.</p>
+
+  <section class="grid">
+    <div class="card">
+      <h2>Quick translate</h2>
+      <label class="muted" for="t">Text</label>
+      <textarea id="t" rows="4" placeholder="Type text…">HELLO</textarea>
+
+      <div style="display:flex; gap:10px; margin:10px 0; flex-wrap:wrap;">
+        <button id="toM">Text → Morse</button>
+        <button id="toT">Morse → Text</button>
+        <button id="copy">Copy output</button>
+      </div>
+
+      <label class="muted" for="o">Output</label>
+      <textarea id="o" rows="4" readonly class="k"></textarea>
+      <p class="muted" style="margin-top:10px">Tip: Use spaces between characters. Use “/” between words.</p>
+    </div>
+
+    <aside class="card">
+      <h2>Start learning</h2>
+      <ul>
+        <li><a href="/morse-code/a/">Morse alphabet (A–Z)</a></li>
+        <li><a href="/morse-code/numbers/">Numbers (0–9)</a></li>
+        <li><a href="/morse-code/punctuation/">Punctuation</a></li>
+        <li><a href="/phrases/sos/">SOS in Morse code</a></li>
+      </ul>
+      <p class="muted">This site is static + fast. Tools run in your browser (no logins).</p>
+    </aside>
+  </section>
+
+  <script define:vars={{ map, reverse }}>
+    import { textToMorse, morseToText } from "../utils/morse";
+    const $t = document.getElementById("t");
+    const $o = document.getElementById("o");
+    const $toM = document.getElementById("toM");
+    const $toT = document.getElementById("toT");
+    const $copy = document.getElementById("copy");
+
+    const normalizeMorse = (m) => m.replace(/\s+/g, " ").trim();
+
+    function runToM() {
+      $o.value = textToMorse($t.value ?? "", map, " ");
+    }
+    function runToT() {
+      const m = normalizeMorse($t.value ?? "");
+      $o.value = morseToText(m, reverse, " ");
+    }
+
+    $toM.addEventListener("click", runToM);
+    $toT.addEventListener("click", runToT);
+    $copy.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText($o.value); $copy.textContent="Copied!"; setTimeout(()=>$copy.textContent="Copy output", 1200); }
+      catch { /* ignore */ }
+    });
+
+    runToM();
+  </script>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context":"https://schema.org",
+    "@type":"SoftwareApplication",
+    "name":"Morse Code Generator",
+    "applicationCategory":"EducationalApplication",
+    "operatingSystem":"Any",
+    "url": Astro.site ? `${Astro.site}` : undefined
+  })}></script>
+</Layout>
