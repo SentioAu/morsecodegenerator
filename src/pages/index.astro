@@ -5,6 +5,9 @@ import morse from "../data/morse.json";
 const title = "Morse Code Generator – Translate Text to Morse Instantly";
 const description =
   "Free online Morse code generator. Convert text to Morse code, decode Morse to text, and copy results instantly.";
+
+// IMPORTANT: Convert the imported JSON into a plain JS object string safely.
+const MORSE_MAP_JSON = JSON.stringify(morse);
 ---
 
 <Layout title={title} description={description}>
@@ -40,68 +43,4 @@ const description =
   <h2>Start learning</h2>
   <ul>
     <li><a href="/morse-code/a/">Morse alphabet (A–Z)</a></li>
-    <li><a href="/morse-code/numbers/">Numbers (0–9)</a></li>
-    <li><a href="/morse-code/punctuation/">Punctuation</a></li>
-    <li><a href="/phrases/sos/">SOS in Morse code</a></li>
-  </ul>
-
-  <p class="muted">This site is static + fast. Tools run in your browser (no logins).</p>
-
-  <script is:inline define:vars={{ morse }}>
-    // `morse` is injected safely by Astro (no JSON stringify pitfalls)
-    const CHAR_TO_MORSE = morse;
-    const MORSE_TO_CHAR = Object.fromEntries(Object.entries(CHAR_TO_MORSE).map(([k, v]) => [v, k]));
-
-    const $in = document.getElementById("mcg-input");
-    const $out = document.getElementById("mcg-output");
-
-    function norm(s) { return (s || "").toUpperCase(); }
-
-    function textToMorse(input) {
-      const s = norm(input).trim();
-      if (!s) return "";
-      const words = s.split(/\s+/).filter(Boolean);
-      return words.map(w =>
-        w.split("").map(ch => CHAR_TO_MORSE[ch] || "").filter(Boolean).join(" ")
-      ).join(" / ");
-    }
-
-    function morseToText(input) {
-      const s = (input || "").trim();
-      if (!s) return "";
-      const words = s.split(/\s*\/\s*/).filter(Boolean);
-      return words.map(w =>
-        w.trim().split(/\s+/).map(code => MORSE_TO_CHAR[code] || "").join("")
-      ).join(" ");
-    }
-
-    async function copy(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        try { document.execCommand("copy"); } catch {}
-        document.body.removeChild(ta);
-      }
-    }
-
-    document.getElementById("mcg-text-to-morse")?.addEventListener("click", () => {
-      $out.value = textToMorse($in.value);
-    });
-
-    document.getElementById("mcg-morse-to-text")?.addEventListener("click", () => {
-      $out.value = morseToText($in.value);
-    });
-
-    document.getElementById("mcg-copy")?.addEventListener("click", async () => {
-      await copy($out.value || "");
-      const btn = document.getElementById("mcg-copy");
-      const old = btn.textContent;
-      btn.textContent = "Copied ✓";
-      setTimeout(() => (btn.textContent = old), 900);
-    });
-  </script>
-</Layout>
+    <li><a href="
