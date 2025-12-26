@@ -1,8 +1,8 @@
+import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
-/** @type {import('astro').AstroUserConfig} */
-export default {
+export default defineConfig({
   site: "https://morsecodegenerator.com",
   integrations: [sitemap()],
-  trailingSlash: "always",
-};
+  output: "static",
+});
