@@ -4,15 +4,18 @@ const {
   description = "Translate text to Morse code instantly, learn the alphabet, and practice common phrases.",
 } = Astro.props;
 
-const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 const path = Astro.url.pathname || "/";
 const canonical = `${site}${path === "/" ? "/" : path}`;
 ---
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -42,16 +45,7 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
       crossorigin="anonymous"
     ></script>
 
-    <!-- Google Tag Manager -->
-    <script>
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-TZ5556MH');
-    </script>
-
-    <!-- GA4 (fallback if GTM blocked) -->
+    <!-- GA4 (Google Analytics only) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -62,16 +56,6 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
   </head>
 
   <body>
-    <!-- GTM noscript -->
-    <noscript>
-      <iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-TZ5556MH"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"
-      ></iframe>
-    </noscript>
-
     <header class="wrap site-header">
       <a class="brand" href="/">MorseCodeGenerator.com</a>
       <nav class="nav">
@@ -86,96 +70,98 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
     </main>
 
     <footer class="wrap foot">
-      <small>© {new Date().getFullYear()} MorseCodeGenerator.com • Educational tools & references</small>
+      <small>
+        © {new Date().getFullYear()} MorseCodeGenerator.com • Educational tools & references
+      </small>
     </footer>
 
     <style>
-  :root { color-scheme: light dark; }
+      :root { color-scheme: light dark; }
 
-  body {
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    margin: 0;
-    line-height: 1.6;
-    background: #0b0b0b;
-  }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        margin: 0;
+        line-height: 1.6;
+        background: #0b0b0b;
+      }
 
-  a { color: inherit; }
+      a { color: inherit; }
 
-  /* 🔑 VISUAL CENTERING FIX */
-  .wrap {
-    max-width: 1100px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 24px;
-  }
+      /* Visual centering */
+      .wrap {
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 24px;
+      }
 
-  /* Give the eye a centered frame */
-  main.wrap {
-    background: rgba(255,255,255,0.02);
-    border-left: 1px solid rgba(255,255,255,0.06);
-    border-right: 1px solid rgba(255,255,255,0.06);
-    min-height: 60vh;
-  }
+      /* Center frame */
+      main.wrap {
+        background: rgba(255,255,255,0.02);
+        border-left: 1px solid rgba(255,255,255,0.06);
+        border-right: 1px solid rgba(255,255,255,0.06);
+        min-height: 60vh;
+      }
 
-  .site-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid rgba(127,127,127,.25);
-  }
+      .site-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(127,127,127,.25);
+      }
 
-  .brand {
-    font-weight: 700;
-    text-decoration: none;
-  }
+      .brand {
+        font-weight: 700;
+        text-decoration: none;
+      }
 
-  .nav {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
+      .nav {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
 
-  .card {
-    border: 1px solid rgba(127,127,127,.25);
-    border-radius: 14px;
-    padding: 16px;
-    background: rgba(255,255,255,0.015);
-  }
+      .card {
+        border: 1px solid rgba(127,127,127,.25);
+        border-radius: 14px;
+        padding: 16px;
+        background: rgba(255,255,255,0.015);
+      }
 
-  textarea, input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(127,127,127,.35);
-    background: transparent;
-  }
+      textarea, input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(127,127,127,.35);
+        background: transparent;
+      }
 
-  button {
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid rgba(127,127,127,.35);
-    background: transparent;
-    cursor: pointer;
-  }
+      button {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(127,127,127,.35);
+        background: transparent;
+        cursor: pointer;
+      }
 
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
 
-  @media (min-width: 860px) {
-    .grid { grid-template-columns: 1.2fr .8fr; }
-  }
+      @media (min-width: 860px) {
+        .grid { grid-template-columns: 1.2fr .8fr; }
+      }
 
-  .foot {
-    border-top: 1px solid rgba(127,127,127,.25);
-    margin-top: 28px;
-  }
+      .foot {
+        border-top: 1px solid rgba(127,127,127,.25);
+        margin-top: 28px;
+      }
 
-  .muted { opacity: .8; }
-  .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-</style>
+      .muted { opacity: .8; }
+      .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    </style>
   </body>
 </html>
