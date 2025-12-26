@@ -7,10 +7,21 @@
     }
   }
 
-  async function loadMorseMap() {
+  async function loadMorsePayload() {
     const res = await fetch("/morse.json", { cache: "force-cache" });
     if (!res.ok) throw new Error("Failed to load /morse.json");
     return await res.json();
+  }
+
+  function extractCharToMorse(payload) {
+    // Supports:
+    // 1) { morseMap: { A: ".-", ... }, phrases: [...] }
+    // 2) { A: ".-", ... } (legacy)
+    if (payload && typeof payload === "object") {
+      if (payload.morseMap && typeof payload.morseMap === "object") return payload.morseMap;
+      return payload;
+    }
+    return {};
   }
 
   function norm(s) {
@@ -18,7 +29,9 @@
   }
 
   function buildReverseMap(map) {
-    return Object.fromEntries(Object.entries(map).map(([k, v]) => [v, k]));
+    // guard: ignore empty keys/values
+    const entries = Object.entries(map).filter(([k, v]) => k && v);
+    return Object.fromEntries(entries.map(([k, v]) => [v, k]));
   }
 
   function textToMorse(input, CHAR_TO_MORSE) {
@@ -85,7 +98,13 @@
     let MORSE_TO_CHAR;
 
     try {
-      CHAR_TO_MORSE = await loadMorseMap();
+      const payload = await loadMorsePayload();
+      CHAR_TO_MORSE = extractCharToMorse(payload);
+
+      if (!CHAR_TO_MORSE || !Object.keys(CHAR_TO_MORSE).length) {
+        throw new Error("Morse map is empty or invalid");
+      }
+
       MORSE_TO_CHAR = buildReverseMap(CHAR_TO_MORSE);
     } catch (e) {
       console.error(e);
