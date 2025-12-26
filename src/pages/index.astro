@@ -1,79 +1,115 @@
 ---
 import Layout from "../components/Layout.astro";
-import data from "../data/morse.json";
-import { buildReverseMap, textToMorse } from "../utils/morse";
-const map = data.morseMap;
-const reverse = buildReverseMap(map);
-const title = "Morse Code Generator – Translate Text to Morse + Audio Tools";
-const description = "Fast, free Morse code translator. Convert text to Morse, copy, learn the alphabet, and practice common phrases.";
+import morse from "../data/morse.json";
+
+const title = "Morse Code Generator – Translate Text to Morse Instantly";
+const description =
+  "Free online Morse code generator. Convert text to Morse code, convert Morse to text, and copy results instantly.";
 ---
+
 <Layout title={title} description={description}>
   <h1>Morse Code Generator</h1>
-  <p class="muted">Translate text to Morse code instantly, learn the alphabet, and practice common phrases.</p>
+  <p>Translate text to Morse code instantly, learn the alphabet, and practice common phrases.</p>
 
-  <section class="grid">
-    <div class="card">
-      <h2>Quick translate</h2>
-      <label class="muted" for="t">Text</label>
-      <textarea id="t" rows="4" placeholder="Type text…">HELLO</textarea>
+  <h2>Quick translate</h2>
 
-      <div style="display:flex; gap:10px; margin:10px 0; flex-wrap:wrap;">
-        <button id="toM">Text → Morse</button>
-        <button id="toT">Morse → Text</button>
-        <button id="copy">Copy output</button>
+  <section class="card">
+    <div class="grid">
+      <div>
+        <label for="mcg-text"><strong>Text</strong></label><br />
+        <textarea id="mcg-text" rows="4">HELLO</textarea>
+
+        <div style="margin-top: 10px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button id="mcg-text-to-morse" type="button">Text → Morse</button>
+          <button id="mcg-morse-to-text" type="button">Morse → Text</button>
+          <button id="mcg-copy" type="button">Copy output</button>
+        </div>
       </div>
 
-      <label class="muted" for="o">Output</label>
-      <textarea id="o" rows="4" readonly class="k"></textarea>
-      <p class="muted" style="margin-top:10px">Tip: Use spaces between characters. Use “/” between words.</p>
-    </div>
+      <div>
+        <label for="mcg-output"><strong>Output</strong></label><br />
+        <textarea id="mcg-output" rows="4" placeholder="Your result will appear here..."></textarea>
 
-    <aside class="card">
-      <h2>Start learning</h2>
-      <ul>
-        <li><a href="/morse-code/a/">Morse alphabet (A–Z)</a></li>
-        <li><a href="/morse-code/numbers/">Numbers (0–9)</a></li>
-        <li><a href="/morse-code/punctuation/">Punctuation</a></li>
-        <li><a href="/phrases/sos/">SOS in Morse code</a></li>
-      </ul>
-      <p class="muted">This site is static + fast. Tools run in your browser (no logins).</p>
-    </aside>
+        <p class="muted" style="margin-top: 10px;">
+          Tip: Use spaces between characters. Use “/” between words.
+        </p>
+      </div>
+    </div>
   </section>
 
-  <script define:vars={{ map, reverse }}>
-    import { textToMorse, morseToText } from "../utils/morse";
-    const $t = document.getElementById("t");
-    const $o = document.getElementById("o");
-    const $toM = document.getElementById("toM");
-    const $toT = document.getElementById("toT");
-    const $copy = document.getElementById("copy");
+  <h2>Start learning</h2>
+  <ul>
+    <li><a href="/morse-code/a/">Morse alphabet (A–Z)</a></li>
+    <li><a href="/morse-code/numbers/">Numbers (0–9)</a></li>
+    <li><a href="/morse-code/punctuation/">Punctuation</a></li>
+    <li><a href="/phrases/sos/">SOS in Morse code</a></li>
+  </ul>
 
-    const normalizeMorse = (m) => m.replace(/\s+/g, " ").trim();
+  <p class="muted">This site is static + fast. Tools run in your browser (no logins).</p>
 
-    function runToM() {
-      $o.value = textToMorse($t.value ?? "", map, " ");
+  <script is:inline>
+    // Embedded Morse maps (build-time safe, runtime simple)
+    const CHAR_TO_MORSE = Object.freeze({...(JSON.parse({JSON.stringify(JSON.stringify(morse))}))});
+    const MORSE_TO_CHAR = Object.freeze(Object.fromEntries(Object.entries(CHAR_TO_MORSE).map(([k,v]) => [v,k])));
+
+    const $text = document.getElementById("mcg-text");
+    const $out = document.getElementById("mcg-output");
+
+    function normalizeText(s) {
+      return (s || "").toUpperCase();
     }
-    function runToT() {
-      const m = normalizeMorse($t.value ?? "");
-      $o.value = morseToText(m, reverse, " ");
+
+    function textToMorse(input) {
+      const s = normalizeText(input);
+      const words = s.split(/\s+/).filter(Boolean);
+      const encodedWords = words.map(word =>
+        word.split("").map(ch => CHAR_TO_MORSE[ch] || "").filter(Boolean).join(" ")
+      );
+      return encodedWords.join(" / ");
     }
 
-    $toM.addEventListener("click", runToM);
-    $toT.addEventListener("click", runToT);
-    $copy.addEventListener("click", async () => {
-      try { await navigator.clipboard.writeText($o.value); $copy.textContent="Copied!"; setTimeout(()=>$copy.textContent="Copy output", 1200); }
-      catch { /* ignore */ }
+    function morseToText(input) {
+      const s = (input || "").trim();
+      if (!s) return "";
+      const words = s.split(/\s*\/\s*/).filter(Boolean);
+      const decodedWords = words.map(w =>
+        w.trim().split(/\s+/).map(code => MORSE_TO_CHAR[code] || "").join("")
+      );
+      return decodedWords.join(" ");
+    }
+
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        // Fallback for older browsers
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch {}
+        document.body.removeChild(ta);
+        return true;
+      }
+    }
+
+    document.getElementById("mcg-text-to-morse")?.addEventListener("click", () => {
+      $out.value = textToMorse($text.value);
     });
 
-    runToM();
-  </script>
+    document.getElementById("mcg-morse-to-text")?.addEventListener("click", () => {
+      $out.value = morseToText($text.value);
+    });
 
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context":"https://schema.org",
-    "@type":"SoftwareApplication",
-    "name":"Morse Code Generator",
-    "applicationCategory":"EducationalApplication",
-    "operatingSystem":"Any",
-    "url": Astro.site ? `${Astro.site}` : undefined
-  })}></script>
+    document.getElementById("mcg-copy")?.addEventListener("click", async () => {
+      const ok = await copyToClipboard($out.value || "");
+      if (ok) {
+        const btn = document.getElementById("mcg-copy");
+        const old = btn.textContent;
+        btn.textContent = "Copied ✓";
+        setTimeout(() => (btn.textContent = old), 900);
+      }
+    });
+  </script>
 </Layout>
