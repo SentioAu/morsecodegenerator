@@ -5,6 +5,9 @@ import morse from "../data/morse.json";
 const title = "Text to Morse Translator – Copy & Convert Instantly";
 const description =
   "Translate text to Morse code or decode Morse to text. Copy results instantly. Free online tool.";
+
+// IMPORTANT: Convert the imported JSON into a plain JS object string safely.
+const MORSE_MAP_JSON = JSON.stringify(morse);
 ---
 
 <Layout title={title} description={description}>
@@ -39,60 +42,96 @@ const description =
     Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/phrases/sos/">common phrases</a>.
   </p>
 
-  <script is:inline define:vars={{ morse }}>
-    const CHAR_TO_MORSE = morse;
-    const MORSE_TO_CHAR = Object.fromEntries(Object.entries(CHAR_TO_MORSE).map(([k, v]) => [v, k]));
+  <script is:inline>
+    // Build-time injected Morse map (stable on static hosts)
+    const CHAR_TO_MORSE = /** @type {Record<string,string>} */ (JSON.parse({JSON.stringify(MORSE_MAP_JSON)}));
+    const MORSE_TO_CHAR = Object.fromEntries(
+      Object.entries(CHAR_TO_MORSE).map(([k, v]) => [v, k])
+    );
 
-    const $in = document.getElementById("mcg-input");
-    const $out = document.getElementById("mcg-output");
-
-    function norm(s) { return (s || "").toUpperCase(); }
+    function norm(s) {
+      return (s || "").toUpperCase();
+    }
 
     function textToMorse(input) {
       const s = norm(input).trim();
       if (!s) return "";
       const words = s.split(/\s+/).filter(Boolean);
-      return words.map(w =>
-        w.split("").map(ch => CHAR_TO_MORSE[ch] || "").filter(Boolean).join(" ")
-      ).join(" / ");
+
+      return words
+        .map((w) =>
+          w
+            .split("")
+            .map((ch) => CHAR_TO_MORSE[ch] || "")
+            .filter(Boolean)
+            .join(" ")
+        )
+        .join(" / ");
     }
 
     function morseToText(input) {
       const s = (input || "").trim();
       if (!s) return "";
+
       const words = s.split(/\s*\/\s*/).filter(Boolean);
-      return words.map(w =>
-        w.trim().split(/\s+/).map(code => MORSE_TO_CHAR[code] || "").join("")
-      ).join(" ");
+      return words
+        .map((w) =>
+          w
+            .trim()
+            .split(/\s+/)
+            .map((code) => MORSE_TO_CHAR[code] || "")
+            .join("")
+        )
+        .join(" ");
     }
 
-    async function copy(text) {
+    async function copyToClipboard(text) {
+      const t = text || "";
       try {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(t);
+        return true;
       } catch {
+        // Fallback
         const ta = document.createElement("textarea");
-        ta.value = text;
+        ta.value = t;
         document.body.appendChild(ta);
         ta.select();
         try { document.execCommand("copy"); } catch {}
         document.body.removeChild(ta);
+        return true;
       }
     }
 
-    document.getElementById("mcg-text-to-morse")?.addEventListener("click", () => {
-      $out.value = textToMorse($in.value);
-    });
+    function bindTranslator() {
+      const input = document.getElementById("mcg-input");
+      const output = document.getElementById("mcg-output");
+      const btnT2M = document.getElementById("mcg-text-to-morse");
+      const btnM2T = document.getElementById("mcg-morse-to-text");
+      const btnCopy = document.getElementById("mcg-copy");
 
-    document.getElementById("mcg-morse-to-text")?.addEventListener("click", () => {
-      $out.value = morseToText($in.value);
-    });
+      if (!input || !output || !btnT2M || !btnM2T || !btnCopy) return;
 
-    document.getElementById("mcg-copy")?.addEventListener("click", async () => {
-      await copy($out.value || "");
-      const btn = document.getElementById("mcg-copy");
-      const old = btn.textContent;
-      btn.textContent = "Copied ✓";
-      setTimeout(() => (btn.textContent = old), 900);
-    });
+      btnT2M.addEventListener("click", () => {
+        output.value = textToMorse(input.value);
+      });
+
+      btnM2T.addEventListener("click", () => {
+        output.value = morseToText(input.value);
+      });
+
+      btnCopy.addEventListener("click", async () => {
+        await copyToClipboard(output.value);
+        const old = btnCopy.textContent;
+        btnCopy.textContent = "Copied ✓";
+        setTimeout(() => (btnCopy.textContent = old), 900);
+      });
+    }
+
+    // Ensure DOM is ready (prevents "handlers not attached" issues)
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bindTranslator);
+    } else {
+      bindTranslator();
+    }
   </script>
 </Layout>
