@@ -101,9 +101,15 @@ const jsonLd = {
     </main>
 
     <footer class="wrap foot">
-      <small>
-        © {new Date().getFullYear()} MorseCodeGenerator.com • Educational tools & references
-      </small>
+      <div class="foot-row">
+        <small>
+          © {new Date().getFullYear()} MorseCodeGenerator.com • Free Morse translator & learning resources
+        </small>
+
+        <a class="contact" href="mailto:morsecodegenerator@gmail.com" aria-label="Contact MorseCodeGenerator.com">
+          Contact
+        </a>
+      </div>
     </footer>
 
     <style>
@@ -191,6 +197,24 @@ const jsonLd = {
         border-top: 1px solid rgba(127,127,127,.25);
         margin-top: 28px;
       }
+
+      .foot-row{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        flex-wrap:wrap;
+      }
+
+      .contact{
+        text-decoration:none;
+        border: 1px solid rgba(127,127,127,.35);
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 14px;
+        opacity: .95;
+      }
+      .contact:hover{ opacity: 1; }
 
       .muted { opacity: .8; }
       .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
