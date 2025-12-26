@@ -8,6 +8,31 @@ const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 const path = Astro.url.pathname || "/";
 const canonical = `${site}${path === "/" ? "/" : path}`;
+
+// Minimal JSON-LD to help SEO + AI systems understand the site
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${site}#org`,
+      name: "MorseCodeGenerator.com",
+      url: site,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${site}#website`,
+      url: site,
+      name: "Morse Code Generator",
+      publisher: { "@id": `${site}#org` },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${site}/translate/?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -22,7 +47,10 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
     <link rel="canonical" href={canonical} />
 
     <meta name="robots" content="index,follow" />
-    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Favicon: use SVG (no more favicon.ico 404) -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -35,10 +63,13 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
 
-    <!-- App / AI reference hint -->
+    <!-- App / AI hint -->
     <meta name="application-name" content="Morse Code Generator" />
 
-    <!-- Google AdSense -->
+    <!-- JSON-LD (SEO + AI search) -->
+    <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+
+    <!-- Google AdSense (loader only; actual ad units will be placed on pages later) -->
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7616383336440831"
@@ -47,7 +78,7 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
 
     <!-- GA4 (Google Analytics only) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L"></script>
-    <script>
+    <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -58,7 +89,7 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
   <body>
     <header class="wrap site-header">
       <a class="brand" href="/">MorseCodeGenerator.com</a>
-      <nav class="nav">
+      <nav class="nav" aria-label="Primary">
         <a href="/translate/">Translate</a>
         <a href="/morse-code/a/">Alphabet</a>
         <a href="/phrases/sos/">Phrases</a>
@@ -114,6 +145,7 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
       .brand {
         font-weight: 700;
         text-decoration: none;
+        white-space: nowrap;
       }
 
       .nav {
