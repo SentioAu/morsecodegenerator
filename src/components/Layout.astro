@@ -18,6 +18,7 @@ const jsonLd = {
       "@id": `${site}#org`,
       name: "MorseCodeGenerator.com",
       url: site,
+      email: "morsecodegenerator@gmail.com",
     },
     {
       "@type": "WebSite",
@@ -48,7 +49,7 @@ const jsonLd = {
 
     <meta name="robots" content="index,follow" />
 
-    <!-- Favicon: use SVG (no more favicon.ico 404) -->
+    <!-- Favicon -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate icon" href="/favicon.ico" />
 
@@ -63,20 +64,17 @@ const jsonLd = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
 
-    <!-- App / AI hint -->
     <meta name="application-name" content="Morse Code Generator" />
-
-    <!-- JSON-LD (SEO + AI search) -->
     <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
 
-    <!-- Google AdSense (loader only; actual ad units will be placed on pages later) -->
+    <!-- Google AdSense (loader only) -->
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7616383336440831"
       crossorigin="anonymous"
     ></script>
 
-    <!-- GA4 (Google Analytics only) -->
+    <!-- GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -87,100 +85,160 @@ const jsonLd = {
   </head>
 
   <body>
-    <header class="wrap site-header">
-      <a class="brand" href="/">MorseCodeGenerator.com</a>
-      <nav class="nav" aria-label="Primary">
-        <a href="/translate/">Translate</a>
-        <a href="/morse-code/a/">Alphabet</a>
-        <a href="/phrases/sos/">Phrases</a>
-      </nav>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href="/">MorseCodeGenerator.com</a>
+
+        <nav class="nav" aria-label="Primary">
+          <a class="nav-link" href="/translate/">Translate</a>
+          <a class="nav-link" href="/morse-code/a/">Alphabet</a>
+          <a class="nav-link" href="/phrases/sos/">Phrases</a>
+          <a class="nav-link contact" href="mailto:morsecodegenerator@gmail.com">Contact</a>
+        </nav>
+      </div>
     </header>
 
     <main class="wrap">
-      <slot />
+      <div class="panel">
+        <slot />
+      </div>
     </main>
 
-    <footer class="wrap foot">
-      <div class="foot-row">
-        <small>
-          © {new Date().getFullYear()} MorseCodeGenerator.com • Free Morse translator & learning resources
+    <footer class="site-footer">
+      <div class="wrap foot-inner">
+        <small class="foot-text">
+          © {new Date().getFullYear()} MorseCodeGenerator.com • Free Morse translator, references & learning tools
         </small>
-
-        <a class="contact" href="mailto:morsecodegenerator@gmail.com" aria-label="Contact MorseCodeGenerator.com">
-          Contact
-        </a>
+        <a class="foot-contact" href="mailto:morsecodegenerator@gmail.com">morsecodegenerator@gmail.com</a>
       </div>
     </footer>
 
     <style>
-      :root { color-scheme: light dark; }
+      :root {
+        color-scheme: light dark;
+        --bg: #0b0b0b;
+        --panel: rgba(255,255,255,0.035);
+        --panel2: rgba(255,255,255,0.02);
+        --border: rgba(255,255,255,0.10);
+        --border2: rgba(255,255,255,0.14);
+        --text: rgba(255,255,255,0.92);
+        --muted: rgba(255,255,255,0.78);
+        --accent: #8ab4ff;
+        --accentBg: rgba(138,180,255,0.14);
+        --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
 
       body {
         font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         margin: 0;
         line-height: 1.6;
-        background: #0b0b0b;
+        background: radial-gradient(1200px 600px at 50% -10%, rgba(138,180,255,0.10), transparent 60%),
+                    var(--bg);
+        color: var(--text);
       }
 
-      a { color: inherit; }
+      a { color: var(--accent); text-underline-offset: 3px; }
+      a:hover { opacity: 0.92; }
 
-      /* Visual centering */
       .wrap {
-        max-width: 1100px;
+        max-width: 1040px;
         margin-left: auto;
         margin-right: auto;
-        padding: 24px;
+        padding: 20px;
       }
 
-      /* Center frame */
-      main.wrap {
-        background: rgba(255,255,255,0.02);
-        border-left: 1px solid rgba(255,255,255,0.06);
-        border-right: 1px solid rgba(255,255,255,0.06);
-        min-height: 60vh;
-      }
-
+      /* Header */
       .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(10px);
+        background: rgba(11,11,11,0.72);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .header-inner {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        gap: 12px;
-        border-bottom: 1px solid rgba(127,127,127,.25);
+        justify-content: space-between;
+        gap: 14px;
       }
 
       .brand {
-        font-weight: 700;
+        font-weight: 750;
+        letter-spacing: 0.2px;
         text-decoration: none;
+        color: var(--text);
         white-space: nowrap;
       }
 
       .nav {
         display: flex;
-        gap: 12px;
         flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+        align-items: center;
       }
 
-      .card {
-        border: 1px solid rgba(127,127,127,.25);
-        border-radius: 14px;
-        padding: 16px;
-        background: rgba(255,255,255,0.015);
+      .nav-link {
+        text-decoration: none;
+        color: var(--text);
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid transparent;
       }
 
+      .nav-link:hover {
+        border-color: var(--border);
+        background: rgba(255,255,255,0.04);
+      }
+
+      .nav-link.contact {
+        border-color: rgba(138,180,255,0.35);
+        background: var(--accentBg);
+        color: var(--text);
+      }
+
+      /* Main panel (fixes “left shift” feel) */
+      .panel {
+        background: linear-gradient(to bottom, var(--panel), var(--panel2));
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 22px;
+      }
+
+      /* Shared UI */
       textarea, input {
         width: 100%;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(127,127,127,.35);
-        background: transparent;
+        padding: 12px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border2);
+        background: rgba(0,0,0,0.15);
+        color: var(--text);
       }
+
+      textarea::placeholder, input::placeholder { color: rgba(255,255,255,0.55); }
 
       button {
         padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid rgba(127,127,127,.35);
-        background: transparent;
+        border-radius: 12px;
+        border: 1px solid rgba(138,180,255,0.35);
+        background: var(--accentBg);
+        color: var(--text);
         cursor: pointer;
+        font-weight: 600;
+      }
+      button:hover { opacity: 0.95; }
+
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        background: rgba(255,255,255,0.02);
       }
 
       .grid {
@@ -193,31 +251,41 @@ const jsonLd = {
         .grid { grid-template-columns: 1.2fr .8fr; }
       }
 
-      .foot {
-        border-top: 1px solid rgba(127,127,127,.25);
-        margin-top: 28px;
-      }
-
-      .foot-row{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:12px;
-        flex-wrap:wrap;
-      }
-
-      .contact{
-        text-decoration:none;
-        border: 1px solid rgba(127,127,127,.35);
-        padding: 8px 12px;
-        border-radius: 999px;
-        font-size: 14px;
-        opacity: .95;
-      }
-      .contact:hover{ opacity: 1; }
-
-      .muted { opacity: .8; }
+      .muted { color: var(--muted); }
       .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+      /* Footer */
+      .site-footer {
+        border-top: 1px solid var(--border);
+        margin-top: 26px;
+        padding-bottom: 30px;
+      }
+
+      .foot-inner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .foot-text { color: rgba(255,255,255,0.72); }
+      .foot-contact {
+        color: var(--accent);
+        text-decoration: none;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.02);
+      }
+
+      /* Mobile improvements */
+      @media (max-width: 640px) {
+        .wrap { padding: 14px; }
+        .panel { padding: 16px; }
+        .header-inner { align-items: flex-start; }
+        .nav { justify-content: flex-start; }
+      }
     </style>
   </body>
 </html>
