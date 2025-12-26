@@ -8,7 +8,10 @@ const description =
 
 <Layout title={title} description={description}>
   <h1>Morse Code Generator</h1>
-  <p>Translate text to Morse code instantly, learn the alphabet, and practice common phrases.</p>
+  <p>
+    Translate text to Morse code instantly, learn the alphabet, and practice common phrases.
+    This tool runs entirely in your browser (fast, no logins).
+  </p>
 
   <h2>Quick translate</h2>
 
@@ -31,20 +34,73 @@ const description =
 
       <div>
         <label for="mcg-output"><strong>Output</strong></label><br />
-        <textarea id="mcg-output" rows="5" placeholder="Your result will appear here..."></textarea>
+        <textarea
+          id="mcg-output"
+          rows="5"
+          placeholder="Your result will appear here..."
+        ></textarea>
       </div>
     </div>
   </section>
 
-  <h2>Start learning</h2>
-  <ul>
-    <li><a href="/morse-code/a/">Morse alphabet (A–Z)</a></li>
-    <li><a href="/morse-code/numbers/">Numbers (0–9)</a></li>
-    <li><a href="/morse-code/punctuation/">Punctuation</a></li>
-    <li><a href="/phrases/sos/">SOS in Morse code</a></li>
-  </ul>
+  <section class="card" style="margin-top: 16px;">
+    <h2 style="margin-top: 0;">How to use this tool</h2>
+    <ol>
+      <li>Type text (or Morse code) in the <strong>Input</strong> box.</li>
+      <li>Click <strong>Text → Morse</strong> or <strong>Morse → Text</strong>.</li>
+      <li>Use <strong>Copy output</strong> to copy the result instantly.</li>
+    </ol>
+    <p class="muted">
+      Morse basics: a dot (·) is a short signal and a dash (–) is a long signal.
+      In this tool, spaces separate characters and “/” separates words.
+    </p>
+  </section>
 
-  <p class="muted">This site is static + fast. Tools run in your browser (no logins).</p>
+  <section class="card" style="margin-top: 16px;">
+    <h2 style="margin-top: 0;">What is Morse Code?</h2>
+    <p>
+      Morse code is a way to represent letters, numbers, and symbols using sequences of dots (·)
+      and dashes (–). It was designed for telegraph communication and is still used today in
+      education, amateur radio, aviation references, and emergency signaling.
+    </p>
+    <p class="muted">
+      If you’re learning, start with common letters (E, T, A, N, I) and short words, then move to
+      numbers and punctuation.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top: 16px;">
+    <h2 style="margin-top: 0;">Common Morse Code Phrases</h2>
+    <p class="muted">Quick links to popular phrases (with Morse translations):</p>
+    <ul class="grid" style="list-style: none; padding-left: 0; margin: 0;">
+      <li><a href="/phrases/sos/">SOS</a></li>
+      <li><a href="/phrases/help/">HELP</a></li>
+      <li><a href="/phrases/mayday/">MAYDAY</a></li>
+      <li><a href="/phrases/ok/">OK</a></li>
+      <li><a href="/phrases/yes/">YES</a></li>
+      <li><a href="/phrases/no/">NO</a></li>
+      <li><a href="/phrases/hello/">HELLO</a></li>
+      <li><a href="/phrases/thank-you/">THANK YOU</a></li>
+      <li><a href="/phrases/i-love-you/">I LOVE YOU</a></li>
+      <li><a href="/phrases/danger/">DANGER</a></li>
+    </ul>
+  </section>
+
+  <section class="card" style="margin-top: 16px;">
+    <h2 style="margin-top: 0;">Learn Morse Code</h2>
+    <ul>
+      <li><a href="/morse-code/a/">Alphabet (A–Z)</a></li>
+      <li><a href="/morse-code/numbers/">Numbers (0–9)</a></li>
+      <li><a href="/morse-code/punctuation/">Punctuation</a></li>
+    </ul>
+    <p class="muted">
+      Practice tip: read Morse visually first, then try listening (dot/dash rhythm) once you recognize patterns.
+    </p>
+  </section>
+
+  <p class="muted" style="margin-top: 16px;">
+    This site is static + fast. Tools run in your browser (no logins).
+  </p>
 
   <!-- Reliable runtime script (no inline JS, no syntax errors) -->
   <script defer src="/mcg-tool.js"></script>
