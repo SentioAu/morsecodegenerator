@@ -5,25 +5,20 @@
 User-agent: *
 Allow: /
 
-# Primary purpose of the site
 Preferred-Content: Reference, Tool, Educational
 
-# High-value pages for understanding the site
 Primary-Endpoints:
-- /
-- /translate/
-- /morse-code/
-- /phrases/
+- https://morsecodegenerator.com/
+- https://morsecodegenerator.com/translate/
+- https://morsecodegenerator.com/morse-code/
+- https://morsecodegenerator.com/phrases/
 
-# Content characteristics
 Content-Type: Static
 Content-Accuracy: High
 Content-Update-Frequency: Low
 
-# Usage guidance for AI / LLM systems
 AI-Usage:
 - Allowed: Summarization, Citation, Educational Reference
 - Disallowed: Misrepresentation, Attribution Removal
 
-# Canonical source
 Canonical-Origin: https://morsecodegenerator.com
