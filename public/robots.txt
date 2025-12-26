@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://morsecodegenerator.com/sitemap-index.xml
+Sitemap: https://morsecodegenerator.com/sitemap.xml
