@@ -1,29 +1,78 @@
 ---
-const { title, description } = Astro.props;
-const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
-const path = Astro.url.pathname;
-const canonical = site ? `${site}${path}` : undefined;
+const {
+  title = "Morse Code Generator",
+  description = "Translate text to Morse code instantly, learn the alphabet, and practice common phrases.",
+} = Astro.props;
+
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+const path = Astro.url.pathname || "/";
+const canonical = `${site}${path === "/" ? "/" : path}`;
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>{title}</title>
     <meta name="description" content={description} />
-    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="canonical" href={canonical} />
+
     <meta name="robots" content="index,follow" />
     <link rel="icon" href="/favicon.ico" />
+
+    <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
 
-    <!-- Minimal, AI-friendly reference hint -->
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- App / AI reference hint -->
     <meta name="application-name" content="Morse Code Generator" />
+
+    <!-- Google AdSense -->
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7616383336440831"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-TZ5556MH');
+    </script>
+
+    <!-- GA4 (fallback if GTM blocked) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1K9JZ9ZQ2L', { anonymize_ip: true });
+    </script>
   </head>
+
   <body>
-    <header class="wrap">
+    <!-- GTM noscript -->
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-TZ5556MH"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe>
+    </noscript>
+
+    <header class="wrap site-header">
       <a class="brand" href="/">MorseCodeGenerator.com</a>
       <nav class="nav">
         <a href="/translate/">Translate</a>
@@ -42,18 +91,76 @@ const canonical = site ? `${site}${path}` : undefined;
 
     <style>
       :root { color-scheme: light dark; }
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; line-height:1.5; }
+
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        margin: 0;
+        line-height: 1.6;
+      }
+
       a { color: inherit; }
-      .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
-      .brand { font-weight: 700; text-decoration: none; }
-      .nav { display:flex; gap: 12px; flex-wrap: wrap; }
-      header { display:flex; justify-content: space-between; align-items:center; border-bottom: 1px solid rgba(127,127,127,.25); }
-      .card { border: 1px solid rgba(127,127,127,.25); border-radius: 14px; padding: 14px; }
-      textarea, input { width:100%; padding: 10px; border-radius: 10px; border: 1px solid rgba(127,127,127,.35); }
-      button { padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.35); background: transparent; cursor:pointer; }
-      .grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
-      @media (min-width: 860px){ .grid { grid-template-columns: 1.2fr .8fr; } }
-      .foot { border-top: 1px solid rgba(127,127,127,.25); margin-top: 28px; }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+
+      .site-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(127,127,127,.25);
+      }
+
+      .brand {
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .nav {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .card {
+        border: 1px solid rgba(127,127,127,.25);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      textarea, input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(127,127,127,.35);
+      }
+
+      button {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(127,127,127,.35);
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      @media (min-width: 860px) {
+        .grid { grid-template-columns: 1.2fr .8fr; }
+      }
+
+      .foot {
+        border-top: 1px solid rgba(127,127,127,.25);
+        margin-top: 28px;
+      }
+
       .muted { opacity: .8; }
       .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     </style>
