@@ -90,79 +90,92 @@ const canonical = `${site}${path === "/" ? "/" : path}`;
     </footer>
 
     <style>
-      :root { color-scheme: light dark; }
+  :root { color-scheme: light dark; }
 
-      body {
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        margin: 0;
-        line-height: 1.6;
-      }
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    margin: 0;
+    line-height: 1.6;
+    background: #0b0b0b;
+  }
 
-      a { color: inherit; }
+  a { color: inherit; }
 
-      .wrap {
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 16px;
-      }
+  /* 🔑 VISUAL CENTERING FIX */
+  .wrap {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 24px;
+  }
 
-      .site-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        border-bottom: 1px solid rgba(127,127,127,.25);
-      }
+  /* Give the eye a centered frame */
+  main.wrap {
+    background: rgba(255,255,255,0.02);
+    border-left: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    min-height: 60vh;
+  }
 
-      .brand {
-        font-weight: 700;
-        text-decoration: none;
-      }
+  .site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(127,127,127,.25);
+  }
 
-      .nav {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
+  .brand {
+    font-weight: 700;
+    text-decoration: none;
+  }
 
-      .card {
-        border: 1px solid rgba(127,127,127,.25);
-        border-radius: 14px;
-        padding: 14px;
-      }
+  .nav {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
 
-      textarea, input {
-        width: 100%;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(127,127,127,.35);
-      }
+  .card {
+    border: 1px solid rgba(127,127,127,.25);
+    border-radius: 14px;
+    padding: 16px;
+    background: rgba(255,255,255,0.015);
+  }
 
-      button {
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid rgba(127,127,127,.35);
-        background: transparent;
-        cursor: pointer;
-      }
+  textarea, input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(127,127,127,.35);
+    background: transparent;
+  }
 
-      .grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
+  button {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(127,127,127,.35);
+    background: transparent;
+    cursor: pointer;
+  }
 
-      @media (min-width: 860px) {
-        .grid { grid-template-columns: 1.2fr .8fr; }
-      }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
 
-      .foot {
-        border-top: 1px solid rgba(127,127,127,.25);
-        margin-top: 28px;
-      }
+  @media (min-width: 860px) {
+    .grid { grid-template-columns: 1.2fr .8fr; }
+  }
 
-      .muted { opacity: .8; }
-      .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    </style>
+  .foot {
+    border-top: 1px solid rgba(127,127,127,.25);
+    margin-top: 28px;
+  }
+
+  .muted { opacity: .8; }
+  .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+</style>
   </body>
 </html>
