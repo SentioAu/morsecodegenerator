@@ -8,7 +8,10 @@ const description =
 
 <Layout title={title} description={description}>
   <h1>Text to Morse Translator</h1>
-  <p>Paste text, convert to Morse, decode Morse back to text, and copy the result.</p>
+  <p>
+    Paste text, convert to Morse, decode Morse back to text, and copy the result instantly.
+    This translator runs locally in your browser (no account needed).
+  </p>
 
   <section class="card">
     <div class="grid">
@@ -34,8 +37,65 @@ const description =
     </div>
   </section>
 
-  <p>
-    Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/phrases/sos/">common phrases</a>.
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">How to use the translator</h2>
+    <ol>
+      <li>Enter text or Morse code in the input box.</li>
+      <li>Choose <strong>Text → Morse</strong> or <strong>Morse → Text</strong>.</li>
+      <li>Copy the output for practice, notes, or messages.</li>
+    </ol>
+    <p class="muted">
+      Example: <span class="k">HELLO</span> becomes Morse, and Morse can be decoded back to text.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Common phrases</h2>
+    <p class="muted">Practice using real phrases people recognize:</p>
+
+    <ul class="grid" style="list-style:none; padding-left:0; margin:0;">
+      <li><a href="/phrases/sos/">SOS</a></li>
+      <li><a href="/phrases/help/">HELP</a></li>
+      <li><a href="/phrases/mayday/">MAYDAY</a></li>
+      <li><a href="/phrases/emergency/">EMERGENCY</a></li>
+
+      <li><a href="/phrases/ok/">OK</a></li>
+      <li><a href="/phrases/yes/">YES</a></li>
+      <li><a href="/phrases/no/">NO</a></li>
+      <li><a href="/phrases/hello/">HELLO</a></li>
+
+      <li><a href="/phrases/thank-you/">THANK YOU</a></li>
+      <li><a href="/phrases/please/">PLEASE</a></li>
+      <li><a href="/phrases/sorry/">SORRY</a></li>
+      <li><a href="/phrases/i-love-you/">I LOVE YOU</a></li>
+    </ul>
+
+    <p class="muted" style="margin-top:10px;">
+      Want more? Browse the <a href="/phrases/sos/">phrases section</a>.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">FAQ</h2>
+
+    <h3 style="margin-bottom:6px;">How do I separate letters and words in Morse?</h3>
+    <p class="muted" style="margin-top:0;">
+      Use spaces between letters, and use “/” between words. Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>.
+    </p>
+
+    <h3 style="margin-bottom:6px;">Can I decode Morse back to text?</h3>
+    <p class="muted" style="margin-top:0;">
+      Yes. Paste Morse code into the input box and click <strong>Morse → Text</strong>.
+    </p>
+
+    <h3 style="margin-bottom:6px;">Is this translator free?</h3>
+    <p class="muted" style="margin-top:0;">
+      Yes. It’s a free educational tool and runs locally in your browser.
+    </p>
+  </section>
+
+  <p style="margin-top:16px;">
+    Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/morse-code/numbers/">numbers</a>.
   </p>
 
   <!-- Reliable runtime script (no inline JS, no syntax errors) -->
