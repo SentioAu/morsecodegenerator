@@ -4,40 +4,156 @@ import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
 export function getStaticPaths() {
-  const map = data.morseMap;
-  const letters = Object.keys(map).filter(k => k.length === 1 && /[A-Z0-9]/.test(k));
-  return letters.map(ch => ({ params: { ch: ch.toLowerCase() }, props: { ch } }));
+  const map = data?.morseMap ?? {};
+  const chars = Object.keys(map)
+    .filter((k) => k.length === 1 && /^[A-Z0-9]$/.test(k))
+    .sort((a, b) => a.localeCompare(b, "en"));
+
+  return chars.map((ch) => ({
+    params: { ch: ch.toLowerCase() },
+    props: { ch, chars },
+  }));
 }
 
-const { ch } = Astro.props;
-const code = data.morseMap[ch];
-const title = `${ch} in Morse Code: ${code}`;
-const description = `Learn how to write ${ch} in Morse code (${code}). Copy it, hear it, and see examples.`;
+const { ch, chars } = Astro.props;
+
+const map = data?.morseMap ?? {};
+const code = map[ch] ?? "";
+
+const isLetter = /^[A-Z]$/.test(ch);
+const isNumber = /^[0-9]$/.test(ch);
+
+const title = code ? `${ch} in Morse Code: ${code}` : `${ch} in Morse Code`;
+const description = code
+  ? `Learn how to write ${ch} in Morse code (${code}). Copy it and practice with examples.`
+  : `Learn how to write ${ch} in Morse code. Copy it and practice with examples.`;
+
+function findNeighbors(list, current) {
+  const idx = list.indexOf(current);
+  const prev = idx > 0 ? list[idx - 1] : null;
+  const next = idx >= 0 && idx < list.length - 1 ? list[idx + 1] : null;
+  return { prev, next };
+}
+
+const { prev, next } = findNeighbors(chars || [], ch);
+
+const examples = isLetter
+  ? [`${ch}A`, `${ch}E`, `M${ch}S`]
+  : isNumber
+  ? [`${ch}0`, `1${ch}`, `${ch}${ch}`]
+  : [`${ch}A`, `${ch}E`, `M${ch}S`];
+
+const examplesMorse = examples.map((w) => ({
+  word: w,
+  morse: textToMorse(w, map, " "),
+}));
 ---
+
 <Layout title={title} description={description}>
   <h1>{ch} in Morse code</h1>
-  <p class="muted">Morse code for <strong>{ch}</strong> is: <span class="k">{code}</span></p>
 
-  <div class="card">
-    <h2>Copy & examples</h2>
-    <p><button id="copy">Copy <span class="k">{code}</span></button></p>
-    <p class="muted">Example word: <span class="k">{ch}A</span> → <span class="k">{textToMorse(`${ch}A`, data.morseMap)}</span></p>
-  </div>
+  <p class="muted">
+    Morse code for <strong>{ch}</strong>
+    {code ? (
+      <> is: <span class="k">{code}</span></>
+    ) : (
+      <> is not available in the current Morse map.</>
+    )}
+  </p>
 
-  <p class="muted">Next: <a href="/morse-code/a/">alphabet</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/morse-code/punctuation/">punctuation</a></p>
+  <section class="card">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <button id="copy" type="button" disabled={!code}>
+        {code ? <>Copy <span class="k">{code}</span></> : <>Copy</>}
+      </button>
 
-  <script define:vars={{ code }}>
+      <a class="muted" style="text-decoration:none;" href="/translate/">Open translator</a>
+    </div>
+
+    <p class="muted" style="margin-top:10px">
+      How to read: dots (·) are short signals and dashes (–) are long signals.
+      In this site, letters are separated by spaces and words by “/”.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2 style="margin-top:0">Practice examples</h2>
+    <ul>
+      {examplesMorse.map((ex) => (
+        <li>
+          <span class="k">{ex.word}</span> → <span class="k">{ex.morse}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="muted">
+      Tip: practice by “chunking” patterns. Over time, you recognize shapes rather than counting dots and dashes.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2 style="margin-top:0">Related</h2>
+
+    <p class="muted" style="margin-top:0">
+      {prev ? (
+        <>Previous: <a href={`/morse-code/${prev.toLowerCase()}/`}>{prev}</a></>
+      ) : (
+        <>Previous: —</>
+      )}
+      {" • "}
+      {next ? (
+        <>Next: <a href={`/morse-code/${next.toLowerCase()}/`}>{next}</a></>
+      ) : (
+        <>Next: —</>
+      )}
+    </p>
+
+    <p class="muted">
+      Browse:
+      <a href="/morse-code/a/"> alphabet</a> •
+      <a href="/morse-code/numbers/"> numbers</a> •
+      <a href="/morse-code/punctuation/"> punctuation</a>
+    </p>
+  </section>
+
+  <script is:inline define:vars={{ code }}>
     const btn = document.getElementById("copy");
-    btn.addEventListener("click", async () => {
-      try { await navigator.clipboard.writeText(code); btn.textContent="Copied!"; setTimeout(()=>btn.textContent=`Copy ${code}`, 1200); } catch {}
+    btn?.addEventListener("click", async () => {
+      const value = (code || "").toString();
+      if (!value) return;
+
+      try {
+        await navigator.clipboard.writeText(value);
+        const old = btn.textContent;
+        btn.textContent = "Copied ✓";
+        setTimeout(() => (btn.textContent = old), 1200);
+      } catch {}
     });
   </script>
 
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context":"https://schema.org",
-    "@type":"FAQPage",
-    "mainEntity":[
-      { "@type":"Question", "name": `What is ${ch} in Morse code?`, "acceptedAnswer": { "@type":"Answer", "text": `${ch} in Morse code is ${code}.` } }
-    ]
-  })}></script>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": `What is ${ch} in Morse code?`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": code ? `${ch} in Morse code is ${code}.` : `This character is not available in the current Morse map.`,
+          },
+        },
+        {
+          "@type": "Question",
+          "name": `How do you read Morse code?`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dots are short signals and dashes are long signals. Letters are separated by spaces, and words are separated by a slash (/).",
+          },
+        },
+      ],
+    })}
+  ></script>
 </Layout>
