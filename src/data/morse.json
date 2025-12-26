@@ -56,45 +56,59 @@
     "@": ".--.-."
   },
   "phrases": [
-    [
-      "sos",
-      "SOS"
-    ],
-    [
-      "hello",
-      "HELLO"
-    ],
-    [
-      "i-love-you",
-      "I LOVE YOU"
-    ],
-    [
-      "help",
-      "HELP"
-    ],
-    [
-      "ok",
-      "OK"
-    ],
-    [
-      "yes",
-      "YES"
-    ],
-    [
-      "no",
-      "NO"
-    ],
-    [
-      "danger",
-      "DANGER"
-    ],
-    [
-      "mayday",
-      "MAYDAY"
-    ],
-    [
-      "thank-you",
-      "THANK YOU"
-    ]
+    ["sos", "SOS"],
+    ["help", "HELP"],
+    ["mayday", "MAYDAY"],
+    ["danger", "DANGER"],
+    ["emergency", "EMERGENCY"],
+    ["call-me", "CALL ME"],
+    ["call-police", "CALL POLICE"],
+    ["call-ambulance", "CALL AMBULANCE"],
+    ["need-help", "NEED HELP"],
+    ["i-need-help", "I NEED HELP"],
+    ["i-am-lost", "I AM LOST"],
+    ["where-are-you", "WHERE ARE YOU"],
+    ["come-here", "COME HERE"],
+    ["go-away", "GO AWAY"],
+    ["stop", "STOP"],
+    ["wait", "WAIT"],
+    ["yes", "YES"],
+    ["no", "NO"],
+    ["ok", "OK"],
+    ["hello", "HELLO"],
+    ["goodbye", "GOODBYE"],
+    ["good-morning", "GOOD MORNING"],
+    ["good-night", "GOOD NIGHT"],
+    ["thank-you", "THANK YOU"],
+    ["thank-you-very-much", "THANK YOU VERY MUCH"],
+    ["please", "PLEASE"],
+    ["sorry", "SORRY"],
+    ["congratulations", "CONGRATULATIONS"],
+    ["happy-birthday", "HAPPY BIRTHDAY"],
+    ["i-love-you", "I LOVE YOU"],
+    ["i-miss-you", "I MISS YOU"],
+    ["how-are-you", "HOW ARE YOU"],
+    ["i-am-ok", "I AM OK"],
+    ["i-am-fine", "I AM FINE"],
+    ["i-understand", "I UNDERSTAND"],
+    ["do-you-understand", "DO YOU UNDERSTAND"],
+    ["repeat", "REPEAT"],
+    ["again", "AGAIN"],
+    ["send-message", "SEND MESSAGE"],
+    ["message-received", "MESSAGE RECEIVED"],
+    ["over", "OVER"],
+    ["out", "OUT"],
+    ["radio-check", "RADIO CHECK"],
+    ["test", "TEST"],
+    ["signal", "SIGNAL"],
+    ["no-signal", "NO SIGNAL"],
+    ["i-am-here", "I AM HERE"],
+    ["meet-me", "MEET ME"],
+    ["follow-me", "FOLLOW ME"],
+    ["turn-left", "TURN LEFT"],
+    ["turn-right", "TURN RIGHT"],
+    ["go-straight", "GO STRAIGHT"],
+    ["slow-down", "SLOW DOWN"],
+    ["speed-up", "SPEED UP"]
   ]
 }
