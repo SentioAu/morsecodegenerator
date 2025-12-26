@@ -1,27 +1,31 @@
-(async function () {
-  // Load morse mapping at runtime (works on any static host)
-  const res = await fetch("/morse.json", { cache: "force-cache" });
-  const CHAR_TO_MORSE = await res.json();
-  const MORSE_TO_CHAR = Object.fromEntries(
-    Object.entries(CHAR_TO_MORSE).map(([k, v]) => [v, k])
-  );
+(function () {
+  function onReady(fn) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fn, { once: true });
+    } else {
+      fn();
+    }
+  }
 
-  const input = document.getElementById("mcg-input");
-  const output = document.getElementById("mcg-output");
-  const btnT2M = document.getElementById("mcg-text-to-morse");
-  const btnM2T = document.getElementById("mcg-morse-to-text");
-  const btnCopy = document.getElementById("mcg-copy");
-
-  if (!input || !output || !btnT2M || !btnM2T || !btnCopy) return;
+  async function loadMorseMap() {
+    const res = await fetch("/morse.json", { cache: "force-cache" });
+    if (!res.ok) throw new Error("Failed to load /morse.json");
+    return await res.json();
+  }
 
   function norm(s) {
     return (s || "").toUpperCase();
   }
 
-  function textToMorse(inputText) {
-    const s = norm(inputText).trim();
+  function buildReverseMap(map) {
+    return Object.fromEntries(Object.entries(map).map(([k, v]) => [v, k]));
+  }
+
+  function textToMorse(input, CHAR_TO_MORSE) {
+    const s = norm(input).trim();
     if (!s) return "";
     const words = s.split(/\s+/).filter(Boolean);
+
     return words
       .map((w) =>
         w
@@ -33,9 +37,10 @@
       .join(" / ");
   }
 
-  function morseToText(inputMorse) {
-    const s = (inputMorse || "").trim();
+  function morseToText(input, MORSE_TO_CHAR) {
+    const s = (input || "").trim();
     if (!s) return "";
+
     const words = s.split(/\s*\/\s*/).filter(Boolean);
     return words
       .map((w) =>
@@ -48,33 +53,59 @@
       .join(" ");
   }
 
-  async function copy(text) {
+  async function copyToClipboard(text) {
+    const t = text || "";
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(t);
+      return true;
     } catch {
       const ta = document.createElement("textarea");
-      ta.value = text;
+      ta.value = t;
       document.body.appendChild(ta);
       ta.select();
       try {
         document.execCommand("copy");
       } catch {}
       document.body.removeChild(ta);
+      return true;
     }
   }
 
-  btnT2M.addEventListener("click", () => {
-    output.value = textToMorse(input.value);
-  });
+  onReady(async () => {
+    const input = document.getElementById("mcg-input");
+    const output = document.getElementById("mcg-output");
+    const btnT2M = document.getElementById("mcg-text-to-morse");
+    const btnM2T = document.getElementById("mcg-morse-to-text");
+    const btnCopy = document.getElementById("mcg-copy");
 
-  btnM2T.addEventListener("click", () => {
-    output.value = morseToText(input.value);
-  });
+    // If page doesn't have the tool, do nothing (safe for other pages)
+    if (!input || !output || !btnT2M || !btnM2T || !btnCopy) return;
 
-  btnCopy.addEventListener("click", async () => {
-    await copy(output.value || "");
-    const old = btnCopy.textContent;
-    btnCopy.textContent = "Copied ✓";
-    setTimeout(() => (btnCopy.textContent = old), 900);
+    let CHAR_TO_MORSE;
+    let MORSE_TO_CHAR;
+
+    try {
+      CHAR_TO_MORSE = await loadMorseMap();
+      MORSE_TO_CHAR = buildReverseMap(CHAR_TO_MORSE);
+    } catch (e) {
+      console.error(e);
+      output.value = "Error: failed to load Morse map.";
+      return;
+    }
+
+    btnT2M.addEventListener("click", () => {
+      output.value = textToMorse(input.value, CHAR_TO_MORSE);
+    });
+
+    btnM2T.addEventListener("click", () => {
+      output.value = morseToText(input.value, MORSE_TO_CHAR);
+    });
+
+    btnCopy.addEventListener("click", async () => {
+      await copyToClipboard(output.value);
+      const old = btnCopy.textContent;
+      btnCopy.textContent = "Copied ✓";
+      setTimeout(() => (btnCopy.textContent = old), 900);
+    });
   });
 })();
