@@ -1,23 +1,138 @@
 ---
 import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
-const map = data.morseMap;
-const nums = ["0","1","2","3","4","5","6","7","8","9"].map(n => [n, map[n]]);
+
+const map = data?.morseMap ?? {};
+const nums = ["0","1","2","3","4","5","6","7","8","9"].map((n) => [n, map[n] ?? ""]);
+
 const title = "Numbers in Morse Code (0–9)";
-const description = "A complete reference table of Morse code numbers 0–9, with quick copy.";
+const description =
+  "A complete reference table of Morse code numbers 0–9, with quick copy and examples.";
 ---
+
 <Layout title={title} description={description}>
-  <h1>Numbers in Morse code</h1>
-  <div class="card">
-    <table>
-      <thead><tr><th>Number</th><th>Morse</th></tr></thead>
-      <tbody>
-        {nums.map(([n,c]) => <tr><td class="k">{n}</td><td class="k">{c}</td></tr>)}
-      </tbody>
-    </table>
-  </div>
+  <h1>Numbers in Morse code (0–9)</h1>
+
+  <p class="muted">
+    Numbers in Morse code use five signals (dots and dashes). This page shows the full 0–9 table
+    so you can learn or copy quickly.
+  </p>
+
+  <section class="card">
+    <h2 style="margin-top:0;">Morse code numbers table</h2>
+
+    <div style="overflow:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Number</th>
+            <th>Morse</th>
+            <th style="width:1%;">Copy</th>
+          </tr>
+        </thead>
+        <tbody>
+          {nums.map(([n, c]) => (
+            <tr>
+              <td class="k">{n}</td>
+              <td class="k">{c}</td>
+              <td>
+                <button type="button" class="copy" data-copy={c} disabled={!c}>
+                  Copy
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="muted" style="margin-top:12px;">
+      Pattern tip: <span class="k">1</span> starts with dots and adds dashes; <span class="k">5</span> is all dots;
+      <span class="k">0</span> is all dashes.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Examples</h2>
+    <ul>
+      <li><span class="k">911</span> → <span class="k">{`${map["9"] ?? ""} ${map["1"] ?? ""} ${map["1"] ?? ""}`.trim()}</span></li>
+      <li><span class="k">2025</span> → <span class="k">{`${map["2"] ?? ""} ${map["0"] ?? ""} ${map["2"] ?? ""} ${map["5"] ?? ""}`.trim()}</span></li>
+      <li><span class="k">123</span> → <span class="k">{`${map["1"] ?? ""} ${map["2"] ?? ""} ${map["3"] ?? ""}`.trim()}</span></li>
+    </ul>
+
+    <p class="muted">
+      Use the <a href="/translate/">translator</a> to encode longer numbers or mixed text.
+    </p>
+  </section>
+
+  <p class="muted" style="margin-top:16px;">
+    Explore:
+    <a href="/morse-code/a/">alphabet</a> •
+    <a href="/morse-code/punctuation/">punctuation</a> •
+    <a href="/translate/">translator</a> •
+    <a href="/">home</a>
+  </p>
+
+  <script is:inline>
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch {}
+        document.body.removeChild(ta);
+        return true;
+      }
+    }
+
+    document.querySelectorAll("button.copy").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const val = btn.getAttribute("data-copy") || "";
+        if (!val) return;
+
+        await copyText(val);
+        const old = btn.textContent;
+        btn.textContent = "Copied ✓";
+        setTimeout(() => (btn.textContent = old), 900);
+      });
+    });
+  </script>
+
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do you write numbers in Morse code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Numbers in Morse code use five signals (dots and dashes). Each digit 0–9 has a fixed pattern.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "What is 0 in Morse code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": map["0"] ? `0 in Morse code is ${map["0"]}.` : "0 in Morse code is a sequence of five dashes.",
+          },
+        },
+      ],
+    })}
+  ></script>
+
   <style>
-    table{ width:100%; border-collapse: collapse;}
-    th,td{ padding:10px; border-bottom:1px solid rgba(127,127,127,.25); text-align:left;}
+    table{ width:100%; border-collapse: collapse; }
+    th,td{ padding:10px; border-bottom:1px solid rgba(127,127,127,.25); text-align:left; vertical-align: middle; }
+    th{ font-weight: 700; }
+    button.copy{ padding: 8px 10px; border-radius: 10px; }
   </style>
 </Layout>
