@@ -46,9 +46,7 @@ const description =
     const $text = document.getElementById("mcg-text");
     const $out = document.getElementById("mcg-output");
 
-    function normalizeText(s) {
-      return (s || "").toUpperCase();
-    }
+    function normalizeText(s) { return (s || "").toUpperCase(); }
 
     function textToMorse(input) {
       const s = normalizeText(input);
@@ -70,10 +68,8 @@ const description =
     }
 
     async function copyToClipboard(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch {
+      try { await navigator.clipboard.writeText(text); return true; }
+      catch {
         const ta = document.createElement("textarea");
         ta.value = text;
         document.body.appendChild(ta);
