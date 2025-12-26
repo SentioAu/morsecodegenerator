@@ -1,23 +1,155 @@
 ---
 import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
-const map = data.morseMap;
-const punct = Object.entries(map).filter(([k]) => !/^[A-Z0-9]$/.test(k) && k !== " " && k !== "/");
+
+const map = data?.morseMap ?? {};
+const punct = Object.entries(map)
+  .filter(([k]) => !/^[A-Z0-9]$/.test(k) && k !== " " )
+  // Keep a stable-ish order: common punctuation first
+  .sort(([a], [b]) => a.localeCompare(b, "en"));
+
 const title = "Punctuation in Morse Code";
-const description = "Reference table for common Morse code punctuation marks, including period, comma, question mark, and more.";
+const description =
+  "Reference table for common Morse code punctuation marks, including period, comma, question mark, and more.";
 ---
+
 <Layout title={title} description={description}>
   <h1>Punctuation in Morse code</h1>
-  <div class="card">
-    <table>
-      <thead><tr><th>Symbol</th><th>Morse</th></tr></thead>
-      <tbody>
-        {punct.map(([k,v]) => <tr><td class="k">{k}</td><td class="k">{v}</td></tr>)}
-      </tbody>
-    </table>
-  </div>
+
+  <p class="muted">
+    Morse code supports common punctuation like <span class="k">.</span>, <span class="k">,</span>, and <span class="k">?</span>.
+    Use this table to copy symbols quickly while you learn.
+  </p>
+
+  <section class="card">
+    <h2 style="margin-top:0;">Morse code punctuation table</h2>
+
+    <div style="overflow:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Morse</th>
+            <th style="width:1%;">Copy</th>
+          </tr>
+        </thead>
+        <tbody>
+          {punct.map(([k, v]) => (
+            <tr>
+              <td class="k">{k}</td>
+              <td class="k">{v}</td>
+              <td>
+                <button type="button" class="copy" data-copy={v} disabled={!v}>
+                  Copy
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="muted" style="margin-top:12px;">
+      Tip: punctuation is great practice because it forces you to recognize longer patterns.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Examples</h2>
+    <ul>
+      <li>
+        <span class="k">SOS!</span> →
+        <span class="k">
+          {`${map["S"] ?? ""} ${map["O"] ?? ""} ${map["S"] ?? ""} ${map["!"] ?? ""}`.trim()}
+        </span>
+      </li>
+      <li>
+        <span class="k">HELLO?</span> →
+        <span class="k">
+          {`${map["H"] ?? ""} ${map["E"] ?? ""} ${map["L"] ?? ""} ${map["L"] ?? ""} ${map["O"] ?? ""} ${map["?"] ?? ""}`.trim()}
+        </span>
+      </li>
+      <li>
+        <span class="k">OK.</span> →
+        <span class="k">
+          {`${map["O"] ?? ""} ${map["K"] ?? ""} ${map["."] ?? ""}`.trim()}
+        </span>
+      </li>
+    </ul>
+
+    <p class="muted">
+      For full sentences, use the <a href="/translate/">translator</a>.
+    </p>
+  </section>
+
+  <p class="muted" style="margin-top:16px;">
+    Explore:
+    <a href="/morse-code/a/">alphabet</a> •
+    <a href="/morse-code/numbers/">numbers</a> •
+    <a href="/translate/">translator</a> •
+    <a href="/">home</a>
+  </p>
+
+  <script is:inline>
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch {}
+        document.body.removeChild(ta);
+        return true;
+      }
+    }
+
+    document.querySelectorAll("button.copy").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const val = btn.getAttribute("data-copy") || "";
+        if (!val) return;
+
+        await copyText(val);
+        const old = btn.textContent;
+        btn.textContent = "Copied ✓";
+        setTimeout(() => (btn.textContent = old), 900);
+      });
+    });
+  </script>
+
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does Morse code include punctuation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Morse code includes punctuation such as period, comma, question mark, exclamation mark, and more.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "How do you separate words in Morse code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A common convention is to use a slash (/) between words, and spaces between characters.",
+          },
+        },
+      ],
+    })}
+  ></script>
+
   <style>
-    table{ width:100%; border-collapse: collapse;}
-    th,td{ padding:10px; border-bottom:1px solid rgba(127,127,127,.25); text-align:left;}
+    table{ width:100%; border-collapse: collapse; }
+    th,td{ padding:10px; border-bottom:1px solid rgba(127,127,127,.25); text-align:left; vertical-align: middle; }
+    th{ font-weight: 700; }
+    button.copy{ padding: 8px 10px; border-radius: 10px; }
   </style>
 </Layout>
