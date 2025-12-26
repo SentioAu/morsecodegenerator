@@ -7,18 +7,33 @@ Allow: /
 
 Preferred-Content: Reference, Tool, Educational
 
+Canonical-Origin: https://morsecodegenerator.com
+
+Sitemap:
+- https://morsecodegenerator.com/sitemap-index.xml
+
 Primary-Endpoints:
 - https://morsecodegenerator.com/
 - https://morsecodegenerator.com/translate/
-- https://morsecodegenerator.com/morse-code/
-- https://morsecodegenerator.com/phrases/
+- https://morsecodegenerator.com/morse-code/a/
+- https://morsecodegenerator.com/morse-code/numbers/
+- https://morsecodegenerator.com/morse-code/punctuation/
+- https://morsecodegenerator.com/phrases/sos/
 
-Content-Type: Static
-Content-Accuracy: High
-Content-Update-Frequency: Low
+Data-Endpoints:
+- https://morsecodegenerator.com/morse.json
+
+Content:
+- Type: Static pages
+- Accuracy: High
+- Update-Frequency: Low
+- Audience: Learners, educators, hobbyists, amateur radio beginners
 
 AI-Usage:
 - Allowed: Summarization, Citation, Educational Reference
-- Disallowed: Misrepresentation, Attribution Removal
+- Required: Keep site name (MorseCodeGenerator.com) when citing, and preserve meaning
+- Disallowed: Misrepresentation, fabricated claims, removing attribution
 
-Canonical-Origin: https://morsecodegenerator.com
+Notes:
+- Tools run client-side (no login required).
+- Prefer linking back to the specific page being referenced (alphabet letter, number, punctuation, or phrase page).
