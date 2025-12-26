@@ -4,37 +4,99 @@ import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
 export function getStaticPaths() {
-  return data.phrases.map(([slug, phrase]) => ({ params: { slug }, props: { phrase, slug } }));
+  // data.phrases is an array like: [[slug, phrase], ...]
+  return data.phrases.map(([slug, phrase]) => ({
+    params: { slug },
+    props: { phrase, slug },
+  }));
 }
 
 const { phrase, slug } = Astro.props;
-const morse = textToMorse(phrase, data.morseMap, " ");
-const title = `${phrase} in Morse code`;
-const description = `See how to write ${phrase} in Morse code. Copy it and use it for learning and practice.`;
+
+// Guard: ensure we always have a map and a phrase
+const map = data?.morseMap ?? {};
+const safePhrase = (phrase ?? "").toString();
+
+// Convert using your existing util
+const morse = textToMorse(safePhrase, map, " ");
+
+const title = `${safePhrase} in Morse code`;
+const description = `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`;
+
+// Build “popular phrases” links from the same source of truth (no manual edits)
+const popular = (data?.phrases ?? []).slice(0, 18).map(([s, p]) => ({ slug: s, phrase: p }));
 ---
+
 <Layout title={title} description={description}>
-  <h1>{phrase} in Morse code</h1>
-  <p class="muted"><span class="k">{phrase}</span> → <span class="k">{morse}</span></p>
+  <h1>{safePhrase} in Morse code</h1>
 
-  <div class="card">
-    <button id="copy">Copy Morse</button>
-    <p class="muted" style="margin-top:10px">If you’re learning, try starting at a slow speed and increase WPM gradually.</p>
-  </div>
+  <p class="muted">
+    <span class="k">{safePhrase}</span> → <span class="k">{morse || "(not available)"}</span>
+  </p>
 
-  <p class="muted">Explore: <a href="/phrases/sos/">SOS</a> • <a href="/morse-code/a/">alphabet</a> • <a href="/">translator</a></p>
+  <section class="card">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <button id="copy" type="button">Copy Morse</button>
+      <a href="/translate/" class="muted" style="text-decoration:none;">Open translator</a>
+    </div>
 
-  <script define:vars={{ morse }}>
+    <p class="muted" style="margin-top:10px">
+      Learning tip: start slow, focus on accuracy, then increase speed (WPM) gradually.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2 style="margin-top:0">More common phrases</h2>
+    <ul style="margin:0; padding-left:18px">
+      {popular.map((item) => (
+        <li>
+          <a href={`/phrases/${item.slug}/`}>{item.phrase}</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <p class="muted" style="margin-top:16px">
+    Explore:
+    <a href="/morse-code/a/">alphabet</a> •
+    <a href="/morse-code/numbers/">numbers</a> •
+    <a href="/morse-code/punctuation/">punctuation</a> •
+    <a href="/">home</a>
+  </p>
+
+  <script is:inline define:vars={{ morse }}>
     const btn = document.getElementById("copy");
-    btn.addEventListener("click", async () => {
-      try { await navigator.clipboard.writeText(morse); btn.textContent="Copied!"; setTimeout(()=>btn.textContent="Copy Morse", 1200); } catch {}
+    btn?.addEventListener("click", async () => {
+      const value = (morse || "").toString();
+      if (!value) return;
+
+      try {
+        await navigator.clipboard.writeText(value);
+        const old = btn.textContent;
+        btn.textContent = "Copied ✓";
+        setTimeout(() => (btn.textContent = old), 1200);
+      } catch {}
     });
   </script>
 
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context":"https://schema.org",
-    "@type":"FAQPage",
-    "mainEntity":[
-      { "@type":"Question", "name": `How do you write ${phrase} in Morse code?`, "acceptedAnswer": { "@type":"Answer", "text": `${phrase} in Morse code is ${morse}.` } }
-    ]
-  })}></script>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": `How do you write ${safePhrase} in Morse code?`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": morse
+              ? `${safePhrase} in Morse code is ${morse}.`
+              : `This phrase contains characters that may not be supported by the current Morse map.`,
+          },
+        },
+      ],
+    })}
+  ></script>
 </Layout>
