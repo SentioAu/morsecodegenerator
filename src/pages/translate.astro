@@ -14,8 +14,8 @@ const description =
   <section class="card">
     <div class="grid">
       <div>
-        <label for="mcg-text"><strong>Input</strong></label><br />
-        <textarea id="mcg-text" rows="6" placeholder="Type text or Morse here..."></textarea>
+        <label for="mcg-input"><strong>Input</strong></label><br />
+        <textarea id="mcg-input" rows="7" placeholder="Type text or Morse here..."></textarea>
 
         <div style="margin-top: 10px; display:flex; gap:10px; flex-wrap:wrap;">
           <button id="mcg-text-to-morse" type="button">Text → Morse</button>
@@ -30,7 +30,7 @@ const description =
 
       <div>
         <label for="mcg-output"><strong>Output</strong></label><br />
-        <textarea id="mcg-output" rows="6" placeholder="Result appears here..."></textarea>
+        <textarea id="mcg-output" rows="7" placeholder="Result appears here..."></textarea>
       </div>
     </div>
   </section>
@@ -39,63 +39,60 @@ const description =
     Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/phrases/sos/">common phrases</a>.
   </p>
 
-  <script is:inline>
-    const CHAR_TO_MORSE = Object.freeze({...(JSON.parse({JSON.stringify(JSON.stringify(morse))}))});
-    const MORSE_TO_CHAR = Object.freeze(Object.fromEntries(Object.entries(CHAR_TO_MORSE).map(([k,v]) => [v,k])));
+  <script is:inline define:vars={{ morse }}>
+    const CHAR_TO_MORSE = morse;
+    const MORSE_TO_CHAR = Object.fromEntries(Object.entries(CHAR_TO_MORSE).map(([k, v]) => [v, k]));
 
-    const $text = document.getElementById("mcg-text");
+    const $in = document.getElementById("mcg-input");
     const $out = document.getElementById("mcg-output");
 
-    function normalizeText(s) { return (s || "").toUpperCase(); }
+    function norm(s) { return (s || "").toUpperCase(); }
 
     function textToMorse(input) {
-      const s = normalizeText(input);
+      const s = norm(input).trim();
+      if (!s) return "";
       const words = s.split(/\s+/).filter(Boolean);
-      const encodedWords = words.map(word =>
-        word.split("").map(ch => CHAR_TO_MORSE[ch] || "").filter(Boolean).join(" ")
-      );
-      return encodedWords.join(" / ");
+      return words.map(w =>
+        w.split("").map(ch => CHAR_TO_MORSE[ch] || "").filter(Boolean).join(" ")
+      ).join(" / ");
     }
 
     function morseToText(input) {
       const s = (input || "").trim();
       if (!s) return "";
       const words = s.split(/\s*\/\s*/).filter(Boolean);
-      const decodedWords = words.map(w =>
+      return words.map(w =>
         w.trim().split(/\s+/).map(code => MORSE_TO_CHAR[code] || "").join("")
-      );
-      return decodedWords.join(" ");
+      ).join(" ");
     }
 
-    async function copyToClipboard(text) {
-      try { await navigator.clipboard.writeText(text); return true; }
-      catch {
+    async function copy(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
         const ta = document.createElement("textarea");
         ta.value = text;
         document.body.appendChild(ta);
         ta.select();
         try { document.execCommand("copy"); } catch {}
         document.body.removeChild(ta);
-        return true;
       }
     }
 
     document.getElementById("mcg-text-to-morse")?.addEventListener("click", () => {
-      $out.value = textToMorse($text.value);
+      $out.value = textToMorse($in.value);
     });
 
     document.getElementById("mcg-morse-to-text")?.addEventListener("click", () => {
-      $out.value = morseToText($text.value);
+      $out.value = morseToText($in.value);
     });
 
     document.getElementById("mcg-copy")?.addEventListener("click", async () => {
-      const ok = await copyToClipboard($out.value || "");
-      if (ok) {
-        const btn = document.getElementById("mcg-copy");
-        const old = btn.textContent;
-        btn.textContent = "Copied ✓";
-        setTimeout(() => (btn.textContent = old), 900);
-      }
+      await copy($out.value || "");
+      const btn = document.getElementById("mcg-copy");
+      const old = btn.textContent;
+      btn.textContent = "Copied ✓";
+      setTimeout(() => (btn.textContent = old), 900);
     });
   </script>
 </Layout>
