@@ -15,43 +15,104 @@ const { phrase, slug } = Astro.props;
 
 // Guard: ensure we always have a map and a phrase
 const map = data?.morseMap ?? {};
-const safePhrase = (phrase ?? "").toString();
+const safePhrase = (phrase ?? "").toString().trim();
 
 // Convert using your existing util
-const morse = textToMorse(safePhrase, map, " ");
+const morse = safePhrase ? textToMorse(safePhrase, map, " ") : "";
 
+// SEO
 const title = `${safePhrase} in Morse code`;
 const description = `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`;
 
-// Build “popular phrases” links from the same source of truth (no manual edits)
-const popular = (data?.phrases ?? []).slice(0, 18).map(([s, p]) => ({ slug: s, phrase: p }));
+// Build “more phrases” (exclude current page)
+const popular = (data?.phrases ?? [])
+  .filter(([s]) => s !== slug)
+  .slice(0, 24)
+  .map(([s, p]) => ({ slug: s, phrase: p }));
+
+// Structured data (correct types for this page)
+const pageUrl = `https://morsecodegenerator.com/phrases/${slug}/`;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${pageUrl}#breadcrumbs`,
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://morsecodegenerator.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Phrases", "item": "https://morsecodegenerator.com/phrases/sos/" },
+        { "@type": "ListItem", "position": 3, "name": safePhrase, "item": pageUrl }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${pageUrl}#webpage`,
+      "url": pageUrl,
+      "name": title,
+      "description": description,
+      "isPartOf": { "@id": "https://morsecodegenerator.com/#website" }
+    }
+  ]
+};
 ---
 
 <Layout title={title} description={description}>
-  <h1>{safePhrase} in Morse code</h1>
+  <header style="margin-bottom: 14px;">
+    <h1 style="margin-bottom: 8px;">{safePhrase} in Morse code</h1>
 
-  <p class="muted">
-    <span class="k">{safePhrase}</span> → <span class="k">{morse || "(not available)"}</span>
-  </p>
+    <p class="muted" style="margin-top: 0; max-width: 70ch;">
+      Copy the Morse translation below, or open the translator to convert your own text.
+      Characters are separated by spaces, and “/” separates words.
+    </p>
+  </header>
 
   <section class="card">
-    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-      <button id="copy" type="button">Copy Morse</button>
-      <a href="/translate/" class="muted" style="text-decoration:none;">Open translator</a>
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>
+        <div class="muted" style="font-size: 14px; margin-bottom: 6px;">Phrase</div>
+        <div class="k" style="font-size: 18px;">{safePhrase}</div>
+      </div>
+
+      <div style="text-align:left;">
+        <div class="muted" style="font-size: 14px; margin-bottom: 6px;">Morse</div>
+        <div
+          class="k"
+          id="morse-value"
+          style="
+            font-size: 18px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(0,0,0,0.18);
+            word-break: break-word;
+          "
+        >
+          {morse || "(not available)"}
+        </div>
+      </div>
     </div>
 
-    <p class="muted" style="margin-top:10px">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; align-items:center;">
+      <button id="copy" type="button" aria-label={`Copy Morse code for ${safePhrase}`}>Copy Morse</button>
+      <a class="nav-link" href="/translate/" style="text-decoration:none;">Open translator</a>
+      <a class="nav-link" href="/morse-code/a/" style="text-decoration:none;">Learn alphabet</a>
+    </div>
+
+    <p class="muted" style="margin-top:12px;">
       Learning tip: start slow, focus on accuracy, then increase speed (WPM) gradually.
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px">
-    <h2 style="margin-top:0">More common phrases</h2>
-    <ul style="margin:0; padding-left:18px">
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">More common phrases</h2>
+    <p class="muted" style="margin-top: 6px;">
+      Popular pages people use for quick copying and practice:
+    </p>
+
+    <ul class="pill-grid" style="margin-top: 12px;">
       {popular.map((item) => (
-        <li>
-          <a href={`/phrases/${item.slug}/`}>{item.phrase}</a>
-        </li>
+        <li><a href={`/phrases/${item.slug}/`}>{item.phrase}</a></li>
       ))}
     </ul>
   </section>
@@ -66,8 +127,10 @@ const popular = (data?.phrases ?? []).slice(0, 18).map(([s, p]) => ({ slug: s, p
 
   <script is:inline define:vars={{ morse }}>
     const btn = document.getElementById("copy");
+    const morseEl = document.getElementById("morse-value");
+
     btn?.addEventListener("click", async () => {
-      const value = (morse || "").toString();
+      const value = (morse || "").toString().trim();
       if (!value) return;
 
       try {
@@ -75,28 +138,18 @@ const popular = (data?.phrases ?? []).slice(0, 18).map(([s, p]) => ({ slug: s, p
         const old = btn.textContent;
         btn.textContent = "Copied ✓";
         setTimeout(() => (btn.textContent = old), 1200);
-      } catch {}
+      } catch {
+        // fallback: select text visually
+        try {
+          const range = document.createRange();
+          range.selectNodeContents(morseEl);
+          const sel = window.getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+        } catch {}
+      }
     });
   </script>
 
-  <script
-    type="application/ld+json"
-    is:inline
-    set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": `How do you write ${safePhrase} in Morse code?`,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": morse
-              ? `${safePhrase} in Morse code is ${morse}.`
-              : `This phrase contains characters that may not be supported by the current Morse map.`,
-          },
-        },
-      ],
-    })}
-  ></script>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
 </Layout>
