@@ -4,35 +4,59 @@ import Layout from "../components/Layout.astro";
 const title = "Text to Morse Translator – Copy & Convert Instantly";
 const description =
   "Translate text to Morse code or decode Morse to text. Copy results instantly. Free online tool.";
+
+// Read ?q= from the URL (safe, server-render time). We'll set the textarea default value.
+const q = (Astro.url.searchParams.get("q") ?? "").toString();
+const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
 ---
 
 <Layout title={title} description={description}>
   <h1>Text to Morse Translator</h1>
-  <p>
-    Paste text, convert to Morse, decode Morse back to text, and copy the result instantly.
-    This translator runs locally in your browser (no account needed).
+  <p class="muted" style="margin-top:6px;">
+    Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
+    Runs locally in your browser (no account needed).
   </p>
 
-  <section class="card">
+  <section class="card" style="margin-top:16px;">
     <div class="grid">
       <div>
         <label for="mcg-input"><strong>Input</strong></label><br />
-        <textarea id="mcg-input" rows="7" placeholder="Type text or Morse here..."></textarea>
+        <textarea
+          id="mcg-input"
+          rows="8"
+          placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
+        >{initial}</textarea>
 
-        <div style="margin-top: 10px; display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="tool-row" style="margin-top: 10px; display:flex; gap:10px; flex-wrap:wrap;">
           <button id="mcg-text-to-morse" type="button">Text → Morse</button>
           <button id="mcg-morse-to-text" type="button">Morse → Text</button>
           <button id="mcg-copy" type="button">Copy output</button>
+
+          <!-- safe UX helpers -->
+          <button id="mcg-swap" type="button" class="ghost">Swap</button>
+          <button id="mcg-clear" type="button" class="ghost">Clear</button>
         </div>
 
         <p class="muted" style="margin-top: 10px;">
           Morse tips: spaces separate characters, and “/” separates words.
+          Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
         </p>
       </div>
 
       <div>
         <label for="mcg-output"><strong>Output</strong></label><br />
-        <textarea id="mcg-output" rows="7" placeholder="Result appears here..."></textarea>
+        <textarea
+          id="mcg-output"
+          rows="8"
+          placeholder="Result appears here..."
+        ></textarea>
+
+        <p class="muted" style="margin-top:10px;">
+          Want a one-click starting point?
+          <a href="/translate/?q=HELLO">HELLO</a> •
+          <a href="/translate/?q=SOS">SOS</a> •
+          <a href="/translate/?q=I%20LOVE%20YOU">I LOVE YOU</a>
+        </p>
       </div>
     </div>
   </section>
@@ -45,7 +69,8 @@ const description =
       <li>Copy the output for practice, notes, or messages.</li>
     </ol>
     <p class="muted">
-      Example: <span class="k">HELLO</span> becomes Morse, and Morse can be decoded back to text.
+      Tip: if you want to share a translation link, use:
+      <span class="k">/translate/?q=YOUR+TEXT</span>
     </p>
   </section>
 
@@ -53,22 +78,23 @@ const description =
     <h2 style="margin-top:0;">Common phrases</h2>
     <p class="muted">Practice using real phrases people recognize:</p>
 
-    <ul class="grid" style="list-style:none; padding-left:0; margin:0;">
-      <li><a href="/phrases/sos/">SOS</a></li>
-      <li><a href="/phrases/help/">HELP</a></li>
-      <li><a href="/phrases/mayday/">MAYDAY</a></li>
-      <li><a href="/phrases/emergency/">EMERGENCY</a></li>
+    <!-- make this a true responsive grid (not a left-only list) -->
+    <div class="phrase-grid" role="list">
+      <a role="listitem" class="pill" href="/phrases/sos/">SOS</a>
+      <a role="listitem" class="pill" href="/phrases/help/">HELP</a>
+      <a role="listitem" class="pill" href="/phrases/mayday/">MAYDAY</a>
+      <a role="listitem" class="pill" href="/phrases/emergency/">EMERGENCY</a>
 
-      <li><a href="/phrases/ok/">OK</a></li>
-      <li><a href="/phrases/yes/">YES</a></li>
-      <li><a href="/phrases/no/">NO</a></li>
-      <li><a href="/phrases/hello/">HELLO</a></li>
+      <a role="listitem" class="pill" href="/phrases/ok/">OK</a>
+      <a role="listitem" class="pill" href="/phrases/yes/">YES</a>
+      <a role="listitem" class="pill" href="/phrases/no/">NO</a>
+      <a role="listitem" class="pill" href="/phrases/hello/">HELLO</a>
 
-      <li><a href="/phrases/thank-you/">THANK YOU</a></li>
-      <li><a href="/phrases/please/">PLEASE</a></li>
-      <li><a href="/phrases/sorry/">SORRY</a></li>
-      <li><a href="/phrases/i-love-you/">I LOVE YOU</a></li>
-    </ul>
+      <a role="listitem" class="pill" href="/phrases/thank-you/">THANK YOU</a>
+      <a role="listitem" class="pill" href="/phrases/please/">PLEASE</a>
+      <a role="listitem" class="pill" href="/phrases/sorry/">SORRY</a>
+      <a role="listitem" class="pill" href="/phrases/i-love-you/">I LOVE YOU</a>
+    </div>
 
     <p class="muted" style="margin-top:10px;">
       Want more? Browse the <a href="/phrases/sos/">phrases section</a>.
@@ -80,7 +106,8 @@ const description =
 
     <h3 style="margin-bottom:6px;">How do I separate letters and words in Morse?</h3>
     <p class="muted" style="margin-top:0;">
-      Use spaces between letters, and use “/” between words. Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>.
+      Use spaces between letters, and use “/” between words.
+      Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>.
     </p>
 
     <h3 style="margin-bottom:6px;">Can I decode Morse back to text?</h3>
@@ -100,4 +127,81 @@ const description =
 
   <!-- Reliable runtime script (no inline JS, no syntax errors) -->
   <script defer src="/mcg-tool.js"></script>
+
+  <!-- Safe inline enhancements (doesn't replace mcg-tool.js; only adds extra UX) -->
+  <script is:inline>
+    (function () {
+      function onReady(fn) {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", fn, { once: true });
+        } else fn();
+      }
+
+      onReady(function () {
+        const input = document.getElementById("mcg-input");
+        const output = document.getElementById("mcg-output");
+        const swap = document.getElementById("mcg-swap");
+        const clear = document.getElementById("mcg-clear");
+
+        if (!input || !output) return;
+
+        // If URL had ?q=, give the user a nice default action: text -> morse if output empty
+        // (mcg-tool.js still owns the conversion; we only nudge UX)
+        // no auto-click to avoid surprises; user stays in control.
+
+        swap?.addEventListener("click", () => {
+          const a = input.value;
+          input.value = output.value;
+          output.value = a;
+          input.focus();
+        });
+
+        clear?.addEventListener("click", () => {
+          input.value = "";
+          output.value = "";
+          input.focus();
+        });
+      });
+    })();
+  </script>
+
+  <style>
+    /* local polish only for this page */
+    .ghost {
+      border-color: rgba(255,255,255,0.18) !important;
+      background: rgba(255,255,255,0.03) !important;
+      font-weight: 600;
+    }
+
+    .phrase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    @media (min-width: 720px) {
+      .phrase-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.92);
+      text-align: center;
+    }
+
+    .pill:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.20);
+    }
+  </style>
 </Layout>
