@@ -1,3 +1,4 @@
+// path: public/mcg-tool.js
 (function () {
   function onReady(fn) {
     if (document.readyState === "loading") {
@@ -24,8 +25,21 @@
     return {};
   }
 
-  function norm(s) {
+  function normText(s) {
     return (s || "").toUpperCase();
+  }
+
+  function normMorse(s) {
+    // Accept common variations people paste:
+    // - middle dot (·) -> .
+    // - en/em dash (–/—) -> -
+    // Also allow "|" as word separator (normalize to "/")
+    return (s || "")
+      .replaceAll("·", ".")
+      .replaceAll("–", "-")
+      .replaceAll("—", "-")
+      .replace(/\s*\|\s*/g, " / ")
+      .trim();
   }
 
   function buildReverseMap(map) {
@@ -35,7 +49,7 @@
   }
 
   function textToMorse(input, CHAR_TO_MORSE) {
-    const s = norm(input).trim();
+    const s = normText(input).trim();
     if (!s) return "";
     const words = s.split(/\s+/).filter(Boolean);
 
@@ -51,9 +65,10 @@
   }
 
   function morseToText(input, MORSE_TO_CHAR) {
-    const s = (input || "").trim();
+    const s = normMorse(input);
     if (!s) return "";
 
+    // allow "/" word separator (optionally surrounded by spaces)
     const words = s.split(/\s*\/\s*/).filter(Boolean);
     return words
       .map((w) =>
@@ -121,7 +136,9 @@
     });
 
     btnCopy.addEventListener("click", async () => {
-      await copyToClipboard(output.value);
+      const val = (output.value || "").trim();
+      if (!val) return; // don't show "Copied" when there's nothing
+      await copyToClipboard(val);
       const old = btnCopy.textContent;
       btnCopy.textContent = "Copied ✓";
       setTimeout(() => (btnCopy.textContent = old), 900);
