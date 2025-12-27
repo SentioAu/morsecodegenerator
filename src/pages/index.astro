@@ -112,20 +112,22 @@ const description =
       <a class="pill" href="/phrases/sorry/">SORRY</a>
       <a class="pill" href="/phrases/i-love-you/">I LOVE YOU</a>
     </div>
-
-    <p class="muted" style="margin-top: 12px;">
-      Want more? We can expand this to 100+ phrases and auto-generate pages safely from <span class="k">data/morse.json</span>.
-    </p>
   </section>
 
   <section class="card" style="margin-top: 16px;">
-    <h2 style="margin-top: 0;">Learn Morse Code</h2>
-    <ul>
-      <li><a href="/morse-code/a/">Alphabet (A–Z)</a></li>
-      <li><a href="/morse-code/numbers/">Numbers (0–9)</a></li>
-      <li><a href="/morse-code/punctuation/">Punctuation</a></li>
-    </ul>
-    <p class="muted">
+    <div class="section-head">
+      <h2 style="margin: 0;">Learn Morse Code</h2>
+      <p class="muted" style="margin: 0;">Start with the basics, then practice.</p>
+    </div>
+
+    <div class="pill-grid" style="margin-top:12px;">
+      <a class="pill" href="/morse-code/a/">Alphabet (A–Z)</a>
+      <a class="pill" href="/morse-code/numbers/">Numbers (0–9)</a>
+      <a class="pill" href="/morse-code/punctuation/">Punctuation</a>
+      <a class="pill" href="/translate/">Practice in Translator</a>
+    </div>
+
+    <p class="muted" style="margin-top: 12px;">
       Practice tip: read Morse visually first, then try listening (dot/dash rhythm) once you recognize patterns.
     </p>
   </section>
@@ -174,10 +176,10 @@ const description =
       justify-content: space-between;
     }
 
-    /* Fix: textarea corner dragging */
-    textarea { resize: vertical; }
+    /* Fix: NO textarea corner dragging */
+    textarea { resize: none; }
 
-    /* Phrases grid */
+    /* Phrases / Learn grid */
     .pill-grid{
       display:grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
