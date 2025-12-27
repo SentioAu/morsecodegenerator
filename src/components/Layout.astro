@@ -9,7 +9,6 @@ const site =
 const path = Astro.url.pathname || "/";
 const canonical = `${site}${path === "/" ? "/" : path}`;
 
-// Minimal JSON-LD to help SEO + AI systems understand the site
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -48,17 +47,14 @@ const jsonLd = {
     <link rel="canonical" href={canonical} />
     <meta name="robots" content="index,follow" />
 
-    <!-- Favicon -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate icon" href="/favicon.ico" />
 
-    <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -66,14 +62,12 @@ const jsonLd = {
     <meta name="application-name" content="Morse Code Generator" />
     <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
 
-    <!-- Google AdSense (loader only) -->
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7616383336440831"
       crossorigin="anonymous"
     ></script>
 
-    <!-- GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -84,8 +78,6 @@ const jsonLd = {
   </head>
 
   <body>
-    <a class="skip" href="#content">Skip to content</a>
-
     <header class="site-header">
       <div class="wrap header-inner">
         <a class="brand" href="/">MorseCodeGenerator.com</a>
@@ -94,14 +86,13 @@ const jsonLd = {
           <a class="nav-link" href="/translate/">Translate</a>
           <a class="nav-link" href="/morse-code/a/">Alphabet</a>
           <a class="nav-link" href="/phrases/sos/">Phrases</a>
-          <a class="nav-link contact" href="mailto:morsecodegenerator@gmail.com" aria-label="Email MorseCodeGenerator.com">
-            Contact
-          </a>
+          <a class="nav-link" href="/about/">About</a>
+          <a class="nav-link nav-cta" href="mailto:morsecodegenerator@gmail.com">Contact</a>
         </nav>
       </div>
     </header>
 
-    <main id="content" class="wrap">
+    <main class="wrap main">
       <div class="panel">
         <slot />
       </div>
@@ -117,215 +108,181 @@ const jsonLd = {
     </footer>
 
     <style>
-      :root {
+      :root{
         color-scheme: light dark;
-        --bg: #0b0b0b;
-        --panel: rgba(255,255,255,0.040);
-        --panel2: rgba(255,255,255,0.020);
+
+        --bg:#0b0b0b;
+        --panelA: rgba(255,255,255,0.05);
+        --panelB: rgba(255,255,255,0.025);
         --border: rgba(255,255,255,0.10);
         --border2: rgba(255,255,255,0.16);
-        --text: rgba(255,255,255,0.94);
-        --muted: rgba(255,255,255,0.80);
-        --subtle: rgba(255,255,255,0.65);
+
+        --text: rgba(255,255,255,0.92);
+        --muted: rgba(255,255,255,0.74);
+
         --accent: #8ab4ff;
         --accentBg: rgba(138,180,255,0.16);
-        --shadow: 0 10px 30px rgba(0,0,0,0.35);
+
+        --shadow: 0 18px 60px rgba(0,0,0,0.55);
+        --radius: 18px;
       }
 
       * { box-sizing: border-box; }
       html, body { height: 100%; }
-
-      body {
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      body{
         margin: 0;
-        line-height: 1.6;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        line-height: 1.65;
+        color: var(--text);
         background:
-          radial-gradient(1200px 600px at 50% -10%, rgba(138,180,255,0.10), transparent 60%),
+          radial-gradient(1200px 650px at 50% -10%, rgba(138,180,255,0.12), transparent 60%),
+          radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,0.06), transparent 55%),
           var(--bg);
-        color: var(--text);
       }
-
-      /* Skip link (accessibility) */
-      .skip {
-        position: absolute;
-        left: -999px;
-        top: 10px;
-        padding: 10px 12px;
-        background: rgba(0,0,0,0.85);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        color: var(--text);
-        text-decoration: none;
-        z-index: 999;
-      }
-      .skip:focus { left: 12px; }
 
       a { color: var(--accent); text-underline-offset: 3px; }
-      a:hover { opacity: 0.92; }
+      a:hover { opacity: .92; }
 
-      .wrap {
-        max-width: 1040px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 20px;
+      .wrap{
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 18px 18px;
       }
 
-      /* Header */
-      .site-header {
+      /* HEADER */
+      .site-header{
         position: sticky;
         top: 0;
-        z-index: 20;
+        z-index: 30;
         backdrop-filter: blur(10px);
         background: rgba(11,11,11,0.78);
         border-bottom: 1px solid var(--border);
       }
 
-      .header-inner {
+      .header-inner{
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 14px;
       }
 
-      .brand {
-        font-weight: 760;
-        letter-spacing: 0.2px;
+      .brand{
+        font-weight: 800;
+        letter-spacing: .2px;
         text-decoration: none;
         color: var(--text);
         white-space: nowrap;
       }
 
-      .nav {
+      .nav{
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: flex-end;
         align-items: center;
+        gap: 10px;
+        flex-wrap: nowrap;
       }
 
-      .nav-link {
+      .nav-link{
         text-decoration: none;
         color: var(--text);
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.10);
-        background: rgba(255,255,255,0.03);
+        padding: 9px 12px;
+        border-radius: 999px; /* pill */
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.02);
+        transition: transform .08s ease, background .12s ease, border-color .12s ease;
       }
-
-      .nav-link:hover {
-        border-color: rgba(255,255,255,0.16);
+      .nav-link:hover{
         background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.18);
       }
+      .nav-link:active{ transform: translateY(1px); }
 
-      .nav-link.contact {
-        border-color: rgba(138,180,255,0.40);
+      /* CTA still consistent, just slightly accented */
+      .nav-link.nav-cta{
+        border-color: rgba(138,180,255,0.45);
         background: var(--accentBg);
       }
 
-      /* Main panel */
-      .panel {
-        background: linear-gradient(to bottom, var(--panel), var(--panel2));
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        box-shadow: var(--shadow);
-        padding: 24px;
+      /* MAIN PANEL */
+      .main{
+        padding-top: 22px;
+        padding-bottom: 22px;
       }
 
-      /* Typography defaults inside pages */
-      h1 { line-height: 1.15; margin-top: 6px; }
-      h2 { line-height: 1.2; margin-top: 26px; }
-      p { color: var(--text); }
+      .panel{
+        width: 100%;
+        background: linear-gradient(to bottom, var(--panelA), var(--panelB));
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 22px;
+      }
+
+      /* TYPOGRAPHY */
+      h1{ font-size: clamp(28px, 4vw, 40px); line-height: 1.15; margin: 0 0 10px; }
+      h2{ margin: 22px 0 10px; line-height: 1.2; }
+      p{ margin: 10px 0; }
       .muted { color: var(--muted); }
       .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
-      /* Forms */
-      textarea, input {
-        width: 100%;
-        padding: 12px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--border2);
-        background: rgba(0,0,0,0.18);
-        color: var(--text);
-        outline: none;
-      }
-      textarea::placeholder, input::placeholder { color: rgba(255,255,255,0.55); }
-      textarea:focus, input:focus {
-        border-color: rgba(138,180,255,0.55);
-        box-shadow: 0 0 0 4px rgba(138,180,255,0.10);
-      }
-
-      button {
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(138,180,255,0.35);
-        background: var(--accentBg);
-        color: var(--text);
-        cursor: pointer;
-        font-weight: 650;
-      }
-      button:hover { opacity: 0.96; }
-      button:active { transform: translateY(1px); }
-
-      /* Cards + grids */
-      .card {
+      /* CARDS & GRID */
+      .card{
         border: 1px solid var(--border);
         border-radius: 16px;
         padding: 16px;
         background: rgba(255,255,255,0.02);
       }
 
-      .grid {
+      .grid{
         display: grid;
         grid-template-columns: 1fr;
         gap: 14px;
       }
-      @media (min-width: 860px) {
-        .grid { grid-template-columns: 1.2fr .8fr; }
+
+      @media (min-width: 900px){
+        .grid{ grid-template-columns: 1fr 1fr; } /* fixes the “empty right side” feel */
       }
 
-      /* Nice tables for numbers/punctuation pages */
-      table { width: 100%; border-collapse: collapse; }
-      th, td {
-        padding: 10px;
-        border-bottom: 1px solid rgba(255,255,255,0.10);
-        text-align: left;
-      }
-      th { color: rgba(255,255,255,0.85); font-weight: 700; }
-
-      /* Utility: pill grid (use for phrases list) */
-      .pill-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        list-style: none;
-        padding-left: 0;
-        margin: 0;
-      }
-      @media (min-width: 720px) {
-        .pill-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      }
-      .pill-grid a {
-        display: block;
-        text-decoration: none;
+      /* FORMS */
+      textarea, input{
+        width: 100%;
+        padding: 12px 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border2);
+        background: rgba(0,0,0,0.18);
         color: var(--text);
+        outline: none;
+      }
+      textarea::placeholder, input::placeholder{ color: rgba(255,255,255,0.55); }
+
+      /* IMPORTANT: stop ugly corner-resize breaking layout */
+      textarea{ resize: vertical; } /* or change to 'none' if you prefer */
+
+      textarea:focus, input:focus{
+        border-color: rgba(138,180,255,0.55);
+        box-shadow: 0 0 0 4px rgba(138,180,255,0.12);
+      }
+
+      button{
         padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(255,255,255,0.10);
-        background: rgba(255,255,255,0.03);
+        border-radius: 14px;
+        border: 1px solid rgba(138,180,255,0.45);
+        background: var(--accentBg);
+        color: var(--text);
+        cursor: pointer;
+        font-weight: 650;
+        transition: transform .08s ease, opacity .12s ease;
       }
-      .pill-grid a:hover {
-        border-color: rgba(138,180,255,0.35);
-        background: rgba(138,180,255,0.10);
-      }
+      button:hover{ opacity: .96; }
+      button:active{ transform: translateY(1px); }
 
-      /* Footer */
-      .site-footer {
+      /* FOOTER */
+      .site-footer{
         border-top: 1px solid var(--border);
-        margin-top: 26px;
-        padding-bottom: 30px;
+        margin-top: 22px;
+        padding-bottom: 26px;
       }
 
-      .foot-inner {
+      .foot-inner{
         display: flex;
         flex-wrap: wrap;
         gap: 10px 16px;
@@ -333,22 +290,31 @@ const jsonLd = {
         justify-content: space-between;
       }
 
-      .foot-text { color: var(--subtle); }
-      .foot-contact {
+      .foot-text{ color: rgba(255,255,255,0.72); }
+
+      .foot-contact{
         color: var(--accent);
         text-decoration: none;
-        padding: 8px 12px;
+        padding: 9px 12px;
         border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.10);
-        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.02);
       }
 
-      /* Mobile */
-      @media (max-width: 640px) {
-        .wrap { padding: 14px; }
-        .panel { padding: 16px; }
-        .header-inner { align-items: flex-start; flex-direction: column; }
-        .nav { justify-content: flex-start; width: 100%; }
+      /* MOBILE */
+      @media (max-width: 720px){
+        .wrap{ padding: 14px; }
+        .panel{ padding: 16px; }
+        .header-inner{ align-items: flex-start; flex-direction: column; }
+
+        /* nav becomes horizontal scroll instead of ugly wraps */
+        .nav{
+          width: 100%;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          padding-bottom: 6px;
+        }
+        .nav-link{ white-space: nowrap; }
       }
     </style>
   </body>
