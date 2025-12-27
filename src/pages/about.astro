@@ -1,0 +1,33 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "About – MorseCodeGenerator.com";
+const description =
+  "About MorseCodeGenerator.com: a fast, privacy-friendly Morse code translator and educational reference.";
+---
+
+<Layout title={title} description={description}>
+  <h1>About MorseCodeGenerator.com</h1>
+
+  <p class="muted">
+    MorseCodeGenerator.com is a lightweight set of tools and references for learning and using Morse code.
+    Everything runs in your browser — no accounts, no logins.
+  </p>
+
+  <section class="card" style="margin-top:16px">
+    <h2 style="margin-top:0">What you can do here</h2>
+    <ul>
+      <li>Convert text to Morse code and decode Morse back to text.</li>
+      <li>Use reference pages for letters, numbers, and punctuation.</li>
+      <li>Copy common phrases in Morse code for practice and learning.</li>
+    </ul>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2 style="margin-top:0">Contact</h2>
+    <p>
+      Questions or suggestions:
+      <a href="mailto:morsecodegenerator@gmail.com">morsecodegenerator@gmail.com</a>
+    </p>
+  </section>
+</Layout>
