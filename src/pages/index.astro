@@ -7,38 +7,47 @@ const description =
 ---
 
 <Layout title={title} description={description}>
-  <h1>Morse Code Generator</h1>
-  <p>
-    Translate text to Morse code instantly, learn the alphabet, and practice common phrases.
-    This tool runs entirely in your browser (fast, no logins).
-  </p>
+  <header style="margin-bottom: 18px;">
+    <h1 style="margin-bottom: 10px;">Morse Code Generator</h1>
 
-  <h2>Quick translate</h2>
+    <p class="muted" style="max-width: 70ch; margin-top: 0;">
+      Translate text to Morse code instantly, decode Morse back to text, and copy results in one click.
+      Runs entirely in your browser — fast, private, no logins.
+    </p>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;">
+      <a class="nav-link" href="/translate/">Open Translator</a>
+      <a class="nav-link" href="/morse-code/a/">Morse Alphabet</a>
+      <a class="nav-link" href="/phrases/sos/">Common Phrases</a>
+    </div>
+  </header>
+
+  <h2 style="margin-top: 8px;">Quick translate</h2>
 
   <section class="card">
     <div class="grid">
       <div>
         <label for="mcg-input"><strong>Input</strong></label><br />
-        <textarea id="mcg-input" rows="5">HELLO</textarea>
+        <textarea id="mcg-input" rows="6" placeholder="Type text or Morse here...">HELLO</textarea>
 
-        <div style="margin-top: 10px; display:flex; gap:10px; flex-wrap:wrap;">
+        <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
           <button id="mcg-text-to-morse" type="button">Text → Morse</button>
           <button id="mcg-morse-to-text" type="button">Morse → Text</button>
           <button id="mcg-copy" type="button">Copy output</button>
         </div>
 
         <p class="muted" style="margin-top: 10px;">
-          Tip: Use spaces between characters. Use “/” between words.
+          Input tips: letters/numbers work best in uppercase. For Morse, use spaces between characters and “/” between words.
         </p>
       </div>
 
       <div>
         <label for="mcg-output"><strong>Output</strong></label><br />
-        <textarea
-          id="mcg-output"
-          rows="5"
-          placeholder="Your result will appear here..."
-        ></textarea>
+        <textarea id="mcg-output" rows="6" placeholder="Your result will appear here..."></textarea>
+
+        <p class="muted" style="margin-top: 10px;">
+          Copy the output, or switch direction to decode Morse back into readable text.
+        </p>
       </div>
     </div>
   </section>
@@ -51,29 +60,15 @@ const description =
       <li>Use <strong>Copy output</strong> to copy the result instantly.</li>
     </ol>
     <p class="muted">
-      Morse basics: a dot (·) is a short signal and a dash (–) is a long signal.
-      In this tool, spaces separate characters and “/” separates words.
-    </p>
-  </section>
-
-  <section class="card" style="margin-top: 16px;">
-    <h2 style="margin-top: 0;">What is Morse Code?</h2>
-    <p>
-      Morse code is a way to represent letters, numbers, and symbols using sequences of dots (·)
-      and dashes (–). It was designed for telegraph communication and is still used today in
-      education, amateur radio, aviation references, and emergency signaling.
-    </p>
-    <p class="muted">
-      If you’re learning, start with common letters (E, T, A, N, I) and short words, then move to
-      numbers and punctuation.
+      Morse basics: a dot (·) is a short signal and a dash (–) is a long signal. In this tool, spaces separate characters and “/” separates words.
     </p>
   </section>
 
   <section class="card" style="margin-top: 16px;">
     <h2 style="margin-top: 0;">Common Morse Code Phrases</h2>
-    <p class="muted">Quick links to popular phrases (with Morse translations):</p>
+    <p class="muted">Popular phrases people search for (each page includes a copy button):</p>
 
-    <ul class="grid" style="list-style: none; padding-left: 0; margin: 0;">
+    <ul class="pill-grid">
       <li><a href="/phrases/sos/">SOS</a></li>
       <li><a href="/phrases/help/">HELP</a></li>
       <li><a href="/phrases/mayday/">MAYDAY</a></li>
@@ -104,6 +99,10 @@ const description =
       <li><a href="/phrases/sorry/">SORRY</a></li>
       <li><a href="/phrases/i-love-you/">I LOVE YOU</a></li>
     </ul>
+
+    <p class="muted" style="margin-top: 12px;">
+      Want more? We can expand this to 100+ phrases and auto-generate pages safely from <span class="k">data/morse.json</span>.
+    </p>
   </section>
 
   <section class="card" style="margin-top: 16px;">
@@ -118,6 +117,13 @@ const description =
     </p>
   </section>
 
-  <!-- Reliable runtime script (no inline JS, no syntax errors) -->
+  <section class="card" style="margin-top: 16px;">
+    <h2 style="margin-top: 0;">FAQ</h2>
+    <p><strong>How do you separate letters in Morse code?</strong><br /><span class="muted">Use spaces between characters. Example: <span class="k">HELLO</span> → <span class="k">.... . .-.. .-.. ---</span></span></p>
+    <p><strong>How do you separate words?</strong><br /><span class="muted">Use “/” between words. Example: <span class="k">HELP ME</span> → <span class="k">.... . .-.. .--. / -- .</span></span></p>
+    <p><strong>Can I decode Morse back to text?</strong><br /><span class="muted">Yes — paste Morse into Input and click <span class="k">Morse → Text</span>.</span></p>
+  </section>
+
+  <!-- Reliable runtime script -->
   <script defer src="/mcg-tool.js"></script>
 </Layout>
