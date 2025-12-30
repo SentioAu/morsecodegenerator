@@ -1,0 +1,58 @@
+---
+import Layout from "../../components/Layout.astro";
+import data from "../../data/morse.json";
+
+const title = "Morse Code Phrases – Common Signals & Messages";
+const description =
+  "Browse common Morse code phrases like SOS, HELP, MAYDAY, and emergency signals. Copy and learn popular Morse messages.";
+
+const phrases = data?.phrases ?? [];
+---
+
+<Layout title={title} description={description}>
+  <header>
+    <h1>Morse Code Phrases</h1>
+    <p class="muted">
+      A collection of common Morse code phrases used for emergencies, communication,
+      learning, and practice. Each phrase includes a ready-to-copy Morse translation.
+    </p>
+  </header>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Popular phrases</h2>
+    <p class="muted">
+      Click any phrase to view its Morse code representation and copy it instantly.
+    </p>
+
+    <div class="pill-grid" style="margin-top:12px;">
+      {phrases.map(([slug, phrase]) => (
+        <a href={`/phrases/${slug}/`}>{phrase}</a>
+      ))}
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">How Morse phrases are used</h2>
+    <ul>
+      <li><strong>Emergency signals:</strong> SOS, MAYDAY, HELP</li>
+      <li><strong>Basic communication:</strong> YES, NO, OK, WAIT</li>
+      <li><strong>Location & coordination:</strong> COME HERE, I AM HERE, MEET ME</li>
+      <li><strong>Learning & practice:</strong> short phrases help build recognition speed</li>
+    </ul>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Practice tip</h2>
+    <p class="muted">
+      Start by memorizing short phrases, then practice converting them back and forth
+      using the <a href="/translate/">Morse translator</a>.
+    </p>
+  </section>
+
+  <p style="margin-top:16px;">
+    Also explore:
+    <a href="/morse-code/a/">alphabet</a> •
+    <a href="/morse-code/numbers/">numbers</a> •
+    <a href="/">home</a>
+  </p>
+</Layout>
