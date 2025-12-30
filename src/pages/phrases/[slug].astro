@@ -12,11 +12,12 @@ export function getStaticPaths() {
 
 const { phrase, slug } = Astro.props;
 
-const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
 // Guard: ensure we always have a map and a phrase
 const map = data?.morseMap ?? {};
-const safePhrase = (phrase ?? "").toString();
+const safePhrase = (phrase ?? "").toString().trim();
 
 // Convert using your existing util
 const morse = textToMorse(safePhrase, map, " ");
@@ -25,7 +26,10 @@ const title = `${safePhrase} in Morse code`;
 const description = `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`;
 
 // Build “popular phrases” links from the same source of truth
-const popular = (data?.phrases ?? []).slice(0, 18).map(([s, p]) => ({ slug: s, phrase: p }));
+const popular = (data?.phrases ?? [])
+  .filter(([s]) => s !== slug) // avoid duplicating current page in the list
+  .slice(0, 20)
+  .map(([s, p]) => ({ slug: s, phrase: p }));
 
 // Breadcrumb URLs
 const crumbs = [
@@ -38,68 +42,70 @@ const crumbs = [
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "itemListElement": crumbs.map((c, i) => ({
+  itemListElement: crumbs.map((c, i) => ({
     "@type": "ListItem",
-    "position": i + 1,
-    "name": c.name,
-    "item": c.url,
+    position: i + 1,
+    name: c.name,
+    item: c.url,
   })),
 };
 
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "mainEntity": [
+  mainEntity: [
     {
       "@type": "Question",
-      "name": `How do you write ${safePhrase} in Morse code?`,
-      "acceptedAnswer": {
+      name: `How do you write ${safePhrase} in Morse code?`,
+      acceptedAnswer: {
         "@type": "Answer",
-        "text": morse
+        text: morse
           ? `${safePhrase} in Morse code is ${morse}.`
           : `This phrase contains characters that may not be supported by the current Morse map.`,
       },
     },
     {
       "@type": "Question",
-      "name": "How do you separate letters and words in Morse code?",
-      "acceptedAnswer": {
+      name: "How do you separate letters and words in Morse code?",
+      acceptedAnswer: {
         "@type": "Answer",
-        "text": "Use spaces between letters and use “/” between words.",
+        text: "Use spaces between letters and use “/” between words.",
       },
     },
   ],
 };
+
+const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
 ---
 
 <Layout title={title} description={description}>
   <!-- Breadcrumbs (visible) -->
   <nav class="crumbs" aria-label="Breadcrumb">
     <a href="/">Home</a>
-    <span aria-hidden="true">›</span>
+    <span aria-hidden="true" class="sep">›</span>
     <a href="/phrases/">Phrases</a>
-    <span aria-hidden="true">›</span>
-    <span class="current">{safePhrase}</span>
+    <span aria-hidden="true" class="sep">›</span>
+    <span class="crumb-current">{safePhrase}</span>
   </nav>
 
-  <header style="margin-top:10px;">
-    <h1 style="margin-bottom:8px;">{safePhrase} in Morse code</h1>
-    <p class="muted" style="margin-top:0; max-width: 72ch;">
+  <header class="hero">
+    <h1 class="hero-title">{safePhrase} in Morse code</h1>
+    <p class="muted hero-sub">
       Copy the Morse translation instantly, then practice in the translator or explore more phrases.
     </p>
   </header>
 
   <section class="card" style="margin-top:16px;">
-    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-      <span class="k">{safePhrase}</span>
+    <div class="phrase-row">
+      <span class="chip">{safePhrase}</span>
       <span class="muted">→</span>
-      <span class="k">{morse || "(not available)"}</span>
+      <span class="chip chip-morse">{morse || "(not available)"}</span>
     </div>
 
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center;">
+    <div class="actions" style="margin-top:12px;">
       <button id="copy" type="button">Copy Morse</button>
-      <a class="muted" href="/translate/" style="text-decoration:none;">Open translator</a>
-      <a class="muted" href="/phrases/" style="text-decoration:none;">Browse all phrases</a>
+      <a class="nav-link" href={translatorHref}>Open translator</a>
+      <a class="nav-link" href="/phrases/">Browse all phrases</a>
     </div>
 
     <p class="muted" style="margin-top:12px;">
@@ -108,7 +114,11 @@ const faqJsonLd = {
   </section>
 
   <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">More common phrases</h2>
+    <div class="section-head">
+      <h2 style="margin:0;">More common phrases</h2>
+      <p class="muted" style="margin:0;">Tap any phrase to open its page.</p>
+    </div>
+
     <div class="pill-grid" style="margin-top:12px;">
       {popular.map((item) => (
         <a href={`/phrases/${item.slug}/`}>{item.phrase}</a>
@@ -156,6 +166,18 @@ const faqJsonLd = {
   <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)}></script>
 
   <style>
+    .hero { margin-top: 10px; }
+    .hero-title { margin-bottom: 8px; }
+    .hero-sub { margin-top: 0; max-width: 72ch; }
+
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
     .crumbs{
       display:flex;
       gap:8px;
@@ -163,7 +185,9 @@ const faqJsonLd = {
       flex-wrap:wrap;
       font-size: 13px;
       opacity: .92;
+      margin-top: 2px;
     }
+
     .crumbs a{
       text-decoration:none;
       border: 1px solid rgba(255,255,255,0.12);
@@ -172,12 +196,53 @@ const faqJsonLd = {
       border-radius: 999px;
       color: rgba(255,255,255,0.92);
     }
+
     .crumbs a:hover{
       background: rgba(255,255,255,0.05);
       border-color: rgba(255,255,255,0.18);
     }
-    .crumbs .current{
+
+    .sep { opacity: .65; }
+
+    .crumb-current{
+      display:inline-flex;
+      align-items:center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.015);
       color: rgba(255,255,255,0.78);
+    }
+
+    .phrase-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.92);
+      font-weight: 650;
+    }
+
+    .chip-morse{
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: .4px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
     }
   </style>
 </Layout>
