@@ -27,7 +27,7 @@ const description = `See how to write ${safePhrase} in Morse code. Copy it insta
 
 // Build “popular phrases” links from the same source of truth
 const popular = (data?.phrases ?? [])
-  .filter(([s]) => s !== slug) // avoid duplicating current page in the list
+  .filter(([s]) => s !== slug) // avoid duplicating current page
   .slice(0, 20)
   .map(([s, p]) => ({ slug: s, phrase: p }));
 
@@ -81,9 +81,9 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
 <Layout title={title} description={description}>
   <!-- Breadcrumbs (visible) -->
   <nav class="crumbs" aria-label="Breadcrumb">
-    <a href="/">Home</a>
+    <a class="crumb" href="/">Home</a>
     <span aria-hidden="true" class="sep">›</span>
-    <a href="/phrases/">Phrases</a>
+    <a class="crumb" href="/phrases/">Phrases</a>
     <span aria-hidden="true" class="sep">›</span>
     <span class="crumb-current">{safePhrase}</span>
   </nav>
@@ -104,8 +104,8 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
 
     <div class="actions" style="margin-top:12px;">
       <button id="copy" type="button">Copy Morse</button>
-      <a class="nav-link" href={translatorHref}>Open translator</a>
-      <a class="nav-link" href="/phrases/">Browse all phrases</a>
+      <a class="btn ghost" href={translatorHref}>Open translator</a>
+      <a class="btn ghost" href="/phrases/">Browse all phrases</a>
     </div>
 
     <p class="muted" style="margin-top:12px;">
@@ -119,9 +119,12 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
       <p class="muted" style="margin:0;">Tap any phrase to open its page.</p>
     </div>
 
-    <div class="pill-grid" style="margin-top:12px;">
+    <!-- IMPORTANT: explicit pill class + safe separators to prevent glued text if CSS ever fails -->
+    <div class="pill-grid" style="margin-top:12px;" role="list">
       {popular.map((item) => (
-        <a href={`/phrases/${item.slug}/`}>{item.phrase}</a>
+        <>
+          <a role="listitem" class="pill" href={`/phrases/${item.slug}/`}>{item.phrase}</a>{" "}
+        </>
       ))}
     </div>
   </section>
@@ -149,21 +152,49 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
   <!-- Copy button -->
   <script is:inline define:vars={{ morse }}>
     const btn = document.getElementById("copy");
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        // Fallback
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          return ok;
+        } catch {
+          return false;
+        }
+      }
+    }
+
     btn?.addEventListener("click", async () => {
       const value = (morse || "").toString();
       if (!value) return;
-      try {
-        await navigator.clipboard.writeText(value);
-        const old = btn.textContent;
-        btn.textContent = "Copied ✓";
-        setTimeout(() => (btn.textContent = old), 1200);
-      } catch {}
+
+      const ok = await copyText(value);
+      if (!ok) return;
+
+      const old = btn.textContent;
+      btn.textContent = "Copied ✓";
+      setTimeout(() => (btn.textContent = old), 1200);
     });
   </script>
 
   <!-- Structured Data -->
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)}></script>
+  <script type="application/ld+json" is:inline>
+    {JSON.stringify(breadcrumbJsonLd)}
+  </script>
+  <script type="application/ld+json" is:inline>
+    {JSON.stringify(faqJsonLd)}
+  </script>
 
   <style>
     .hero { margin-top: 10px; }
@@ -188,7 +219,7 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
       margin-top: 2px;
     }
 
-    .crumbs a{
+    .crumb{
       text-decoration:none;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.02);
@@ -197,7 +228,7 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
       color: rgba(255,255,255,0.92);
     }
 
-    .crumbs a:hover{
+    .crumb:hover{
       background: rgba(255,255,255,0.05);
       border-color: rgba(255,255,255,0.18);
     }
@@ -243,6 +274,56 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
+    }
+
+    /* CTA links (local only) */
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      border: 1px solid rgba(138,180,255,0.35);
+      background: rgba(138,180,255,0.14);
+      color: rgba(255,255,255,0.92);
+      font-weight: 650;
+    }
+    .btn:hover{ opacity: .95; }
+    .btn.ghost{
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* Local pills (explicit, so we don’t depend on Layout’s pill-grid rules) */
+    .pill-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    @media (min-width: 860px){
+      .pill-grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      text-decoration:none;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.92);
+      font-weight: 650;
+    }
+    .pill:hover{
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.20);
     }
   </style>
 </Layout>
