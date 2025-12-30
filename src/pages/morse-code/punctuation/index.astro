@@ -1,0 +1,76 @@
+---
+import Layout from "../../../components/Layout.astro";
+import data from "../../../data/morse.json";
+
+const title = "Morse Code Punctuation Chart";
+const description =
+  "Morse code chart for common punctuation symbols. Copy, learn, and practice quickly.";
+
+const map = data?.morseMap ?? {};
+const items = [
+  [".", "Period"],
+  [",", "Comma"],
+  ["?", "Question mark"],
+  ["!", "Exclamation"],
+  ["/", "Slash"],
+  ["(", "Open parenthesis"],
+  [")", "Close parenthesis"],
+  ["&", "Ampersand"],
+  [":", "Colon"],
+  [";", "Semicolon"],
+  ["=", "Equals"],
+  ["+", "Plus"],
+  ["-", "Hyphen"],
+  ["_", "Underscore"],
+  ["\"", "Quotation mark"],
+  ["$", "Dollar"],
+  ["@", "At sign"],
+].map(([ch, label]) => ({ ch, label, morse: map[ch] ?? "" }));
+---
+
+<Layout title={title} description={description}>
+  <header>
+    <h1>Morse Code Punctuation</h1>
+    <p class="muted" style="margin-top:6px; max-width:72ch;">
+      Quick reference for punctuation symbols. Practice by pasting a symbol into the translator.
+    </p>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+      <a class="nav-link" href="/translate/">Practice in Translator</a>
+      <a class="nav-link" href="/morse-code/">Learn hub</a>
+    </div>
+  </header>
+
+  <section class="card" style="margin-top:16px;">
+    <div class="table">
+      {items.map((row) => (
+        <div class="row">
+          <div class="cell big">{row.ch}</div>
+          <div class="cell">
+            <div style="font-weight:700;">{row.label}</div>
+            <div class="k muted" style="margin-top:2px;">{row.morse || "—"}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .table{ display:grid; gap: 10px; }
+    .row{
+      display:grid;
+      grid-template-columns: 120px 1fr;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.02);
+      align-items:center;
+    }
+    .big{
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+  </style>
+</Layout>
