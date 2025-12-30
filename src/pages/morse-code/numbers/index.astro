@@ -1,0 +1,69 @@
+---
+import Layout from "../../../components/Layout.astro";
+import data from "../../../data/morse.json";
+
+const title = "Morse Code Numbers (0–9)";
+const description =
+  "Morse code chart for numbers 0–9. Copy and practice quickly using the translator.";
+
+const map = data?.morseMap ?? {};
+const numbers = ["0","1","2","3","4","5","6","7","8","9"].map((n) => ({
+  ch: n,
+  morse: map[n] ?? "",
+}));
+---
+
+<Layout title={title} description={description}>
+  <header>
+    <h1>Morse Code Numbers (0–9)</h1>
+    <p class="muted" style="margin-top:6px; max-width:72ch;">
+      Use this chart to memorize number patterns quickly, then practice in the translator.
+    </p>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+      <a class="nav-link" href="/translate/">Practice in Translator</a>
+      <a class="nav-link" href="/morse-code/">Learn hub</a>
+    </div>
+  </header>
+
+  <section class="card" style="margin-top:16px;">
+    <div class="table">
+      {numbers.map((row) => (
+        <div class="row">
+          <div class="cell big">{row.ch}</div>
+          <div class="cell k">{row.morse || "—"}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Tip</h2>
+    <p class="muted" style="margin-top:6px; max-width:72ch;">
+      Numbers are very systematic: <span class="k">1</span> starts with one dot, <span class="k">5</span> is all dots,
+      then it flips into dashes through <span class="k">0</span>.
+    </p>
+  </section>
+
+  <style>
+    .table{
+      display:grid;
+      gap: 10px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 120px 1fr;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.02);
+      align-items:center;
+    }
+    .big{
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+  </style>
+</Layout>
