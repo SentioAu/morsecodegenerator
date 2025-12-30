@@ -7,27 +7,49 @@ const description =
 ---
 
 <Layout title={title} description={description}>
-  <h1>About MorseCodeGenerator.com</h1>
+  <header class="about-hero">
+    <h1 class="about-title">About MorseCodeGenerator.com</h1>
+    <p class="muted about-sub">
+      A lightweight Morse code translator and reference built for speed, clarity, and learning.
+      Everything runs in your browser — no accounts, no logins.
+    </p>
 
-  <p class="muted">
-    MorseCodeGenerator.com is a lightweight set of tools and references for learning and using Morse code.
-    Everything runs in your browser — no accounts, no logins.
-  </p>
+    <div class="about-actions">
+      <a class="nav-link" href="/translate/">Open Translator</a>
+      <a class="nav-link" href="/morse-code/a/">Learn the Alphabet</a>
+      <a class="nav-link" href="/phrases/sos/">Browse Phrases</a>
+    </div>
+  </header>
 
   <section class="card" style="margin-top:16px">
     <h2 style="margin-top:0">What you can do here</h2>
     <ul>
-      <li>Convert text to Morse code and decode Morse back to text.</li>
-      <li>Use reference pages for letters, numbers, and punctuation.</li>
-      <li>Copy common phrases in Morse code for practice and learning.</li>
+      <li><strong>Translate:</strong> convert text → Morse and Morse → text instantly.</li>
+      <li><strong>Learn:</strong> reference pages for letters, numbers, and punctuation.</li>
+      <li><strong>Practice:</strong> common phrases in Morse with copy-ready output.</li>
     </ul>
   </section>
 
   <section class="card" style="margin-top:16px">
-    <h2 style="margin-top:0">Contact</h2>
-    <p>
-      Questions or suggestions:
-      <a href="mailto:morsecodegenerator@gmail.com">morsecodegenerator@gmail.com</a>
+    <h2 style="margin-top:0">Design principles</h2>
+    <ul>
+      <li><strong>Fast:</strong> minimal UI, instant results.</li>
+      <li><strong>Privacy-friendly:</strong> the translator runs locally in your browser.</li>
+      <li><strong>Clear:</strong> consistent formatting (spaces between letters, “/” between words).</li>
+    </ul>
+    <p class="muted" style="margin-top:10px">
+      If you spot an issue (missing characters, formatting edge cases, or a broken link), please email us.
     </p>
+
+    <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="nav-link contact" href="mailto:morsecodegenerator@gmail.com">Send feedback</a>
+    </div>
   </section>
+
+  <style>
+    .about-hero { margin-bottom: 8px; }
+    .about-title { margin: 0 0 10px; }
+    .about-sub { margin: 0; max-width: 74ch; }
+    .about-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+  </style>
 </Layout>
