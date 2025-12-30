@@ -122,16 +122,25 @@ const jsonLd = {
     <style>
       :root {
         color-scheme: light dark;
+
         --bg: #0b0b0b;
+
         --panel: rgba(255,255,255,0.035);
         --panel2: rgba(255,255,255,0.02);
+
         --border: rgba(255,255,255,0.10);
         --border2: rgba(255,255,255,0.14);
+
         --text: rgba(255,255,255,0.92);
         --muted: rgba(255,255,255,0.74);
+
         --accent: #8ab4ff;
         --accentBg: rgba(138,180,255,0.14);
+
         --shadow: 0 12px 34px rgba(0,0,0,0.40);
+
+        /* Typographic rhythm */
+        --contentMax: 74ch;
       }
 
       * { box-sizing: border-box; }
@@ -140,7 +149,7 @@ const jsonLd = {
       body {
         font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         margin: 0;
-        line-height: 1.65;
+        line-height: 1.7;
         background:
           radial-gradient(1200px 600px at 50% -10%, rgba(138,180,255,0.10), transparent 60%),
           var(--bg);
@@ -150,19 +159,34 @@ const jsonLd = {
         -moz-osx-font-smoothing: grayscale;
       }
 
-      h1, h2, h3 { line-height: 1.2; letter-spacing: -0.01em; }
-      h1 { font-size: clamp(28px, 3vw, 40px); margin: 0 0 10px; }
-      h2 { font-size: clamp(20px, 2vw, 26px); }
-      h3 { font-size: 16px; }
+      /* Better default spacing + consistent hierarchy */
+      h1, h2, h3 {
+        line-height: 1.18;
+        letter-spacing: -0.012em;
+        margin: 0 0 10px;
+      }
+
+      h1 { font-size: clamp(30px, 3.1vw, 42px); }
+      h2 { font-size: clamp(20px, 2.0vw, 26px); margin-top: 22px; }
+      h3 { font-size: 16px; margin-top: 14px; }
+
+      p { margin: 10px 0; }
+      ol, ul { margin: 10px 0 0; }
+      li { margin: 6px 0; }
+
+      /* Make reading feel premium: constrain long text blocks */
+      p, ol, ul {
+        max-width: var(--contentMax);
+      }
 
       a { color: var(--accent); text-underline-offset: 3px; }
       a:hover { opacity: 0.92; }
 
       .wrap {
-        max-width: 1080px;
+        max-width: 1100px;
         margin-left: auto;
         margin-right: auto;
-        padding: 20px;
+        padding: 22px;
       }
 
       /* Header */
@@ -187,6 +211,7 @@ const jsonLd = {
         text-decoration: none;
         color: var(--text);
         white-space: nowrap;
+        letter-spacing: -0.01em;
       }
 
       .nav {
@@ -197,6 +222,7 @@ const jsonLd = {
         align-items: center;
       }
 
+      /* Make all nav items feel like one “system” */
       .nav-link {
         text-decoration: none;
         color: var(--text);
@@ -204,6 +230,7 @@ const jsonLd = {
         border-radius: 999px;
         border: 1px solid rgba(255,255,255,0.10);
         background: rgba(255,255,255,0.02);
+        font-weight: 650;
       }
 
       .nav-link:hover {
@@ -211,10 +238,10 @@ const jsonLd = {
         background: rgba(255,255,255,0.05);
       }
 
+      /* Contact: same shape, subtle emphasis (not a different “component”) */
       .nav-link.contact {
-        border-color: rgba(138,180,255,0.35);
-        background: var(--accentBg);
-        color: var(--text);
+        border-color: rgba(138,180,255,0.30);
+        background: rgba(138,180,255,0.10);
       }
 
       /* Main panel */
@@ -223,7 +250,7 @@ const jsonLd = {
         border: 1px solid var(--border);
         border-radius: 22px;
         box-shadow: var(--shadow);
-        padding: 24px;
+        padding: 28px;
       }
 
       /* Shared UI */
@@ -237,7 +264,7 @@ const jsonLd = {
         outline: none;
       }
 
-      /* 🔒 Disable draggable resize corner */
+      /* Disable draggable resize corner globally */
       textarea { resize: none; }
 
       textarea::placeholder, input::placeholder { color: rgba(255,255,255,0.50); }
@@ -249,7 +276,7 @@ const jsonLd = {
         background: var(--accentBg);
         color: var(--text);
         cursor: pointer;
-        font-weight: 700;
+        font-weight: 750;
       }
       button:hover { opacity: 0.95; }
 
@@ -295,6 +322,7 @@ const jsonLd = {
         border-radius: 999px;
         border: 1px solid rgba(255,255,255,0.12);
         background: rgba(255,255,255,0.02);
+        font-weight: 650;
       }
       .pill-grid a:hover {
         border-color: rgba(255,255,255,0.20);
@@ -319,7 +347,7 @@ const jsonLd = {
       /* Mobile */
       @media (max-width: 640px) {
         .wrap { padding: 14px; }
-        .panel { padding: 16px; }
+        .panel { padding: 18px; }
         .header-inner { align-items: flex-start; }
         .nav { justify-content: flex-start; }
       }
