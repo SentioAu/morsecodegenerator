@@ -1,0 +1,54 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const title = "Learn Morse Code – Alphabet, Numbers, Punctuation";
+const description =
+  "Learn Morse code with clean reference pages: alphabet (A–Z), numbers (0–9), and punctuation. Practice with the translator.";
+---
+
+<Layout title={title} description={description}>
+  <header>
+    <h1>Learn Morse Code</h1>
+    <p class="muted" style="margin-top:6px; max-width:72ch;">
+      Start with the alphabet, then numbers and punctuation. Use the translator to practice what you learn.
+    </p>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+      <a class="nav-link" href="/translate/">Open Translator</a>
+      <a class="nav-link" href="/phrases/">Common Phrases</a>
+    </div>
+  </header>
+
+  <section class="card" style="margin-top:16px;">
+    <div class="section-head">
+      <h2 style="margin:0;">Quick links</h2>
+      <p class="muted" style="margin:0;">Clean references you can bookmark.</p>
+    </div>
+
+    <div class="pill-grid" style="margin-top:12px;">
+      <a href="/morse-code/a/">Alphabet (A–Z)</a>
+      <a href="/morse-code/numbers/">Numbers (0–9)</a>
+      <a href="/morse-code/punctuation/">Punctuation</a>
+      <a href="/translate/">Practice in Translator</a>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Learning tips</h2>
+    <ul>
+      <li>Learn by sound + rhythm (not dots/dashes visually only).</li>
+      <li>Start with E, T, A, N, I, M — then build outward.</li>
+      <li>Short daily practice beats long sessions once a week.</li>
+    </ul>
+  </section>
+
+  <style>
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+  </style>
+</Layout>
