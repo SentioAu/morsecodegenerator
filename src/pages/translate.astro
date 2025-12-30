@@ -11,13 +11,15 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
 ---
 
 <Layout title={title} description={description}>
-  <h1>Text to Morse Translator</h1>
-  <p class="muted" style="margin-top:6px;">
-    Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
-    Runs locally in your browser (no account needed).
-  </p>
+  <header class="hero">
+    <h1 class="hero-title">Text to Morse Translator</h1>
+    <p class="muted hero-sub">
+      Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
+      Runs locally in your browser (no account needed).
+    </p>
+  </header>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="card tool-card">
     <div class="grid">
       <div>
         <label for="mcg-input"><strong>Input</strong></label><br />
@@ -27,12 +29,12 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
           placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
         >{initial}</textarea>
 
-        <div class="tool-row" style="margin-top: 10px; display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="tool-row">
           <button id="mcg-text-to-morse" type="button">Text → Morse</button>
           <button id="mcg-morse-to-text" type="button">Morse → Text</button>
           <button id="mcg-copy" type="button">Copy output</button>
 
-          <!-- safe UX helpers -->
+          <!-- UX helpers -->
           <button id="mcg-swap" type="button" class="ghost">Swap</button>
           <button id="mcg-clear" type="button" class="ghost">Clear</button>
         </div>
@@ -45,14 +47,10 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
 
       <div>
         <label for="mcg-output"><strong>Output</strong></label><br />
-        <textarea
-          id="mcg-output"
-          rows="8"
-          placeholder="Result appears here..."
-        ></textarea>
+        <textarea id="mcg-output" rows="8" placeholder="Result appears here..."></textarea>
 
         <p class="muted" style="margin-top:10px;">
-          Want a one-click starting point?
+          One-click starting points:
           <a href="/translate/?q=HELLO">HELLO</a> •
           <a href="/translate/?q=SOS">SOS</a> •
           <a href="/translate/?q=I%20LOVE%20YOU">I LOVE YOU</a>
@@ -69,31 +67,32 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
       <li>Copy the output for practice, notes, or messages.</li>
     </ol>
     <p class="muted">
-      Tip: if you want to share a translation link, use:
+      Tip: to share a translation link, use:
       <span class="k">/translate/?q=YOUR+TEXT</span>
     </p>
   </section>
 
   <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Common phrases</h2>
-    <p class="muted">Practice using real phrases people recognize:</p>
+    <div class="section-head">
+      <h2 style="margin:0;">Common phrases</h2>
+      <p class="muted" style="margin:0;">Practice using real phrases people recognize.</p>
+    </div>
 
-    <!-- make this a true responsive grid (not a left-only list) -->
-    <div class="phrase-grid" role="list">
-      <a role="listitem" class="pill" href="/phrases/sos/">SOS</a>
-      <a role="listitem" class="pill" href="/phrases/help/">HELP</a>
-      <a role="listitem" class="pill" href="/phrases/mayday/">MAYDAY</a>
-      <a role="listitem" class="pill" href="/phrases/emergency/">EMERGENCY</a>
+    <div class="pill-grid" style="margin-top:12px;" role="list">
+      <a role="listitem" href="/phrases/sos/">SOS</a>
+      <a role="listitem" href="/phrases/help/">HELP</a>
+      <a role="listitem" href="/phrases/mayday/">MAYDAY</a>
+      <a role="listitem" href="/phrases/emergency/">EMERGENCY</a>
 
-      <a role="listitem" class="pill" href="/phrases/ok/">OK</a>
-      <a role="listitem" class="pill" href="/phrases/yes/">YES</a>
-      <a role="listitem" class="pill" href="/phrases/no/">NO</a>
-      <a role="listitem" class="pill" href="/phrases/hello/">HELLO</a>
+      <a role="listitem" href="/phrases/ok/">OK</a>
+      <a role="listitem" href="/phrases/yes/">YES</a>
+      <a role="listitem" href="/phrases/no/">NO</a>
+      <a role="listitem" href="/phrases/hello/">HELLO</a>
 
-      <a role="listitem" class="pill" href="/phrases/thank-you/">THANK YOU</a>
-      <a role="listitem" class="pill" href="/phrases/please/">PLEASE</a>
-      <a role="listitem" class="pill" href="/phrases/sorry/">SORRY</a>
-      <a role="listitem" class="pill" href="/phrases/i-love-you/">I LOVE YOU</a>
+      <a role="listitem" href="/phrases/thank-you/">THANK YOU</a>
+      <a role="listitem" href="/phrases/please/">PLEASE</a>
+      <a role="listitem" href="/phrases/sorry/">SORRY</a>
+      <a role="listitem" href="/phrases/i-love-you/">I LOVE YOU</a>
     </div>
 
     <p class="muted" style="margin-top:10px;">
@@ -125,7 +124,7 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
     Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/morse-code/numbers/">numbers</a>.
   </p>
 
-  <!-- Reliable runtime script (no inline JS, no syntax errors) -->
+  <!-- Reliable runtime script -->
   <script defer src="/mcg-tool.js"></script>
 
   <!-- Safe inline enhancements (doesn't replace mcg-tool.js; only adds extra UX) -->
@@ -145,10 +144,6 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
 
         if (!input || !output) return;
 
-        // If URL had ?q=, give the user a nice default action: text -> morse if output empty
-        // (mcg-tool.js still owns the conversion; we only nudge UX)
-        // no auto-click to avoid surprises; user stays in control.
-
         swap?.addEventListener("click", () => {
           const a = input.value;
           input.value = output.value;
@@ -166,42 +161,34 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
   </script>
 
   <style>
-    /* local polish only for this page */
+    /* Translator page polish only */
+    .hero { margin-bottom: 10px; }
+    .hero-title { margin: 0 0 8px; }
+    .hero-sub { margin: 0; max-width: 72ch; }
+
+    .tool-card { margin-top: 16px; }
+
+    .tool-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* Ghost buttons that still match the system */
     .ghost {
       border-color: rgba(255,255,255,0.18) !important;
       background: rgba(255,255,255,0.03) !important;
-      font-weight: 600;
+      font-weight: 650;
     }
 
-    .phrase-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    @media (min-width: 720px) {
-      .phrase-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.92);
-      text-align: center;
-    }
-
-    .pill:hover {
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.20);
+    .section-head {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
     }
   </style>
 </Layout>
