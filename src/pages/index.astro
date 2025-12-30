@@ -8,29 +8,29 @@ const description =
 
 <Layout title={title} description={description}>
   <header class="hero">
+    <p class="hero-kicker muted">Free • Fast • Private</p>
+
     <h1 class="hero-title">Morse Code Generator</h1>
 
-    <p class="muted hero-sub">
+    <p class="hero-sub muted">
       Translate text to Morse code instantly, decode Morse back to text, and copy results in one click.
-      Runs entirely in your browser — fast, private, no logins.
+      Runs entirely in your browser — no accounts, no logins.
     </p>
 
     <div class="hero-actions">
-      <a class="btn" href="/translate/">Open Translator</a>
-      <a class="btn ghost" href="/morse-code/a/">Morse Alphabet</a>
-      <a class="btn ghost" href="/phrases/sos/">Common Phrases</a>
+      <a class="cta" href="/translate/">Open Translator</a>
+      <a class="cta ghost" href="/morse-code/a/">Morse Alphabet</a>
+      <a class="cta ghost" href="/phrases/sos/">Common Phrases</a>
     </div>
   </header>
 
   <section class="card" style="margin-top:16px;">
     <div class="section-head">
-      <h2 style="margin:0;">Quick translate</h2>
-      <p class="muted" style="margin:0;">
-        Tip: Use spaces between letters and “/” between words.
-      </p>
+      <h2 class="section-title">Quick translate</h2>
+      <p class="muted section-note">Tip: use spaces between letters and “/” between words.</p>
     </div>
 
-    <div class="grid" style="margin-top:12px;">
+    <div class="grid tool-grid">
       <div>
         <label for="mcg-input"><strong>Input</strong></label><br />
         <textarea
@@ -39,7 +39,7 @@ const description =
           placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
         >HELLO</textarea>
 
-        <div class="tool-row" style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="tool-row">
           <button id="mcg-text-to-morse" type="button">Text → Morse</button>
           <button id="mcg-morse-to-text" type="button">Morse → Text</button>
           <button id="mcg-copy" type="button">Copy output</button>
@@ -69,62 +69,62 @@ const description =
       <li>Use <strong>Copy output</strong> to copy the result instantly.</li>
     </ol>
     <p class="muted">
-      Morse basics: a dot (·) is a short signal and a dash (–) is a long signal. In this tool, spaces separate characters and “/” separates words.
+      Morse basics: a dot (·) is a short signal and a dash (–) is a long signal.
+      In this tool, spaces separate characters and “/” separates words.
     </p>
   </section>
 
   <section class="card" style="margin-top: 16px;">
     <div class="section-head">
-      <h2 style="margin:0;">Common Morse Code Phrases</h2>
-      <p class="muted" style="margin:0;">
-        Popular phrases people search for (each page includes a copy button).
-      </p>
+      <h2 class="section-title">Common Morse Code Phrases</h2>
+      <p class="muted section-note">Popular phrases people search for (each page includes a copy button).</p>
     </div>
 
+    <!-- Use Layout's global pill system: .pill-grid a -->
     <div class="pill-grid" style="margin-top:12px;">
-      <a class="pill" href="/phrases/sos/">SOS</a>
-      <a class="pill" href="/phrases/help/">HELP</a>
-      <a class="pill" href="/phrases/mayday/">MAYDAY</a>
-      <a class="pill" href="/phrases/emergency/">EMERGENCY</a>
+      <a href="/phrases/sos/">SOS</a>
+      <a href="/phrases/help/">HELP</a>
+      <a href="/phrases/mayday/">MAYDAY</a>
+      <a href="/phrases/emergency/">EMERGENCY</a>
 
-      <a class="pill" href="/phrases/danger/">DANGER</a>
-      <a class="pill" href="/phrases/stop/">STOP</a>
-      <a class="pill" href="/phrases/wait/">WAIT</a>
-      <a class="pill" href="/phrases/come-here/">COME HERE</a>
+      <a href="/phrases/danger/">DANGER</a>
+      <a href="/phrases/stop/">STOP</a>
+      <a href="/phrases/wait/">WAIT</a>
+      <a href="/phrases/come-here/">COME HERE</a>
 
-      <a class="pill" href="/phrases/call-me/">CALL ME</a>
-      <a class="pill" href="/phrases/call-police/">CALL POLICE</a>
-      <a class="pill" href="/phrases/call-ambulance/">CALL AMBULANCE</a>
-      <a class="pill" href="/phrases/i-need-help/">I NEED HELP</a>
+      <a href="/phrases/call-me/">CALL ME</a>
+      <a href="/phrases/call-police/">CALL POLICE</a>
+      <a href="/phrases/call-ambulance/">CALL AMBULANCE</a>
+      <a href="/phrases/i-need-help/">I NEED HELP</a>
 
-      <a class="pill" href="/phrases/i-am-lost/">I AM LOST</a>
-      <a class="pill" href="/phrases/where-are-you/">WHERE ARE YOU</a>
-      <a class="pill" href="/phrases/i-am-here/">I AM HERE</a>
-      <a class="pill" href="/phrases/meet-me/">MEET ME</a>
+      <a href="/phrases/i-am-lost/">I AM LOST</a>
+      <a href="/phrases/where-are-you/">WHERE ARE YOU</a>
+      <a href="/phrases/i-am-here/">I AM HERE</a>
+      <a href="/phrases/meet-me/">MEET ME</a>
 
-      <a class="pill" href="/phrases/ok/">OK</a>
-      <a class="pill" href="/phrases/yes/">YES</a>
-      <a class="pill" href="/phrases/no/">NO</a>
-      <a class="pill" href="/phrases/hello/">HELLO</a>
+      <a href="/phrases/ok/">OK</a>
+      <a href="/phrases/yes/">YES</a>
+      <a href="/phrases/no/">NO</a>
+      <a href="/phrases/hello/">HELLO</a>
 
-      <a class="pill" href="/phrases/thank-you/">THANK YOU</a>
-      <a class="pill" href="/phrases/please/">PLEASE</a>
-      <a class="pill" href="/phrases/sorry/">SORRY</a>
-      <a class="pill" href="/phrases/i-love-you/">I LOVE YOU</a>
+      <a href="/phrases/thank-you/">THANK YOU</a>
+      <a href="/phrases/please/">PLEASE</a>
+      <a href="/phrases/sorry/">SORRY</a>
+      <a href="/phrases/i-love-you/">I LOVE YOU</a>
     </div>
   </section>
 
   <section class="card" style="margin-top: 16px;">
     <div class="section-head">
-      <h2 style="margin: 0;">Learn Morse Code</h2>
-      <p class="muted" style="margin: 0;">Start with the basics, then practice.</p>
+      <h2 class="section-title">Learn Morse Code</h2>
+      <p class="muted section-note">Start with the basics, then practice.</p>
     </div>
 
     <div class="pill-grid" style="margin-top:12px;">
-      <a class="pill" href="/morse-code/a/">Alphabet (A–Z)</a>
-      <a class="pill" href="/morse-code/numbers/">Numbers (0–9)</a>
-      <a class="pill" href="/morse-code/punctuation/">Punctuation</a>
-      <a class="pill" href="/translate/">Practice in Translator</a>
+      <a href="/morse-code/a/">Alphabet (A–Z)</a>
+      <a href="/morse-code/numbers/">Numbers (0–9)</a>
+      <a href="/morse-code/punctuation/">Punctuation</a>
+      <a href="/translate/">Practice in Translator</a>
     </div>
 
     <p class="muted" style="margin-top: 12px;">
@@ -134,79 +134,101 @@ const description =
 
   <section class="card" style="margin-top: 16px;">
     <h2 style="margin-top: 0;">FAQ</h2>
-    <p><strong>How do you separate letters in Morse code?</strong><br /><span class="muted">Use spaces between characters. Example: <span class="k">HELLO</span> → <span class="k">.... . .-.. .-.. ---</span></span></p>
-    <p><strong>How do you separate words?</strong><br /><span class="muted">Use “/” between words. Example: <span class="k">HELP ME</span> → <span class="k">.... . .-.. .--. / -- .</span></span></p>
-    <p><strong>Can I decode Morse back to text?</strong><br /><span class="muted">Yes — paste Morse into Input and click <span class="k">Morse → Text</span>.</span></p>
+    <p>
+      <strong>How do you separate letters in Morse code?</strong><br />
+      <span class="muted">Use spaces between characters. Example: <span class="k">HELLO</span> → <span class="k">.... . .-.. .-.. ---</span></span>
+    </p>
+    <p>
+      <strong>How do you separate words?</strong><br />
+      <span class="muted">Use “/” between words. Example: <span class="k">HELP ME</span> → <span class="k">.... . .-.. .--. / -- .</span></span>
+    </p>
+    <p>
+      <strong>Can I decode Morse back to text?</strong><br />
+      <span class="muted">Yes — paste Morse into Input and click <span class="k">Morse → Text</span>.</span>
+    </p>
   </section>
 
   <!-- Reliable runtime script -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- Homepage-only polish (safe: doesn't affect other pages) -->
+  <!-- Homepage-only polish -->
   <style>
-    .hero { margin-bottom: 8px; }
-    .hero-title { margin: 0 0 10px; letter-spacing: .2px; }
-    .hero-sub { margin: 0; max-width: 72ch; }
-    .hero-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+    .hero {
+      text-align: center;
+      padding: 8px 0 2px;
+    }
 
-    /* Buttons without changing Layout nav-link styles */
-    .btn {
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 12px;
+    .hero-kicker {
+      margin: 0 0 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .hero-title {
+      margin: 0 0 10px;
+    }
+
+    .hero-sub {
+      margin: 0 auto;
+      max-width: 70ch;
+    }
+
+    .hero-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Home CTAs look like nav system, but slightly larger */
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
       border-radius: 999px;
       text-decoration: none;
-      border: 1px solid rgba(138,180,255,0.35);
-      background: rgba(138,180,255,0.14);
+      border: 1px solid rgba(138,180,255,0.30);
+      background: rgba(138,180,255,0.12);
       color: rgba(255,255,255,0.92);
-      font-weight: 650;
+      font-weight: 750;
     }
-    .btn:hover { opacity: .95; }
-    .btn.ghost {
+
+    .cta:hover { opacity: 0.95; }
+
+    .cta.ghost {
       border-color: rgba(255,255,255,0.16);
       background: rgba(255,255,255,0.03);
     }
 
     .section-head {
-      display:flex;
-      flex-wrap:wrap;
+      display: flex;
+      flex-wrap: wrap;
       gap: 6px 14px;
       align-items: baseline;
       justify-content: space-between;
     }
 
-    /* Fix: NO textarea corner dragging */
-    textarea { resize: none; }
+    .section-title { margin: 0; }
+    .section-note { margin: 0; }
 
-    /* Phrases / Learn grid */
-    .pill-grid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .tool-grid { margin-top: 12px; }
+
+    .tool-row {
+      margin-top: 12px;
+      display: flex;
       gap: 10px;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    @media (min-width: 720px){
-      .pill-grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      flex-wrap: wrap;
+      align-items: center;
     }
 
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      text-decoration:none;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.92);
-    }
-    .pill:hover{
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.20);
+    /* Slightly more pleasant on small screens */
+    @media (max-width: 520px) {
+      .hero { text-align: left; }
+      .hero-sub { margin-left: 0; }
+      .hero-actions { justify-content: flex-start; }
     }
   </style>
 </Layout>
