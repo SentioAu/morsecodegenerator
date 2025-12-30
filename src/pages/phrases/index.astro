@@ -1,58 +1,116 @@
 ---
 import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
+import { textToMorse } from "../../utils/morse";
 
-const title = "Morse Code Phrases – Common Signals & Messages";
+const title = "Common Morse Code Phrases – Copy & Practice";
 const description =
-  "Browse common Morse code phrases like SOS, HELP, MAYDAY, and emergency signals. Copy and learn popular Morse messages.";
+  "Browse common Morse code phrases (SOS, HELP, MAYDAY, and more). Copy Morse instantly and practice with the translator.";
 
-const phrases = data?.phrases ?? [];
+const phrases = (data?.phrases ?? []).map(([slug, phrase]) => ({ slug, phrase }));
+const map = data?.morseMap ?? {};
 ---
 
 <Layout title={title} description={description}>
   <header>
-    <h1>Morse Code Phrases</h1>
-    <p class="muted">
-      A collection of common Morse code phrases used for emergencies, communication,
-      learning, and practice. Each phrase includes a ready-to-copy Morse translation.
+    <h1>Common Morse Code Phrases</h1>
+    <p class="muted" style="margin-top:6px; max-width:72ch;">
+      Click any phrase to open its dedicated page (with a copy button), or copy Morse directly from this list.
     </p>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+      <a class="nav-link" href="/translate/">Open Translator</a>
+      <a class="nav-link" href="/morse-code/a/">Learn Alphabet</a>
+    </div>
   </header>
 
   <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Popular phrases</h2>
-    <p class="muted">
-      Click any phrase to view its Morse code representation and copy it instantly.
-    </p>
-
     <div class="pill-grid" style="margin-top:12px;">
-      {phrases.map(([slug, phrase]) => (
-        <a href={`/phrases/${slug}/`}>{phrase}</a>
+      {phrases.map((p) => (
+        <a href={`/phrases/${p.slug}/`}>{p.phrase}</a>
       ))}
     </div>
   </section>
 
   <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">How Morse phrases are used</h2>
-    <ul>
-      <li><strong>Emergency signals:</strong> SOS, MAYDAY, HELP</li>
-      <li><strong>Basic communication:</strong> YES, NO, OK, WAIT</li>
-      <li><strong>Location & coordination:</strong> COME HERE, I AM HERE, MEET ME</li>
-      <li><strong>Learning & practice:</strong> short phrases help build recognition speed</li>
-    </ul>
-  </section>
-
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Practice tip</h2>
-    <p class="muted">
-      Start by memorizing short phrases, then practice converting them back and forth
-      using the <a href="/translate/">Morse translator</a>.
+    <h2 style="margin-top:0;">Copy Morse quickly</h2>
+    <p class="muted" style="margin-top:6px; max-width:72ch;">
+      Pick a phrase below and copy its Morse instantly (no page change).
     </p>
+
+    <div class="grid" style="margin-top:12px;">
+      <div>
+        <label for="phraseSelect"><strong>Phrase</strong></label><br />
+        <select id="phraseSelect">
+          {phrases.map((p) => (
+            <option value={p.phrase}>{p.phrase}</option>
+          ))}
+        </select>
+
+        <p class="muted" style="margin-top:10px;">
+          Tip: You can also practice any phrase inside the <a href="/translate/">translator</a>.
+        </p>
+      </div>
+
+      <div>
+        <label for="phraseMorse"><strong>Morse</strong></label><br />
+        <textarea id="phraseMorse" rows="4" readonly></textarea>
+
+        <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button id="copyMorse" type="button">Copy Morse</button>
+          <a class="nav-link" id="practiceLink" href="/translate/">Practice in Translator</a>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <p style="margin-top:16px;">
-    Also explore:
-    <a href="/morse-code/a/">alphabet</a> •
-    <a href="/morse-code/numbers/">numbers</a> •
-    <a href="/">home</a>
-  </p>
+  <style>
+    select{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.92);
+      outline:none;
+    }
+  </style>
+
+  <script is:inline define:vars={{ map }}>
+    const select = document.getElementById("phraseSelect");
+    const morseBox = document.getElementById("phraseMorse");
+    const copyBtn = document.getElementById("copyMorse");
+    const practiceLink = document.getElementById("practiceLink");
+
+    function toMorse(text){
+      const s = (text || "").toUpperCase().trim();
+      if (!s) return "";
+      return s
+        .split(/\s+/)
+        .filter(Boolean)
+        .map(w => w.split("").map(ch => (map?.[ch] || "")).filter(Boolean).join(" "))
+        .join(" / ");
+    }
+
+    function refresh(){
+      const phrase = (select?.value || "").toString();
+      const morse = toMorse(phrase);
+      if (morseBox) morseBox.value = morse;
+      if (practiceLink) practiceLink.href = "/translate/?q=" + encodeURIComponent(phrase);
+    }
+
+    select?.addEventListener("change", refresh);
+    refresh();
+
+    copyBtn?.addEventListener("click", async () => {
+      const value = (morseBox?.value || "").toString();
+      if (!value) return;
+      try {
+        await navigator.clipboard.writeText(value);
+        const old = copyBtn.textContent;
+        copyBtn.textContent = "Copied ✓";
+        setTimeout(() => (copyBtn.textContent = old), 1200);
+      } catch {}
+    });
+  </script>
 </Layout>
