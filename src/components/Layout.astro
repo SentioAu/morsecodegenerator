@@ -105,7 +105,8 @@ const jsonLd = {
       </div>
     </header>
 
-    <main class="wrap">
+    <!-- Centering wrapper to remove the “shifted left” feel -->
+    <main class="wrap main-wrap">
       <div class="panel">
         <slot />
       </div>
@@ -125,21 +126,20 @@ const jsonLd = {
 
         --bg: #0b0b0b;
 
-        --panel: rgba(255,255,255,0.035);
+        --panel: rgba(255,255,255,0.045);
         --panel2: rgba(255,255,255,0.02);
 
-        --border: rgba(255,255,255,0.10);
-        --border2: rgba(255,255,255,0.14);
+        --border: rgba(255,255,255,0.11);
+        --border2: rgba(255,255,255,0.16);
 
-        --text: rgba(255,255,255,0.92);
+        --text: rgba(255,255,255,0.94);
         --muted: rgba(255,255,255,0.74);
 
         --accent: #8ab4ff;
         --accentBg: rgba(138,180,255,0.14);
 
-        --shadow: 0 12px 34px rgba(0,0,0,0.40);
+        --shadow: 0 14px 40px rgba(0,0,0,0.45);
 
-        /* Typographic rhythm */
         --contentMax: 74ch;
       }
 
@@ -157,9 +157,10 @@ const jsonLd = {
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden; /* prevents “off-center” from tiny overflow */
       }
 
-      /* Better default spacing + consistent hierarchy */
+      /* Typography + rhythm */
       h1, h2, h3 {
         line-height: 1.18;
         letter-spacing: -0.012em;
@@ -167,14 +168,14 @@ const jsonLd = {
       }
 
       h1 { font-size: clamp(30px, 3.1vw, 42px); }
-      h2 { font-size: clamp(20px, 2.0vw, 26px); margin-top: 22px; }
+      h2 { font-size: clamp(20px, 2.0vw, 26px); margin-top: 24px; }
       h3 { font-size: 16px; margin-top: 14px; }
 
       p { margin: 10px 0; }
       ol, ul { margin: 10px 0 0; }
       li { margin: 6px 0; }
 
-      /* Make reading feel premium: constrain long text blocks */
+      /* Premium reading: constrain long text blocks */
       p, ol, ul {
         max-width: var(--contentMax);
       }
@@ -183,7 +184,8 @@ const jsonLd = {
       a:hover { opacity: 0.92; }
 
       .wrap {
-        max-width: 1100px;
+        width: 100%;
+        max-width: 1120px;
         margin-left: auto;
         margin-right: auto;
         padding: 22px;
@@ -222,30 +224,36 @@ const jsonLd = {
         align-items: center;
       }
 
-      /* Make all nav items feel like one “system” */
+      /* One unified button system */
       .nav-link {
         text-decoration: none;
         color: var(--text);
         padding: 9px 12px;
         border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.10);
-        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.025);
         font-weight: 650;
       }
 
       .nav-link:hover {
-        border-color: rgba(255,255,255,0.18);
-        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.20);
+        background: rgba(255,255,255,0.055);
       }
 
-      /* Contact: same shape, subtle emphasis (not a different “component”) */
+      /* Contact = same component, gentle emphasis */
       .nav-link.contact {
         border-color: rgba(138,180,255,0.30);
         background: rgba(138,180,255,0.10);
       }
 
       /* Main panel */
+      .main-wrap {
+        display: flex;
+        justify-content: center; /* ensures centered even if a child overflows */
+      }
+
       .panel {
+        width: 100%;
         background: linear-gradient(to bottom, var(--panel), var(--panel2));
         border: 1px solid var(--border);
         border-radius: 22px;
@@ -325,8 +333,8 @@ const jsonLd = {
         font-weight: 650;
       }
       .pill-grid a:hover {
-        border-color: rgba(255,255,255,0.20);
-        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.22);
+        background: rgba(255,255,255,0.06);
       }
 
       /* Footer */
@@ -345,11 +353,17 @@ const jsonLd = {
       .foot-text { color: rgba(255,255,255,0.70); }
 
       /* Mobile */
-      @media (max-width: 640px) {
+      @media (max-width: 720px) {
         .wrap { padding: 14px; }
         .panel { padding: 18px; }
-        .header-inner { align-items: flex-start; }
-        .nav { justify-content: flex-start; }
+
+        /* Header stacks cleanly + feels “finished” */
+        .header-inner { flex-direction: column; align-items: flex-start; }
+        .nav { justify-content: flex-start; width: 100%; }
+        .nav-link { padding: 9px 11px; }
+
+        /* Keep text comfortable on small screens */
+        p, ol, ul { max-width: 100%; }
       }
     </style>
   </body>
