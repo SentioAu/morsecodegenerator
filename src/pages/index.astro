@@ -80,8 +80,7 @@ const description =
       <p class="muted section-note">Popular phrases people search for (each page includes a copy button).</p>
     </div>
 
-    <!-- Use Layout's global pill system: .pill-grid a -->
-    <div class="pill-grid" style="margin-top:12px;">
+    <div class="pill-grid home-pills" style="margin-top:12px;">
       <a href="/phrases/sos/">SOS</a>
       <a href="/phrases/help/">HELP</a>
       <a href="/phrases/mayday/">MAYDAY</a>
@@ -120,7 +119,7 @@ const description =
       <p class="muted section-note">Start with the basics, then practice.</p>
     </div>
 
-    <div class="pill-grid" style="margin-top:12px;">
+    <div class="pill-grid home-pills" style="margin-top:12px;">
       <a href="/morse-code/a/">Alphabet (A–Z)</a>
       <a href="/morse-code/numbers/">Numbers (0–9)</a>
       <a href="/morse-code/punctuation/">Punctuation</a>
@@ -182,7 +181,7 @@ const description =
       justify-content: center;
     }
 
-    /* Home CTAs look like nav system, but slightly larger */
+    /* Home CTAs */
     .cta {
       display: inline-flex;
       align-items: center;
@@ -195,9 +194,7 @@ const description =
       color: rgba(255,255,255,0.92);
       font-weight: 750;
     }
-
     .cta:hover { opacity: 0.95; }
-
     .cta.ghost {
       border-color: rgba(255,255,255,0.16);
       background: rgba(255,255,255,0.03);
@@ -222,6 +219,36 @@ const description =
       gap: 10px;
       flex-wrap: wrap;
       align-items: center;
+    }
+
+    /* Make tool buttons match the site's button system (your screenshot showed browser-default buttons) */
+    .tool-row button {
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(138,180,255,0.35);
+      background: rgba(138,180,255,0.14);
+      color: rgba(255,255,255,0.92);
+      cursor: pointer;
+      font-weight: 750;
+    }
+    .tool-row button:hover { opacity: 0.95; }
+
+    /* Ensure textareas match theme here even if Layout styles change */
+    textarea {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.92);
+      outline: none;
+      resize: none; /* no corner drag */
+    }
+    textarea::placeholder { color: rgba(255,255,255,0.50); }
+
+    /* Safety: force pill layout to behave nicely on home */
+    .home-pills a {
+      font-weight: 650;
     }
 
     /* Slightly more pleasant on small screens */
