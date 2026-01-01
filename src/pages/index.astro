@@ -150,7 +150,7 @@ const description =
   <!-- Reliable runtime script -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- Homepage-only polish -->
+  <!-- Homepage-only layout polish (NO component restyling) -->
   <style>
     .hero {
       text-align: center;
@@ -181,7 +181,7 @@ const description =
       justify-content: center;
     }
 
-    /* Home CTAs */
+    /* Home CTAs only (safe) */
     .cta {
       display: inline-flex;
       align-items: center;
@@ -221,37 +221,7 @@ const description =
       align-items: center;
     }
 
-    /* Make tool buttons match the site's button system (your screenshot showed browser-default buttons) */
-    .tool-row button {
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(138,180,255,0.35);
-      background: rgba(138,180,255,0.14);
-      color: rgba(255,255,255,0.92);
-      cursor: pointer;
-      font-weight: 750;
-    }
-    .tool-row button:hover { opacity: 0.95; }
-
-    /* Ensure textareas match theme here even if Layout styles change */
-    textarea {
-      width: 100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(0,0,0,0.18);
-      color: rgba(255,255,255,0.92);
-      outline: none;
-      resize: none; /* no corner drag */
-    }
-    textarea::placeholder { color: rgba(255,255,255,0.50); }
-
-    /* Safety: force pill layout to behave nicely on home */
-    .home-pills a {
-      font-weight: 650;
-    }
-
-    /* Slightly more pleasant on small screens */
+    /* Mobile: left-align hero for better reading */
     @media (max-width: 520px) {
       .hero { text-align: left; }
       .hero-sub { margin-left: 0; }
