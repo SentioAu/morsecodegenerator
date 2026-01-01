@@ -5,13 +5,15 @@ const title = "Text to Morse Translator – Copy & Convert Instantly";
 const description =
   "Translate text to Morse code or decode Morse to text. Copy results instantly. Free online tool.";
 
-// Read ?q= from the URL (safe, server-render time). We'll set the textarea default value.
+// Read ?q= from the URL (SSR-safe). We'll set the textarea default value.
 const q = (Astro.url.searchParams.get("q") ?? "").toString();
-const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
+const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // safety cap
+const hasInitial = Boolean(initial);
 ---
 
 <Layout title={title} description={description}>
   <header class="hero">
+    <p class="hero-kicker muted">Fast • Private • No logins</p>
     <h1 class="hero-title">Text to Morse Translator</h1>
     <p class="muted hero-sub">
       Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
@@ -20,7 +22,14 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
   </header>
 
   <section class="card tool-card">
-    <div class="grid">
+    <div class="section-head">
+      <h2 class="section-title">Translator</h2>
+      <p class="muted section-note">
+        Tip: spaces separate letters • “/” separates words
+      </p>
+    </div>
+
+    <div class="grid tool-grid">
       <div>
         <label for="mcg-input"><strong>Input</strong></label><br />
         <textarea
@@ -34,13 +43,13 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
           <button id="mcg-morse-to-text" type="button">Morse → Text</button>
           <button id="mcg-copy" type="button">Copy output</button>
 
-          <!-- UX helpers -->
+          <span class="spacer" aria-hidden="true"></span>
+
           <button id="mcg-swap" type="button" class="ghost">Swap</button>
           <button id="mcg-clear" type="button" class="ghost">Clear</button>
         </div>
 
         <p class="muted" style="margin-top: 10px;">
-          Morse tips: spaces separate characters, and “/” separates words.
           Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
         </p>
       </div>
@@ -60,22 +69,22 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
   </section>
 
   <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">How to use the translator</h2>
+    <h2 style="margin-top:0;">How to use</h2>
     <ol>
       <li>Enter text or Morse code in the input box.</li>
       <li>Choose <strong>Text → Morse</strong> or <strong>Morse → Text</strong>.</li>
       <li>Copy the output for practice, notes, or messages.</li>
     </ol>
     <p class="muted">
-      Tip: to share a translation link, use:
+      Share a link like:
       <span class="k">/translate/?q=YOUR+TEXT</span>
     </p>
   </section>
 
   <section class="card" style="margin-top:16px;">
     <div class="section-head">
-      <h2 style="margin:0;">Common phrases</h2>
-      <p class="muted" style="margin:0;">Practice using real phrases people recognize.</p>
+      <h2 class="section-title">Common phrases</h2>
+      <p class="muted section-note">Practice using phrases people recognize.</p>
     </div>
 
     <div class="pill-grid" style="margin-top:12px;" role="list">
@@ -96,7 +105,7 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
     </div>
 
     <p class="muted" style="margin-top:10px;">
-      Want more? Browse the <a href="/phrases/sos/">phrases section</a>.
+      Want more? Browse the <a href="/phrases/">phrases section</a>.
     </p>
   </section>
 
@@ -127,8 +136,8 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
   <!-- Reliable runtime script -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- Safe inline enhancements (doesn't replace mcg-tool.js; only adds extra UX) -->
-  <script is:inline>
+  <!-- Safe inline enhancements (adds UX; does NOT replace mcg-tool.js) -->
+  <script is:inline define:vars={{ hasInitial }}>
     (function () {
       function onReady(fn) {
         if (document.readyState === "loading") {
@@ -142,7 +151,20 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
         const swap = document.getElementById("mcg-swap");
         const clear = document.getElementById("mcg-clear");
 
+        const btnT2M = document.getElementById("mcg-text-to-morse");
+        // const btnM2T = document.getElementById("mcg-morse-to-text");
+
         if (!input || !output) return;
+
+        // Premium feel: focus input
+        input.focus();
+
+        // If we arrived with ?q=... and output is empty, auto-run Text->Morse once.
+        // This is predictable + matches user intent when they click "HELLO" etc.
+        if (hasInitial && btnT2M && !output.value.trim()) {
+          // Let mcg-tool.js attach handlers first
+          setTimeout(() => btnT2M.click(), 0);
+        }
 
         swap?.addEventListener("click", () => {
           const a = input.value;
@@ -161,12 +183,30 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
   </script>
 
   <style>
-    /* Translator page polish only */
+    /* Translator page polish only (keeps Layout as source of truth) */
     .hero { margin-bottom: 10px; }
-    .hero-title { margin: 0 0 8px; }
-    .hero-sub { margin: 0; max-width: 72ch; }
+    .hero-kicker{
+      margin: 0 0 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+      text-align: center;
+    }
+    .hero-title { margin: 0 0 8px; text-align: center; }
+    .hero-sub { margin: 0 auto; max-width: 72ch; text-align: center; }
 
     .tool-card { margin-top: 16px; }
+    .tool-grid { margin-top: 12px; }
+
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    .section-title{ margin: 0; }
+    .section-note{ margin: 0; }
 
     .tool-row {
       margin-top: 10px;
@@ -176,6 +216,8 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
       align-items: center;
     }
 
+    .spacer { flex: 1; min-width: 8px; }
+
     /* Ghost buttons that still match the system */
     .ghost {
       border-color: rgba(255,255,255,0.18) !important;
@@ -183,12 +225,14 @@ const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // small safety cap
       font-weight: 650;
     }
 
-    .section-head {
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px 14px;
-      align-items: baseline;
-      justify-content: space-between;
+    /* Safety: no textarea drag corner even if browser overrides */
+    textarea { resize: none; }
+
+    /* Small screens: align hero left (feels less “boxed”) */
+    @media (max-width: 520px) {
+      .hero-kicker, .hero-title, .hero-sub { text-align: left; }
+      .hero-sub { margin-left: 0; }
+      .spacer { display: none; }
     }
   </style>
 </Layout>
