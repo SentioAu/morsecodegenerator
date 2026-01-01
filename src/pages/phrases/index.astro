@@ -1,7 +1,6 @@
 ---
 import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
-import { textToMorse } from "../../utils/morse";
 
 const title = "Common Morse Code Phrases – Copy & Practice";
 const description =
@@ -12,19 +11,25 @@ const map = data?.morseMap ?? {};
 ---
 
 <Layout title={title} description={description}>
-  <header>
-    <h1>Common Morse Code Phrases</h1>
-    <p class="muted" style="margin-top:6px; max-width:72ch;">
-      Click any phrase to open its dedicated page (with a copy button), or copy Morse directly from this list.
+  <header class="hero">
+    <h1 class="hero-title">Common Morse Code Phrases</h1>
+
+    <p class="muted hero-sub">
+      Click any phrase to open its dedicated page (with a copy button), or copy Morse directly from the tool below.
     </p>
 
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+    <div class="hero-actions">
       <a class="nav-link" href="/translate/">Open Translator</a>
       <a class="nav-link" href="/morse-code/a/">Learn Alphabet</a>
     </div>
   </header>
 
   <section class="card" style="margin-top:16px;">
+    <div class="section-head">
+      <h2 style="margin:0;">Browse phrases</h2>
+      <p class="muted" style="margin:0;">Open any phrase page.</p>
+    </div>
+
     <div class="pill-grid" style="margin-top:12px;">
       {phrases.map((p) => (
         <a href={`/phrases/${p.slug}/`}>{p.phrase}</a>
@@ -33,30 +38,30 @@ const map = data?.morseMap ?? {};
   </section>
 
   <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Copy Morse quickly</h2>
-    <p class="muted" style="margin-top:6px; max-width:72ch;">
-      Pick a phrase below and copy its Morse instantly (no page change).
-    </p>
+    <div class="section-head">
+      <h2 style="margin:0;">Copy Morse quickly</h2>
+      <p class="muted" style="margin:0;">Pick a phrase and copy its Morse (no page change).</p>
+    </div>
 
     <div class="grid" style="margin-top:12px;">
       <div>
         <label for="phraseSelect"><strong>Phrase</strong></label><br />
-        <select id="phraseSelect">
+        <select id="phraseSelect" aria-label="Select a phrase">
           {phrases.map((p) => (
             <option value={p.phrase}>{p.phrase}</option>
           ))}
         </select>
 
         <p class="muted" style="margin-top:10px;">
-          Tip: You can also practice any phrase inside the <a href="/translate/">translator</a>.
+          Tip: You can practice any phrase inside the <a href="/translate/">translator</a>.
         </p>
       </div>
 
       <div>
         <label for="phraseMorse"><strong>Morse</strong></label><br />
-        <textarea id="phraseMorse" rows="4" readonly></textarea>
+        <textarea id="phraseMorse" rows="4" readonly placeholder="Morse will appear here..."></textarea>
 
-        <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="tool-row" style="margin-top:10px;">
           <button id="copyMorse" type="button">Copy Morse</button>
           <a class="nav-link" id="practiceLink" href="/translate/">Practice in Translator</a>
         </div>
@@ -65,14 +70,25 @@ const map = data?.morseMap ?? {};
   </section>
 
   <style>
-    select{
-      width:100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(0,0,0,0.18);
-      color: rgba(255,255,255,0.92);
-      outline:none;
+    /* page-only layout polish */
+    .hero { margin-bottom: 10px; }
+    .hero-title { margin: 0 0 8px; }
+    .hero-sub { margin: 0; max-width: 72ch; }
+    .hero-actions { margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .tool-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
     }
   </style>
 
