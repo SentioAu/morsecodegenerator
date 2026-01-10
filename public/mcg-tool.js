@@ -8,9 +8,20 @@
     }
   }
 
+  function resolveMorseJsonUrl() {
+    // Prefer root, but remain robust in subpath previews.
+    // If you always deploy at root, this still works.
+    try {
+      return new URL("/morse.json", window.location.origin).toString();
+    } catch {
+      return "/morse.json";
+    }
+  }
+
   async function loadMorsePayload() {
-    const res = await fetch("/morse.json", { cache: "force-cache" });
-    if (!res.ok) throw new Error("Failed to load /morse.json");
+    const url = resolveMorseJsonUrl();
+    const res = await fetch(url, { cache: "force-cache" });
+    if (!res.ok) throw new Error(`Failed to load ${url} (${res.status})`);
     return await res.json();
   }
 
@@ -43,22 +54,30 @@
   }
 
   function buildReverseMap(map) {
-    // guard: ignore empty keys/values
-    const entries = Object.entries(map).filter(([k, v]) => k && v);
-    return Object.fromEntries(entries.map(([k, v]) => [v, k]));
+    const out = {};
+    for (const [k, v] of Object.entries(map || {})) {
+      if (!k || !v) continue;
+      // Keep first occurrence if there’s a collision
+      if (out[v] == null) out[v] = k;
+    }
+    return out;
   }
 
   function textToMorse(input, CHAR_TO_MORSE) {
     const s = normText(input).trim();
     if (!s) return "";
+
+    // Split by whitespace into words
     const words = s.split(/\s+/).filter(Boolean);
 
     return words
       .map((w) =>
         w
           .split("")
-          .map((ch) => CHAR_TO_MORSE[ch] || "")
-          .filter(Boolean)
+          .map((ch) => {
+            const code = CHAR_TO_MORSE[ch];
+            return code ? code : "?"; // visible fallback for unknown chars
+          })
           .join(" ")
       )
       .join(" / ");
@@ -70,12 +89,14 @@
 
     // allow "/" word separator (optionally surrounded by spaces)
     const words = s.split(/\s*\/\s*/).filter(Boolean);
+
     return words
       .map((w) =>
         w
           .trim()
           .split(/\s+/)
-          .map((code) => MORSE_TO_CHAR[code] || "")
+          .filter(Boolean)
+          .map((code) => MORSE_TO_CHAR[code] || "?") // visible fallback
           .join("")
       )
       .join(" ");
@@ -87,15 +108,22 @@
       await navigator.clipboard.writeText(t);
       return true;
     } catch {
-      const ta = document.createElement("textarea");
-      ta.value = t;
-      document.body.appendChild(ta);
-      ta.select();
+      // Fallback
       try {
-        document.execCommand("copy");
-      } catch {}
-      document.body.removeChild(ta);
-      return true;
+        const ta = document.createElement("textarea");
+        ta.value = t;
+        ta.setAttribute("readonly", "true");
+        ta.style.position = "fixed";
+        ta.style.top = "-9999px";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return !!ok;
+      } catch {
+        return false;
+      }
     }
   }
 
@@ -137,10 +165,12 @@
 
     btnCopy.addEventListener("click", async () => {
       const val = (output.value || "").trim();
-      if (!val) return; // don't show "Copied" when there's nothing
-      await copyToClipboard(val);
+      if (!val) return;
+
+      const ok = await copyToClipboard(val);
       const old = btnCopy.textContent;
-      btnCopy.textContent = "Copied ✓";
+
+      btnCopy.textContent = ok ? "Copied ✓" : "Copy failed";
       setTimeout(() => (btnCopy.textContent = old), 900);
     });
   });
