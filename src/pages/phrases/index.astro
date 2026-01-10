@@ -8,6 +8,34 @@ const description =
 
 const phrases = (data?.phrases ?? []).map(([slug, phrase]) => ({ slug, phrase }));
 const map = data?.morseMap ?? {};
+
+// Canonical pieces for JSON-LD
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Phrases", url: `${site}/phrases/` },
+];
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: crumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: c.url,
+  })),
+};
+
+const collectionJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Common Morse Code Phrases",
+  url: `${site}/phrases/`,
+  isPartOf: { "@type": "WebSite", url: site, name: "Morse Code Generator" },
+};
 ---
 
 <Layout title={title} description={description}>
@@ -30,7 +58,7 @@ const map = data?.morseMap ?? {};
       <p class="muted" style="margin:0;">Open any phrase page.</p>
     </div>
 
-    <div class="pill-grid" style="margin-top:12px;">
+    <div class="pill-grid phrase-pills" style="margin-top:12px;">
       {phrases.map((p) => (
         <a href={`/phrases/${p.slug}/`}>{p.phrase}</a>
       ))}
@@ -59,15 +87,28 @@ const map = data?.morseMap ?? {};
 
       <div>
         <label for="phraseMorse"><strong>Morse</strong></label><br />
-        <textarea id="phraseMorse" rows="4" readonly placeholder="Morse will appear here..."></textarea>
+        <textarea
+          id="phraseMorse"
+          rows="4"
+          readonly
+          placeholder="Morse will appear here..."
+        ></textarea>
 
         <div class="tool-row" style="margin-top:10px;">
           <button id="copyMorse" type="button">Copy Morse</button>
           <a class="nav-link" id="practiceLink" href="/translate/">Practice in Translator</a>
         </div>
+
+        <p class="muted" style="margin-top:10px;">
+          Output format: spaces separate letters and “/” separates words.
+        </p>
       </div>
     </div>
   </section>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(collectionJsonLd)}></script>
 
   <style>
     /* page-only layout polish */
@@ -89,6 +130,24 @@ const map = data?.morseMap ?? {};
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
+    }
+
+    /* Make huge phrase lists feel less “endless” */
+    .phrase-pills{
+      max-height: 520px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    /* Select styling to match global inputs (Layout currently styles textarea/input, not select) */
+    select{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.92);
+      outline:none;
     }
   </style>
 
@@ -115,18 +174,40 @@ const map = data?.morseMap ?? {};
       if (practiceLink) practiceLink.href = "/translate/?q=" + encodeURIComponent(phrase);
     }
 
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          return ok;
+        } catch {
+          return false;
+        }
+      }
+    }
+
     select?.addEventListener("change", refresh);
     refresh();
 
     copyBtn?.addEventListener("click", async () => {
       const value = (morseBox?.value || "").toString();
       if (!value) return;
-      try {
-        await navigator.clipboard.writeText(value);
-        const old = copyBtn.textContent;
-        copyBtn.textContent = "Copied ✓";
-        setTimeout(() => (copyBtn.textContent = old), 1200);
-      } catch {}
+
+      const ok = await copyText(value);
+      if (!ok) return;
+
+      const old = copyBtn.textContent;
+      copyBtn.textContent = "Copied ✓";
+      setTimeout(() => (copyBtn.textContent = old), 1200);
     });
   </script>
 </Layout>
