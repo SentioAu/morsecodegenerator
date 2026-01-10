@@ -25,9 +25,9 @@ const morse = textToMorse(safePhrase, map, " ");
 const title = `${safePhrase} in Morse code`;
 const description = `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`;
 
-// Build “popular phrases” links from the same source of truth
+// More phrases (exclude current)
 const popular = (data?.phrases ?? [])
-  .filter(([s]) => s !== slug) // avoid duplicating current page
+  .filter(([s]) => s !== slug)
   .slice(0, 20)
   .map(([s, p]) => ({ slug: s, phrase: p }));
 
@@ -38,7 +38,7 @@ const crumbs = [
   { name: safePhrase, url: `${site}/phrases/${slug}/` },
 ];
 
-// Structured data: BreadcrumbList + FAQPage
+// Structured data
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -79,7 +79,7 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
 ---
 
 <Layout title={title} description={description}>
-  <!-- Breadcrumbs (visible) -->
+  <!-- Breadcrumbs -->
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span aria-hidden="true" class="sep">›</span>
@@ -102,10 +102,11 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
       <span class="chip chip-morse">{morse || "(not available)"}</span>
     </div>
 
+    <!-- Use the global nav-link system (same look as header pills) -->
     <div class="actions" style="margin-top:12px;">
       <button id="copy" type="button">Copy Morse</button>
-      <a class="btn ghost" href={translatorHref}>Open translator</a>
-      <a class="btn ghost" href="/phrases/">Browse all phrases</a>
+      <a class="nav-link" href={translatorHref}>Open translator</a>
+      <a class="nav-link" href="/phrases/">Browse all phrases</a>
     </div>
 
     <p class="muted" style="margin-top:12px;">
@@ -119,12 +120,10 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
       <p class="muted" style="margin:0;">Tap any phrase to open its page.</p>
     </div>
 
-    <!-- IMPORTANT: explicit pill class + safe separators to prevent glued text if CSS ever fails -->
+    <!-- Use Layout’s global pill-grid system -->
     <div class="pill-grid" style="margin-top:12px;" role="list">
       {popular.map((item) => (
-        <>
-          <a role="listitem" class="pill" href={`/phrases/${item.slug}/`}>{item.phrase}</a>{" "}
-        </>
+        <a role="listitem" href={`/phrases/${item.slug}/`}>{item.phrase}</a>
       ))}
     </div>
   </section>
@@ -158,7 +157,6 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
         await navigator.clipboard.writeText(text);
         return true;
       } catch {
-        // Fallback
         try {
           const ta = document.createElement("textarea");
           ta.value = text;
@@ -188,13 +186,9 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
     });
   </script>
 
-  <!-- Structured Data -->
-  <script type="application/ld+json" is:inline>
-    {JSON.stringify(breadcrumbJsonLd)}
-  </script>
-  <script type="application/ld+json" is:inline>
-    {JSON.stringify(faqJsonLd)}
-  </script>
+  <!-- Structured Data (safe injection) -->
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)}></script>
 
   <style>
     .hero { margin-top: 10px; }
@@ -274,56 +268,6 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
-    }
-
-    /* CTA links (local only) */
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 12px;
-      border-radius: 999px;
-      text-decoration: none;
-      border: 1px solid rgba(138,180,255,0.35);
-      background: rgba(138,180,255,0.14);
-      color: rgba(255,255,255,0.92);
-      font-weight: 650;
-    }
-    .btn:hover{ opacity: .95; }
-    .btn.ghost{
-      border-color: rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-    }
-
-    /* Local pills (explicit, so we don’t depend on Layout’s pill-grid rules) */
-    .pill-grid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    @media (min-width: 860px){
-      .pill-grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      text-decoration:none;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.92);
-      font-weight: 650;
-    }
-    .pill:hover{
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.20);
     }
   </style>
 </Layout>
