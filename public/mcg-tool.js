@@ -8,20 +8,9 @@
     }
   }
 
-  function resolveMorseJsonUrl() {
-    // Prefer root, but remain robust in subpath previews.
-    // If you always deploy at root, this still works.
-    try {
-      return new URL("/morse.json", window.location.origin).toString();
-    } catch {
-      return "/morse.json";
-    }
-  }
-
   async function loadMorsePayload() {
-    const url = resolveMorseJsonUrl();
-    const res = await fetch(url, { cache: "force-cache" });
-    if (!res.ok) throw new Error(`Failed to load ${url} (${res.status})`);
+    const res = await fetch("/morse.json", { cache: "force-cache" });
+    if (!res.ok) throw new Error(`Failed to load /morse.json (${res.status})`);
     return await res.json();
   }
 
@@ -36,6 +25,17 @@
     return {};
   }
 
+  function sanitizeCharMap(map) {
+    // Your JSON contains " ": "/". We *ignore* it because the tool already uses " / " between words.
+    const out = {};
+    for (const [k, v] of Object.entries(map || {})) {
+      if (!k || !v) continue;
+      if (k === " ") continue; // prevent double word-separator behavior
+      out[k.toUpperCase()] = v;
+    }
+    return out;
+  }
+
   function normText(s) {
     return (s || "").toUpperCase();
   }
@@ -44,7 +44,7 @@
     // Accept common variations people paste:
     // - middle dot (·) -> .
     // - en/em dash (–/—) -> -
-    // Also allow "|" as word separator (normalize to "/")
+    // - "|" as word separator -> "/"
     return (s || "")
       .replaceAll("·", ".")
       .replaceAll("–", "-")
@@ -57,7 +57,7 @@
     const out = {};
     for (const [k, v] of Object.entries(map || {})) {
       if (!k || !v) continue;
-      // Keep first occurrence if there’s a collision
+      // keep first if collision
       if (out[v] == null) out[v] = k;
     }
     return out;
@@ -67,17 +67,13 @@
     const s = normText(input).trim();
     if (!s) return "";
 
-    // Split by whitespace into words
     const words = s.split(/\s+/).filter(Boolean);
 
     return words
       .map((w) =>
         w
           .split("")
-          .map((ch) => {
-            const code = CHAR_TO_MORSE[ch];
-            return code ? code : "?"; // visible fallback for unknown chars
-          })
+          .map((ch) => CHAR_TO_MORSE[ch] || "?")
           .join(" ")
       )
       .join(" / ");
@@ -88,7 +84,8 @@
     if (!s) return "";
 
     // allow "/" word separator (optionally surrounded by spaces)
-    const words = s.split(/\s*\/\s*/).filter(Boolean);
+    // also tolerate multiple slashes
+    const words = s.split(/\s*\/+\s*/).filter(Boolean);
 
     return words
       .map((w) =>
@@ -96,7 +93,7 @@
           .trim()
           .split(/\s+/)
           .filter(Boolean)
-          .map((code) => MORSE_TO_CHAR[code] || "?") // visible fallback
+          .map((code) => MORSE_TO_CHAR[code] || "?")
           .join("")
       )
       .join(" ");
@@ -108,7 +105,6 @@
       await navigator.clipboard.writeText(t);
       return true;
     } catch {
-      // Fallback
       try {
         const ta = document.createElement("textarea");
         ta.value = t;
@@ -142,7 +138,8 @@
 
     try {
       const payload = await loadMorsePayload();
-      CHAR_TO_MORSE = extractCharToMorse(payload);
+      const raw = extractCharToMorse(payload);
+      CHAR_TO_MORSE = sanitizeCharMap(raw);
 
       if (!CHAR_TO_MORSE || !Object.keys(CHAR_TO_MORSE).length) {
         throw new Error("Morse map is empty or invalid");
