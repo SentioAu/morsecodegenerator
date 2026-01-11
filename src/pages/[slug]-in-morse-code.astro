@@ -1,0 +1,75 @@
+---
+import Layout from "../components/Layout.astro";
+import morsePayload from "../data/morse.json";
+import slugs from "../data/seo-slugs.json";
+
+const morseMapRaw = (morsePayload?.morseMap ?? morsePayload) || {};
+
+// Ignore the " " mapping during generation to avoid double word separators
+const morseMap = Object.fromEntries(
+  Object.entries(morseMapRaw).filter(([k, v]) => k && v && k !== " ")
+);
+
+export function getStaticPaths() {
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+
+function toTerm(s) {
+  // If slug is a single letter or number, keep it literal
+  if (/^[a-z]$/i.test(s)) return s.toUpperCase();
+  if (/^\d+$/.test(s)) return s;
+
+  // Otherwise treat it as a normal word slug
+  return s.replace(/-/g, " ");
+}
+
+function normText(s) {
+  return (s || "").toUpperCase();
+}
+
+function textToMorse(input) {
+  const s = normText(input).trim();
+  if (!s) return "";
+
+  const words = s.split(/\s+/).filter(Boolean);
+  return words
+    .map((w) =>
+      w
+        .split("")
+        .map((ch) => morseMap[ch] || "?")
+        .join(" ")
+    )
+    .join(" / ");
+}
+
+const term = toTerm(slug);
+const morse = textToMorse(term);
+
+const title = `${term} in Morse Code`;
+const description = morse
+  ? `Learn how to write ${term} in Morse code: ${morse}. Copy, practice, and translate instantly.`
+  : `Learn how to write ${term} in Morse code. Copy, practice, and translate instantly.`;
+---
+
+<Layout title={title} description={description}>
+  <h1>{term} in Morse Code</h1>
+
+  <p class="muted">
+    Copy the Morse code for <strong>{term}</strong>, or open the translator to convert any text.
+  </p>
+
+  <div class="card">
+    <h2>Morse Code</h2>
+    <p class="k" style="font-size:18px;word-break:break-word;">{morse}</p>
+
+    <p>
+      <a href="/translate/">Open Translator</a>
+      {" "}•{" "}
+      <a href="/phrases/">Common Phrases</a>
+      {" "}•{" "}
+      <a href="/morse-code/a/">Learn the Alphabet</a>
+    </p>
+  </div>
+</Layout>
