@@ -53,67 +53,7 @@
     "_": "..--.-",
     "\"": ".-..-.",
     "$": "...-..-",
-    "@": ".--.-."
-  },
-  "phrases": [
-    ["sos", "SOS"],
-    ["help", "HELP"],
-    ["mayday", "MAYDAY"],
-    ["emergency", "EMERGENCY"],
-    ["danger", "DANGER"],
-    ["no-signal", "NO SIGNAL"],
-    ["signal", "SIGNAL"],
-
-    ["call-me", "CALL ME"],
-    ["call-police", "CALL POLICE"],
-    ["call-ambulance", "CALL AMBULANCE"],
-    ["send-message", "SEND MESSAGE"],
-    ["message-received", "MESSAGE RECEIVED"],
-
-    ["i-need-help", "I NEED HELP"],
-    ["i-am-lost", "I AM LOST"],
-    ["where-are-you", "WHERE ARE YOU"],
-    ["i-am-here", "I AM HERE"],
-    ["meet-me", "MEET ME"],
-    ["follow-me", "FOLLOW ME"],
-
-    ["come-here", "COME HERE"],
-    ["go-away", "GO AWAY"],
-    ["stop", "STOP"],
-    ["wait", "WAIT"],
-    ["turn-left", "TURN LEFT"],
-    ["turn-right", "TURN RIGHT"],
-    ["go-straight", "GO STRAIGHT"],
-    ["slow-down", "SLOW DOWN"],
-    ["speed-up", "SPEED UP"],
-
-    ["yes", "YES"],
-    ["no", "NO"],
-    ["ok", "OK"],
-    ["repeat", "REPEAT"],
-    ["again", "AGAIN"],
-
-    ["hello", "HELLO"],
-    ["goodbye", "GOODBYE"],
-    ["good-morning", "GOOD MORNING"],
-    ["good-night", "GOOD NIGHT"],
-    ["please", "PLEASE"],
-    ["thank-you", "THANK YOU"],
-    ["thank-you-very-much", "THANK YOU VERY MUCH"],
-    ["sorry", "SORRY"],
-    ["congratulations", "CONGRATULATIONS"],
-    ["happy-birthday", "HAPPY BIRTHDAY"],
-    ["i-love-you", "I LOVE YOU"],
-    ["i-miss-you", "I MISS YOU"],
-    ["how-are-you", "HOW ARE YOU"],
-    ["i-am-ok", "I AM OK"],
-    ["i-am-fine", "I AM FINE"],
-    ["i-understand", "I UNDERSTAND"],
-    ["do-you-understand", "DO YOU UNDERSTAND"],
-
-    ["radio-check", "RADIO CHECK"],
-    ["test", "TEST"],
-    ["over", "OVER"],
-    ["out", "OUT"]
-  ]
+    "@": ".--.-.",
+    "'": ".----."
+  }
 }
