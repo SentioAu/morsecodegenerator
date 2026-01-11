@@ -5,7 +5,8 @@ import slugs from "../data/seo-slugs.json";
 
 const morseMapRaw = (morsePayload?.morseMap ?? morsePayload) || {};
 
-// Ignore the " " mapping during generation to avoid double word separators
+// Ignore the " " mapping during generation to avoid double word separators.
+// Word separation is handled by " / " in our generator.
 const morseMap = Object.fromEntries(
   Object.entries(morseMapRaw).filter(([k, v]) => k && v && k !== " ")
 );
@@ -16,17 +17,47 @@ export function getStaticPaths() {
 
 const { slug } = Astro.params;
 
-function toTerm(s) {
-  // If slug is a single letter or number, keep it literal
-  if (/^[a-z]$/i.test(s)) return s.toUpperCase();
-  if (/^\d+$/.test(s)) return s;
+// If you later add more “named punctuation” slugs, just extend this object.
+const slugToSymbol = {
+  comma: ",",
+  period: ".",
+  dot: ".",
+  question: "?",
+  exclamation: "!",
+  colon: ":",
+  semicolon: ";",
+  plus: "+",
+  equals: "=",
+  hyphen: "-",
+  dash: "-",
+  slash: "/",
+  at: "@",
+  dollar: "$",
+  quote: "\"",
+  apostrophe: "'",
+  underscore: "_",
+};
 
-  // Otherwise treat it as a normal word slug
-  return s.replace(/-/g, " ");
+function titleCase(s) {
+  return (s || "")
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 }
 
-function normText(s) {
-  return (s || "").toUpperCase();
+function termFromSlug(s) {
+  if (slugToSymbol[s]) return { display: `${titleCase(s)} (${slugToSymbol[s]})`, value: slugToSymbol[s] };
+
+  if (/^[a-z]$/i.test(s)) return { display: s.toUpperCase(), value: s.toUpperCase() };
+  if (/^\d+$/.test(s)) return { display: s, value: s };
+
+  const phrase = s.replace(/-/g, " ");
+  return { display: titleCase(phrase), value: phrase };
+}
+
+function normText(x) {
+  return (x || "").toUpperCase();
 }
 
 function textToMorse(input) {
@@ -34,6 +65,7 @@ function textToMorse(input) {
   if (!s) return "";
 
   const words = s.split(/\s+/).filter(Boolean);
+
   return words
     .map((w) =>
       w
@@ -44,20 +76,20 @@ function textToMorse(input) {
     .join(" / ");
 }
 
-const term = toTerm(slug);
-const morse = textToMorse(term);
+const term = termFromSlug(slug);
+const morse = textToMorse(term.value);
 
-const title = `${term} in Morse Code`;
+const pageTitle = `${term.display} in Morse Code`;
 const description = morse
-  ? `Learn how to write ${term} in Morse code: ${morse}. Copy, practice, and translate instantly.`
-  : `Learn how to write ${term} in Morse code. Copy, practice, and translate instantly.`;
+  ? `Learn how to write ${term.display} in Morse code: ${morse}. Copy, practice, and translate instantly.`
+  : `Learn how to write ${term.display} in Morse code. Copy, practice, and translate instantly.`;
 ---
 
-<Layout title={title} description={description}>
-  <h1>{term} in Morse Code</h1>
+<Layout title={pageTitle} description={description}>
+  <h1>{term.display} in Morse Code</h1>
 
   <p class="muted">
-    Copy the Morse code for <strong>{term}</strong>, or open the translator to convert any text.
+    Copy the Morse code for <strong>{term.display}</strong>, or open the translator to convert any text.
   </p>
 
   <div class="card">
@@ -72,4 +104,12 @@ const description = morse
       <a href="/morse-code/a/">Learn the Alphabet</a>
     </p>
   </div>
+
+  <h2>How to read it</h2>
+  <ul>
+    <li>Dot: <span class="k">.</span></li>
+    <li>Dash: <span class="k">-</span></li>
+    <li>Letters are separated by spaces</li>
+    <li>Words are separated by <span class="k">/</span></li>
+  </ul>
 </Layout>
