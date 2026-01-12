@@ -1,7 +1,16 @@
 ---
 import Layout from "../components/Layout.astro";
 ---
-<Layout title="Page not found" description="404">
+
+<Layout title="Page not found" description="The page you requested does not exist.">
   <h1>404</h1>
-  <p class="muted">That page doesn’t exist. Try the <a href="/">translator</a>.</p>
+
+  <p class="muted">
+    That page doesn’t exist. Try the <a href="/translate/">translator</a> or browse
+    <a href="/phrases/"> common phrases</a>.
+  </p>
+
+  <p class="muted">
+    <a href="/">Go to homepage</a>
+  </p>
 </Layout>
