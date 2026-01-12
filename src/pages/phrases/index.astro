@@ -36,6 +36,8 @@ const collectionJsonLd = {
   url: `${site}/phrases/`,
   isPartOf: { "@type": "WebSite", url: site, name: "Morse Code Generator" },
 };
+
+const hasPhrases = phrases.length > 0;
 ---
 
 <Layout title={title} description={description}>
@@ -52,66 +54,80 @@ const collectionJsonLd = {
     </div>
   </header>
 
-  <section class="card" style="margin-top:16px;">
-    <div class="section-head">
-      <h2 style="margin:0;">Browse phrases</h2>
-      <p class="muted" style="margin:0;">Open any phrase page.</p>
-    </div>
-
-    <div class="pill-grid phrase-pills" style="margin-top:12px;">
-      {phrases.map((p) => (
-        <a href={`/phrases/${p.slug}/`}>{p.phrase}</a>
-      ))}
-    </div>
-  </section>
-
-  <section class="card" style="margin-top:16px;">
-    <div class="section-head">
-      <h2 style="margin:0;">Copy Morse quickly</h2>
-      <p class="muted" style="margin:0;">Pick a phrase and copy its Morse (no page change).</p>
-    </div>
-
-    <div class="grid" style="margin-top:12px;">
-      <div>
-        <label for="phraseSelect"><strong>Phrase</strong></label><br />
-        <select id="phraseSelect" aria-label="Select a phrase">
-          {phrases.map((p) => (
-            <option value={p.phrase}>{p.phrase}</option>
-          ))}
-        </select>
-
-        <p class="muted" style="margin-top:10px;">
-          Tip: You can practice any phrase inside the <a href="/translate/">translator</a>.
-        </p>
-      </div>
-
-      <div>
-        <label for="phraseMorse"><strong>Morse</strong></label><br />
-        <textarea
-          id="phraseMorse"
-          rows="4"
-          readonly
-          placeholder="Morse will appear here..."
-        ></textarea>
-
-        <div class="tool-row" style="margin-top:10px;">
-          <button id="copyMorse" type="button">Copy Morse</button>
-          <a class="nav-link" id="practiceLink" href="/translate/">Practice in Translator</a>
+  {!hasPhrases ? (
+    <section class="card" style="margin-top:16px;">
+      <h2 style="margin-top:0;">No phrases found</h2>
+      <p class="muted">
+        Your phrases list is empty or missing in <span class="k">src/data/morse.json</span>.
+        Add a <span class="k">phrases</span> array there, then rebuild.
+      </p>
+      <p class="muted">
+        You can still use the <a href="/translate/">translator</a>.
+      </p>
+    </section>
+  ) : (
+    <>
+      <section class="card" style="margin-top:16px;">
+        <div class="section-head">
+          <h2 style="margin:0;">Browse phrases</h2>
+          <p class="muted" style="margin:0;">Open any phrase page.</p>
         </div>
 
-        <p class="muted" style="margin-top:10px;">
-          Output format: spaces separate letters and “/” separates words.
-        </p>
-      </div>
-    </div>
-  </section>
+        <div class="pill-grid phrase-pills" style="margin-top:12px;">
+          {phrases.map((p) => (
+            <a href={`/phrases/${p.slug}/`}>{p.phrase}</a>
+          ))}
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:16px;">
+        <div class="section-head">
+          <h2 style="margin:0;">Copy Morse quickly</h2>
+          <p class="muted" style="margin:0;">Pick a phrase and copy its Morse (no page change).</p>
+        </div>
+
+        <div class="grid" style="margin-top:12px;">
+          <div>
+            <label for="phraseSelect"><strong>Phrase</strong></label><br />
+            <select id="phraseSelect" aria-label="Select a phrase">
+              {phrases.map((p) => (
+                <option value={p.phrase}>{p.phrase}</option>
+              ))}
+            </select>
+
+            <p class="muted" style="margin-top:10px;">
+              Tip: You can practice any phrase inside the <a href="/translate/">translator</a>.
+            </p>
+          </div>
+
+          <div>
+            <label for="phraseMorse"><strong>Morse</strong></label><br />
+            <textarea
+              id="phraseMorse"
+              rows="4"
+              readonly
+              placeholder="Morse will appear here..."
+            ></textarea>
+
+            <div class="tool-row" style="margin-top:10px;">
+              <button id="copyMorse" type="button">Copy Morse</button>
+              <a class="nav-link" id="practiceLink" href="/translate/">Practice in Translator</a>
+            </div>
+
+            <p class="muted" style="margin-top:10px;">
+              Output format: spaces separate letters and “/” separates words.
+            </p>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
 
   <!-- Structured Data -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(collectionJsonLd)}></script>
 
   <style>
-    /* page-only layout polish */
     .hero { margin-bottom: 10px; }
     .hero-title { margin: 0 0 8px; }
     .hero-sub { margin: 0; max-width: 72ch; }
@@ -132,82 +148,72 @@ const collectionJsonLd = {
       align-items:center;
     }
 
-    /* Make huge phrase lists feel less “endless” */
     .phrase-pills{
       max-height: 520px;
       overflow: auto;
       padding-right: 6px;
     }
-
-    /* Select styling to match global inputs (Layout currently styles textarea/input, not select) */
-    select{
-      width:100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(0,0,0,0.18);
-      color: rgba(255,255,255,0.92);
-      outline:none;
-    }
   </style>
 
-  <script is:inline define:vars={{ map }}>
-    const select = document.getElementById("phraseSelect");
-    const morseBox = document.getElementById("phraseMorse");
-    const copyBtn = document.getElementById("copyMorse");
-    const practiceLink = document.getElementById("practiceLink");
+  {hasPhrases && (
+    <script is:inline define:vars={{ map }}>
+      const select = document.getElementById("phraseSelect");
+      const morseBox = document.getElementById("phraseMorse");
+      const copyBtn = document.getElementById("copyMorse");
+      const practiceLink = document.getElementById("practiceLink");
 
-    function toMorse(text){
-      const s = (text || "").toUpperCase().trim();
-      if (!s) return "";
-      return s
-        .split(/\s+/)
-        .filter(Boolean)
-        .map(w => w.split("").map(ch => (map?.[ch] || "")).filter(Boolean).join(" "))
-        .join(" / ");
-    }
+      function toMorse(text){
+        const s = (text || "").toUpperCase().trim();
+        if (!s) return "";
+        return s
+          .split(/\s+/)
+          .filter(Boolean)
+          .map(w => w.split("").map(ch => (map?.[ch] || "")).filter(Boolean).join(" "))
+          .join(" / ");
+      }
 
-    function refresh(){
-      const phrase = (select?.value || "").toString();
-      const morse = toMorse(phrase);
-      if (morseBox) morseBox.value = morse;
-      if (practiceLink) practiceLink.href = "/translate/?q=" + encodeURIComponent(phrase);
-    }
+      function refresh(){
+        const phrase = (select?.value || "").toString();
+        const morse = toMorse(phrase);
+        if (morseBox) morseBox.value = morse;
+        if (practiceLink) practiceLink.href = "/translate/?q=" + encodeURIComponent(phrase);
+      }
 
-    async function copyText(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch {
+      async function copyText(text) {
         try {
-          const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.style.position = "fixed";
-          ta.style.left = "-9999px";
-          document.body.appendChild(ta);
-          ta.select();
-          const ok = document.execCommand("copy");
-          document.body.removeChild(ta);
-          return ok;
+          await navigator.clipboard.writeText(text);
+          return true;
         } catch {
-          return false;
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            const ok = document.execCommand("copy");
+            document.body.removeChild(ta);
+            return ok;
+          } catch {
+            return false;
+          }
         }
       }
-    }
 
-    select?.addEventListener("change", refresh);
-    refresh();
+      select?.addEventListener("change", refresh);
+      refresh();
 
-    copyBtn?.addEventListener("click", async () => {
-      const value = (morseBox?.value || "").toString();
-      if (!value) return;
+      copyBtn?.addEventListener("click", async () => {
+        const value = (morseBox?.value || "").toString();
+        if (!value) return;
 
-      const ok = await copyText(value);
-      if (!ok) return;
+        const ok = await copyText(value);
+        if (!ok) return;
 
-      const old = copyBtn.textContent;
-      copyBtn.textContent = "Copied ✓";
-      setTimeout(() => (copyBtn.textContent = old), 1200);
-    });
-  </script>
+        const old = copyBtn.textContent;
+        copyBtn.textContent = "Copied ✓";
+        setTimeout(() => (copyBtn.textContent = old), 1200);
+      });
+    </script>
+  )}
 </Layout>
