@@ -2,13 +2,18 @@
   "name": "morsecodegenerator-com",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "typecheck": "astro check",
+    "clean": "rm -rf dist .astro"
   },
   "dependencies": {
-    "astro": "^4.16.0",
-    "@astrojs/sitemap": "^3.1.6"
+    "@astrojs/sitemap": "^3.1.6",
+    "astro": "^4.16.0"
   }
 }
