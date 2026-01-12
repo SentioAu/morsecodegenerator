@@ -1,0 +1,230 @@
+
+---
+import Layout from "../../components/Layout.astro";
+
+const title = "Text to Morse Translator – Copy & Convert Instantly";
+const description =
+  "Translate text to Morse code or decode Morse to text. Copy results instantly. Free online tool.";
+
+// Read ?q= from the URL (SSR-safe). We'll set the textarea default value.
+const q = (Astro.url.searchParams.get("q") ?? "").toString();
+const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // safety cap
+const hasInitial = Boolean(initial);
+---
+
+<Layout title={title} description={description}>
+  <header class="hero">
+    <p class="hero-kicker muted">Fast • Private • No logins</p>
+    <h1 class="hero-title">Text to Morse Translator</h1>
+    <p class="muted hero-sub">
+      Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
+      Runs locally in your browser (no account needed).
+    </p>
+  </header>
+
+  <section class="card tool-card">
+    <div class="section-head">
+      <h2 class="section-title">Translator</h2>
+      <p class="muted section-note">
+        Tip: spaces separate letters • “/” separates words
+      </p>
+    </div>
+
+    <div class="grid tool-grid">
+      <div>
+        <label for="mcg-input"><strong>Input</strong></label><br />
+        <textarea
+          id="mcg-input"
+          rows="8"
+          placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
+        >{initial}</textarea>
+
+        <div class="tool-row">
+          <button id="mcg-text-to-morse" type="button">Text → Morse</button>
+          <button id="mcg-morse-to-text" type="button">Morse → Text</button>
+          <button id="mcg-copy" type="button">Copy output</button>
+
+          <span class="spacer" aria-hidden="true"></span>
+
+          <button id="mcg-swap" type="button" class="ghost">Swap</button>
+          <button id="mcg-clear" type="button" class="ghost">Clear</button>
+        </div>
+
+        <p class="muted" style="margin-top: 10px;">
+          Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
+        </p>
+      </div>
+
+      <div>
+        <label for="mcg-output"><strong>Output</strong></label><br />
+        <textarea id="mcg-output" rows="8" placeholder="Result appears here..."></textarea>
+
+        <p class="muted" style="margin-top:10px;">
+          One-click starting points:
+          <a href="/translate/?q=HELLO">HELLO</a> •
+          <a href="/translate/?q=SOS">SOS</a> •
+          <a href="/translate/?q=I%20LOVE%20YOU">I LOVE YOU</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">How to use</h2>
+    <ol>
+      <li>Enter text or Morse code in the input box.</li>
+      <li>Choose <strong>Text → Morse</strong> or <strong>Morse → Text</strong>.</li>
+      <li>Copy the output for practice, notes, or messages.</li>
+    </ol>
+    <p class="muted">
+      Share a link like:
+      <span class="k">/translate/?q=YOUR+TEXT</span>
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <div class="section-head">
+      <h2 class="section-title">Common phrases</h2>
+      <p class="muted section-note">Practice using phrases people recognize.</p>
+    </div>
+
+    <div class="pill-grid" style="margin-top:12px;" role="list">
+      <a role="listitem" href="/phrases/sos/">SOS</a>
+      <a role="listitem" href="/phrases/help/">HELP</a>
+      <a role="listitem" href="/phrases/mayday/">MAYDAY</a>
+      <a role="listitem" href="/phrases/emergency/">EMERGENCY</a>
+
+      <a role="listitem" href="/phrases/ok/">OK</a>
+      <a role="listitem" href="/phrases/yes/">YES</a>
+      <a role="listitem" href="/phrases/no/">NO</a>
+      <a role="listitem" href="/phrases/hello/">HELLO</a>
+
+      <a role="listitem" href="/phrases/thank-you/">THANK YOU</a>
+      <a role="listitem" href="/phrases/please/">PLEASE</a>
+      <a role="listitem" href="/phrases/sorry/">SORRY</a>
+      <a role="listitem" href="/phrases/i-love-you/">I LOVE YOU</a>
+    </div>
+
+    <p class="muted" style="margin-top:10px;">
+      Want more? Browse the <a href="/phrases/">phrases section</a>.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">FAQ</h2>
+
+    <h3 style="margin-bottom:6px;">How do I separate letters and words in Morse?</h3>
+    <p class="muted" style="margin-top:0;">
+      Use spaces between letters, and use “/” between words.
+      Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>.
+    </p>
+
+    <h3 style="margin-bottom:6px;">Can I decode Morse back to text?</h3>
+    <p class="muted" style="margin-top:0;">
+      Yes. Paste Morse code into the input box and click <strong>Morse → Text</strong>.
+    </p>
+
+    <h3 style="margin-bottom:6px;">Is this translator free?</h3>
+    <p class="muted" style="margin-top:0;">
+      Yes. It’s a free educational tool and runs locally in your browser.
+    </p>
+  </section>
+
+  <p style="margin-top:16px;">
+    Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/morse-code/numbers/">numbers</a>.
+  </p>
+
+  <!-- Reliable runtime script -->
+  <script defer src="/mcg-tool.js"></script>
+
+  <!-- Safe inline enhancements (adds UX; does NOT replace mcg-tool.js) -->
+  <script is:inline define:vars={{ hasInitial }}>
+    (function () {
+      function onReady(fn) {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", fn, { once: true });
+        } else fn();
+      }
+
+      onReady(function () {
+        const input = document.getElementById("mcg-input");
+        const output = document.getElementById("mcg-output");
+        const swap = document.getElementById("mcg-swap");
+        const clear = document.getElementById("mcg-clear");
+
+        const btnT2M = document.getElementById("mcg-text-to-morse");
+
+        if (!input || !output) return;
+
+        input.focus();
+
+        if (hasInitial && btnT2M && !output.value.trim()) {
+          setTimeout(() => btnT2M.click(), 0);
+        }
+
+        swap?.addEventListener("click", () => {
+          const a = input.value;
+          input.value = output.value;
+          output.value = a;
+          input.focus();
+        });
+
+        clear?.addEventListener("click", () => {
+          input.value = "";
+          output.value = "";
+          input.focus();
+        });
+      });
+    })();
+  </script>
+
+  <style>
+    .hero { margin-bottom: 10px; }
+    .hero-kicker{
+      margin: 0 0 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+      text-align: center;
+    }
+    .hero-title { margin: 0 0 8px; text-align: center; }
+    .hero-sub { margin: 0 auto; max-width: 72ch; text-align: center; }
+
+    .tool-card { margin-top: 16px; }
+    .tool-grid { margin-top: 12px; }
+
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    .section-title{ margin: 0; }
+    .section-note{ margin: 0; }
+
+    .tool-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .spacer { flex: 1; min-width: 8px; }
+
+    .ghost {
+      border-color: rgba(255,255,255,0.18) !important;
+      background: rgba(255,255,255,0.03) !important;
+      font-weight: 650;
+    }
+
+    textarea { resize: none; }
+
+    @media (max-width: 520px) {
+      .hero-kicker, .hero-title, .hero-sub { text-align: left; }
+      .hero-sub { margin-left: 0; }
+      .spacer { display: none; }
+    }
+  </style>
+</Layout>
