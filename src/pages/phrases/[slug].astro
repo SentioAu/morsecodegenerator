@@ -3,8 +3,11 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
+const phrases = Array.isArray(data?.phrases) ? data.phrases : [];
+
 export function getStaticPaths() {
-  return data.phrases.map(([slug, phrase]) => ({
+  // Must be defensive: if phrases is missing, return empty list (build still succeeds)
+  return phrases.map(([slug, phrase]) => ({
     params: { slug },
     props: { phrase, slug },
   }));
@@ -19,14 +22,17 @@ const site =
 const map = data?.morseMap ?? {};
 const safePhrase = (phrase ?? "").toString().trim();
 
-// Convert using your existing util
-const morse = textToMorse(safePhrase, map, " ");
+// Convert using your existing util (don’t change util signature here)
+const morse = safePhrase ? textToMorse(safePhrase, map, " ") : "";
 
-const title = `${safePhrase} in Morse code`;
-const description = `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`;
+// SEO
+const title = safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code";
+const description = safePhrase
+  ? `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`
+  : `See how to write common phrases in Morse code. Copy them instantly and practice.`;
 
 // More phrases (exclude current)
-const popular = (data?.phrases ?? [])
+const popular = phrases
   .filter(([s]) => s !== slug)
   .slice(0, 20)
   .map(([s, p]) => ({ slug: s, phrase: p }));
@@ -35,7 +41,7 @@ const popular = (data?.phrases ?? [])
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Phrases", url: `${site}/phrases/` },
-  { name: safePhrase, url: `${site}/phrases/${slug}/` },
+  ...(safePhrase ? [{ name: safePhrase, url: `${site}/phrases/${slug}/` }] : []),
 ];
 
 // Structured data
@@ -56,7 +62,9 @@ const faqJsonLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: `How do you write ${safePhrase} in Morse code?`,
+      name: safePhrase
+        ? `How do you write ${safePhrase} in Morse code?`
+        : "How do you write a phrase in Morse code?",
       acceptedAnswer: {
         "@type": "Answer",
         text: morse
@@ -75,7 +83,7 @@ const faqJsonLd = {
   ],
 };
 
-const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
+const translatorHref = safePhrase ? `/translate/?q=${encodeURIComponent(safePhrase)}` : "/translate/";
 ---
 
 <Layout title={title} description={description}>
@@ -84,12 +92,16 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
     <a class="crumb" href="/">Home</a>
     <span aria-hidden="true" class="sep">›</span>
     <a class="crumb" href="/phrases/">Phrases</a>
-    <span aria-hidden="true" class="sep">›</span>
-    <span class="crumb-current">{safePhrase}</span>
+    {safePhrase && (
+      <>
+        <span aria-hidden="true" class="sep">›</span>
+        <span class="crumb-current">{safePhrase}</span>
+      </>
+    )}
   </nav>
 
   <header class="hero">
-    <h1 class="hero-title">{safePhrase} in Morse code</h1>
+    <h1 class="hero-title">{safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code"}</h1>
     <p class="muted hero-sub">
       Copy the Morse translation instantly, then practice in the translator or explore more phrases.
     </p>
@@ -97,14 +109,13 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
 
   <section class="card" style="margin-top:16px;">
     <div class="phrase-row">
-      <span class="chip">{safePhrase}</span>
+      <span class="chip">{safePhrase || "(unknown phrase)"}</span>
       <span class="muted">→</span>
       <span class="chip chip-morse">{morse || "(not available)"}</span>
     </div>
 
-    <!-- Use the global nav-link system (same look as header pills) -->
     <div class="actions" style="margin-top:12px;">
-      <button id="copy" type="button">Copy Morse</button>
+      <button id="copy" type="button" disabled={!morse}>Copy Morse</button>
       <a class="nav-link" href={translatorHref}>Open translator</a>
       <a class="nav-link" href="/phrases/">Browse all phrases</a>
     </div>
@@ -120,7 +131,6 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
       <p class="muted" style="margin:0;">Tap any phrase to open its page.</p>
     </div>
 
-    <!-- Use Layout’s global pill-grid system -->
     <div class="pill-grid" style="margin-top:12px;" role="list">
       {popular.map((item) => (
         <a role="listitem" href={`/phrases/${item.slug}/`}>{item.phrase}</a>
@@ -186,7 +196,7 @@ const translatorHref = `/translate/?q=${encodeURIComponent(safePhrase)}`;
     });
   </script>
 
-  <!-- Structured Data (safe injection) -->
+  <!-- Structured Data -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)}></script>
 
