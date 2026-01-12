@@ -26,11 +26,11 @@
   }
 
   function sanitizeCharMap(map) {
-    // Your JSON contains " ": "/". We *ignore* it because the tool already uses " / " between words.
+    // Ignore " " mapping if present. Word separation is handled by joining words with " / ".
     const out = {};
     for (const [k, v] of Object.entries(map || {})) {
       if (!k || !v) continue;
-      if (k === " ") continue; // prevent double word-separator behavior
+      if (k === " ") continue;
       out[k.toUpperCase()] = v;
     }
     return out;
@@ -63,6 +63,7 @@
     return out;
   }
 
+  // ✅ Patched: ignore unsupported chars (no "?") and keep word separation consistent.
   function textToMorse(input, CHAR_TO_MORSE) {
     const s = normText(input).trim();
     if (!s) return "";
@@ -73,9 +74,11 @@
       .map((w) =>
         w
           .split("")
-          .map((ch) => CHAR_TO_MORSE[ch] || "?")
+          .map((ch) => CHAR_TO_MORSE[ch] || "")
+          .filter(Boolean)
           .join(" ")
       )
+      .filter(Boolean)
       .join(" / ");
   }
 
@@ -93,7 +96,7 @@
           .trim()
           .split(/\s+/)
           .filter(Boolean)
-          .map((code) => MORSE_TO_CHAR[code] || "?")
+          .map((code) => MORSE_TO_CHAR[code] || "")
           .join("")
       )
       .join(" ");
