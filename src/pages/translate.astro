@@ -1,5 +1,5 @@
 ---
-import Layout from "../components/Layout.astro";
+import Layout from "../../components/Layout.astro";
 
 const title = "Text to Morse Translator – Copy & Convert Instantly";
 const description =
@@ -152,17 +152,12 @@ const hasInitial = Boolean(initial);
         const clear = document.getElementById("mcg-clear");
 
         const btnT2M = document.getElementById("mcg-text-to-morse");
-        // const btnM2T = document.getElementById("mcg-morse-to-text");
 
         if (!input || !output) return;
 
-        // Premium feel: focus input
         input.focus();
 
-        // If we arrived with ?q=... and output is empty, auto-run Text->Morse once.
-        // This is predictable + matches user intent when they click "HELLO" etc.
         if (hasInitial && btnT2M && !output.value.trim()) {
-          // Let mcg-tool.js attach handlers first
           setTimeout(() => btnT2M.click(), 0);
         }
 
@@ -183,7 +178,6 @@ const hasInitial = Boolean(initial);
   </script>
 
   <style>
-    /* Translator page polish only (keeps Layout as source of truth) */
     .hero { margin-bottom: 10px; }
     .hero-kicker{
       margin: 0 0 10px;
@@ -218,17 +212,14 @@ const hasInitial = Boolean(initial);
 
     .spacer { flex: 1; min-width: 8px; }
 
-    /* Ghost buttons that still match the system */
     .ghost {
       border-color: rgba(255,255,255,0.18) !important;
       background: rgba(255,255,255,0.03) !important;
       font-weight: 650;
     }
 
-    /* Safety: no textarea drag corner even if browser overrides */
     textarea { resize: none; }
 
-    /* Small screens: align hero left (feels less “boxed”) */
     @media (max-width: 520px) {
       .hero-kicker, .hero-title, .hero-sub { text-align: left; }
       .hero-sub { margin-left: 0; }
