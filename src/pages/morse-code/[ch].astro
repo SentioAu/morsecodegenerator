@@ -9,39 +9,43 @@ export function getStaticPaths() {
     .filter((k) => k.length === 1 && /^[A-Z0-9]$/.test(k))
     .sort((a, b) => a.localeCompare(b, "en"));
 
-  return chars.map((ch) => ({
-    params: { ch: ch.toLowerCase() },
-    props: { ch, chars },
+  return chars.map((CH) => ({
+    params: { ch: CH.toLowerCase() },
+    props: { ch: CH.toLowerCase(), chars }, // keep prop consistent with param
   }));
 }
 
 const { ch, chars } = Astro.props;
 
+// Normalize once
+const CH = (ch ?? "").toString().toUpperCase();
+
 const map = data?.morseMap ?? {};
-const code = map[ch] ?? "";
+const code = map[CH] ?? "";
 
-const isLetter = /^[A-Z]$/.test(ch);
-const isNumber = /^[0-9]$/.test(ch);
+const isLetter = /^[A-Z]$/.test(CH);
+const isNumber = /^[0-9]$/.test(CH);
 
-const title = code ? `${ch} in Morse Code: ${code}` : `${ch} in Morse Code`;
+const title = code ? `${CH} in Morse Code: ${code}` : `${CH} in Morse Code`;
 const description = code
-  ? `Learn how to write ${ch} in Morse code (${code}). Copy it and practice with examples.`
-  : `Learn how to write ${ch} in Morse code. Copy it and practice with examples.`;
+  ? `Learn how to write ${CH} in Morse code (${code}). Copy it and practice with examples.`
+  : `Learn how to write ${CH} in Morse code. Copy it and practice with examples.`;
 
-function findNeighbors(list, current) {
-  const idx = list.indexOf(current);
+function findNeighbors(list, currentUpper) {
+  const idx = list.indexOf(currentUpper);
   const prev = idx > 0 ? list[idx - 1] : null;
   const next = idx >= 0 && idx < list.length - 1 ? list[idx + 1] : null;
   return { prev, next };
 }
 
-const { prev, next } = findNeighbors(chars || [], ch);
+// `chars` array is uppercase keys from the map
+const { prev, next } = findNeighbors(chars || [], CH);
 
 const examples = isLetter
-  ? [`${ch}A`, `${ch}E`, `M${ch}S`]
+  ? [`${CH}A`, `${CH}E`, `M${CH}S`]
   : isNumber
-  ? [`${ch}0`, `1${ch}`, `${ch}${ch}`]
-  : [`${ch}A`, `${ch}E`, `M${ch}S`];
+  ? [`${CH}0`, `1${CH}`, `${CH}${CH}`]
+  : [`${CH}A`, `${CH}E`, `M${CH}S`];
 
 const examplesMorse = examples.map((w) => ({
   word: w,
@@ -50,10 +54,10 @@ const examplesMorse = examples.map((w) => ({
 ---
 
 <Layout title={title} description={description}>
-  <h1>{ch} in Morse code</h1>
+  <h1>{CH} in Morse code</h1>
 
   <p class="muted">
-    Morse code for <strong>{ch}</strong>
+    Morse code for <strong>{CH}</strong>
     {code ? (
       <> is: <span class="k">{code}</span></>
     ) : (
@@ -139,10 +143,10 @@ const examplesMorse = examples.map((w) => ({
       "mainEntity": [
         {
           "@type": "Question",
-          "name": `What is ${ch} in Morse code?`,
+          "name": `What is ${CH} in Morse code?`,
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": code ? `${ch} in Morse code is ${code}.` : `This character is not available in the current Morse map.`,
+            "text": code ? `${CH} in Morse code is ${code}.` : `This character is not available in the current Morse map.`,
           },
         },
         {
@@ -154,6 +158,6 @@ const examplesMorse = examples.map((w) => ({
           },
         },
       ],
-    })}
+    })}}
   ></script>
 </Layout>
