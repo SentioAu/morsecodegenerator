@@ -4,15 +4,22 @@ const {
   description = "Translate text to Morse code instantly, learn the alphabet, and practice common phrases.",
 } = Astro.props;
 
+const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
+
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
 const path = Astro.url.pathname || "/";
-const canonical = `${site}${path === "/" ? "/" : path}`;
+
+// Canonical must follow trailingSlash: "always"
+const normalizedPath =
+  path === "/" ? "/" : path.endsWith("/") ? path : `${path}/`;
+
+const canonical = `${site}${normalizedPath}`;
 
 // Active nav helper
 const isActive = (href) => {
-  // normalize trailing slash
-  const p = (path || "/").replace(/\/$/, "") || "/";
+  const p = (normalizedPath || "/").replace(/\/$/, "") || "/";
   const h = (href || "/").replace(/\/$/, "") || "/";
   return p === h || (h !== "/" && p.startsWith(h));
 };
@@ -25,7 +32,7 @@ const jsonLd = {
       "@id": `${site}#org`,
       name: "MorseCodeGenerator.com",
       url: site,
-      email: "morsecodegenerator@gmail.com",
+      email: CONTACT_EMAIL,
     },
     {
       "@type": "WebSite",
@@ -128,7 +135,7 @@ const jsonLd = {
             aria-current={isActive("/about/") ? "page" : undefined}
           >About</a>
 
-          <a class="nav-link contact" href="mailto:morsecodegenerator@gmail.com">Contact</a>
+          <a class="nav-link contact" href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
         </nav>
       </div>
     </header>
@@ -169,7 +176,6 @@ const jsonLd = {
 
         --contentMax: 74ch;
 
-        /* focus ring */
         --focus: rgba(138,180,255,0.55);
       }
 
@@ -187,16 +193,12 @@ const jsonLd = {
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-
-        /* more robust than overflow-x hidden (prevents layout shift) */
         width: 100%;
       }
 
-      /* prevent tiny overflows that cause “shifted left” feel */
       html { overflow-x: clip; }
       body { overflow-x: clip; }
 
-      /* Typography + rhythm */
       h1, h2, h3 {
         line-height: 1.18;
         letter-spacing: -0.012em;
@@ -211,7 +213,6 @@ const jsonLd = {
       ol, ul { margin: 10px 0 0; }
       li { margin: 6px 0; }
 
-      /* Premium reading: constrain long text blocks */
       p, ol, ul { max-width: var(--contentMax); }
 
       a { color: var(--accent); text-underline-offset: 3px; }
@@ -225,7 +226,6 @@ const jsonLd = {
         padding: 22px;
       }
 
-      /* Header */
       .site-header {
         position: sticky;
         top: 0;
@@ -258,7 +258,6 @@ const jsonLd = {
         align-items: center;
       }
 
-      /* One unified button system */
       .nav-link {
         text-decoration: none;
         color: var(--text);
@@ -282,13 +281,11 @@ const jsonLd = {
         background: rgba(138,180,255,0.10);
       }
 
-      /* Contact = same component, gentle emphasis */
       .nav-link.contact {
         border-color: rgba(138,180,255,0.30);
         background: rgba(138,180,255,0.10);
       }
 
-      /* Main panel */
       .main-wrap {
         display: flex;
         justify-content: center;
@@ -301,10 +298,9 @@ const jsonLd = {
         border-radius: 22px;
         box-shadow: var(--shadow);
         padding: 28px;
-        overflow: hidden; /* prevents inner UI from causing horizontal scroll */
+        overflow: hidden;
       }
 
-      /* Shared UI */
       textarea, input, select {
         width: 100%;
         padding: 12px 12px;
@@ -315,14 +311,12 @@ const jsonLd = {
         outline: none;
       }
 
-      /* Disable draggable resize corner globally */
       textarea { resize: none; }
 
       textarea::placeholder, input::placeholder {
         color: rgba(255,255,255,0.50);
       }
 
-      /* Select polish (consistent + not “default browser”) */
       select {
         appearance: none;
         -webkit-appearance: none;
@@ -343,7 +337,6 @@ const jsonLd = {
         color: rgba(255,255,255,0.92);
       }
 
-      /* Focus ring (makes everything feel more “pro”) */
       textarea:focus, input:focus, select:focus, button:focus, a.nav-link:focus {
         box-shadow: 0 0 0 3px var(--focus);
         border-color: rgba(138,180,255,0.38);
@@ -383,7 +376,6 @@ const jsonLd = {
       .muted { color: var(--muted); }
       .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
-      /* Pills (for phrases / learn links) */
       .pill-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -417,7 +409,6 @@ const jsonLd = {
 
       .pill-grid a:active { transform: translateY(1px); }
 
-      /* Footer */
       .site-footer {
         border-top: 1px solid var(--border);
         margin-top: 26px;
@@ -432,7 +423,6 @@ const jsonLd = {
 
       .foot-text { color: rgba(255,255,255,0.70); }
 
-      /* Mobile */
       @media (max-width: 720px) {
         .wrap { padding: 14px; }
         .panel { padding: 18px; }
