@@ -2,9 +2,9 @@
 import Layout from "../../../components/Layout.astro";
 import data from "../../../data/morse.json";
 
-const title = "Morse Code Punctuation Chart";
+const title = "Punctuation in Morse Code";
 const description =
-  "Morse code chart for common punctuation symbols. Copy, learn, and practice quickly.";
+  "Morse code chart for common punctuation symbols. Copy patterns quickly and practice in the translator.";
 
 const map = data?.morseMap ?? {};
 const items = [
@@ -22,7 +22,7 @@ const items = [
   ["+", "Plus"],
   ["-", "Hyphen"],
   ["_", "Underscore"],
-  ["\"", "Quotation mark"],
+  ['"', "Quotation mark"],
   ["$", "Dollar"],
   ["@", "At sign"],
 ].map(([ch, label]) => ({ ch, label, morse: map[ch] ?? "" }));
@@ -30,7 +30,7 @@ const items = [
 
 <Layout title={title} description={description}>
   <header>
-    <h1>Morse Code Punctuation</h1>
+    <h1>Punctuation in Morse Code</h1>
     <p class="muted" style="margin-top:6px; max-width:72ch;">
       Quick reference for punctuation symbols. Practice by pasting a symbol into the translator.
     </p>
@@ -54,6 +54,33 @@ const items = [
       ))}
     </div>
   </section>
+
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "How do you write punctuation in Morse code?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Many punctuation marks have standardized Morse code patterns, typically longer than letters. Use this chart to copy and practice them.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How do you separate letters and words in Morse code?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Use spaces between letters and use “/” between words.",
+          },
+        },
+      ],
+    })}}
+  ></script>
 
   <style>
     .table{ display:grid; gap: 10px; }
