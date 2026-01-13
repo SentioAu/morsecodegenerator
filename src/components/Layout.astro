@@ -25,6 +25,13 @@ const isActive = (href) => {
   return p === h || (h !== "/" && p.startsWith(h));
 };
 
+const navItems = [
+  { href: "/translate/", label: "Translate" },
+  { href: "/morse-code/a/", label: "Alphabet" },
+  { href: "/phrases/", label: "Phrases" },
+  { href: "/about/", label: "About" },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -111,35 +118,43 @@ const jsonLd = {
   <body>
     <header class="site-header">
       <div class="wrap header-inner">
-        <a class="brand" href="/">MorseCodeGenerator.com</a>
+        <a class="brand" href="/">
+          <span class="brand-mark" aria-hidden="true">·–</span>
+          <span>MorseCodeGenerator.com</span>
+        </a>
 
-        <nav class="nav" aria-label="Primary">
-          <a
-            class:list={["nav-link", isActive("/translate/") && "active"]}
-            href="/translate/"
-            aria-current={isActive("/translate/") ? "page" : undefined}
-          >Translate</a>
-
-          <a
-            class:list={["nav-link", isActive("/morse-code/") && "active"]}
-            href="/morse-code/a/"
-            aria-current={isActive("/morse-code/") ? "page" : undefined}
-          >Alphabet</a>
-
-          <a
-            class:list={["nav-link", isActive("/phrases/") && "active"]}
-            href="/phrases/"
-            aria-current={isActive("/phrases/") ? "page" : undefined}
-          >Phrases</a>
-
-          <a
-            class:list={["nav-link", isActive("/about/") && "active"]}
-            href="/about/"
-            aria-current={isActive("/about/") ? "page" : undefined}
-          >About</a>
-
+        <!-- Desktop nav -->
+        <nav class="nav nav-desktop" aria-label="Primary">
+          {navItems.map((it) => (
+            <a
+              class:list={["nav-link", isActive(it.href) && "active"]}
+              href={it.href}
+              aria-current={isActive(it.href) ? "page" : undefined}
+            >
+              {it.label}
+            </a>
+          ))}
           <a class="nav-link contact" href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
         </nav>
+
+        <!-- Mobile menu (no JS) -->
+        <details class="nav-mobile" aria-label="Mobile menu">
+          <summary class="menu-btn">
+            Menu <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="menu-panel">
+            {navItems.map((it) => (
+              <a
+                class:list={["menu-link", isActive(it.href) && "active"]}
+                href={it.href}
+                aria-current={isActive(it.href) ? "page" : undefined}
+              >
+                {it.label}
+              </a>
+            ))}
+            <a class="menu-link contact" href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
+          </div>
+        </details>
       </div>
     </header>
 
@@ -162,10 +177,10 @@ const jsonLd = {
     </footer>
 
     <style>
-      :root {
+      :root{
         color-scheme: light dark;
 
-        --bg: #0b0b0b;
+        --bg:#0b0b0b;
 
         --panel: rgba(255,255,255,0.045);
         --panel2: rgba(255,255,255,0.02);
@@ -181,59 +196,59 @@ const jsonLd = {
 
         --shadow: 0 14px 40px rgba(0,0,0,0.45);
 
-        --contentMax: 74ch;
+        --contentMax: 72ch;
 
         --focus: rgba(138,180,255,0.55);
       }
 
-      * { box-sizing: border-box; }
-      html, body { height: 100%; }
+      *{ box-sizing:border-box; }
+      html, body{ height:100%; }
 
-      body {
+      body{
         font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        margin: 0;
-        line-height: 1.7;
+        margin:0;
+        line-height:1.72;
         background:
           radial-gradient(1200px 600px at 50% -10%, rgba(138,180,255,0.10), transparent 60%),
           var(--bg);
-        color: var(--text);
+        color:var(--text);
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        width: 100%;
+        width:100%;
       }
 
-      html { overflow-x: clip; }
-      body { overflow-x: clip; }
+      html{ overflow-x: clip; }
+      body{ overflow-x: clip; }
 
-      h1, h2, h3 {
-        line-height: 1.18;
-        letter-spacing: -0.012em;
-        margin: 0 0 10px;
+      h1, h2, h3{
+        line-height:1.14;
+        letter-spacing:-0.012em;
+        margin:0 0 10px;
       }
 
-      h1 { font-size: clamp(30px, 3.1vw, 42px); }
-      h2 { font-size: clamp(20px, 2.0vw, 26px); margin-top: 24px; }
-      h3 { font-size: 16px; margin-top: 14px; }
+      h1{ font-size: clamp(30px, 3.1vw, 44px); }
+      h2{ font-size: clamp(20px, 2.0vw, 28px); margin-top: 26px; }
+      h3{ font-size: 16px; margin-top: 14px; }
 
-      p { margin: 10px 0; }
-      ol, ul { margin: 10px 0 0; }
-      li { margin: 6px 0; }
+      p{ margin: 10px 0; }
+      ol, ul{ margin: 10px 0 0; }
+      li{ margin: 6px 0; }
 
-      p, ol, ul { max-width: var(--contentMax); }
+      p, ol, ul{ max-width: var(--contentMax); }
 
-      a { color: var(--accent); text-underline-offset: 3px; }
-      a:hover { opacity: 0.92; }
+      a{ color: var(--accent); text-underline-offset: 3px; }
+      a:hover{ opacity: 0.92; }
 
-      .wrap {
-        width: 100%;
+      .wrap{
+        width:100%;
         max-width: 1120px;
-        margin-left: auto;
-        margin-right: auto;
+        margin-left:auto;
+        margin-right:auto;
         padding: 22px;
       }
 
-      .site-header {
+      .site-header{
         position: sticky;
         top: 0;
         z-index: 20;
@@ -242,92 +257,169 @@ const jsonLd = {
         border-bottom: 1px solid var(--border);
       }
 
-      .header-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      .header-inner{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
         gap: 14px;
       }
 
-      .brand {
-        font-weight: 800;
-        text-decoration: none;
+      .brand{
+        display:flex;
+        align-items:center;
+        gap: 10px;
+        font-weight: 850;
+        text-decoration:none;
         color: var(--text);
         white-space: nowrap;
-        letter-spacing: -0.01em;
+        letter-spacing:-0.01em;
       }
 
-      .nav {
-        display: flex;
+      .brand-mark{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        border: 1px solid rgba(138,180,255,0.22);
+        background: rgba(138,180,255,0.08);
+        color: rgba(255,255,255,0.92);
+        font-weight: 900;
+        letter-spacing: .02em;
+      }
+
+      .nav{
+        display:flex;
         flex-wrap: wrap;
         gap: 10px;
-        justify-content: flex-end;
-        align-items: center;
+        justify-content:flex-end;
+        align-items:center;
       }
 
-      .nav-link {
-        text-decoration: none;
+      .nav-link{
+        text-decoration:none;
         color: var(--text);
         padding: 9px 12px;
         border-radius: 999px;
         border: 1px solid rgba(255,255,255,0.12);
         background: rgba(255,255,255,0.025);
-        font-weight: 650;
+        font-weight: 680;
         transition: background .12s ease, border-color .12s ease, transform .12s ease;
       }
 
-      .nav-link:hover {
+      .nav-link:hover{
         border-color: rgba(255,255,255,0.20);
         background: rgba(255,255,255,0.055);
       }
 
-      .nav-link:active { transform: translateY(1px); }
+      .nav-link:active{ transform: translateY(1px); }
 
-      .nav-link.active {
-        border-color: rgba(138,180,255,0.32);
-        background: rgba(138,180,255,0.10);
+      .nav-link.active{
+        border-color: rgba(138,180,255,0.34);
+        background: rgba(138,180,255,0.12);
       }
 
-      .nav-link.contact {
+      .nav-link.contact{
         border-color: rgba(138,180,255,0.30);
         background: rgba(138,180,255,0.10);
       }
 
-      .main-wrap {
-        display: flex;
-        justify-content: center;
+      /* Mobile menu */
+      .nav-mobile{ display:none; position: relative; }
+      .menu-btn{
+        list-style:none;
+        cursor:pointer;
+        user-select:none;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.02);
+        padding: 9px 12px;
+        font-weight: 750;
+        color: var(--text);
+      }
+      .menu-btn::-webkit-details-marker{ display:none; }
+      .chev{ opacity: .8; margin-left: 6px; }
+
+      .menu-panel{
+        position:absolute;
+        right:0;
+        top: calc(100% + 10px);
+        width: min(320px, calc(100vw - 28px));
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(11,11,11,0.96);
+        backdrop-filter: blur(10px);
+        border-radius: 18px;
+        box-shadow: 0 16px 46px rgba(0,0,0,0.55);
+        padding: 10px;
+        display:flex;
+        flex-direction: column;
+        gap: 8px;
       }
 
-      .panel {
-        width: 100%;
+      .menu-link{
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        text-decoration:none;
+        color: rgba(255,255,255,0.92);
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.02);
+        font-weight: 700;
+      }
+
+      .menu-link:hover{
+        border-color: rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.05);
+      }
+
+      .menu-link.active{
+        border-color: rgba(138,180,255,0.34);
+        background: rgba(138,180,255,0.10);
+      }
+
+      .menu-link.contact{
+        border-color: rgba(138,180,255,0.28);
+        background: rgba(138,180,255,0.08);
+      }
+
+      .main-wrap{
+        display:flex;
+        justify-content:center;
+      }
+
+      .panel{
+        width:100%;
         background: linear-gradient(to bottom, var(--panel), var(--panel2));
         border: 1px solid var(--border);
         border-radius: 22px;
         box-shadow: var(--shadow);
-        padding: 28px;
-        overflow: hidden;
+        padding: 30px;
+        overflow:hidden;
       }
 
-      textarea, input, select {
-        width: 100%;
+      textarea, input, select{
+        width:100%;
         padding: 12px 12px;
         border-radius: 14px;
         border: 1px solid var(--border2);
         background: rgba(0,0,0,0.18);
         color: var(--text);
-        outline: none;
+        outline:none;
       }
 
-      textarea { resize: none; }
+      textarea{ resize:none; }
 
-      textarea::placeholder, input::placeholder {
+      textarea::placeholder, input::placeholder{
         color: rgba(255,255,255,0.50);
       }
 
-      select {
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
+      select{
+        appearance:none;
+        -webkit-appearance:none;
+        -moz-appearance:none;
         padding-right: 36px;
         background-image:
           linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.65) 50%),
@@ -336,116 +428,119 @@ const jsonLd = {
           calc(100% - 18px) calc(50% - 3px),
           calc(100% - 12px) calc(50% - 3px);
         background-size: 6px 6px, 6px 6px;
-        background-repeat: no-repeat;
+        background-repeat:no-repeat;
       }
 
-      select option {
-        background: #0b0b0b;
+      select option{
+        background:#0b0b0b;
         color: rgba(255,255,255,0.92);
       }
 
-      textarea:focus, input:focus, select:focus, button:focus, a.nav-link:focus {
+      textarea:focus, input:focus, select:focus, button:focus,
+      a.nav-link:focus, summary.menu-btn:focus, a.menu-link:focus{
         box-shadow: 0 0 0 3px var(--focus);
-        border-color: rgba(138,180,255,0.38);
+        border-color: rgba(138,180,255,0.40);
+        outline: none;
       }
 
-      button {
+      button{
         padding: 10px 12px;
         border-radius: 999px;
         border: 1px solid rgba(138,180,255,0.35);
         background: var(--accentBg);
         color: var(--text);
-        cursor: pointer;
-        font-weight: 750;
+        cursor:pointer;
+        font-weight: 800;
         transition: opacity .12s ease, transform .12s ease;
       }
 
-      button:hover { opacity: 0.95; }
-      button:active { transform: translateY(1px); }
+      button:hover{ opacity: 0.95; }
+      button:active{ transform: translateY(1px); }
 
-      .card {
+      .card{
         border: 1px solid var(--border);
         border-radius: 18px;
-        padding: 16px;
+        padding: 18px;
         background: rgba(255,255,255,0.02);
       }
 
-      .grid {
-        display: grid;
+      .grid{
+        display:grid;
         grid-template-columns: 1fr;
         gap: 14px;
       }
 
-      @media (min-width: 860px) {
-        .grid { grid-template-columns: 1fr 1fr; }
+      @media (min-width: 860px){
+        .grid{ grid-template-columns: 1fr 1fr; }
       }
 
-      .muted { color: var(--muted); }
-      .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .muted{ color: var(--muted); }
+      .k{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
-      .pill-grid {
-        display: grid;
+      .pill-grid{
+        display:grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
-        list-style: none;
-        padding: 0;
-        margin: 0;
+        list-style:none;
+        padding:0;
+        margin:0;
       }
 
-      @media (min-width: 860px) {
-        .pill-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      @media (min-width: 860px){
+        .pill-grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
       }
 
-      .pill-grid a {
-        display: block;
-        text-decoration: none;
+      .pill-grid a{
+        display:block;
+        text-decoration:none;
         color: var(--text);
-        text-align: center;
+        text-align:center;
         padding: 10px 12px;
         border-radius: 999px;
         border: 1px solid rgba(255,255,255,0.12);
         background: rgba(255,255,255,0.02);
-        font-weight: 650;
+        font-weight: 700;
         transition: background .12s ease, border-color .12s ease, transform .12s ease;
       }
 
-      .pill-grid a:hover {
+      .pill-grid a:hover{
         border-color: rgba(255,255,255,0.22);
         background: rgba(255,255,255,0.06);
       }
 
-      .pill-grid a:active { transform: translateY(1px); }
+      .pill-grid a:active{ transform: translateY(1px); }
 
-      .site-footer {
+      .site-footer{
         border-top: 1px solid var(--border);
         margin-top: 26px;
         padding-bottom: 30px;
       }
 
-      .foot-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      .foot-inner{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
         gap: 12px;
       }
 
-      .foot-text { color: rgba(255,255,255,0.70); }
-      .foot-brand { color: rgba(255,255,255,0.70); white-space: nowrap; }
-      .foot-brand a { color: var(--accent); text-decoration: none; }
-      .foot-brand a:hover { opacity: 0.92; text-decoration: underline; }
+      .foot-text{ color: rgba(255,255,255,0.70); }
+      .foot-brand{ color: rgba(255,255,255,0.70); white-space: nowrap; }
+      .foot-brand a{ color: var(--accent); text-decoration:none; }
+      .foot-brand a:hover{ opacity: 0.92; text-decoration: underline; }
 
-      @media (max-width: 720px) {
-        .wrap { padding: 14px; }
-        .panel { padding: 18px; }
+      @media (max-width: 860px){
+        .wrap{ padding: 14px; }
+        .panel{ padding: 18px; }
+      }
 
-        .header-inner { flex-direction: column; align-items: flex-start; }
-        .nav { justify-content: flex-start; width: 100%; }
-        .nav-link { padding: 9px 11px; }
+      @media (max-width: 720px){
+        .nav-desktop{ display:none; }
+        .nav-mobile{ display:block; }
 
-        p, ol, ul { max-width: 100%; }
+        p, ol, ul{ max-width: 100%; }
 
-        .foot-inner { flex-direction: column; align-items: flex-start; }
-        .foot-brand { white-space: normal; }
+        .foot-inner{ flex-direction: column; align-items:flex-start; }
+        .foot-brand{ white-space: normal; }
       }
     </style>
   </body>
