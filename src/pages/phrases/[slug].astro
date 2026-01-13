@@ -5,8 +5,16 @@ import { textToMorse } from "../../utils/morse";
 
 const phrases = Array.isArray(data?.phrases) ? data.phrases : [];
 
+// Normalize map: uppercase keys, ignore " " key if present
+const rawMap = data?.morseMap ?? {};
+const map = Object.fromEntries(
+  Object.entries(rawMap)
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [k.toUpperCase(), v])
+);
+
 export function getStaticPaths() {
-  // Must be defensive: if phrases is missing, return empty list (build still succeeds)
+  // Defensive: if phrases missing, return empty list (build still succeeds)
   return phrases.map(([slug, phrase]) => ({
     params: { slug },
     props: { phrase, slug },
@@ -18,11 +26,9 @@ const { phrase, slug } = Astro.props;
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
-// Guard: ensure we always have a map and a phrase
-const map = data?.morseMap ?? {};
 const safePhrase = (phrase ?? "").toString().trim();
 
-// Convert using your existing util (don’t change util signature here)
+// Convert using util (letters separated by spaces; words by " / " handled in util)
 const morse = safePhrase ? textToMorse(safePhrase, map, " ") : "";
 
 // SEO
@@ -44,7 +50,6 @@ const crumbs = [
   ...(safePhrase ? [{ name: safePhrase, url: `${site}/phrases/${slug}/` }] : []),
 ];
 
-// Structured data
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
