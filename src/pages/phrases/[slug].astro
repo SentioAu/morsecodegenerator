@@ -3,8 +3,6 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
-const phrases = Array.isArray(data?.phrases) ? data.phrases : [];
-
 // Normalize map: uppercase keys, ignore " " key if present
 const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
@@ -13,13 +11,34 @@ const map = Object.fromEntries(
     .map(([k, v]) => [k.toUpperCase(), v])
 );
 
-export function getStaticPaths() {
-  // Defensive: if phrases missing, return empty list (build still succeeds)
-  return phrases.map(([slug, phrase]) => ({
-    params: { slug },
-    props: { phrase, slug },
-  }));
+function slugify(input) {
+  return String(input ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, "")          // drop quotes
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")   // non-alnum -> hyphen
+    .replace(/^-+|-+$/g, "");      // trim hyphens
 }
+
+export function getStaticPaths() {
+  // Define phrases INSIDE function to avoid build-scope issues
+  const phrases = Array.isArray(data?.phrases) ? data.phrases : [];
+
+  // Defensive: tolerate bad rows, ensure safe slugs, never crash build
+  return phrases
+    .filter((row) => Array.isArray(row) && row.length >= 2)
+    .map(([rawSlug, phrase]) => {
+      const safeSlug = slugify(rawSlug);
+      return safeSlug
+        ? { params: { slug: safeSlug }, props: { phrase, slug: safeSlug } }
+        : null;
+    })
+    .filter(Boolean);
+}
+
+// For page rendering / "More phrases"
+const phrases = Array.isArray(data?.phrases) ? data.phrases : [];
 
 const { phrase, slug } = Astro.props;
 
@@ -39,9 +58,10 @@ const description = safePhrase
 
 // More phrases (exclude current)
 const popular = phrases
-  .filter(([s]) => s !== slug)
-  .slice(0, 20)
-  .map(([s, p]) => ({ slug: s, phrase: p }));
+  .filter((row) => Array.isArray(row) && row.length >= 2)
+  .map(([s, p]) => ({ slug: slugify(s), phrase: p }))
+  .filter((x) => x.slug && x.slug !== slug && x.phrase)
+  .slice(0, 20);
 
 // Breadcrumb URLs
 const crumbs = [
@@ -88,7 +108,9 @@ const faqJsonLd = {
   ],
 };
 
-const translatorHref = safePhrase ? `/translate/?q=${encodeURIComponent(safePhrase)}` : "/translate/";
+const translatorHref = safePhrase
+  ? `/translate/?q=${encodeURIComponent(safePhrase)}`
+  : "/translate/";
 ---
 
 <Layout title={title} description={description}>
@@ -106,7 +128,9 @@ const translatorHref = safePhrase ? `/translate/?q=${encodeURIComponent(safePhra
   </nav>
 
   <header class="hero">
-    <h1 class="hero-title">{safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code"}</h1>
+    <h1 class="hero-title">
+      {safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code"}
+    </h1>
     <p class="muted hero-sub">
       Copy the Morse translation instantly, then practice in the translator or explore more phrases.
     </p>
@@ -151,7 +175,9 @@ const translatorHref = safePhrase ? `/translate/?q=${encodeURIComponent(safePhra
     </p>
     <p>
       <strong>Can I decode Morse back to text?</strong><br />
-      <span class="muted">Yes — paste Morse into the translator and click <span class="k">Morse → Text</span>.</span>
+      <span class="muted">
+        Yes — paste Morse into the translator and click <span class="k">Morse → Text</span>.
+      </span>
     </p>
   </section>
 
@@ -202,87 +228,4 @@ const translatorHref = safePhrase ? `/translate/?q=${encodeURIComponent(safePhra
   </script>
 
   <!-- Structured Data -->
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)}></script>
-
-  <style>
-    .hero { margin-top: 10px; }
-    .hero-title { margin-bottom: 8px; }
-    .hero-sub { margin-top: 0; max-width: 72ch; }
-
-    .section-head{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px 14px;
-      align-items: baseline;
-      justify-content: space-between;
-    }
-
-    .crumbs{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-      font-size: 13px;
-      opacity: .92;
-      margin-top: 2px;
-    }
-
-    .crumb{
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.02);
-      padding: 6px 10px;
-      border-radius: 999px;
-      color: rgba(255,255,255,0.92);
-    }
-
-    .crumb:hover{
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.18);
-    }
-
-    .sep { opacity: .65; }
-
-    .crumb-current{
-      display:inline-flex;
-      align-items:center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.015);
-      color: rgba(255,255,255,0.78);
-    }
-
-    .phrase-row{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.92);
-      font-weight: 650;
-    }
-
-    .chip-morse{
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      letter-spacing: .4px;
-    }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-  </style>
-</Layout>
+  <script type="application/ld+jso
