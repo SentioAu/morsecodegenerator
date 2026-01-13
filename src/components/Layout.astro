@@ -2,6 +2,7 @@
 const {
   title = "Morse Code Generator",
   description = "Translate text to Morse code instantly, learn the alphabet, and practice common phrases.",
+  robots = "index,follow",
 } = Astro.props;
 
 const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
@@ -60,7 +61,7 @@ const jsonLd = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="robots" content="index,follow" />
+    <meta name="robots" content={robots} />
 
     <!-- Favicon -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -79,6 +80,7 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Morse Code Generator" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary" />
@@ -86,6 +88,7 @@ const jsonLd = {
     <meta name="twitter:description" content={description} />
 
     <meta name="application-name" content="Morse Code Generator" />
+    <meta name="theme-color" content="#0b0b0b" />
     <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
 
     <!-- Google AdSense (loader only) -->
@@ -150,6 +153,10 @@ const jsonLd = {
       <div class="wrap foot-inner">
         <small class="foot-text">
           © {new Date().getFullYear()} MorseCodeGenerator.com • Free Morse translator, references & learning tools
+        </small>
+
+        <small class="foot-brand">
+          Project by <a href="https://sentioaurum.com/" rel="noopener">SentioAurum</a>
         </small>
       </div>
     </footer>
@@ -419,9 +426,13 @@ const jsonLd = {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 12px;
       }
 
       .foot-text { color: rgba(255,255,255,0.70); }
+      .foot-brand { color: rgba(255,255,255,0.70); white-space: nowrap; }
+      .foot-brand a { color: var(--accent); text-decoration: none; }
+      .foot-brand a:hover { opacity: 0.92; text-decoration: underline; }
 
       @media (max-width: 720px) {
         .wrap { padding: 14px; }
@@ -432,6 +443,9 @@ const jsonLd = {
         .nav-link { padding: 9px 11px; }
 
         p, ol, ul { max-width: 100%; }
+
+        .foot-inner { flex-direction: column; align-items: flex-start; }
+        .foot-brand { white-space: normal; }
       }
     </style>
   </body>
