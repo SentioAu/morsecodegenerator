@@ -6,7 +6,13 @@ const title = "Punctuation in Morse Code";
 const description =
   "Morse code chart for common punctuation symbols. Copy patterns quickly and practice in the translator.";
 
-const map = data?.morseMap ?? {};
+// Normalize map: keep exact punctuation keys, ignore " " if present
+const rawMap = data?.morseMap ?? {};
+const map = Object.fromEntries(
+  Object.entries(rawMap)
+    .filter(([k, v]) => k && v && k !== " ")
+);
+
 const items = [
   [".", "Period"],
   [",", "Comma"],
@@ -25,6 +31,7 @@ const items = [
   ['"', "Quotation mark"],
   ["$", "Dollar"],
   ["@", "At sign"],
+  ["'", "Apostrophe"],
 ].map(([ch, label]) => ({ ch, label, morse: map[ch] ?? "" }));
 ---
 
@@ -55,6 +62,7 @@ const items = [
     </div>
   </section>
 
+  <!-- Structured data -->
   <script
     type="application/ld+json"
     is:inline
@@ -79,7 +87,7 @@ const items = [
           },
         },
       ],
-    })}}
+    })}
   ></script>
 
   <style>
