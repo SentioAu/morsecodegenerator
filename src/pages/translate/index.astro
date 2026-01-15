@@ -5,7 +5,7 @@ const title = "Text to Morse Translator – Copy & Convert Instantly";
 const description =
   "Translate text to Morse code or decode Morse to text. Copy results instantly. Free online tool.";
 
-// Read ?q= from the URL (SSR-safe). We'll set the textarea default value.
+// Read ?q= from the URL (SSR-safe)
 const q = (Astro.url.searchParams.get("q") ?? "").toString();
 const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // safety cap
 const hasInitial = Boolean(initial);
@@ -13,23 +13,42 @@ const hasInitial = Boolean(initial);
 
 <Layout title={title} description={description}>
   <header class="hero">
-    <p class="hero-kicker muted">Fast • Private • No logins</p>
-    <h1 class="hero-title">Text to Morse Translator</h1>
-    <p class="muted hero-sub">
-      Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
-      Runs locally in your browser (no account needed).
-    </p>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="hero-kicker muted">Fast • Private • No logins</p>
+        <h1 class="hero-title">Text to Morse Translator</h1>
+        <p class="muted hero-sub">
+          Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
+          Runs locally in your browser (no account needed).
+        </p>
 
-    <div class="hero-actions">
-      <a class="cta" href="/phrases/">Practice phrases</a>
-      <a class="cta ghost" href="/morse-code/a/">Learn alphabet</a>
+        <div class="hero-actions">
+          <a class="cta primary" href="/phrases/">Practice phrases</a>
+          <a class="cta ghost" href="/morse-code/a/">Learn alphabet</a>
+          <a class="cta ghost" href="/">Back to home</a>
+        </div>
+
+        <div class="hint-row">
+          <span class="hint">Letters: spaces</span>
+          <span class="hint">Words: “/”</span>
+          <span class="hint muted">Example: <span class="k">SOS</span> → <span class="k">... --- ...</span></span>
+        </div>
+      </div>
     </div>
   </header>
 
-  <section class="card tool-card">
-    <div class="section-head">
-      <h2 class="section-title">Translator</h2>
-      <p class="muted section-note">Spaces separate letters • “/” separates words</p>
+  <section class="card tool-card" aria-label="Translator tool">
+    <div class="tool-head">
+      <div>
+        <h2 class="tool-title">Translator</h2>
+        <p class="muted tool-sub">Spaces separate letters • “/” separates words</p>
+      </div>
+
+      <div class="tool-mini-links muted">
+        <a href="/translate/?q=HELLO">HELLO</a> •
+        <a href="/translate/?q=SOS">SOS</a> •
+        <a href="/translate/?q=I%20LOVE%20YOU">I LOVE YOU</a>
+      </div>
     </div>
 
     <div class="grid tool-grid">
@@ -39,13 +58,13 @@ const hasInitial = Boolean(initial);
           id="mcg-input"
           rows="9"
           placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
-        >{initial}</textarea>
+        ></textarea>
 
         <div class="actions">
           <div class="action-group primary">
-            <button id="mcg-text-to-morse" type="button" class="primary-btn">Text → Morse</button>
-            <button id="mcg-morse-to-text" type="button" class="primary-btn">Morse → Text</button>
-            <button id="mcg-copy" type="button" class="primary-btn">Copy output</button>
+            <button id="mcg-text-to-morse" type="button">Text → Morse</button>
+            <button id="mcg-morse-to-text" type="button">Morse → Text</button>
+            <button id="mcg-copy" type="button">Copy output</button>
           </div>
 
           <div class="action-group secondary">
@@ -54,7 +73,7 @@ const hasInitial = Boolean(initial);
           </div>
         </div>
 
-        <p class="muted hint">
+        <p class="muted micro">
           Example:
           <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
         </p>
@@ -69,11 +88,8 @@ const hasInitial = Boolean(initial);
           placeholder="Result appears here..."
         ></textarea>
 
-        <p class="muted hint">
-          One-click starting points:
-          <a href="/translate/?q=HELLO">HELLO</a> •
-          <a href="/translate/?q=SOS">SOS</a> •
-          <a href="/translate/?q=I%20LOVE%20YOU">I LOVE YOU</a>
+        <p class="muted micro">
+          Tip: you can share links like <span class="k">/translate/?q=YOUR+TEXT</span>.
         </p>
       </div>
     </div>
@@ -86,10 +102,6 @@ const hasInitial = Boolean(initial);
       <li>Choose <strong>Text → Morse</strong> or <strong>Morse → Text</strong>.</li>
       <li>Copy the output for practice, notes, or messages.</li>
     </ol>
-    <p class="muted">
-      Share a link like:
-      <span class="k">/translate/?q=YOUR+TEXT</span>
-    </p>
   </section>
 
   <section class="card" style="margin-top:16px;">
@@ -133,22 +145,17 @@ const hasInitial = Boolean(initial);
     <p class="muted" style="margin-top:0;">
       Yes. Paste Morse code into the input box and click <strong>Morse → Text</strong>.
     </p>
-
-    <h3 style="margin-bottom:6px;">Is this translator free?</h3>
-    <p class="muted" style="margin-top:0;">
-      Yes. It’s a free educational tool and runs locally in your browser.
-    </p>
   </section>
 
   <p style="margin-top:16px;">
     Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/morse-code/numbers/">numbers</a>.
   </p>
 
-  <!-- Reliable runtime script -->
+  <!-- Runtime script -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- Safe inline enhancements (adds UX; does NOT replace mcg-tool.js) -->
-  <script is:inline define:vars={{ hasInitial }}>
+  <!-- UX glue: set initial value safely + swap/clear + auto-run when ?q= -->
+  <script is:inline define:vars={{ initial, hasInitial }}>
     (function () {
       function onReady(fn) {
         if (document.readyState === "loading") {
@@ -164,6 +171,10 @@ const hasInitial = Boolean(initial);
         const btnT2M = document.getElementById("mcg-text-to-morse");
 
         if (!input || !output) return;
+
+        // Fix: don't render text inside <textarea>...</textarea> (whitespace + selection bugs)
+        if (initial && !input.value.trim()) input.value = String(initial);
+        if (!initial && !input.value.trim()) input.value = "HELLO";
 
         input.focus();
 
@@ -215,20 +226,57 @@ const hasInitial = Boolean(initial);
       padding: 0 14px;
       border-radius: 999px;
       text-decoration:none;
-      border: 1px solid rgba(138,180,255,0.30);
-      background: rgba(138,180,255,0.12);
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.03);
       color: rgba(255,255,255,0.92);
       font-weight: 850;
       line-height: 1;
     }
     .cta:hover { opacity: 0.95; }
+    .cta.primary{
+      border-color: rgba(138,180,255,0.30);
+      background: rgba(138,180,255,0.12);
+    }
     .cta.ghost{
       border-color: rgba(255,255,255,0.16);
       background: rgba(255,255,255,0.03);
       font-weight: 750;
     }
 
+    .hint-row{
+      margin-top: 14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      justify-content:center;
+      align-items:center;
+    }
+    .hint{
+      display:inline-flex;
+      align-items:center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.82);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
     .tool-card { margin-top: 16px; }
+    .tool-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px 14px;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    .tool-title { margin: 0 0 6px; }
+    .tool-sub { margin: 0; }
+    .tool-mini-links { font-size: 13px; }
+    .tool-mini-links a { text-decoration: none; }
+    .tool-mini-links a:hover { text-decoration: underline; }
+
     .tool-grid { margin-top: 12px; }
 
     .section-head{
@@ -271,24 +319,25 @@ const hasInitial = Boolean(initial);
       align-items:center;
     }
 
-    .primary-btn{
-      font-weight: 850;
-    }
-
     .ghost-btn{
       border-color: rgba(255,255,255,0.18) !important;
       background: rgba(255,255,255,0.03) !important;
       font-weight: 750;
     }
 
-    .hint{
+    .micro{
       margin-top: 10px;
+    }
+
+    @media (min-width: 860px){
+      .tool-grid { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 520px) {
       .hero-kicker, .hero-title, .hero-sub { text-align: left; }
       .hero-sub { margin-left: 0; }
       .hero-actions { justify-content: flex-start; }
+      .hint-row { justify-content: flex-start; }
 
       .action-group.primary button,
       .action-group.secondary button{
