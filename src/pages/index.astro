@@ -8,11 +8,13 @@ const description =
 
 <Layout title={title} description={description}>
   <header class="hero">
-    <div class="hero-inner">
+    <div class="hero-grid">
       <div class="hero-copy">
         <p class="hero-kicker muted">Free • Fast • Private</p>
+
         <h1 class="hero-title">Morse Code Generator</h1>
-        <p class="hero-sub muted">
+
+        <p class="muted hero-sub">
           Translate text to Morse code instantly, decode Morse back to text, and copy results in one click.
           Runs entirely in your browser — no accounts, no logins.
         </p>
@@ -23,14 +25,24 @@ const description =
           <a class="cta" href="/phrases/">Common Phrases</a>
         </div>
 
-        <p class="muted hero-note">
-          Tip: spaces separate letters • “/” separates words
-        </p>
+        <div class="hint-row">
+          <span class="hint">Letters: separated by spaces</span>
+          <span class="hint">Words: separated by “/”</span>
+          <a class="hint link" href="/translate/">Practice →</a>
+        </div>
       </div>
 
-      <div class="hero-side card">
-        <h2 class="side-title">Quick translate</h2>
-        <p class="muted side-sub">Type text or Morse, then convert and copy.</p>
+      <section class="tool card" aria-label="Quick translate">
+        <div class="tool-head">
+          <div>
+            <h2 class="tool-title">Quick translate</h2>
+            <p class="muted tool-sub">Type text or Morse, then convert and copy.</p>
+          </div>
+          <div class="tool-mini-links muted">
+            <a href="/morse-code/numbers/">Numbers</a> •
+            <a href="/morse-code/punctuation/">Punctuation</a>
+          </div>
+        </div>
 
         <div class="grid tool-grid">
           <div>
@@ -39,34 +51,34 @@ const description =
               id="mcg-input"
               rows="8"
               placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
-            >HELLO</textarea>
+            ></textarea>
 
             <div class="tool-row">
               <button id="mcg-text-to-morse" type="button">Text → Morse</button>
               <button id="mcg-morse-to-text" type="button">Morse → Text</button>
               <button id="mcg-copy" type="button">Copy output</button>
+
+              <span class="spacer" aria-hidden="true"></span>
+
+              <button id="mcg-swap" type="button" class="ghost">Swap</button>
+              <button id="mcg-clear" type="button" class="ghost">Clear</button>
             </div>
 
             <p class="muted micro">
-              For Morse: spaces between letters, “/” between words.
+              Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
             </p>
           </div>
 
           <div>
             <label for="mcg-output"><strong>Output</strong></label><br />
             <textarea id="mcg-output" rows="8" placeholder="Your result will appear here..."></textarea>
+
             <p class="muted micro">
-              Switch direction to decode Morse back into readable text.
+              Want a full page? <a href="/translate/">Open the translator</a>.
             </p>
           </div>
         </div>
-
-        <div class="side-links muted">
-          <a href="/translate/">Open full translator</a> •
-          <a href="/morse-code/punctuation/">Punctuation</a> •
-          <a href="/morse-code/numbers/">Numbers</a>
-        </div>
-      </div>
+      </section>
     </div>
   </header>
 
@@ -110,12 +122,49 @@ const description =
     </p>
   </section>
 
-  <!-- Reliable runtime script -->
+  <!-- Runtime tool -->
   <script defer src="/mcg-tool.js"></script>
 
+  <!-- Fix textarea whitespace + add swap/clear UX -->
+  <script is:inline>
+    (function () {
+      function onReady(fn) {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", fn, { once: true });
+        } else fn();
+      }
+
+      onReady(() => {
+        const input = document.getElementById("mcg-input");
+        const output = document.getElementById("mcg-output");
+        const swap = document.getElementById("mcg-swap");
+        const clear = document.getElementById("mcg-clear");
+
+        // Fix: don't put default text inside <textarea>...</textarea> (whitespace bugs)
+        if (input && !input.value.trim()) input.value = "HELLO";
+
+        swap?.addEventListener("click", () => {
+          if (!input || !output) return;
+          const a = input.value;
+          input.value = output.value;
+          output.value = a;
+          input.focus();
+        });
+
+        clear?.addEventListener("click", () => {
+          if (!input || !output) return;
+          input.value = "";
+          output.value = "";
+          input.focus();
+        });
+      });
+    })();
+  </script>
+
   <style>
+    /* HERO */
     .hero { margin-top: 6px; }
-    .hero-inner {
+    .hero-grid {
       display: grid;
       grid-template-columns: 1fr;
       gap: 16px;
@@ -131,7 +180,6 @@ const description =
 
     .hero-title { margin: 0 0 10px; }
     .hero-sub { margin: 0; max-width: 70ch; }
-    .hero-note { margin-top: 12px; }
 
     .hero-actions {
       margin-top: 14px;
@@ -158,9 +206,48 @@ const description =
       background: rgba(138,180,255,0.12);
     }
 
-    .hero-side { padding: 16px; }
-    .side-title { margin: 0 0 6px; }
-    .side-sub { margin: 0 0 10px; }
+    .hint-row{
+      margin-top: 14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      align-items:center;
+    }
+    .hint{
+      display:inline-flex;
+      align-items:center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.78);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+    .hint.link{
+      border-color: rgba(138,180,255,0.26);
+      background: rgba(138,180,255,0.10);
+      color: rgba(255,255,255,0.90);
+      text-decoration:none;
+      font-weight: 750;
+    }
+
+    /* TOOL CARD */
+    .tool { padding: 16px; }
+    .tool-head{
+      display:flex;
+      flex-wrap:wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px 14px;
+      margin-bottom: 10px;
+    }
+    .tool-title { margin: 0 0 6px; }
+    .tool-sub { margin: 0; }
+
+    .tool-mini-links { font-size: 13px; }
+    .tool-mini-links a { text-decoration: none; }
+    .tool-mini-links a:hover { text-decoration: underline; }
 
     .tool-grid { margin-top: 10px; }
     .tool-row {
@@ -170,9 +257,15 @@ const description =
       flex-wrap: wrap;
       align-items: center;
     }
-    .micro { margin-top: 10px; }
+    .spacer { flex: 1; min-width: 8px; }
 
-    .side-links { margin-top: 12px; }
+    .ghost {
+      border-color: rgba(255,255,255,0.18) !important;
+      background: rgba(255,255,255,0.03) !important;
+      font-weight: 650;
+    }
+
+    .micro { margin-top: 10px; }
 
     .section-head{
       display:flex;
@@ -184,13 +277,20 @@ const description =
     .section-title { margin: 0; }
     .section-note { margin: 0; }
 
+    /* BREAKPOINTS */
     @media (min-width: 980px){
-      .hero-inner { grid-template-columns: 0.95fr 1.05fr; }
+      .hero-grid { grid-template-columns: 0.95fr 1.05fr; }
       .hero-actions { max-width: 560px; }
+    }
+
+    /* Ensure tool grid is 2-col on desktop widths */
+    @media (min-width: 860px){
+      .tool-grid { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 520px){
       .hero-actions .cta { width: 100%; }
+      .spacer { display:none; }
     }
   </style>
 </Layout>
