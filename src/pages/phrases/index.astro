@@ -7,6 +7,21 @@ const title = "Common Morse Code Phrases – Copy & Practice";
 const description =
   "Browse common Morse code phrases (SOS, HELP, MAYDAY, and more). Copy Morse instantly and practice with the translator.";
 
+// -------------------------
+// Helpers
+// -------------------------
+function slugify(s: any) {
+  return (
+    String(s || "")
+      .toLowerCase()
+      .trim()
+      .replace(/['"]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "phrase"
+  );
+}
+
 // Normalize map: uppercase keys, ignore " " key if present
 const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
@@ -19,22 +34,12 @@ const map = Object.fromEntries(
 // 1) [["sos","SOS"], ...]
 // 2) [{slug:"sos", phrase:"SOS"}, ...]
 // 3) [{slug:"sos", text:"SOS"}, ...]
-function slugify(s) {
-  return String(s || "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "phrase";
-}
-
 const rawPhrases = data?.phrases;
-let phrases = [];
+let phrases: { slug: string; phrase: string }[] = [];
 
 if (Array.isArray(rawPhrases)) {
-  // Array of pairs
   if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
+    // Array of pairs
     phrases = rawPhrases
       .map((row) => {
         const slug = row?.[0];
@@ -85,8 +90,8 @@ const fallback = [
   "I LOVE YOU",
 ].map((phrase) => ({ slug: slugify(phrase), phrase }));
 
-const hasPhrases = phrases.length > 0;
-const list = hasPhrases ? phrases : fallback;
+const hasRealPhrases = phrases.length > 0;
+const list = hasRealPhrases ? phrases : fallback;
 
 // Site URL for JSON-LD
 const site =
@@ -116,27 +121,11 @@ const collectionJsonLd = {
   isPartOf: { "@type": "WebSite", url: site, name: "Morse Code Generator" },
 };
 
-// Client-side morse builder (same output format as your site: letters = spaces, words = " / ")
-function toMorse(text) {
-  const s = String(text || "").toUpperCase().trim();
-  if (!s) return "";
-  return s
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((w) =>
-      w
-        .split("")
-        .map((ch) => map?.[ch] || "")
-        .filter(Boolean)
-        .join(" ")
-    )
-    .join(" / ");
-}
-
-// If the real phrases list exists, dedicated pages should exist.
-// If not, we only link to translator to avoid 404s.
-const hrefFor = (item) =>
-  hasPhrases ? `/phrases/${item.slug}/` : `/translate/?q=${encodeURIComponent(item.phrase)}`;
+// If real phrase pages exist, link to them. Otherwise link to translator to avoid 404.
+const hrefFor = (item: { slug: string; phrase: string }) =>
+  hasRealPhrases
+    ? `/phrases/${item.slug}/`
+    : `/translate/?q=${encodeURIComponent(item.phrase)}`;
 ---
 
 <Layout title={title} description={description}>
@@ -144,7 +133,7 @@ const hrefFor = (item) =>
     <h1 class="hero-title">Common Morse Code Phrases</h1>
     <p class="muted hero-sub">
       Search, copy Morse instantly, and practice inside the translator.
-      {hasPhrases ? " Each phrase also has its own page." : ""}
+      {hasRealPhrases ? " Each phrase also has its own page." : ""}
     </p>
 
     <div class="hero-actions">
@@ -152,10 +141,11 @@ const hrefFor = (item) =>
       <a class="btn" href="/morse-code/a/">Learn Alphabet</a>
     </div>
 
-    {!hasPhrases && (
+    {!hasRealPhrases && (
       <p class="muted warn">
-        Your <span class="k">data.phrases</span> list looks empty or not detected, so this page is showing a fallback list.
-        Fix <span class="k">src/data/morse.json</span> to enable dedicated phrase pages.
+        Your <span class="k">data.phrases</span> list is missing/empty in{" "}
+        <span class="k">src/data/morse.json</span>, so this page is showing a fallback list.
+        Add a <span class="k">phrases</span> array there to enable full phrase pages + SEO expansion.
       </p>
     )}
   </header>
@@ -228,7 +218,7 @@ const hrefFor = (item) =>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(collectionJsonLd)}></script>
 
-  <script is:inline define:vars={{ map, hasPhrases }}>
+  <script is:inline define:vars={{ map }}>
     const select = document.getElementById("phraseSelect");
     const morseBox = document.getElementById("phraseMorse");
     const copyBtn = document.getElementById("copyMorse");
@@ -332,9 +322,7 @@ const hrefFor = (item) =>
       gap: 12px;
       flex-wrap:wrap;
     }
-    .searchbox{
-      min-width: min(360px, 100%);
-    }
+    .searchbox{ min-width: min(360px, 100%); }
 
     .section-head{
       display:flex;
