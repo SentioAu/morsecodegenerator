@@ -11,37 +11,39 @@ const map = Object.fromEntries(
     .map(([k, v]) => [k.toUpperCase(), v])
 );
 
-function slugify(input) {
-  return String(input ?? "")
-    .trim()
-    .toLowerCase()
-    .replace(/['"]/g, "")          // drop quotes
-    .replace(/&/g, " and ")
-    .replace(/[^a-z0-9]+/g, "-")   // non-alnum -> hyphen
-    .replace(/^-+|-+$/g, "");      // trim hyphens
-}
+// Support both formats:
+// 1) [["sos","SOS"], ...]  (your current format)
+// 2) [{slug:"sos", phrase:"SOS"}, ...]
+const phrasesRaw = data?.phrases ?? [];
+const phrases = Array.isArray(phrasesRaw)
+  ? phrasesRaw
+      .map((x) => {
+        if (Array.isArray(x) && x.length >= 2) {
+          const slug = String(x[0] ?? "").trim();
+          const phrase = String(x[1] ?? "").trim();
+          return slug && phrase ? { slug, phrase } : null;
+        }
+        if (x && typeof x === "object") {
+          const slug = String(x.slug ?? "").trim();
+          const phrase = String(x.phrase ?? "").trim();
+          return slug && phrase ? { slug, phrase } : null;
+        }
+        return null;
+      })
+      .filter(Boolean)
+  : [];
 
 export function getStaticPaths() {
-  // Define phrases INSIDE function to avoid build-scope issues
-  const phrases = Array.isArray(data?.phrases) ? data.phrases : [];
-
-  // Defensive: tolerate bad rows, ensure safe slugs, never crash build
-  return phrases
-    .filter((row) => Array.isArray(row) && row.length >= 2)
-    .map(([rawSlug, phrase]) => {
-      const safeSlug = slugify(rawSlug);
-      return safeSlug
-        ? { params: { slug: safeSlug }, props: { phrase, slug: safeSlug } }
-        : null;
-    })
-    .filter(Boolean);
+  // If phrases missing, return empty list (build still succeeds)
+  return phrases.map((p) => ({
+    params: { slug: p.slug },
+    props: { slug: p.slug, phrase: p.phrase },
+  }));
 }
-
-// For page rendering / "More phrases"
-const phrases = Array.isArray(data?.phrases) ? data.phrases : [];
 
 const { phrase, slug } = Astro.props;
 
+// Canonical base (for breadcrumbs JSON-LD)
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
@@ -53,15 +55,13 @@ const morse = safePhrase ? textToMorse(safePhrase, map, " ") : "";
 // SEO
 const title = safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code";
 const description = safePhrase
-  ? `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`
+  ? `See how to write ${safePhrase} in Morse code. Copy it instantly and practice with the translator.`
   : `See how to write common phrases in Morse code. Copy them instantly and practice.`;
 
 // More phrases (exclude current)
 const popular = phrases
-  .filter((row) => Array.isArray(row) && row.length >= 2)
-  .map(([s, p]) => ({ slug: slugify(s), phrase: p }))
-  .filter((x) => x.slug && x.slug !== slug && x.phrase)
-  .slice(0, 20);
+  .filter((p) => p.slug !== slug)
+  .slice(0, 24);
 
 // Breadcrumb URLs
 const crumbs = [
@@ -114,7 +114,6 @@ const translatorHref = safePhrase
 ---
 
 <Layout title={title} description={description}>
-  <!-- Breadcrumbs -->
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span aria-hidden="true" class="sep">›</span>
@@ -175,9 +174,7 @@ const translatorHref = safePhrase
     </p>
     <p>
       <strong>Can I decode Morse back to text?</strong><br />
-      <span class="muted">
-        Yes — paste Morse into the translator and click <span class="k">Morse → Text</span>.
-      </span>
+      <span class="muted">Yes — paste Morse into the translator and click <span class="k">Morse → Text</span>.</span>
     </p>
   </section>
 
@@ -228,4 +225,87 @@ const translatorHref = safePhrase
   </script>
 
   <!-- Structured Data -->
-  <script type="application/ld+jso
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)}></script>
+
+  <style>
+    .hero { margin-top: 10px; }
+    .hero-title { margin-bottom: 8px; }
+    .hero-sub { margin-top: 0; max-width: 72ch; }
+
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .crumbs{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-size: 13px;
+      opacity: .92;
+      margin-top: 2px;
+    }
+
+    .crumb{
+      text-decoration:none;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.02);
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .crumb:hover{
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    .sep { opacity: .65; }
+
+    .crumb-current{
+      display:inline-flex;
+      align-items:center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.015);
+      color: rgba(255,255,255,0.78);
+    }
+
+    .phrase-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.92);
+      font-weight: 650;
+    }
+
+    .chip-morse{
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: .4px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+  </style>
+</Layout>
