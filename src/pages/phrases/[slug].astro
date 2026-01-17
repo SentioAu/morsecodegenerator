@@ -3,63 +3,114 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
-// Normalize map: uppercase keys, ignore " " key if present
+// -------------------------
+// Helpers
+// -------------------------
+function slugify(s) {
+  return (
+    String(s || "")
+      .toLowerCase()
+      .trim()
+      .replace(/['"]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "phrase"
+  );
+}
+
+// Normalize morse map: uppercase keys, ignore " " key if present
 const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
   Object.entries(rawMap)
     .filter(([k, v]) => k && v && k !== " ")
-    .map(([k, v]) => [k.toUpperCase(), v])
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
 );
 
-// Support both formats:
-// 1) [["sos","SOS"], ...]  (your current format)
+// Robust phrase parsing (supports:
+// 1) [["sos","SOS"], ...]
 // 2) [{slug:"sos", phrase:"SOS"}, ...]
-const phrasesRaw = data?.phrases ?? [];
-const phrases = Array.isArray(phrasesRaw)
-  ? phrasesRaw
-      .map((x) => {
-        if (Array.isArray(x) && x.length >= 2) {
-          const slug = String(x[0] ?? "").trim();
-          const phrase = String(x[1] ?? "").trim();
-          return slug && phrase ? { slug, phrase } : null;
-        }
-        if (x && typeof x === "object") {
-          const slug = String(x.slug ?? "").trim();
-          const phrase = String(x.phrase ?? "").trim();
-          return slug && phrase ? { slug, phrase } : null;
-        }
-        return null;
-      })
-      .filter(Boolean)
-  : [];
+// 3) [{slug:"sos", text:"SOS"}, ...]
+const rawPhrases = data?.phrases;
+let phrases = [];
 
+if (Array.isArray(rawPhrases)) {
+  if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
+    phrases = rawPhrases
+      .map((row) => {
+        const slug = row?.[0];
+        const phrase = row?.[1];
+        if (!slug || !phrase) return null;
+        return { slug: String(slug), phrase: String(phrase) };
+      })
+      .filter(Boolean);
+  } else {
+    phrases = rawPhrases
+      .map((p) => {
+        if (!p) return null;
+        const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
+        if (!phrase) return null;
+        const slug = p.slug ?? slugify(phrase);
+        return { slug: String(slug), phrase: String(phrase) };
+      })
+      .filter(Boolean);
+  }
+}
+
+// Fallback phrases (so build + pages still work even if data.phrases is missing)
+const fallback = [
+  "SOS",
+  "HELP",
+  "MAYDAY",
+  "EMERGENCY",
+  "DANGER",
+  "STOP",
+  "WAIT",
+  "COME HERE",
+  "CALL ME",
+  "CALL POLICE",
+  "CALL AMBULANCE",
+  "I NEED HELP",
+  "I AM LOST",
+  "WHERE ARE YOU",
+  "I AM HERE",
+  "MEET ME",
+  "OK",
+  "YES",
+  "NO",
+  "HELLO",
+  "THANK YOU",
+  "PLEASE",
+  "SORRY",
+  "I LOVE YOU",
+].map((phrase) => ({ slug: slugify(phrase), phrase }));
+
+const hasRealPhrases = phrases.length > 0;
+const all = hasRealPhrases ? phrases : fallback;
+
+// IMPORTANT: never reference external vars here; keep everything self-contained
 export function getStaticPaths() {
-  // If phrases missing, return empty list (build still succeeds)
-  return phrases.map((p) => ({
-    params: { slug: p.slug },
-    props: { slug: p.slug, phrase: p.phrase },
+  return all.map((item) => ({
+    params: { slug: item.slug },
+    props: { slug: item.slug, phrase: item.phrase, hasRealPhrases },
   }));
 }
 
-const { phrase, slug } = Astro.props;
+const { phrase, slug, hasRealPhrases: hasReal } = Astro.props;
 
-// Canonical base (for breadcrumbs JSON-LD)
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
 const safePhrase = (phrase ?? "").toString().trim();
-
-// Convert using util (letters separated by spaces; words by " / " handled in util)
 const morse = safePhrase ? textToMorse(safePhrase, map, " ") : "";
 
 // SEO
 const title = safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code";
 const description = safePhrase
-  ? `See how to write ${safePhrase} in Morse code. Copy it instantly and practice with the translator.`
+  ? `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`
   : `See how to write common phrases in Morse code. Copy them instantly and practice.`;
 
 // More phrases (exclude current)
-const popular = phrases
+const popular = all
   .filter((p) => p.slug !== slug)
   .slice(0, 24);
 
@@ -127,12 +178,17 @@ const translatorHref = safePhrase
   </nav>
 
   <header class="hero">
-    <h1 class="hero-title">
-      {safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code"}
-    </h1>
+    <h1 class="hero-title">{safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code"}</h1>
     <p class="muted hero-sub">
       Copy the Morse translation instantly, then practice in the translator or explore more phrases.
     </p>
+
+    {!hasReal && (
+      <p class="muted warn">
+        Showing a fallback phrase list because <span class="k">data.phrases</span> is missing/empty in{" "}
+        <span class="k">src/data/morse.json</span>. Add phrases there to fully control SEO phrase pages.
+      </p>
+    )}
   </header>
 
   <section class="card" style="margin-top:16px;">
@@ -186,7 +242,6 @@ const translatorHref = safePhrase
     <a href="/">home</a>
   </p>
 
-  <!-- Copy button -->
   <script is:inline define:vars={{ morse }}>
     const btn = document.getElementById("copy");
 
@@ -224,7 +279,6 @@ const translatorHref = safePhrase
     });
   </script>
 
-  <!-- Structured Data -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)}></script>
 
@@ -232,6 +286,7 @@ const translatorHref = safePhrase
     .hero { margin-top: 10px; }
     .hero-title { margin-bottom: 8px; }
     .hero-sub { margin-top: 0; max-width: 72ch; }
+    .warn { margin-top: 12px; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; background: rgba(255,255,255,0.03); }
 
     .section-head{
       display:flex;
