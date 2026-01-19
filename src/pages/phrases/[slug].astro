@@ -3,7 +3,7 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
-// Small slugify (hoisted)
+// Hoisted helper (safe)
 function slugify(input) {
   return String(input ?? "")
     .toLowerCase()
@@ -14,27 +14,25 @@ function slugify(input) {
     .slice(0, 80) || "phrase";
 }
 
-// Build map once
-const rawMap = data?.morseMap ?? {};
-const map = Object.fromEntries(
-  Object.entries(rawMap)
-    .filter(([k, v]) => k && v && k !== " ")
-    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
-);
+export function getStaticPaths() {
+  // ✅ EVERYTHING defined locally (no hoisting traps)
+  const rawPhrases = data?.phrases ?? [];
+  let list = [];
 
-// Parse phrases once (your JSON is pairs, but supports objects too)
-const rawPhrases = data?.phrases ?? [];
-const phraseList = Array.isArray(rawPhrases)
-  ? (rawPhrases.length && Array.isArray(rawPhrases[0]))
-    ? rawPhrases
+  if (Array.isArray(rawPhrases)) {
+    if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
+      // pairs: [slug, phrase]
+      list = rawPhrases
         .map((row) => {
           const slug = row?.[0];
           const phrase = row?.[1];
           if (!slug || !phrase) return null;
           return { slug: String(slug), phrase: String(phrase) };
         })
-        .filter(Boolean)
-    : rawPhrases
+        .filter(Boolean);
+    } else {
+      // objects: {slug, phrase} or variants
+      list = rawPhrases
         .map((p) => {
           if (!p) return null;
           const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
@@ -42,43 +40,43 @@ const phraseList = Array.isArray(rawPhrases)
           const slug = p.slug ?? slugify(phrase);
           return { slug: String(slug), phrase: String(phrase) };
         })
-        .filter(Boolean)
-  : [];
+        .filter(Boolean);
+    }
+  }
 
-// ✅ MOST IMPORTANT PART: getStaticPaths does NOT call any external helper name
-export function getStaticPaths() {
-  return phraseList.map((item) => ({
+  return list.map((item) => ({
     params: { slug: item.slug },
-    props: { slug: item.slug, phrase: item.phrase },
+    props: { phrase: item.phrase, slug: item.slug },
   }));
 }
 
-const { slug: propSlug, phrase: propPhrase } = Astro.props;
-const currentSlug = String(propSlug ?? Astro.params.slug ?? "");
-const currentPhrase =
-  String(propPhrase ?? phraseList.find((p) => p.slug === currentSlug)?.phrase ?? "").trim();
+// Build map once for rendering
+const rawMap = data?.morseMap ?? {};
+const map = Object.fromEntries(
+  Object.entries(rawMap)
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+);
 
-const safePhrase = currentPhrase || "(Unknown phrase)";
-const morse = currentPhrase ? textToMorse(currentPhrase, map, " ") : "";
+const { phrase: propPhrase, slug: propSlug } = Astro.props;
+const slug = String(propSlug ?? Astro.params.slug ?? "");
+const phrase = String(propPhrase ?? "").trim();
 
-// SEO
-const title = currentPhrase ? `${currentPhrase} in Morse code` : "Phrase in Morse code";
-const description = currentPhrase
-  ? `See how to write ${currentPhrase} in Morse code. Copy it instantly and practice with the translator.`
+const morse = phrase ? textToMorse(phrase, map, " ") : "";
+
+const title = phrase ? `${phrase} in Morse code` : "Phrase in Morse code";
+const description = phrase
+  ? `See how to write ${phrase} in Morse code. Copy it instantly and practice with the translator.`
   : `See how to write common phrases in Morse code. Copy them instantly and practice.`;
 
-const translatorHref = currentPhrase
-  ? `/translate/?q=${encodeURIComponent(currentPhrase)}`
-  : "/translate/";
+const translatorHref = phrase ? `/translate/?q=${encodeURIComponent(phrase)}` : "/translate/";
 
-const more = phraseList.filter((p) => p.slug !== currentSlug).slice(0, 24);
-
-// JSON-LD (safe site fallback)
+// Breadcrumb JSON-LD
 const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Phrases", url: `${site}/phrases/` },
-  ...(currentPhrase ? [{ name: currentPhrase, url: `${site}/phrases/${currentSlug}/` }] : []),
+  ...(phrase ? [{ name: phrase, url: `${site}/phrases/${slug}/` }] : []),
 ];
 
 const breadcrumbJsonLd = {
@@ -96,28 +94,26 @@ const breadcrumbJsonLd = {
 <Layout title={title} description={description}>
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
-    <span aria-hidden="true" class="sep">›</span>
+    <span class="sep" aria-hidden="true">›</span>
     <a class="crumb" href="/phrases/">Phrases</a>
-    {currentPhrase && (
+    {phrase && (
       <>
-        <span aria-hidden="true" class="sep">›</span>
-        <span class="crumb-current">{currentPhrase}</span>
+        <span class="sep" aria-hidden="true">›</span>
+        <span class="crumb-current">{phrase}</span>
       </>
     )}
   </nav>
 
   <header class="hero">
-    <h1 class="hero-title">
-      {currentPhrase ? `${currentPhrase} in Morse code` : "Phrase in Morse code"}
-    </h1>
+    <h1 class="hero-title">{title}</h1>
     <p class="muted hero-sub">
-      Copy the Morse translation instantly, then practice in the translator or explore more phrases.
+      Copy the Morse translation instantly, then practice in the translator.
     </p>
   </header>
 
   <section class="card" style="margin-top:16px;">
     <div class="phrase-row">
-      <span class="chip">{safePhrase}</span>
+      <span class="chip">{phrase || "(Unknown phrase)"}</span>
       <span class="muted">→</span>
       <span class="chip chip-morse">{morse || "(not available)"}</span>
     </div>
@@ -126,19 +122,6 @@ const breadcrumbJsonLd = {
       <button id="copy" type="button" disabled={!morse}>Copy Morse</button>
       <a class="nav-link" href={translatorHref}>Practice in translator</a>
       <a class="nav-link" href="/phrases/">Browse all phrases</a>
-    </div>
-  </section>
-
-  <section class="card" style="margin-top:16px;">
-    <div class="section-head">
-      <h2 style="margin:0;">More common phrases</h2>
-      <p class="muted" style="margin:0;">Tap any phrase to open it.</p>
-    </div>
-
-    <div class="pill-grid" style="margin-top:12px;" role="list">
-      {more.map((item) => (
-        <a role="listitem" href={`/phrases/${item.slug}/`}>{item.phrase}</a>
-      ))}
     </div>
   </section>
 
@@ -175,14 +158,6 @@ const breadcrumbJsonLd = {
     .hero { margin-top: 10px; }
     .hero-title { margin-bottom: 8px; }
     .hero-sub { margin-top: 0; max-width: 72ch; }
-
-    .section-head{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px 14px;
-      align-items: baseline;
-      justify-content: space-between;
-    }
 
     .crumbs{
       display:flex;
