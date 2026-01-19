@@ -3,6 +3,7 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
+// Small slugify (hoisted)
 function slugify(input) {
   return String(input ?? "")
     .toLowerCase()
@@ -13,61 +14,49 @@ function slugify(input) {
     .slice(0, 80) || "phrase";
 }
 
-function loadMap() {
-  const raw = data?.morseMap ?? {};
-  return Object.fromEntries(
-    Object.entries(raw)
-      .filter(([k, v]) => k && v && k !== " ")
-      .map(([k, v]) => [String(k).toUpperCase(), String(v)])
-  );
-}
+// Build map once
+const rawMap = data?.morseMap ?? {};
+const map = Object.fromEntries(
+  Object.entries(rawMap)
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+);
 
-function loadPhrases() {
-  const raw = data?.phrases;
-  if (!Array.isArray(raw)) return [];
+// Parse phrases once (your JSON is pairs, but supports objects too)
+const rawPhrases = data?.phrases ?? [];
+const phraseList = Array.isArray(rawPhrases)
+  ? (rawPhrases.length && Array.isArray(rawPhrases[0]))
+    ? rawPhrases
+        .map((row) => {
+          const slug = row?.[0];
+          const phrase = row?.[1];
+          if (!slug || !phrase) return null;
+          return { slug: String(slug), phrase: String(phrase) };
+        })
+        .filter(Boolean)
+    : rawPhrases
+        .map((p) => {
+          if (!p) return null;
+          const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
+          if (!phrase) return null;
+          const slug = p.slug ?? slugify(phrase);
+          return { slug: String(slug), phrase: String(phrase) };
+        })
+        .filter(Boolean)
+  : [];
 
-  // pairs: [["sos","SOS"], ...]
-  if (raw.length && Array.isArray(raw[0])) {
-    return raw
-      .map((row) => {
-        const slug = row?.[0];
-        const phrase = row?.[1];
-        if (!slug || !phrase) return null;
-        return { slug: String(slug), phrase: String(phrase) };
-      })
-      .filter(Boolean);
-  }
-
-  // objects fallback (not used by your JSON, but safe)
-  return raw
-    .map((p) => {
-      if (!p) return null;
-      const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
-      if (!phrase) return null;
-      const slug = p.slug ?? slugify(phrase);
-      return { slug: String(slug), phrase: String(phrase) };
-    })
-    .filter(Boolean);
-}
-
+// ✅ MOST IMPORTANT PART: getStaticPaths does NOT call any external helper name
 export function getStaticPaths() {
-  const list = loadPhrases();
-  return list.map((item) => ({
+  return phraseList.map((item) => ({
     params: { slug: item.slug },
-    props: { phrase: item.phrase, slug: item.slug },
+    props: { slug: item.slug, phrase: item.phrase },
   }));
 }
 
-const map = loadMap();
-const phrases = loadPhrases();
-
 const { slug: propSlug, phrase: propPhrase } = Astro.props;
-
 const currentSlug = String(propSlug ?? Astro.params.slug ?? "");
 const currentPhrase =
-  String(propPhrase ?? phrases.find((p) => p.slug === currentSlug)?.phrase ?? "").trim();
-
-const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+  String(propPhrase ?? phraseList.find((p) => p.slug === currentSlug)?.phrase ?? "").trim();
 
 const safePhrase = currentPhrase || "(Unknown phrase)";
 const morse = currentPhrase ? textToMorse(currentPhrase, map, " ") : "";
@@ -82,10 +71,10 @@ const translatorHref = currentPhrase
   ? `/translate/?q=${encodeURIComponent(currentPhrase)}`
   : "/translate/";
 
-// More phrases
-const popular = phrases.filter((p) => p.slug !== currentSlug).slice(0, 24);
+const more = phraseList.filter((p) => p.slug !== currentSlug).slice(0, 24);
 
-// JSON-LD
+// JSON-LD (safe site fallback)
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Phrases", url: `${site}/phrases/` },
@@ -101,33 +90,6 @@ const breadcrumbJsonLd = {
     name: c.name,
     item: c.url,
   })),
-};
-
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: currentPhrase
-        ? `How do you write ${currentPhrase} in Morse code?`
-        : "How do you write a phrase in Morse code?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: morse
-          ? `${currentPhrase} in Morse code is ${morse}.`
-          : "This phrase contains characters that may not be supported by the current Morse map.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How do you separate letters and words in Morse code?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Use spaces between letters and use “/” between words.",
-      },
-    },
-  ],
 };
 ---
 
@@ -162,7 +124,7 @@ const faqJsonLd = {
 
     <div class="actions" style="margin-top:12px;">
       <button id="copy" type="button" disabled={!morse}>Copy Morse</button>
-      <a class="nav-link" href={translatorHref}>Open translator</a>
+      <a class="nav-link" href={translatorHref}>Practice in translator</a>
       <a class="nav-link" href="/phrases/">Browse all phrases</a>
     </div>
   </section>
@@ -170,55 +132,37 @@ const faqJsonLd = {
   <section class="card" style="margin-top:16px;">
     <div class="section-head">
       <h2 style="margin:0;">More common phrases</h2>
-      <p class="muted" style="margin:0;">Tap any phrase to open its page.</p>
+      <p class="muted" style="margin:0;">Tap any phrase to open it.</p>
     </div>
 
     <div class="pill-grid" style="margin-top:12px;" role="list">
-      {popular.map((item) => (
+      {more.map((item) => (
         <a role="listitem" href={`/phrases/${item.slug}/`}>{item.phrase}</a>
       ))}
     </div>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">FAQ</h2>
-    <p>
-      <strong>How do you separate letters and words in Morse code?</strong><br />
-      <span class="muted">Use spaces between letters and use “/” between words.</span>
-    </p>
-  </section>
-
   <script is:inline define:vars={{ morse }}>
     const btn = document.getElementById("copy");
-
     async function copyText(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch {
+      try { await navigator.clipboard.writeText(text); return true; }
+      catch {
         try {
           const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.style.position = "fixed";
-          ta.style.left = "-9999px";
-          document.body.appendChild(ta);
-          ta.select();
+          ta.value = text; ta.style.position = "fixed"; ta.style.left = "-9999px";
+          document.body.appendChild(ta); ta.select();
           const ok = document.execCommand("copy");
           document.body.removeChild(ta);
           return ok;
-        } catch {
-          return false;
-        }
+        } catch { return false; }
       }
     }
 
     btn?.addEventListener("click", async () => {
       const value = (morse || "").toString();
       if (!value) return;
-
       const ok = await copyText(value);
       if (!ok) return;
-
       const old = btn.textContent;
       btn.textContent = "Copied ✓";
       setTimeout(() => (btn.textContent = old), 1200);
@@ -226,7 +170,6 @@ const faqJsonLd = {
   </script>
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)}></script>
 
   <style>
     .hero { margin-top: 10px; }
