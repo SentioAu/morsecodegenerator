@@ -3,39 +3,36 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
-// -------------------------
-// Helpers
-// -------------------------
-function slugify(s) {
-  return (
-    String(s || "")
-      .toLowerCase()
-      .trim()
-      .replace(/['"]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 80) || "phrase"
+// small, safe slugify (no external deps)
+function slugify(input) {
+  return String(input ?? "")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "phrase";
+}
+
+// normalize morse map
+function loadMap() {
+  const raw = data?.morseMap ?? {};
+  return Object.fromEntries(
+    Object.entries(raw)
+      .filter(([k, v]) => k && v && k !== " ")
+      .map(([k, v]) => [String(k).toUpperCase(), String(v)])
   );
 }
 
-// Normalize morse map: uppercase keys, ignore " " key if present
-const rawMap = data?.morseMap ?? {};
-const map = Object.fromEntries(
-  Object.entries(rawMap)
-    .filter(([k, v]) => k && v && k !== " ")
-    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
-);
+// phrases can be: [["sos","SOS"], ...] OR [{slug,phrase}, ...]
+// This loader always returns [{slug, phrase}, ...]
+function loadPhrases() {
+  const raw = data?.phrases;
+  if (!Array.isArray(raw)) return [];
 
-// Robust phrase parsing (supports:
-// 1) [["sos","SOS"], ...]
-// 2) [{slug:"sos", phrase:"SOS"}, ...]
-// 3) [{slug:"sos", text:"SOS"}, ...]
-const rawPhrases = data?.phrases;
-let phrases = [];
-
-if (Array.isArray(rawPhrases)) {
-  if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
-    phrases = rawPhrases
+  // pairs
+  if (raw.length && Array.isArray(raw[0])) {
+    return raw
       .map((row) => {
         const slug = row?.[0];
         const phrase = row?.[1];
@@ -43,82 +40,63 @@ if (Array.isArray(rawPhrases)) {
         return { slug: String(slug), phrase: String(phrase) };
       })
       .filter(Boolean);
-  } else {
-    phrases = rawPhrases
-      .map((p) => {
-        if (!p) return null;
-        const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
-        if (!phrase) return null;
-        const slug = p.slug ?? slugify(phrase);
-        return { slug: String(slug), phrase: String(phrase) };
-      })
-      .filter(Boolean);
   }
+
+  // objects
+  return raw
+    .map((p) => {
+      if (!p) return null;
+      const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
+      if (!phrase) return null;
+      const slug = p.slug ?? slugify(phrase);
+      return { slug: String(slug), phrase: String(phrase) };
+    })
+    .filter(Boolean);
 }
 
-// Fallback phrases (so build + pages still work even if data.phrases is missing)
-const fallback = [
-  "SOS",
-  "HELP",
-  "MAYDAY",
-  "EMERGENCY",
-  "DANGER",
-  "STOP",
-  "WAIT",
-  "COME HERE",
-  "CALL ME",
-  "CALL POLICE",
-  "CALL AMBULANCE",
-  "I NEED HELP",
-  "I AM LOST",
-  "WHERE ARE YOU",
-  "I AM HERE",
-  "MEET ME",
-  "OK",
-  "YES",
-  "NO",
-  "HELLO",
-  "THANK YOU",
-  "PLEASE",
-  "SORRY",
-  "I LOVE YOU",
-].map((phrase) => ({ slug: slugify(phrase), phrase }));
-
-const hasRealPhrases = phrases.length > 0;
-const all = hasRealPhrases ? phrases : fallback;
-
-// IMPORTANT: never reference external vars here; keep everything self-contained
 export function getStaticPaths() {
-  return all.map((item) => ({
+  const list = loadPhrases();
+  return list.map((item) => ({
     params: { slug: item.slug },
-    props: { slug: item.slug, phrase: item.phrase, hasRealPhrases },
+    props: { phrase: item.phrase, slug: item.slug },
   }));
 }
 
-const { phrase, slug, hasRealPhrases: hasReal } = Astro.props;
+const map = loadMap();
+const phrases = loadPhrases();
 
-const site =
-  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+const { slug: propSlug, phrase: propPhrase } = Astro.props;
 
-const safePhrase = (phrase ?? "").toString().trim();
-const morse = safePhrase ? textToMorse(safePhrase, map, " ") : "";
+// also allow recovering phrase from slug (if props missing for any reason)
+const currentSlug = String(propSlug ?? Astro.params.slug ?? "");
+const currentPhrase =
+  String(propPhrase ?? phrases.find((p) => p.slug === currentSlug)?.phrase ?? "").trim();
+
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const safePhrase = currentPhrase || "(Unknown phrase)";
+const morse = currentPhrase ? textToMorse(currentPhrase, map, " ") : "";
 
 // SEO
-const title = safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code";
-const description = safePhrase
-  ? `See how to write ${safePhrase} in Morse code. Copy it instantly and use it for learning and practice.`
+const title = currentPhrase ? `${currentPhrase} in Morse code` : "Phrase in Morse code";
+const description = currentPhrase
+  ? `See how to write ${currentPhrase} in Morse code. Copy it instantly and practice with the translator.`
   : `See how to write common phrases in Morse code. Copy them instantly and practice.`;
 
-// More phrases (exclude current)
-const popular = all
-  .filter((p) => p.slug !== slug)
+const translatorHref = currentPhrase
+  ? `/translate/?q=${encodeURIComponent(currentPhrase)}`
+  : "/translate/";
+
+// more phrases
+const popular = phrases
+  .filter((p) => p.slug !== currentSlug)
   .slice(0, 24);
 
-// Breadcrumb URLs
+// JSON-LD
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Phrases", url: `${site}/phrases/` },
-  ...(safePhrase ? [{ name: safePhrase, url: `${site}/phrases/${slug}/` }] : []),
+  ...(currentPhrase ? [{ name: currentPhrase, url: `${site}/phrases/${currentSlug}/` }] : []),
 ];
 
 const breadcrumbJsonLd = {
@@ -138,14 +116,14 @@ const faqJsonLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: safePhrase
-        ? `How do you write ${safePhrase} in Morse code?`
+      name: currentPhrase
+        ? `How do you write ${currentPhrase} in Morse code?`
         : "How do you write a phrase in Morse code?",
       acceptedAnswer: {
         "@type": "Answer",
         text: morse
-          ? `${safePhrase} in Morse code is ${morse}.`
-          : `This phrase contains characters that may not be supported by the current Morse map.`,
+          ? `${currentPhrase} in Morse code is ${morse}.`
+          : "This phrase contains characters that may not be supported by the current Morse map.",
       },
     },
     {
@@ -158,10 +136,6 @@ const faqJsonLd = {
     },
   ],
 };
-
-const translatorHref = safePhrase
-  ? `/translate/?q=${encodeURIComponent(safePhrase)}`
-  : "/translate/";
 ---
 
 <Layout title={title} description={description}>
@@ -169,31 +143,26 @@ const translatorHref = safePhrase
     <a class="crumb" href="/">Home</a>
     <span aria-hidden="true" class="sep">›</span>
     <a class="crumb" href="/phrases/">Phrases</a>
-    {safePhrase && (
+    {currentPhrase && (
       <>
         <span aria-hidden="true" class="sep">›</span>
-        <span class="crumb-current">{safePhrase}</span>
+        <span class="crumb-current">{currentPhrase}</span>
       </>
     )}
   </nav>
 
   <header class="hero">
-    <h1 class="hero-title">{safePhrase ? `${safePhrase} in Morse code` : "Phrase in Morse code"}</h1>
+    <h1 class="hero-title">
+      {currentPhrase ? `${currentPhrase} in Morse code` : "Phrase in Morse code"}
+    </h1>
     <p class="muted hero-sub">
       Copy the Morse translation instantly, then practice in the translator or explore more phrases.
     </p>
-
-    {!hasReal && (
-      <p class="muted warn">
-        Showing a fallback phrase list because <span class="k">data.phrases</span> is missing/empty in{" "}
-        <span class="k">src/data/morse.json</span>. Add phrases there to fully control SEO phrase pages.
-      </p>
-    )}
   </header>
 
   <section class="card" style="margin-top:16px;">
     <div class="phrase-row">
-      <span class="chip">{safePhrase || "(unknown phrase)"}</span>
+      <span class="chip">{safePhrase}</span>
       <span class="muted">→</span>
       <span class="chip chip-morse">{morse || "(not available)"}</span>
     </div>
@@ -203,10 +172,6 @@ const translatorHref = safePhrase
       <a class="nav-link" href={translatorHref}>Open translator</a>
       <a class="nav-link" href="/phrases/">Browse all phrases</a>
     </div>
-
-    <p class="muted" style="margin-top:12px;">
-      Learning tip: start slow, focus on accuracy, then increase speed (WPM) gradually.
-    </p>
   </section>
 
   <section class="card" style="margin-top:16px;">
@@ -228,19 +193,7 @@ const translatorHref = safePhrase
       <strong>How do you separate letters and words in Morse code?</strong><br />
       <span class="muted">Use spaces between letters and use “/” between words.</span>
     </p>
-    <p>
-      <strong>Can I decode Morse back to text?</strong><br />
-      <span class="muted">Yes — paste Morse into the translator and click <span class="k">Morse → Text</span>.</span>
-    </p>
   </section>
-
-  <p class="muted" style="margin-top:16px">
-    Explore:
-    <a href="/morse-code/a/">alphabet</a> •
-    <a href="/morse-code/numbers/">numbers</a> •
-    <a href="/morse-code/punctuation/">punctuation</a> •
-    <a href="/">home</a>
-  </p>
 
   <script is:inline define:vars={{ morse }}>
     const btn = document.getElementById("copy");
@@ -286,7 +239,6 @@ const translatorHref = safePhrase
     .hero { margin-top: 10px; }
     .hero-title { margin-bottom: 8px; }
     .hero-sub { margin-top: 0; max-width: 72ch; }
-    .warn { margin-top: 12px; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; background: rgba(255,255,255,0.03); }
 
     .section-head{
       display:flex;
@@ -313,11 +265,6 @@ const translatorHref = safePhrase
       padding: 6px 10px;
       border-radius: 999px;
       color: rgba(255,255,255,0.92);
-    }
-
-    .crumb:hover{
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.18);
     }
 
     .sep { opacity: .65; }
