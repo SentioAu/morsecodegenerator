@@ -3,7 +3,6 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
-// small, safe slugify (no external deps)
 function slugify(input) {
   return String(input ?? "")
     .toLowerCase()
@@ -14,7 +13,6 @@ function slugify(input) {
     .slice(0, 80) || "phrase";
 }
 
-// normalize morse map
 function loadMap() {
   const raw = data?.morseMap ?? {};
   return Object.fromEntries(
@@ -24,13 +22,11 @@ function loadMap() {
   );
 }
 
-// phrases can be: [["sos","SOS"], ...] OR [{slug,phrase}, ...]
-// This loader always returns [{slug, phrase}, ...]
 function loadPhrases() {
   const raw = data?.phrases;
   if (!Array.isArray(raw)) return [];
 
-  // pairs
+  // pairs: [["sos","SOS"], ...]
   if (raw.length && Array.isArray(raw[0])) {
     return raw
       .map((row) => {
@@ -42,7 +38,7 @@ function loadPhrases() {
       .filter(Boolean);
   }
 
-  // objects
+  // objects fallback (not used by your JSON, but safe)
   return raw
     .map((p) => {
       if (!p) return null;
@@ -67,7 +63,6 @@ const phrases = loadPhrases();
 
 const { slug: propSlug, phrase: propPhrase } = Astro.props;
 
-// also allow recovering phrase from slug (if props missing for any reason)
 const currentSlug = String(propSlug ?? Astro.params.slug ?? "");
 const currentPhrase =
   String(propPhrase ?? phrases.find((p) => p.slug === currentSlug)?.phrase ?? "").trim();
@@ -87,10 +82,8 @@ const translatorHref = currentPhrase
   ? `/translate/?q=${encodeURIComponent(currentPhrase)}`
   : "/translate/";
 
-// more phrases
-const popular = phrases
-  .filter((p) => p.slug !== currentSlug)
-  .slice(0, 24);
+// More phrases
+const popular = phrases.filter((p) => p.slug !== currentSlug).slice(0, 24);
 
 // JSON-LD
 const crumbs = [
