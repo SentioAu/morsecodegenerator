@@ -3,31 +3,30 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
-function normalizeMap(payload: any) {
-  const rawMap = payload?.morseMap ?? {};
-  return Object.fromEntries(
-    Object.entries(rawMap)
-      .filter(([k, v]) => k && v && k !== " ")
-      .map(([k, v]) => [String(k).toUpperCase(), String(v)])
-  );
-}
-
-function sortChars(list: string[]) {
-  // Prefer A–Z first, then 0–9
-  const weight = (x: string) => (/^[A-Z]$/.test(x) ? 0 : 1);
-  return [...list].sort((a, b) => {
-    const wa = weight(a), wb = weight(b);
-    if (wa !== wb) return wa - wb;
-    return a.localeCompare(b, "en");
-  });
-}
-
 export function getStaticPaths() {
-  const map = normalizeMap(data);
-  const keys = Object.keys(map);
+  // ✅ Define helpers INSIDE getStaticPaths (Astro-safe)
+  function normalizeMap(payload) {
+    const rawMap = payload?.morseMap ?? {};
+    return Object.fromEntries(
+      Object.entries(rawMap)
+        .filter(([k, v]) => k && v && k !== " ")
+        .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+    );
+  }
 
+  function sortChars(list) {
+    const weight = (x) => (/^[A-Z]$/.test(x) ? 0 : 1);
+    return [...list].sort((a, b) => {
+      const wa = weight(a),
+        wb = weight(b);
+      if (wa !== wb) return wa - wb;
+      return a.localeCompare(b, "en");
+    });
+  }
+
+  const map = normalizeMap(data);
   const chars = sortChars(
-    keys
+    Object.keys(map)
       .filter((k) => k && k.length === 1)
       .map((k) => k.toUpperCase())
       .filter((k) => /^[A-Z0-9]$/.test(k))
@@ -36,11 +35,21 @@ export function getStaticPaths() {
   return chars.map((CH, i) => ({
     params: { ch: CH.toLowerCase() },
     props: {
-      ch: CH, // uppercase
+      ch: CH,
       prev: i > 0 ? chars[i - 1] : null,
       next: i < chars.length - 1 ? chars[i + 1] : null,
     },
   }));
+}
+
+// ✅ Runtime helpers (not used by getStaticPaths)
+function normalizeMap(payload) {
+  const rawMap = payload?.morseMap ?? {};
+  return Object.fromEntries(
+    Object.entries(rawMap)
+      .filter(([k, v]) => k && v && k !== " ")
+      .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+  );
 }
 
 const { ch, prev, next } = Astro.props;
@@ -50,7 +59,7 @@ const site =
 
 const CH = String(ch ?? "").toUpperCase();
 const map = normalizeMap(data);
-const code: string = map[CH] ?? "";
+const code = map[CH] ?? "";
 
 const isLetter = /^[A-Z]$/.test(CH);
 const isNumber = /^[0-9]$/.test(CH);
@@ -60,7 +69,9 @@ const description = code
   ? `Learn how to write ${CH} in Morse code (${code}). Copy it, listen to it, and practice with examples.`
   : `Learn how to write ${CH} in Morse code. Copy it, listen to it, and practice with examples.`;
 
-const translatorHref = code ? `/translate/?q=${encodeURIComponent(CH)}` : "/translate/";
+const translatorHref = code
+  ? `/translate/?q=${encodeURIComponent(CH)}`
+  : "/translate/";
 
 const tips = (() => {
   if (!code) return [];
@@ -68,30 +79,18 @@ const tips = (() => {
   const dashes = (code.match(/-/g) || []).length;
   const len = dots + dashes;
   return [
-    `${len} signals (${dots} dot${dots === 1 ? "" : "s"}, ${dashes} dash${dashes === 1 ? "" : "es"})`,
+    `${len} signals (${dots} dot${dots === 1 ? "" : "s"}, ${dashes} dash${
+      dashes === 1 ? "" : "es"
+    })`,
     "Dots are short • dashes are long",
     "Letters use spaces • words use “/”",
   ];
 })();
 
 const examples = isLetter
-  ? [
-      `${CH}`,
-      `${CH}A`,
-      `A${CH}`,
-      `${CH}E`,
-      `E${CH}`,
-      `SOS`,
-    ]
+  ? [`${CH}`, `${CH}A`, `A${CH}`, `${CH}E`, `E${CH}`, `SOS`]
   : isNumber
-  ? [
-      `${CH}`,
-      `${CH}0`,
-      `1${CH}`,
-      `${CH}${CH}`,
-      `2026`,
-      `SOS`,
-    ]
+  ? [`${CH}`, `${CH}0`, `1${CH}`, `${CH}${CH}`, `2026`, `SOS`]
   : [`${CH}`, `SOS`, `HELLO`];
 
 const examplesMorse = examples.map((t) => ({
@@ -236,7 +235,6 @@ const jsonLd = {
       setTimeout(() => (copyBtn.textContent = old), 1000);
     });
 
-    // Simple WebAudio “listen” (dot = 1 unit, dash = 3 units, intra = 1, letter gap = 3)
     function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
     listenBtn?.addEventListener("click", async () => {
@@ -247,7 +245,7 @@ const jsonLd = {
       const old = listenBtn.textContent;
       listenBtn.textContent = "Playing…";
 
-      const unit = 90; // ms
+      const unit = 90;
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
       async function beep(durationMs){
@@ -264,16 +262,9 @@ const jsonLd = {
 
       try {
         for (const ch of value) {
-          if (ch === ".") {
-            await beep(unit);
-            await sleep(unit); // intra-element gap
-          } else if (ch === "-") {
-            await beep(unit * 3);
-            await sleep(unit);
-          } else {
-            // spaces (end of letter)
-            await sleep(unit * 2); // already slept 1 unit after last element → total ~3
-          }
+          if (ch === ".") { await beep(unit); await sleep(unit); }
+          else if (ch === "-") { await beep(unit * 3); await sleep(unit); }
+          else { await sleep(unit * 2); }
         }
       } catch {}
       try { await ctx.close(); } catch {}
@@ -284,121 +275,39 @@ const jsonLd = {
   </script>
 
   <style>
-    .crumbs{
-      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
-      font-size: 13px; opacity: .92; margin-top: 2px;
-    }
-    .crumb{
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.02);
-      padding: 6px 10px;
-      border-radius: 999px;
-      color: rgba(255,255,255,0.92);
-    }
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.02); padding:6px 10px; border-radius:999px; color:rgba(255,255,255,0.92); }
     .sep{ opacity:.65; }
-    .crumb-current{
-      display:inline-flex; align-items:center;
-      padding: 6px 10px; border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.015);
-      color: rgba(255,255,255,0.78);
-    }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.10); background:rgba(255,255,255,0.015); color:rgba(255,255,255,0.78); }
 
-    .hero{ margin-top: 10px; }
-    .kicker{
-      margin: 0 0 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-    .title{ margin: 0 0 10px; }
+    .hero{ margin-top:10px; }
+    .kicker{ margin:0 0 10px; letter-spacing:.08em; text-transform:uppercase; font-size:12px; }
+    .title{ margin:0 0 10px; }
 
-    .code-row{
-      display:flex; gap:12px; align-items:center; flex-wrap:wrap;
-      margin-top: 10px;
-    }
-    .badge{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding: 8px 12px; border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.92);
-      font-weight: 800;
-    }
-    .badge-code{
-      font-weight: 700;
-      letter-spacing: .4px;
-    }
+    .code-row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+    .badge{ display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.02); color:rgba(255,255,255,0.92); font-weight:800; }
+    .badge-code{ font-weight:700; letter-spacing:.4px; }
 
-    .chips{
-      margin-top: 12px;
-      display:flex; flex-wrap:wrap; gap: 8px; align-items:center;
-    }
-    .chip{
-      display:inline-flex; align-items:center;
-      padding: 7px 10px; border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.82);
-      font-size: 13px; line-height: 1.2;
-    }
+    .chips{ margin-top:12px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .chip{ display:inline-flex; align-items:center; padding:7px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.10); background:rgba(255,255,255,0.02); color:rgba(255,255,255,0.82); font-size:13px; line-height:1.2; }
 
-    .actions{
-      margin-top: 14px;
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding: 10px 14px; border-radius: 999px; text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.92);
-      font-weight: 800;
-      line-height: 1;
-    }
-    .btn.ghost{
-      border-color: rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      font-weight: 750;
-    }
+    .actions{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:999px; text-decoration:none; border:1px solid rgba(255,255,255,0.16); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.92); font-weight:800; line-height:1; }
+    .btn.ghost{ border-color:rgba(255,255,255,0.16); background:rgba(255,255,255,0.03); font-weight:750; }
+    button.ghost{ border-color:rgba(255,255,255,0.18) !important; background:rgba(255,255,255,0.03) !important; font-weight:750; }
 
-    button.ghost{
-      border-color: rgba(255,255,255,0.18) !important;
-      background: rgba(255,255,255,0.03) !important;
-      font-weight: 750;
-    }
+    .section-head{ display:flex; flex-wrap:wrap; gap:6px 14px; align-items:baseline; justify-content:space-between; }
 
-    .section-head{
-      display:flex; flex-wrap:wrap;
-      gap: 6px 14px; align-items: baseline;
-      justify-content: space-between;
-    }
+    .ex-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
+    @media (min-width: 900px){ .ex-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
 
-    .ex-grid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-    }
-    @media (min-width: 900px){
-      .ex-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
-    }
-
-    .ex{
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.11);
-      background: rgba(255,255,255,0.02);
-      border-radius: 16px;
-      padding: 12px;
-      display:flex; flex-direction:column; gap: 8px;
-      color: rgba(255,255,255,0.92);
-    }
-    .ex:hover{ border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); }
-    .ex-text{ font-weight: 850; }
-    .ex-morse{ opacity: .92; font-size: 14px; }
+    .ex{ text-decoration:none; border:1px solid rgba(255,255,255,0.11); background:rgba(255,255,255,0.02); border-radius:16px; padding:12px; display:flex; flex-direction:column; gap:8px; color:rgba(255,255,255,0.92); }
+    .ex:hover{ border-color:rgba(255,255,255,0.18); background:rgba(255,255,255,0.04); }
+    .ex-text{ font-weight:850; }
+    .ex-morse{ opacity:.92; font-size:14px; }
 
     @media (max-width: 600px){
-      .actions > *{ width: 100%; justify-content:center; }
+      .actions > *{ width:100%; justify-content:center; }
     }
   </style>
 </Layout>
