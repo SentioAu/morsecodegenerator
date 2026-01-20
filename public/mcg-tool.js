@@ -3,7 +3,9 @@
   function onReady(fn) {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", fn, { once: true });
-    } else fn();
+    } else {
+      fn();
+    }
   }
 
   async function loadMorsePayload() {
@@ -13,9 +15,6 @@
   }
 
   function extractCharToMorse(payload) {
-    // Supports:
-    // 1) { morseMap: { A: ".-", ... }, phrases: [...] }
-    // 2) { A: ".-", ... } (legacy)
     if (payload && typeof payload === "object") {
       if (payload.morseMap && typeof payload.morseMap === "object") return payload.morseMap;
       return payload;
@@ -24,94 +23,60 @@
   }
 
   function sanitizeCharMap(map) {
-    // Ignore " " mapping if present. Word separation is handled by joining words with " / ".
     const out = {};
     for (const [k, v] of Object.entries(map || {})) {
       if (!k || !v) continue;
       if (k === " ") continue;
-      out[String(k).toUpperCase()] = String(v);
+      out[k.toUpperCase()] = v;
     }
     return out;
+  }
+
+  function normText(s) {
+    return (s || "").toUpperCase();
+  }
+
+  function normMorse(s) {
+    return (s || "")
+      .replaceAll("·", ".")
+      .replaceAll("–", "-")
+      .replaceAll("—", "-")
+      .replace(/\s*\|\s*/g, " / ")
+      .trim();
   }
 
   function buildReverseMap(map) {
     const out = {};
     for (const [k, v] of Object.entries(map || {})) {
       if (!k || !v) continue;
-      if (out[v] == null) out[v] = k; // keep first if collision
+      if (out[v] == null) out[v] = k;
     }
     return out;
   }
 
-  // -------------------------
-  // Normalizers
-  // -------------------------
-  function normText(s) {
-    return String(s || "").toUpperCase();
-  }
-
-  function normMorse(s) {
-    // Accept common variations people paste:
-    // - middle dot (·) / bullet (•) -> .
-    // - en/em dash (–/—) -> -
-    // - "|" or "\" as word separator -> "/"
-    // - collapse spaces
-    return String(s || "")
-      .replaceAll("·", ".")
-      .replaceAll("•", ".")
-      .replaceAll("–", "-")
-      .replaceAll("—", "-")
-      .replace(/\s*(\||\\)\s*/g, " / ")
-      .replace(/\s*\/+\s*/g, " / ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function looksLikeMorse(s) {
-    // Heuristic: contains only morse-ish chars and at least one dot/dash
-    const t = String(s || "").trim();
-    if (!t) return false;
-    const hasSignal = /[.\-]/.test(t) || /[·•–—]/.test(t);
-    const okChars = /^[.\-\/\s|\\·•–—]+$/.test(t);
-    return hasSignal && okChars;
-  }
-
-  // -------------------------
-  // Converters
-  // -------------------------
-  function textToMorseDetailed(input, CHAR_TO_MORSE) {
+  // text -> morse (ignore unsupported chars, preserve word breaks)
+  function textToMorse(input, CHAR_TO_MORSE) {
     const s = normText(input).trim();
-    if (!s) return { out: "", missing: [] };
-
-    const missing = [];
+    if (!s) return "";
     const words = s.split(/\s+/).filter(Boolean);
 
-    const out = words
+    return words
       .map((w) =>
         w
           .split("")
-          .map((ch) => {
-            const m = CHAR_TO_MORSE[ch];
-            if (!m) {
-              missing.push(ch);
-              return "";
-            }
-            return m;
-          })
+          .map((ch) => CHAR_TO_MORSE[ch] || "")
           .filter(Boolean)
           .join(" ")
       )
       .filter(Boolean)
       .join(" / ");
-
-    const uniqMissing = Array.from(new Set(missing)).filter((x) => x && x !== " ");
-    return { out, missing: uniqMissing };
   }
 
   function morseToText(input, MORSE_TO_CHAR) {
     const s = normMorse(input);
     if (!s) return "";
-    const words = s.split(/\s*\/\s*/).filter(Boolean);
+
+    const words = s.split(/\s*\/+\s*/).filter(Boolean);
 
     return words
       .map((w) =>
@@ -125,9 +90,20 @@
       .join(" ");
   }
 
-  // -------------------------
-  // Clipboard
-  // -------------------------
+  // simple heuristic: if it contains mostly .-/ and spaces, treat as morse
+  function looksLikeMorse(raw) {
+    const s = (raw || "").trim();
+    if (!s) return false;
+    // any letters strongly suggests text
+    if (/[A-Za-z0-9]/.test(s)) {
+      // allow numbers in morse input too, but if there are many letters, it’s text
+      const letters = (s.match(/[A-Za-z]/g) || []).length;
+      if (letters > 0) return false;
+    }
+    // if it contains dot/dash, likely morse
+    return /[.\-·–—]/.test(s);
+  }
+
   async function copyToClipboard(text) {
     const t = text || "";
     try {
@@ -152,39 +128,11 @@
     }
   }
 
-  // -------------------------
-  // UI helpers
-  // -------------------------
-  function setBtnLabel(btn, text, ms) {
+  function setBtnToast(btn, text) {
     if (!btn) return;
     const old = btn.textContent;
     btn.textContent = text;
-    if (ms) setTimeout(() => (btn.textContent = old), ms);
-  }
-
-  function ensureHintEl(output) {
-    const parent = output?.parentElement;
-    if (!parent) return null;
-
-    let el = parent.querySelector("[data-mcg-hint]");
-    if (!el) {
-      el = document.createElement("p");
-      el.setAttribute("data-mcg-hint", "true");
-      el.style.margin = "10px 0 0";
-      el.style.fontSize = "13px";
-      el.style.opacity = "0.78";
-      el.style.maxWidth = "72ch";
-      parent.appendChild(el);
-    }
-    return el;
-  }
-
-  function debounce(fn, wait) {
-    let t = null;
-    return function (...args) {
-      if (t) clearTimeout(t);
-      t = setTimeout(() => fn.apply(this, args), wait);
-    };
+    setTimeout(() => (btn.textContent = old), 900);
   }
 
   onReady(async () => {
@@ -196,14 +144,8 @@
     const btnSwap = document.getElementById("mcg-swap");
     const btnClear = document.getElementById("mcg-clear");
 
-    // Safe for other pages
-    if (!input || !output) return;
-
-    // Track whether user interacted, to avoid "surprise" auto-convert on load
-    let userTouched = false;
-    const markTouched = () => (userTouched = true);
-    input.addEventListener("keydown", markTouched, { once: true });
-    input.addEventListener("paste", markTouched, { once: true });
+    // If page doesn't have the tool, do nothing
+    if (!input || !output || !btnT2M || !btnM2T || !btnCopy) return;
 
     let CHAR_TO_MORSE;
     let MORSE_TO_CHAR;
@@ -224,92 +166,59 @@
       return;
     }
 
-    const hint = ensureHintEl(output);
-
-    function renderHint(message) {
-      if (!hint) return;
-      hint.textContent = message || "";
-      hint.style.display = message ? "" : "none";
+    function runTextToMorse() {
+      output.value = textToMorse(input.value, CHAR_TO_MORSE);
     }
-
-    function convertAuto(showHint) {
-      const v = String(input.value || "").trim();
-      if (!v) {
-        output.value = "";
-        if (showHint) renderHint("");
-        return;
-      }
-
-      if (looksLikeMorse(v)) {
-        output.value = morseToText(v, MORSE_TO_CHAR);
-        if (showHint) renderHint("Detected Morse input → decoded to text.");
-      } else {
-        const { out, missing } = textToMorseDetailed(v, CHAR_TO_MORSE);
-        output.value = out;
-        if (showHint) {
-          if (missing.length) renderHint(`Some characters were skipped: ${missing.join(" ")}`);
-          else renderHint("Detected text input → converted to Morse.");
-        }
-      }
-    }
-
-    const convertLive = debounce(() => {
-      // Live convert while typing, but avoid noisy hints
-      convertAuto(false);
-    }, 120);
-
-    const convertWithHint = () => convertAuto(true);
-
-    // Buttons (if present)
-    btnT2M?.addEventListener("click", () => {
-      const { out, missing } = textToMorseDetailed(input.value, CHAR_TO_MORSE);
-      output.value = out;
-      if (missing.length) renderHint(`Some characters were skipped: ${missing.join(" ")}`);
-      else renderHint("Converted: Text → Morse.");
-    });
-
-    btnM2T?.addEventListener("click", () => {
+    function runMorseToText() {
       output.value = morseToText(input.value, MORSE_TO_CHAR);
-      renderHint("Converted: Morse → Text.");
-    });
+    }
 
-    btnCopy?.addEventListener("click", async () => {
-      const val = String(output.value || "").trim();
+    // Buttons
+    btnT2M.addEventListener("click", runTextToMorse);
+    btnM2T.addEventListener("click", runMorseToText);
+
+    btnCopy.addEventListener("click", async () => {
+      const val = (output.value || "").trim();
       if (!val) return;
       const ok = await copyToClipboard(val);
-      setBtnLabel(btnCopy, ok ? "Copied ✓" : "Copy failed", 900);
+      setBtnToast(btnCopy, ok ? "Copied ✓" : "Copy failed");
     });
 
     btnSwap?.addEventListener("click", () => {
-      const a = input.value;
-      input.value = output.value;
+      const a = input.value || "";
+      const b = output.value || "";
+      input.value = b;
       output.value = a;
-      input.focus();
-      userTouched = true;
-      convertWithHint();
-      renderHint("Swapped input/output.");
+      setBtnToast(btnSwap, "Swapped ✓");
     });
 
     btnClear?.addEventListener("click", () => {
       input.value = "";
       output.value = "";
       input.focus();
-      userTouched = true;
-      renderHint("");
+      setBtnToast(btnClear, "Cleared ✓");
     });
 
-    // Live feel: auto-convert on input (no hints)
+    // Auto-detect on input (throttled)
+    let t = null;
     input.addEventListener("input", () => {
-      userTouched = true;
-      convertLive();
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const raw = input.value || "";
+        if (!raw.trim()) {
+          output.value = "";
+          return;
+        }
+        if (looksLikeMorse(raw)) runMorseToText();
+        else runTextToMorse();
+      }, 140);
     });
 
-    // ✅ Initial behavior:
-    // - If URL has ?q= (pages set input.value), convert once with hint
-    // - Otherwise DON'T auto-convert on load (prevents "weird typing" feel)
-    const hasQuery = new URLSearchParams(location.search).has("q");
-    if (hasQuery && String(input.value || "").trim()) {
-      convertWithHint();
+    // Run once on load to populate output for default text (e.g., "HELLO")
+    const init = (input.value || "").trim();
+    if (init) {
+      if (looksLikeMorse(init)) runMorseToText();
+      else runTextToMorse();
     }
   });
 })();
