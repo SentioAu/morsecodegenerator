@@ -38,8 +38,7 @@
     const out = {};
     for (const [k, v] of Object.entries(map || {})) {
       if (!k || !v) continue;
-      // Keep first if collision
-      if (out[v] == null) out[v] = k;
+      if (out[v] == null) out[v] = k; // keep first if collision
     }
     return out;
   }
@@ -69,7 +68,7 @@
   }
 
   function looksLikeMorse(s) {
-    // Heuristic: contains only morse-ish chars (., -, /, spaces) and at least one dot/dash
+    // Heuristic: contains only morse-ish chars and at least one dot/dash
     const t = String(s || "").trim();
     if (!t) return false;
     const hasSignal = /[.\-]/.test(t) || /[·•–—]/.test(t);
@@ -94,7 +93,6 @@
           .map((ch) => {
             const m = CHAR_TO_MORSE[ch];
             if (!m) {
-              // Track unsupported (but ignore whitespace which we already split on)
               missing.push(ch);
               return "";
             }
@@ -106,7 +104,6 @@
       .filter(Boolean)
       .join(" / ");
 
-    // De-dupe missing
     const uniqMissing = Array.from(new Set(missing)).filter((x) => x && x !== " ");
     return { out, missing: uniqMissing };
   }
@@ -114,7 +111,6 @@
   function morseToText(input, MORSE_TO_CHAR) {
     const s = normMorse(input);
     if (!s) return "";
-
     const words = s.split(/\s*\/\s*/).filter(Boolean);
 
     return words
@@ -167,7 +163,6 @@
   }
 
   function ensureHintEl(output) {
-    // Adds a small muted line under output textarea (no CSS dependency)
     const parent = output?.parentElement;
     if (!parent) return null;
 
@@ -204,6 +199,12 @@
     // Safe for other pages
     if (!input || !output) return;
 
+    // Track whether user interacted, to avoid "surprise" auto-convert on load
+    let userTouched = false;
+    const markTouched = () => (userTouched = true);
+    input.addEventListener("keydown", markTouched, { once: true });
+    input.addEventListener("paste", markTouched, { once: true });
+
     let CHAR_TO_MORSE;
     let MORSE_TO_CHAR;
 
@@ -231,40 +232,40 @@
       hint.style.display = message ? "" : "none";
     }
 
-    function runAutoConvert() {
+    function convertAuto(showHint) {
       const v = String(input.value || "").trim();
       if (!v) {
         output.value = "";
-        renderHint("");
+        if (showHint) renderHint("");
         return;
       }
 
       if (looksLikeMorse(v)) {
-        const decoded = morseToText(v, MORSE_TO_CHAR);
-        output.value = decoded;
-        renderHint("Detected Morse input → decoded to text.");
+        output.value = morseToText(v, MORSE_TO_CHAR);
+        if (showHint) renderHint("Detected Morse input → decoded to text.");
       } else {
         const { out, missing } = textToMorseDetailed(v, CHAR_TO_MORSE);
         output.value = out;
-        if (missing.length) {
-          renderHint(`Some characters were skipped (no Morse mapping): ${missing.join(" ")}`);
-        } else {
-          renderHint("Detected text input → converted to Morse.");
+        if (showHint) {
+          if (missing.length) renderHint(`Some characters were skipped: ${missing.join(" ")}`);
+          else renderHint("Detected text input → converted to Morse.");
         }
       }
     }
 
-    const runAutoConvertDebounced = debounce(runAutoConvert, 120);
+    const convertLive = debounce(() => {
+      // Live convert while typing, but avoid noisy hints
+      convertAuto(false);
+    }, 120);
+
+    const convertWithHint = () => convertAuto(true);
 
     // Buttons (if present)
     btnT2M?.addEventListener("click", () => {
       const { out, missing } = textToMorseDetailed(input.value, CHAR_TO_MORSE);
       output.value = out;
-      if (missing.length) {
-        renderHint(`Some characters were skipped (no Morse mapping): ${missing.join(" ")}`);
-      } else {
-        renderHint("Converted: Text → Morse.");
-      }
+      if (missing.length) renderHint(`Some characters were skipped: ${missing.join(" ")}`);
+      else renderHint("Converted: Text → Morse.");
     });
 
     btnM2T?.addEventListener("click", () => {
@@ -284,7 +285,8 @@
       input.value = output.value;
       output.value = a;
       input.focus();
-      runAutoConvertDebounced();
+      userTouched = true;
+      convertWithHint();
       renderHint("Swapped input/output.");
     });
 
@@ -292,13 +294,22 @@
       input.value = "";
       output.value = "";
       input.focus();
+      userTouched = true;
       renderHint("");
     });
 
-    // Live feel: auto-convert on input
-    input.addEventListener("input", runAutoConvertDebounced);
+    // Live feel: auto-convert on input (no hints)
+    input.addEventListener("input", () => {
+      userTouched = true;
+      convertLive();
+    });
 
-    // Initial run (for default HELLO or ?q=)
-    runAutoConvertDebounced();
+    // ✅ Initial behavior:
+    // - If URL has ?q= (pages set input.value), convert once with hint
+    // - Otherwise DON'T auto-convert on load (prevents "weird typing" feel)
+    const hasQuery = new URLSearchParams(location.search).has("q");
+    if (hasQuery && String(input.value || "").trim()) {
+      convertWithHint();
+    }
   });
 })();
