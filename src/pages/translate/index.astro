@@ -13,27 +13,23 @@ const hasInitial = Boolean(initial);
 
 <Layout title={title} description={description}>
   <header class="hero">
-    <div class="hero-inner">
-      <div class="hero-copy">
-        <p class="hero-kicker muted">Fast • Private • No logins</p>
-        <h1 class="hero-title">Text to Morse Translator</h1>
-        <p class="muted hero-sub">
-          Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
-          Runs locally in your browser (no account needed).
-        </p>
+    <p class="muted kicker">Fast • Private • No logins</p>
+    <h1 class="title">Text to Morse Translator</h1>
+    <p class="muted sub">
+      Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
+      Runs locally in your browser.
+    </p>
 
-        <div class="hero-actions">
-          <a class="cta primary" href="/phrases/">Practice phrases</a>
-          <a class="cta ghost" href="/morse-code/a/">Learn alphabet</a>
-          <a class="cta ghost" href="/">Back to home</a>
-        </div>
+    <div class="hero-actions">
+      <a class="btn primary" href="/phrases/">Practice phrases</a>
+      <a class="btn" href="/morse-code/a/">Learn alphabet</a>
+      <a class="btn" href="/">Home</a>
+    </div>
 
-        <div class="hint-row">
-          <span class="hint">Letters: spaces</span>
-          <span class="hint">Words: “/”</span>
-          <span class="hint muted">Example: <span class="k">SOS</span> → <span class="k">... --- ...</span></span>
-        </div>
-      </div>
+    <div class="chips" aria-label="Morse formatting tips">
+      <span class="chip">Letters: spaces</span>
+      <span class="chip">Words: “/”</span>
+      <span class="chip muted">SOS → <span class="k">... --- ...</span></span>
     </div>
   </header>
 
@@ -44,7 +40,7 @@ const hasInitial = Boolean(initial);
         <p class="muted tool-sub">Spaces separate letters • “/” separates words</p>
       </div>
 
-      <div class="tool-mini-links muted">
+      <div class="muted tool-mini-links" aria-label="Quick examples">
         <a href="/translate/?q=HELLO">HELLO</a> •
         <a href="/translate/?q=SOS">SOS</a> •
         <a href="/translate/?q=I%20LOVE%20YOU">I LOVE YOU</a>
@@ -56,26 +52,21 @@ const hasInitial = Boolean(initial);
         <label for="mcg-input" class="lbl">Input</label>
         <textarea
           id="mcg-input"
-          rows="9"
+          class="ta"
+          rows="8"
           placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
         ></textarea>
 
         <div class="actions">
-          <div class="action-group primary">
-            <button id="mcg-text-to-morse" type="button">Text → Morse</button>
-            <button id="mcg-morse-to-text" type="button">Morse → Text</button>
-            <button id="mcg-copy" type="button">Copy output</button>
-          </div>
-
-          <div class="action-group secondary">
-            <button id="mcg-swap" type="button" class="ghost-btn">Swap</button>
-            <button id="mcg-clear" type="button" class="ghost-btn">Clear</button>
-          </div>
+          <button id="mcg-text-to-morse" type="button">Text → Morse</button>
+          <button id="mcg-morse-to-text" type="button" class="ghost">Morse → Text</button>
+          <button id="mcg-copy" type="button" class="ghost">Copy output</button>
+          <button id="mcg-swap" type="button" class="ghost">Swap</button>
+          <button id="mcg-clear" type="button" class="ghost">Clear</button>
         </div>
 
         <p class="muted micro">
-          Example:
-          <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
+          Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
         </p>
       </div>
 
@@ -83,13 +74,13 @@ const hasInitial = Boolean(initial);
         <label for="mcg-output" class="lbl">Output</label>
         <textarea
           id="mcg-output"
-          rows="9"
-          class="mono"
+          class="ta mono"
+          rows="8"
           placeholder="Result appears here..."
         ></textarea>
 
         <p class="muted micro">
-          Tip: you can share links like <span class="k">/translate/?q=YOUR+TEXT</span>.
+          Tip: share links like <span class="k">/translate/?q=YOUR+TEXT</span>.
         </p>
       </div>
     </div>
@@ -172,7 +163,6 @@ const hasInitial = Boolean(initial);
 
         if (!input || !output) return;
 
-        // Fix: don't render text inside <textarea>...</textarea> (whitespace + selection bugs)
         if (initial && !input.value.trim()) input.value = String(initial);
         if (!initial && !input.value.trim()) input.value = "HELLO";
 
@@ -199,16 +189,15 @@ const hasInitial = Boolean(initial);
   </script>
 
   <style>
-    .hero { margin-bottom: 14px; }
-    .hero-kicker{
+    .hero { margin: 6px 0 14px; text-align: center; }
+    .kicker{
       margin: 0 0 10px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       font-size: 12px;
-      text-align: center;
     }
-    .hero-title { margin: 0 0 8px; text-align: center; }
-    .hero-sub { margin: 0 auto; max-width: 72ch; text-align: center; }
+    .title { margin: 0 0 8px; }
+    .sub { margin: 0 auto; max-width: 72ch; }
 
     .hero-actions{
       margin-top: 14px;
@@ -218,32 +207,27 @@ const hasInitial = Boolean(initial);
       flex-wrap:wrap;
     }
 
-    .cta{
+    /* Use the same button style language as Layout */
+    .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-height: 38px;
-      padding: 0 14px;
+      padding: 10px 14px;
       border-radius: 999px;
       text-decoration:none;
       border: 1px solid rgba(255,255,255,0.16);
       background: rgba(255,255,255,0.03);
       color: rgba(255,255,255,0.92);
-      font-weight: 850;
+      font-weight: 800;
       line-height: 1;
     }
-    .cta:hover { opacity: 0.95; }
-    .cta.primary{
+    .btn.primary{
       border-color: rgba(138,180,255,0.30);
       background: rgba(138,180,255,0.12);
     }
-    .cta.ghost{
-      border-color: rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      font-weight: 750;
-    }
+    .btn:hover { opacity: .95; }
 
-    .hint-row{
+    .chips{
       margin-top: 14px;
       display:flex;
       flex-wrap:wrap;
@@ -251,7 +235,7 @@ const hasInitial = Boolean(initial);
       justify-content:center;
       align-items:center;
     }
-    .hint{
+    .chip{
       display:inline-flex;
       align-items:center;
       padding: 7px 10px;
@@ -270,6 +254,7 @@ const hasInitial = Boolean(initial);
       gap: 10px 14px;
       align-items: baseline;
       justify-content: space-between;
+      margin-bottom: 10px;
     }
     .tool-title { margin: 0 0 6px; }
     .tool-sub { margin: 0; }
@@ -277,29 +262,20 @@ const hasInitial = Boolean(initial);
     .tool-mini-links a { text-decoration: none; }
     .tool-mini-links a:hover { text-decoration: underline; }
 
-    .tool-grid { margin-top: 12px; }
-
-    .section-head{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px 14px;
-      align-items: baseline;
-      justify-content: space-between;
-    }
-    .section-title{ margin: 0; }
-    .section-note{ margin: 0; }
-
     .lbl{
       display:inline-block;
       font-weight: 800;
       margin-bottom: 6px;
     }
 
-    textarea{
-      resize: none;
-      min-height: 190px;
+    /* Override global textarea sizing: make it feel right for typing */
+    .ta{
+      min-height: 200px;
+      line-height: 1.55;
+      padding: 14px 14px;
+      resize: vertical;
+      overflow: auto;
     }
-
     .mono{
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       letter-spacing: .25px;
@@ -307,43 +283,35 @@ const hasInitial = Boolean(initial);
 
     .actions{
       margin-top: 12px;
-      display:flex;
-      flex-direction: column;
+      display:grid;
+      grid-template-columns: 1fr;
       gap: 10px;
     }
 
-    .action-group{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 10px;
-      align-items:center;
-    }
-
-    .ghost-btn{
+    /* Ghost buttons inside the tool only */
+    .ghost{
       border-color: rgba(255,255,255,0.18) !important;
       background: rgba(255,255,255,0.03) !important;
       font-weight: 750;
     }
 
-    .micro{
-      margin-top: 10px;
-    }
+    .micro{ margin-top: 10px; }
 
     @media (min-width: 860px){
       .tool-grid { grid-template-columns: 1fr 1fr; }
+      .actions{
+        grid-template-columns: 1fr 1fr;
+      }
+      .actions button:first-child{
+        grid-column: 1 / -1; /* “Text → Morse” gets prominence */
+      }
     }
 
-    @media (max-width: 520px) {
-      .hero-kicker, .hero-title, .hero-sub { text-align: left; }
-      .hero-sub { margin-left: 0; }
-      .hero-actions { justify-content: flex-start; }
-      .hint-row { justify-content: flex-start; }
-
-      .action-group.primary button,
-      .action-group.secondary button{
-        width: 100%;
-        justify-content: center;
-      }
+    @media (max-width: 600px) {
+      .hero { text-align: left; }
+      .sub { margin-left: 0; }
+      .hero-actions, .chips { justify-content: flex-start; }
+      .ta{ min-height: 180px; }
     }
   </style>
 </Layout>
