@@ -1,20 +1,118 @@
 ---
 import Layout from "../components/Layout.astro";
+
+const title = "Page not found (404)";
+const description = "The page you requested does not exist.";
 ---
 
-<Layout
-  title="Page not found (404)"
-  description="The page you requested does not exist."
-  robots="noindex,nofollow"
->
-  <h1>Page not found</h1>
+<Layout title={title} description={description} robots="noindex,nofollow">
+  <header class="hero">
+    <p class="muted kicker">404</p>
+    <h1 class="title">Page not found</h1>
+    <p class="muted sub">
+      That URL doesn’t exist (or it moved). Use the quick tools below to recover fast.
+    </p>
 
-  <p class="muted">
-    That page doesn’t exist. Try the <a href="/translate/">translator</a> or browse
-    <a href="/phrases/"> common phrases</a>.
-  </p>
+    <div class="actions">
+      <a class="btn" href="/translate/">Open translator</a>
+      <a class="btn ghost" href="/morse-code/">Learn Morse</a>
+      <a class="btn ghost" href="/phrases/">Common phrases</a>
+      <a class="btn ghost" href="/">Homepage</a>
+    </div>
+  </header>
 
-  <p class="muted">
-    <a href="/">Go to homepage</a>
-  </p>
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin:0 0 10px;">Translate anything right now</h2>
+
+    <form id="search" class="search" autocomplete="off">
+      <label class="muted" for="q" style="display:block; margin:0 0 8px;">
+        Paste text (or Morse) and we’ll open the translator.
+      </label>
+
+      <div class="row">
+        <input id="q" name="q" type="text" placeholder="Example: SOS or HELLO or ... --- ..." />
+        <button type="submit">Open</button>
+      </div>
+
+      <p class="muted" style="margin:10px 0 0;">
+        Tip: Words are separated by <span class="k">/</span> in our Morse format.
+      </p>
+    </form>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin:0 0 10px;">Popular pages</h2>
+
+    <div class="pill-grid">
+      <a href="/morse-code/a/">A in Morse</a>
+      <a href="/morse-code/numbers/">Numbers (0–9)</a>
+      <a href="/morse-code/punctuation/">Punctuation</a>
+      <a href="/phrases/sos/">SOS</a>
+    </div>
+
+    <p class="muted" style="margin-top:12px;">
+      If you found a broken link, please report it on the <a href="/contact/">contact page</a>.
+    </p>
+  </section>
+
+  <script is:inline>
+    const form = document.getElementById("search");
+    const input = document.getElementById("q");
+    form?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const q = (input?.value || "").trim();
+      const url = q ? `/translate/?q=${encodeURIComponent(q)}` : "/translate/";
+      window.location.href = url;
+    });
+  </script>
+
+  <style>
+    .hero{ margin-top: 6px; }
+    .kicker{ margin:0 0 10px; letter-spacing:.08em; text-transform:uppercase; font-size:12px; }
+    .title{ margin:0 0 10px; }
+    .sub{ margin:0; max-width: 72ch; }
+
+    .actions{
+      margin-top: 14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      text-decoration:none;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.92);
+      font-weight: 800;
+      line-height: 1;
+    }
+    .btn.ghost{
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.03);
+      font-weight: 750;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .row input{
+      flex: 1 1 320px;
+      min-width: 220px;
+    }
+
+    @media (max-width: 600px){
+      .actions > a{ width:100%; justify-content:center; }
+      .row > *{ width:100%; }
+    }
+  </style>
 </Layout>
