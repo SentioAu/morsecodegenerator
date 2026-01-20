@@ -5,6 +5,7 @@ const {
   robots = "index,follow",
 } = Astro.props;
 
+// Keep email available for the /contact page (do NOT use mailto in header nav)
 const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
 
 const site =
@@ -33,7 +34,7 @@ const jsonLd = {
       "@id": `${site}#org`,
       name: "MorseCodeGenerator.com",
       url: site,
-      email: CONTACT_EMAIL,
+      // Intentionally omit "email" to avoid Cloudflare email-protection rewriting issues
     },
     {
       "@type": "WebSite",
@@ -143,7 +144,12 @@ const jsonLd = {
             aria-current={isActive("/about/") ? "page" : undefined}
           >About</a>
 
-          <a class="nav-link contact" href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
+          <!-- ✅ Never mailto in header nav on Cloudflare Pages -->
+          <a
+            class:list={["nav-link", isActive("/contact/") && "active", "contact"]}
+            href="/contact/"
+            aria-current={isActive("/contact/") ? "page" : undefined}
+          >Contact</a>
         </nav>
       </div>
     </header>
@@ -348,7 +354,7 @@ const jsonLd = {
         overflow:hidden;
       }
 
-      /* ✅ Fix “typing feels wrong”: normalize all form controls */
+      /* Normalize all form controls */
       textarea, input, select, button{
         font-family: inherit;
         font-size: 16px;
@@ -374,7 +380,7 @@ const jsonLd = {
         color: rgba(255,255,255,0.50);
       }
 
-      /* Make the tool textareas feel “crisp” for dots/dashes */
+      /* Crisp for dots/dashes */
       #mcg-input, #mcg-output{
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         letter-spacing: .2px;
