@@ -3,34 +3,29 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
+// -------------------------------------------------------------------
+// getStaticPaths (MUST be self-contained and not rely on outer helpers)
+// -------------------------------------------------------------------
 export function getStaticPaths() {
-  // ✅ Define helpers INSIDE getStaticPaths (Astro-safe)
-  function normalizeMap(payload) {
-    const rawMap = payload?.morseMap ?? {};
-    return Object.fromEntries(
-      Object.entries(rawMap)
-        .filter(([k, v]) => k && v && k !== " ")
-        .map(([k, v]) => [String(k).toUpperCase(), String(v)])
-    );
-  }
+  const rawMap = (data && data.morseMap) ? data.morseMap : {};
+  const map = Object.fromEntries(
+    Object.entries(rawMap)
+      .filter(([k, v]) => k && v && k !== " ")
+      .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+  );
 
-  function sortChars(list) {
-    const weight = (x) => (/^[A-Z]$/.test(x) ? 0 : 1);
-    return [...list].sort((a, b) => {
-      const wa = weight(a),
-        wb = weight(b);
+  const weight = (x) => (/^[A-Z]$/.test(x) ? 0 : 1);
+
+  const chars = Object.keys(map)
+    .filter((k) => k && String(k).length === 1)
+    .map((k) => String(k).toUpperCase())
+    .filter((k) => /^[A-Z0-9]$/.test(k))
+    .sort((a, b) => {
+      const wa = weight(a);
+      const wb = weight(b);
       if (wa !== wb) return wa - wb;
       return a.localeCompare(b, "en");
     });
-  }
-
-  const map = normalizeMap(data);
-  const chars = sortChars(
-    Object.keys(map)
-      .filter((k) => k && k.length === 1)
-      .map((k) => k.toUpperCase())
-      .filter((k) => /^[A-Z0-9]$/.test(k))
-  );
 
   return chars.map((CH, i) => ({
     params: { ch: CH.toLowerCase() },
@@ -42,23 +37,24 @@ export function getStaticPaths() {
   }));
 }
 
-// ✅ Runtime helpers (not used by getStaticPaths)
-function normalizeMap(payload) {
-  const rawMap = payload?.morseMap ?? {};
-  return Object.fromEntries(
-    Object.entries(rawMap)
-      .filter(([k, v]) => k && v && k !== " ")
-      .map(([k, v]) => [String(k).toUpperCase(), String(v)])
-  );
-}
-
+// -------------------------------------------------------------------
+// Page runtime (safe, no shared helper names)
+// -------------------------------------------------------------------
 const { ch, prev, next } = Astro.props;
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
 const CH = String(ch ?? "").toUpperCase();
-const map = normalizeMap(data);
+
+// Normalize map for rendering
+const rawMap = data?.morseMap ?? {};
+const map = Object.fromEntries(
+  Object.entries(rawMap)
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+);
+
 const code = map[CH] ?? "";
 
 const isLetter = /^[A-Z]$/.test(CH);
@@ -69,9 +65,7 @@ const description = code
   ? `Learn how to write ${CH} in Morse code (${code}). Copy it, listen to it, and practice with examples.`
   : `Learn how to write ${CH} in Morse code. Copy it, listen to it, and practice with examples.`;
 
-const translatorHref = code
-  ? `/translate/?q=${encodeURIComponent(CH)}`
-  : "/translate/";
+const translatorHref = `/translate/?q=${encodeURIComponent(CH)}`;
 
 const tips = (() => {
   if (!code) return [];
@@ -79,9 +73,7 @@ const tips = (() => {
   const dashes = (code.match(/-/g) || []).length;
   const len = dots + dashes;
   return [
-    `${len} signals (${dots} dot${dots === 1 ? "" : "s"}, ${dashes} dash${
-      dashes === 1 ? "" : "es"
-    })`,
+    `${len} signals (${dots} dot${dots === 1 ? "" : "s"}, ${dashes} dash${dashes === 1 ? "" : "es"})`,
     "Dots are short • dashes are long",
     "Letters use spaces • words use “/”",
   ];
@@ -261,9 +253,9 @@ const jsonLd = {
       }
 
       try {
-        for (const ch of value) {
-          if (ch === ".") { await beep(unit); await sleep(unit); }
-          else if (ch === "-") { await beep(unit * 3); await sleep(unit); }
+        for (const s of value) {
+          if (s === ".") { await beep(unit); await sleep(unit); }
+          else if (s === "-") { await beep(unit * 3); await sleep(unit); }
           else { await sleep(unit * 2); }
         }
       } catch {}
