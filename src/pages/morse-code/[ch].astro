@@ -3,173 +3,402 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
+function normalizeMap(payload: any) {
+  const rawMap = payload?.morseMap ?? {};
+  return Object.fromEntries(
+    Object.entries(rawMap)
+      .filter(([k, v]) => k && v && k !== " ")
+      .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+  );
+}
+
+function sortChars(list: string[]) {
+  // Prefer A–Z first, then 0–9
+  const weight = (x: string) => (/^[A-Z]$/.test(x) ? 0 : 1);
+  return [...list].sort((a, b) => {
+    const wa = weight(a), wb = weight(b);
+    if (wa !== wb) return wa - wb;
+    return a.localeCompare(b, "en");
+  });
+}
+
 export function getStaticPaths() {
-  const rawMap = data?.morseMap ?? {};
-  const keys = Object.keys(rawMap);
+  const map = normalizeMap(data);
+  const keys = Object.keys(map);
 
-  const chars = keys
-    .filter((k) => k && k.length === 1 && /^[A-Z0-9]$/.test(k.toUpperCase()))
-    .map((k) => k.toUpperCase())
-    .sort((a, b) => a.localeCompare(b, "en"));
+  const chars = sortChars(
+    keys
+      .filter((k) => k && k.length === 1)
+      .map((k) => k.toUpperCase())
+      .filter((k) => /^[A-Z0-9]$/.test(k))
+  );
 
-  return chars.map((CH) => ({
+  return chars.map((CH, i) => ({
     params: { ch: CH.toLowerCase() },
-    props: { ch: CH.toLowerCase(), chars },
+    props: {
+      ch: CH, // uppercase
+      prev: i > 0 ? chars[i - 1] : null,
+      next: i < chars.length - 1 ? chars[i + 1] : null,
+    },
   }));
 }
 
-const { ch, chars } = Astro.props;
+const { ch, prev, next } = Astro.props;
 
-// Normalize once
-const CH = (ch ?? "").toString().toUpperCase();
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
-// Normalize map: uppercase keys, ignore " " key if present
-const rawMap = data?.morseMap ?? {};
-const map = Object.fromEntries(
-  Object.entries(rawMap)
-    .filter(([k, v]) => k && v && k !== " ")
-    .map(([k, v]) => [k.toUpperCase(), v])
-);
-
-const code = map[CH] ?? "";
+const CH = String(ch ?? "").toUpperCase();
+const map = normalizeMap(data);
+const code: string = map[CH] ?? "";
 
 const isLetter = /^[A-Z]$/.test(CH);
 const isNumber = /^[0-9]$/.test(CH);
 
-const title = code ? `${CH} in Morse Code: ${code}` : `${CH} in Morse Code`;
+const title = code ? `${CH} in Morse Code (${code})` : `${CH} in Morse Code`;
 const description = code
-  ? `Learn how to write ${CH} in Morse code (${code}). Copy it and practice with examples.`
-  : `Learn how to write ${CH} in Morse code. Copy it and practice with examples.`;
+  ? `Learn how to write ${CH} in Morse code (${code}). Copy it, listen to it, and practice with examples.`
+  : `Learn how to write ${CH} in Morse code. Copy it, listen to it, and practice with examples.`;
 
-function findNeighbors(list, currentUpper) {
-  const idx = list.indexOf(currentUpper);
-  const prev = idx > 0 ? list[idx - 1] : null;
-  const next = idx >= 0 && idx < list.length - 1 ? list[idx + 1] : null;
-  return { prev, next };
-}
+const translatorHref = code ? `/translate/?q=${encodeURIComponent(CH)}` : "/translate/";
 
-const { prev, next } = findNeighbors((chars || []).map((x) => (x || "").toUpperCase()), CH);
+const tips = (() => {
+  if (!code) return [];
+  const dots = (code.match(/\./g) || []).length;
+  const dashes = (code.match(/-/g) || []).length;
+  const len = dots + dashes;
+  return [
+    `${len} signals (${dots} dot${dots === 1 ? "" : "s"}, ${dashes} dash${dashes === 1 ? "" : "es"})`,
+    "Dots are short • dashes are long",
+    "Letters use spaces • words use “/”",
+  ];
+})();
 
 const examples = isLetter
-  ? [`${CH}A`, `${CH}E`, `M${CH}S`]
+  ? [
+      `${CH}`,
+      `${CH}A`,
+      `A${CH}`,
+      `${CH}E`,
+      `E${CH}`,
+      `SOS`,
+    ]
   : isNumber
-  ? [`${CH}0`, `1${CH}`, `${CH}${CH}`]
-  : [`${CH}A`, `${CH}E`, `M${CH}S`];
+  ? [
+      `${CH}`,
+      `${CH}0`,
+      `1${CH}`,
+      `${CH}${CH}`,
+      `2026`,
+      `SOS`,
+    ]
+  : [`${CH}`, `SOS`, `HELLO`];
 
-const examplesMorse = examples.map((w) => ({
-  word: w,
-  morse: textToMorse(w, map, " "),
+const examplesMorse = examples.map((t) => ({
+  text: t,
+  morse: textToMorse(t, map, " "),
+  href: `/translate/?q=${encodeURIComponent(t)}`,
 }));
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Learn", url: `${site}/morse-code/` },
+  { name: CH, url: `${site}/morse-code/${CH.toLowerCase()}/` },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: `${site}/morse-code/${CH.toLowerCase()}/`,
+      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+    },
+  ],
+};
 ---
 
 <Layout title={title} description={description}>
-  <h1>{CH} in Morse code</h1>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/morse-code/">Learn</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">{CH}</span>
+  </nav>
 
-  <p class="muted">
-    Morse code for <strong>{CH}</strong>
-    {code ? (
-      <> is: <span class="k">{code}</span></>
-    ) : (
-      <> is not available in the current Morse map.</>
-    )}
-  </p>
+  <header class="hero">
+    <p class="muted kicker">{isLetter ? "Alphabet" : isNumber ? "Numbers" : "Reference"}</p>
+    <h1 class="title">{CH} in Morse code</h1>
 
-  <section class="card">
-    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-      <button id="copy" type="button" disabled={!code}>
-        {code ? <>Copy <span class="k">{code}</span></> : <>Copy</>}
-      </button>
-
-      <a class="muted" style="text-decoration:none;" href="/translate/">Open translator</a>
+    <div class="code-row">
+      <span class="badge">{CH}</span>
+      <span class="muted">→</span>
+      <span class="badge badge-code k">{code || "—"}</span>
     </div>
 
-    <p class="muted" style="margin-top:10px">
-      How to read: dots (·) are short signals and dashes (–) are long signals.
-      In this site, letters are separated by spaces and words by “/”.
-    </p>
-  </section>
+    {code ? (
+      <div class="chips" aria-label="Quick tips">
+        {tips.map((t) => (
+          <span class="chip">{t}</span>
+        ))}
+      </div>
+    ) : (
+      <p class="muted" style="margin-top:10px;">
+        This character isn’t available in the current Morse map.
+      </p>
+    )}
 
-  <section class="card" style="margin-top:16px">
-    <h2 style="margin-top:0">Practice examples</h2>
-    <ul>
+    <div class="actions">
+      <button id="copy" type="button" disabled={!code}>Copy</button>
+      <button id="listen" type="button" class="ghost" disabled={!code}>Listen</button>
+      <a class="btn" href={translatorHref}>Practice in translator</a>
+      <a class="btn ghost" href="/morse-code/">Back to Learn hub</a>
+    </div>
+  </header>
+
+  <section class="card" style="margin-top:16px;">
+    <div class="section-head">
+      <h2 style="margin:0;">Practice examples</h2>
+      <p class="muted" style="margin:0;">Click any example to practice instantly.</p>
+    </div>
+
+    <div class="ex-grid" style="margin-top:12px;">
       {examplesMorse.map((ex) => (
-        <li>
-          <span class="k">{ex.word}</span> → <span class="k">{ex.morse}</span>
-        </li>
+        <a class="ex" href={ex.href}>
+          <div class="ex-text">{ex.text}</div>
+          <div class="ex-morse k">{ex.morse}</div>
+        </a>
       ))}
-    </ul>
-    <p class="muted">
-      Tip: practice by “chunking” patterns. Over time, you recognize shapes rather than counting dots and dashes.
+    </div>
+
+    <p class="muted" style="margin-top:12px;">
+      Tip: stop “counting” dots/dashes. With repetition, you recognize patterns as shapes/rhythm.
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px">
-    <h2 style="margin-top:0">Related</h2>
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Navigate</h2>
 
-    <p class="muted" style="margin-top:0">
-      {prev ? (
-        <>Previous: <a href={`/morse-code/${prev.toLowerCase()}/`}>{prev}</a></>
-      ) : (
-        <>Previous: —</>
-      )}
+    <p class="muted" style="margin-top:0;">
+      {prev ? <>Previous: <a href={`/morse-code/${String(prev).toLowerCase()}/`}>{prev}</a></> : <>Previous: —</>}
       {" • "}
-      {next ? (
-        <>Next: <a href={`/morse-code/${next.toLowerCase()}/`}>{next}</a></>
-      ) : (
-        <>Next: —</>
-      )}
+      {next ? <>Next: <a href={`/morse-code/${String(next).toLowerCase()}/`}>{next}</a></> : <>Next: —</>}
     </p>
 
-    <p class="muted">
+    <p class="muted" style="margin-top:10px;">
       Browse:
       <a href="/morse-code/a/"> alphabet</a> •
       <a href="/morse-code/numbers/"> numbers</a> •
-      <a href="/morse-code/punctuation/"> punctuation</a>
+      <a href="/morse-code/punctuation/"> punctuation</a> •
+      <a href="/phrases/"> phrases</a>
     </p>
   </section>
 
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
   <script is:inline define:vars={{ code }}>
-    const btn = document.getElementById("copy");
-    btn?.addEventListener("click", async () => {
-      const value = (code || "").toString();
+    const copyBtn = document.getElementById("copy");
+    const listenBtn = document.getElementById("listen");
+
+    async function copyText(text) {
+      try { await navigator.clipboard.writeText(text); return true; }
+      catch {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text; ta.style.position="fixed"; ta.style.left="-9999px";
+          document.body.appendChild(ta); ta.select();
+          const ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          return ok;
+        } catch { return false; }
+      }
+    }
+
+    copyBtn?.addEventListener("click", async () => {
+      const value = String(code || "");
+      if (!value) return;
+      const ok = await copyText(value);
+      if (!ok) return;
+      const old = copyBtn.textContent;
+      copyBtn.textContent = "Copied ✓";
+      setTimeout(() => (copyBtn.textContent = old), 1000);
+    });
+
+    // Simple WebAudio “listen” (dot = 1 unit, dash = 3 units, intra = 1, letter gap = 3)
+    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    listenBtn?.addEventListener("click", async () => {
+      const value = String(code || "");
       if (!value) return;
 
+      listenBtn.disabled = true;
+      const old = listenBtn.textContent;
+      listenBtn.textContent = "Playing…";
+
+      const unit = 90; // ms
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+      async function beep(durationMs){
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        gain.gain.value = 0.06;
+        osc.frequency.value = 700;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        await sleep(durationMs);
+        osc.stop();
+      }
+
       try {
-        await navigator.clipboard.writeText(value);
-        const old = btn.textContent;
-        btn.textContent = "Copied ✓";
-        setTimeout(() => (btn.textContent = old), 1200);
+        for (const ch of value) {
+          if (ch === ".") {
+            await beep(unit);
+            await sleep(unit); // intra-element gap
+          } else if (ch === "-") {
+            await beep(unit * 3);
+            await sleep(unit);
+          } else {
+            // spaces (end of letter)
+            await sleep(unit * 2); // already slept 1 unit after last element → total ~3
+          }
+        }
       } catch {}
+      try { await ctx.close(); } catch {}
+
+      listenBtn.textContent = old;
+      listenBtn.disabled = false;
     });
   </script>
 
-  <!-- Structured data -->
-  <script
-    type="application/ld+json"
-    is:inline
-    set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: `What is ${CH} in Morse code?`,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: code
-              ? `${CH} in Morse code is ${code}.`
-              : "This character is not available in the current Morse map.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "How do you read Morse code?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Dots are short signals and dashes are long signals. Letters are separated by spaces, and words are separated by a slash (/).",
-          },
-        },
-      ],
-    })}
-  ></script>
+  <style>
+    .crumbs{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+      font-size: 13px; opacity: .92; margin-top: 2px;
+    }
+    .crumb{
+      text-decoration:none;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.02);
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: rgba(255,255,255,0.92);
+    }
+    .sep{ opacity:.65; }
+    .crumb-current{
+      display:inline-flex; align-items:center;
+      padding: 6px 10px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.015);
+      color: rgba(255,255,255,0.78);
+    }
+
+    .hero{ margin-top: 10px; }
+    .kicker{
+      margin: 0 0 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    .title{ margin: 0 0 10px; }
+
+    .code-row{
+      display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 8px 12px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.92);
+      font-weight: 800;
+    }
+    .badge-code{
+      font-weight: 700;
+      letter-spacing: .4px;
+    }
+
+    .chips{
+      margin-top: 12px;
+      display:flex; flex-wrap:wrap; gap: 8px; align-items:center;
+    }
+    .chip{
+      display:inline-flex; align-items:center;
+      padding: 7px 10px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.82);
+      font-size: 13px; line-height: 1.2;
+    }
+
+    .actions{
+      margin-top: 14px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 10px 14px; border-radius: 999px; text-decoration:none;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.92);
+      font-weight: 800;
+      line-height: 1;
+    }
+    .btn.ghost{
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.03);
+      font-weight: 750;
+    }
+
+    button.ghost{
+      border-color: rgba(255,255,255,0.18) !important;
+      background: rgba(255,255,255,0.03) !important;
+      font-weight: 750;
+    }
+
+    .section-head{
+      display:flex; flex-wrap:wrap;
+      gap: 6px 14px; align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .ex-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+    @media (min-width: 900px){
+      .ex-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+
+    .ex{
+      text-decoration:none;
+      border: 1px solid rgba(255,255,255,0.11);
+      background: rgba(255,255,255,0.02);
+      border-radius: 16px;
+      padding: 12px;
+      display:flex; flex-direction:column; gap: 8px;
+      color: rgba(255,255,255,0.92);
+    }
+    .ex:hover{ border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); }
+    .ex-text{ font-weight: 850; }
+    .ex-morse{ opacity: .92; font-size: 14px; }
+
+    @media (max-width: 600px){
+      .actions > *{ width: 100%; justify-content:center; }
+    }
+  </style>
 </Layout>
