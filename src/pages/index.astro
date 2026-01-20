@@ -10,7 +10,7 @@ const description =
   <header class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="hero-kicker muted">Free • Fast • Private</p>
+        <p class="muted kicker">Free • Fast • Private</p>
 
         <h1 class="hero-title">Morse Code Generator</h1>
 
@@ -20,61 +20,64 @@ const description =
         </p>
 
         <div class="hero-actions">
-          <a class="cta primary" href="/translate/">Open Translator</a>
-          <a class="cta" href="/morse-code/a/">Morse Alphabet</a>
-          <a class="cta" href="/phrases/">Common Phrases</a>
+          <a class="btn primary" href="/translate/">Open Translator</a>
+          <a class="btn" href="/morse-code/a/">Learn Alphabet</a>
+          <a class="btn" href="/phrases/">Practice Phrases</a>
         </div>
 
         <div class="hint-row">
-          <span class="hint">Letters: separated by spaces</span>
-          <span class="hint">Words: separated by “/”</span>
-          <a class="hint link" href="/translate/">Practice →</a>
+          <span class="hint">Letters: spaces</span>
+          <span class="hint">Words: “/”</span>
+          <span class="hint muted">Example: <span class="k">SOS</span> → <span class="k">... --- ...</span></span>
         </div>
       </div>
 
-      <section class="tool card" aria-label="Quick translate">
+      <section class="card tool" aria-label="Quick translate">
         <div class="tool-head">
           <div>
-            <h2 class="tool-title">Quick translate</h2>
-            <p class="muted tool-sub">Type text or Morse, then convert and copy.</p>
+            <h2 style="margin:0;">Quick translate</h2>
+            <p class="muted" style="margin:6px 0 0;">
+              Type text or Morse. Auto-detect converts as you type.
+            </p>
           </div>
-          <div class="tool-mini-links muted">
+
+          <div class="muted tool-mini-links">
             <a href="/morse-code/numbers/">Numbers</a> •
             <a href="/morse-code/punctuation/">Punctuation</a>
           </div>
         </div>
 
-        <div class="grid tool-grid">
+        <div class="grid tool-grid" style="margin-top:12px;">
           <div>
             <label for="mcg-input"><strong>Input</strong></label><br />
             <textarea
               id="mcg-input"
-              rows="8"
+              rows="7"
               placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
             ></textarea>
 
-            <div class="tool-row">
+            <div class="tool-row" style="margin-top:10px;">
               <button id="mcg-text-to-morse" type="button">Text → Morse</button>
               <button id="mcg-morse-to-text" type="button">Morse → Text</button>
               <button id="mcg-copy" type="button">Copy output</button>
 
               <span class="spacer" aria-hidden="true"></span>
 
-              <button id="mcg-swap" type="button" class="ghost">Swap</button>
-              <button id="mcg-clear" type="button" class="ghost">Clear</button>
+              <button id="mcg-swap" type="button">Swap</button>
+              <button id="mcg-clear" type="button">Clear</button>
             </div>
 
-            <p class="muted micro">
-              Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
+            <p class="muted" style="margin-top:10px;">
+              Tip: Use <span class="k">/</span> between words.
             </p>
           </div>
 
           <div>
             <label for="mcg-output"><strong>Output</strong></label><br />
-            <textarea id="mcg-output" rows="8" placeholder="Your result will appear here..."></textarea>
+            <textarea id="mcg-output" rows="7" placeholder="Your result will appear here..."></textarea>
 
-            <p class="muted micro">
-              Want a full page? <a href="/translate/">Open the translator</a>.
+            <p class="muted" style="margin-top:10px;">
+              Want the full tool? <a href="/translate/">Open the translator</a>.
             </p>
           </div>
         </div>
@@ -82,50 +85,61 @@ const description =
     </div>
   </header>
 
-  <section class="card" style="margin-top:16px;">
-    <div class="section-head">
-      <h2 class="section-title">Common Morse Code Phrases</h2>
-      <p class="muted section-note">Popular phrases people search for.</p>
-    </div>
+  <section class="grid hub" style="margin-top:16px;">
+    <section class="card">
+      <h2 style="margin-top:0;">Learn Morse Code</h2>
+      <p class="muted" style="margin-top:0;">
+        Start with the alphabet, then numbers and punctuation.
+      </p>
 
-    <div class="pill-grid" style="margin-top:12px;">
-      <a href="/phrases/sos/">SOS</a>
-      <a href="/phrases/help/">HELP</a>
-      <a href="/phrases/mayday/">MAYDAY</a>
-      <a href="/phrases/emergency/">EMERGENCY</a>
-      <a href="/phrases/stop/">STOP</a>
-      <a href="/phrases/wait/">WAIT</a>
-      <a href="/phrases/call-me/">CALL ME</a>
-      <a href="/phrases/i-love-you/">I LOVE YOU</a>
-    </div>
+      <div class="pill-grid" style="margin-top:12px;">
+        <a href="/morse-code/a/">Alphabet (A–Z)</a>
+        <a href="/morse-code/numbers/">Numbers (0–9)</a>
+        <a href="/morse-code/punctuation/">Punctuation</a>
+        <a href="/translate/">Practice in Translator</a>
+      </div>
 
-    <p class="muted" style="margin-top:10px;">
-      Browse all phrases in the <a href="/phrases/">phrases section</a>.
-    </p>
+      <p class="muted" style="margin-top:12px;">
+        Practice tip: learn a few letters per day and test yourself using the translator.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0;">Common Phrases</h2>
+      <p class="muted" style="margin-top:0;">
+        Popular phrases people search for and copy.
+      </p>
+
+      <div class="pill-grid" style="margin-top:12px;">
+        <a href="/phrases/sos/">SOS</a>
+        <a href="/phrases/help/">HELP</a>
+        <a href="/phrases/mayday/">MAYDAY</a>
+        <a href="/phrases/emergency/">EMERGENCY</a>
+        <a href="/phrases/stop/">STOP</a>
+        <a href="/phrases/wait/">WAIT</a>
+        <a href="/phrases/call-me/">CALL ME</a>
+        <a href="/phrases/i-love-you/">I LOVE YOU</a>
+      </div>
+
+      <p class="muted" style="margin-top:10px;">
+        Browse all phrases in the <a href="/phrases/">phrases section</a>.
+      </p>
+    </section>
   </section>
 
   <section class="card" style="margin-top:16px;">
-    <div class="section-head">
-      <h2 class="section-title">Learn Morse Code</h2>
-      <p class="muted section-note">Start with basics, then practice.</p>
-    </div>
-
-    <div class="pill-grid" style="margin-top:12px;">
-      <a href="/morse-code/a/">Alphabet (A–Z)</a>
-      <a href="/morse-code/numbers/">Numbers (0–9)</a>
-      <a href="/morse-code/punctuation/">Punctuation</a>
-      <a href="/translate/">Practice in Translator</a>
-    </div>
-
-    <p class="muted" style="margin-top: 12px;">
-      Practice tip: read Morse visually first, then try listening (dot/dash rhythm) once you recognize patterns.
-    </p>
+    <h2 style="margin-top:0;">How it works</h2>
+    <ol>
+      <li>Type text or paste Morse into the input box.</li>
+      <li>The tool auto-detects (or use the convert buttons).</li>
+      <li>Copy output and practice using alphabet and phrases.</li>
+    </ol>
   </section>
 
   <!-- Runtime tool -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- Fix textarea whitespace + add swap/clear UX -->
+  <!-- Minimal glue: set default input without whitespace bugs -->
   <script is:inline>
     (function () {
       function onReady(fn) {
@@ -133,77 +147,36 @@ const description =
           document.addEventListener("DOMContentLoaded", fn, { once: true });
         } else fn();
       }
-
       onReady(() => {
         const input = document.getElementById("mcg-input");
-        const output = document.getElementById("mcg-output");
-        const swap = document.getElementById("mcg-swap");
-        const clear = document.getElementById("mcg-clear");
-
-        // Fix: don't put default text inside <textarea>...</textarea> (whitespace bugs)
         if (input && !input.value.trim()) input.value = "HELLO";
-
-        swap?.addEventListener("click", () => {
-          if (!input || !output) return;
-          const a = input.value;
-          input.value = output.value;
-          output.value = a;
-          input.focus();
-        });
-
-        clear?.addEventListener("click", () => {
-          if (!input || !output) return;
-          input.value = "";
-          output.value = "";
-          input.focus();
-        });
       });
     })();
   </script>
 
   <style>
-    /* HERO */
-    .hero { margin-top: 6px; }
-    .hero-grid {
-      display: grid;
+    .hero-grid{
+      display:grid;
       grid-template-columns: 1fr;
       gap: 16px;
       align-items: start;
     }
 
-    .hero-kicker {
+    .kicker{
       margin: 0 0 10px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       font-size: 12px;
     }
 
-    .hero-title { margin: 0 0 10px; }
-    .hero-sub { margin: 0; max-width: 70ch; }
+    .hero-title{ margin: 0 0 10px; }
+    .hero-sub{ margin: 0; max-width: 72ch; }
 
-    .hero-actions {
+    .hero-actions{
       margin-top: 14px;
-      display: flex;
+      display:flex;
       gap: 10px;
       flex-wrap: wrap;
-    }
-
-    .cta{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 14px;
-      border-radius: 999px;
-      text-decoration: none;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.92);
-      font-weight: 800;
-    }
-    .cta:hover { opacity: 0.95; }
-    .cta.primary{
-      border-color: rgba(138,180,255,0.30);
-      background: rgba(138,180,255,0.12);
     }
 
     .hint-row{
@@ -220,77 +193,43 @@ const description =
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.10);
       background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.78);
+      color: rgba(255,255,255,0.82);
       font-size: 13px;
       line-height: 1.2;
     }
-    .hint.link{
-      border-color: rgba(138,180,255,0.26);
-      background: rgba(138,180,255,0.10);
-      color: rgba(255,255,255,0.90);
-      text-decoration:none;
-      font-weight: 750;
-    }
 
-    /* TOOL CARD */
-    .tool { padding: 16px; }
     .tool-head{
       display:flex;
       flex-wrap:wrap;
       align-items: baseline;
       justify-content: space-between;
       gap: 10px 14px;
-      margin-bottom: 10px;
     }
-    .tool-title { margin: 0 0 6px; }
-    .tool-sub { margin: 0; }
+    .tool-mini-links{ font-size: 13px; }
+    .tool-mini-links a{ text-decoration:none; }
+    .tool-mini-links a:hover{ text-decoration: underline; }
 
-    .tool-mini-links { font-size: 13px; }
-    .tool-mini-links a { text-decoration: none; }
-    .tool-mini-links a:hover { text-decoration: underline; }
-
-    .tool-grid { margin-top: 10px; }
-    .tool-row {
-      margin-top: 10px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .spacer { flex: 1; min-width: 8px; }
-
-    .ghost {
-      border-color: rgba(255,255,255,0.18) !important;
-      background: rgba(255,255,255,0.03) !important;
-      font-weight: 650;
-    }
-
-    .micro { margin-top: 10px; }
-
-    .section-head{
+    .tool-row{
       display:flex;
+      gap:10px;
       flex-wrap:wrap;
-      gap: 6px 14px;
-      align-items: baseline;
-      justify-content: space-between;
+      align-items:center;
     }
-    .section-title { margin: 0; }
-    .section-note { margin: 0; }
+    .spacer{ flex:1; min-width: 8px; }
 
-    /* BREAKPOINTS */
+    /* Hub grid: 1-col on mobile, 2-col on desktop */
+    .hub{
+      grid-template-columns: 1fr;
+    }
     @media (min-width: 980px){
-      .hero-grid { grid-template-columns: 0.95fr 1.05fr; }
-      .hero-actions { max-width: 560px; }
-    }
-
-    /* Ensure tool grid is 2-col on desktop widths */
-    @media (min-width: 860px){
-      .tool-grid { grid-template-columns: 1fr 1fr; }
+      .hero-grid{ grid-template-columns: 0.95fr 1.05fr; }
+      .hub{ grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 520px){
-      .hero-actions .cta { width: 100%; }
-      .spacer { display:none; }
+      .hero-actions .btn{ width:100%; }
+      .spacer{ display:none; }
+      .tool-row button{ width:100%; }
     }
   </style>
 </Layout>
