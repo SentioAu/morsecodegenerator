@@ -55,10 +55,15 @@ const hasInitial = Boolean(initial);
           class="ta"
           rows="8"
           placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
+          spellcheck="false"
+          autocorrect="off"
+          autocapitalize="off"
+          inputmode="text"
+          maxlength="5000"
         ></textarea>
 
-        <div class="actions">
-          <button id="mcg-text-to-morse" type="button">Text → Morse</button>
+        <div class="actions" aria-label="Tool actions">
+          <button id="mcg-text-to-morse" type="button" class="primary-action">Text → Morse</button>
           <button id="mcg-morse-to-text" type="button" class="ghost">Morse → Text</button>
           <button id="mcg-copy" type="button" class="ghost">Copy output</button>
           <button id="mcg-swap" type="button" class="ghost">Swap</button>
@@ -77,6 +82,10 @@ const hasInitial = Boolean(initial);
           class="ta mono"
           rows="8"
           placeholder="Result appears here..."
+          spellcheck="false"
+          autocorrect="off"
+          autocapitalize="off"
+          readonly
         ></textarea>
 
         <p class="muted micro">
@@ -160,18 +169,19 @@ const hasInitial = Boolean(initial);
         const swap = document.getElementById("mcg-swap");
         const clear = document.getElementById("mcg-clear");
         const btnT2M = document.getElementById("mcg-text-to-morse");
+        const btnM2T = document.getElementById("mcg-morse-to-text");
 
         if (!input || !output) return;
 
         if (initial && !input.value.trim()) input.value = String(initial);
         if (!initial && !input.value.trim()) input.value = "HELLO";
 
-        input.focus();
-
+        // Only auto-run on query links (avoid surprising behavior)
         if (hasInitial && btnT2M && !output.value.trim()) {
           setTimeout(() => btnT2M.click(), 0);
         }
 
+        // Swap/copy should feel instant + keep cursor where user expects
         swap?.addEventListener("click", () => {
           const a = input.value;
           input.value = output.value;
@@ -183,6 +193,23 @@ const hasInitial = Boolean(initial);
           input.value = "";
           output.value = "";
           input.focus();
+        });
+
+        // Nice keyboard shortcut: Ctrl/Cmd+Enter converts depending on what input looks like
+        input.addEventListener("keydown", (e) => {
+          const isEnter = e.key === "Enter";
+          const isMod = e.ctrlKey || e.metaKey;
+          if (!isEnter || !isMod) return;
+
+          const v = (input.value || "").trim();
+          if (!v) return;
+
+          // If it contains dot/dash patterns, decode; else encode
+          const looksMorse = /[.\-]/.test(v) && !/[a-zA-Z]/.test(v);
+          if (looksMorse && btnM2T) btnM2T.click();
+          else if (btnT2M) btnT2M.click();
+
+          e.preventDefault();
         });
       });
     })();
@@ -207,7 +234,6 @@ const hasInitial = Boolean(initial);
       flex-wrap:wrap;
     }
 
-    /* Use the same button style language as Layout */
     .btn{
       display:inline-flex;
       align-items:center;
@@ -268,14 +294,17 @@ const hasInitial = Boolean(initial);
       margin-bottom: 6px;
     }
 
-    /* Override global textarea sizing: make it feel right for typing */
     .ta{
-      min-height: 200px;
+      min-height: 210px;
       line-height: 1.55;
       padding: 14px 14px;
       resize: vertical;
       overflow: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
+
+    /* Output monospace only */
     .mono{
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       letter-spacing: .25px;
@@ -288,11 +317,16 @@ const hasInitial = Boolean(initial);
       gap: 10px;
     }
 
-    /* Ghost buttons inside the tool only */
     .ghost{
       border-color: rgba(255,255,255,0.18) !important;
       background: rgba(255,255,255,0.03) !important;
       font-weight: 750;
+    }
+
+    /* Make the main action visually “primary” without changing global button styles */
+    .primary-action{
+      border-color: rgba(138,180,255,0.42) !important;
+      background: rgba(138,180,255,0.18) !important;
     }
 
     .micro{ margin-top: 10px; }
@@ -302,8 +336,8 @@ const hasInitial = Boolean(initial);
       .actions{
         grid-template-columns: 1fr 1fr;
       }
-      .actions button:first-child{
-        grid-column: 1 / -1; /* “Text → Morse” gets prominence */
+      .actions .primary-action{
+        grid-column: 1 / -1;
       }
     }
 
