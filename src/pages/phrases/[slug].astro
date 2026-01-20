@@ -15,7 +15,6 @@ function slugify(input) {
 }
 
 export function getStaticPaths() {
-  // ✅ EVERYTHING defined locally (no hoisting traps)
   const rawPhrases = data?.phrases ?? [];
   let list = [];
 
@@ -31,7 +30,7 @@ export function getStaticPaths() {
         })
         .filter(Boolean);
     } else {
-      // objects: {slug, phrase} or variants
+      // objects
       list = rawPhrases
         .map((p) => {
           if (!p) return null;
@@ -71,6 +70,30 @@ const description = phrase
 
 const translatorHref = phrase ? `/translate/?q=${encodeURIComponent(phrase)}` : "/translate/";
 
+// Related phrases (simple, deterministic)
+const rawPhrases = data?.phrases ?? [];
+let phraseList = [];
+
+if (Array.isArray(rawPhrases)) {
+  if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
+    phraseList = rawPhrases
+      .map((row) => ({ slug: String(row?.[0] ?? ""), phrase: String(row?.[1] ?? "") }))
+      .filter((x) => x.slug && x.phrase);
+  } else {
+    phraseList = rawPhrases
+      .map((p) => {
+        const ph = p?.phrase ?? p?.text ?? p?.value ?? p?.name;
+        const sl = p?.slug ?? slugify(ph);
+        return { slug: String(sl ?? ""), phrase: String(ph ?? "") };
+      })
+      .filter((x) => x.slug && x.phrase);
+  }
+}
+
+const related = phraseList
+  .filter((p) => p.slug !== slug)
+  .slice(0, 10);
+
 // Breadcrumb JSON-LD
 const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 const crumbs = [
@@ -107,8 +130,14 @@ const breadcrumbJsonLd = {
   <header class="hero">
     <h1 class="hero-title">{title}</h1>
     <p class="muted hero-sub">
-      Copy the Morse translation instantly, then practice in the translator.
+      Copy the Morse translation, then practice it in the translator.
     </p>
+
+    <div class="hero-actions">
+      <a class="btn primary" href={translatorHref}>Open in translator</a>
+      <a class="btn" href="/phrases/">Browse all phrases</a>
+      <a class="btn" href="/morse-code/a/">Learn alphabet</a>
+    </div>
   </header>
 
   <section class="card" style="margin-top:16px;">
@@ -120,13 +149,61 @@ const breadcrumbJsonLd = {
 
     <div class="actions" style="margin-top:12px;">
       <button id="copy" type="button" disabled={!morse}>Copy Morse</button>
-      <a class="nav-link" href={translatorHref}>Practice in translator</a>
-      <a class="nav-link" href="/phrases/">Browse all phrases</a>
+      <a class="btn" href={translatorHref}>Practice</a>
+      <a class="btn" href="/translate/?q=SOS">Try SOS</a>
     </div>
+
+    <p class="muted" style="margin-top:12px;">
+      Format: spaces between letters • “/” between words.
+    </p>
   </section>
+
+  <section class="grid" style="margin-top:16px;">
+    <section class="card">
+      <h2 style="margin-top:0;">How to send this</h2>
+      <ol>
+        <li>Copy the Morse code above.</li>
+        <li>Use <span class="k">.</span> (dot) and <span class="k">-</span> (dash) visually, or tap it out.</li>
+        <li>Separate words with <span class="k">/</span> if you’re writing it.</li>
+      </ol>
+      <p class="muted" style="margin-top:10px;">
+        Want to decode a reply? Paste Morse into the <a href="/translate/">translator</a>.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0;">Learn more</h2>
+      <div class="pill-grid" style="margin-top:12px;">
+        <a href="/morse-code/a/">Alphabet (A–Z)</a>
+        <a href="/morse-code/numbers/">Numbers (0–9)</a>
+        <a href="/morse-code/punctuation/">Punctuation</a>
+        <a href="/translate/">Translator</a>
+      </div>
+
+      <p class="muted" style="margin-top:12px;">
+        Tip: learn 3–5 characters per day and test yourself in the translator.
+      </p>
+    </section>
+  </section>
+
+  {related.length > 0 && (
+    <section class="card" style="margin-top:16px;">
+      <div class="section-head">
+        <h2 style="margin:0;">Related phrases</h2>
+        <p class="muted" style="margin:0;">Keep practicing with these next.</p>
+      </div>
+
+      <div class="pill-grid" style="margin-top:12px;">
+        {related.map((p) => (
+          <a href={`/phrases/${p.slug}/`}>{p.phrase}</a>
+        ))}
+      </div>
+    </section>
+  )}
 
   <script is:inline define:vars={{ morse }}>
     const btn = document.getElementById("copy");
+
     async function copyText(text) {
       try { await navigator.clipboard.writeText(text); return true; }
       catch {
@@ -158,6 +235,13 @@ const breadcrumbJsonLd = {
     .hero { margin-top: 10px; }
     .hero-title { margin-bottom: 8px; }
     .hero-sub { margin-top: 0; max-width: 72ch; }
+
+    .hero-actions{
+      margin-top: 12px;
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+    }
 
     .crumbs{
       display:flex;
@@ -219,6 +303,14 @@ const breadcrumbJsonLd = {
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
+    }
+
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
     }
   </style>
 </Layout>
