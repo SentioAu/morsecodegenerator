@@ -1,0 +1,92 @@
+---
+import Layout from "../components/Layout.astro";
+
+const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
+
+const title = "Contact – Morse Code Generator";
+const description =
+  "Contact MorseCodeGenerator.com for feedback, corrections, partnerships, or bug reports.";
+---
+
+<Layout title={title} description={description}>
+  <header style="margin-top:6px;">
+    <h1 style="margin:0 0 8px;">Contact</h1>
+    <p class="muted" style="margin:0; max-width:72ch;">
+      Send feedback, report an issue, or request a feature. If you’re reporting a bug, include the page URL and what you expected to happen.
+    </p>
+  </header>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin:0 0 10px;">Email</h2>
+
+    <!-- IMPORTANT: Cloudflare can rewrite mailto links. We show the email as text,
+         and provide a safe "copy" button. -->
+    <div class="row">
+      <code class="email" id="emailText">{CONTACT_EMAIL}</code>
+      <button type="button" id="copyEmail">Copy email</button>
+    </div>
+
+    <p class="muted" style="margin-top:10px;">
+      If the “Copy email” button doesn’t work, just copy the address manually.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin:0 0 10px;">What to include</h2>
+    <ul>
+      <li><strong>Bug report:</strong> page URL + device/browser + steps to reproduce</li>
+      <li><strong>Correction:</strong> which page is wrong + your suggested correction</li>
+      <li><strong>Partnership:</strong> who you are + what you’re proposing</li>
+    </ul>
+  </section>
+
+  <script is:inline>
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          return ok;
+        } catch {
+          return false;
+        }
+      }
+    }
+
+    const btn = document.getElementById("copyEmail");
+    const emailEl = document.getElementById("emailText");
+    btn?.addEventListener("click", async () => {
+      const email = (emailEl?.textContent || "").trim();
+      if (!email) return;
+      const ok = await copyText(email);
+      if (!ok) return;
+      const old = btn.textContent;
+      btn.textContent = "Copied ✓";
+      setTimeout(() => (btn.textContent = old), 1200);
+    });
+  </script>
+
+  <style>
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .email{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.20);
+    }
+  </style>
+</Layout>
