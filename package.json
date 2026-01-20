@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "postbuild": "node scripts/postbuild-sitemap.mjs",
+    "postbuild": "node ./scripts/postbuild-sitemap.mjs || echo \"postbuild skipped\"",
     "preview": "astro preview",
     "typecheck": "astro check",
     "clean": "rm -rf dist .astro"
