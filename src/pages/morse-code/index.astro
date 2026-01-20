@@ -3,52 +3,250 @@ import Layout from "../../components/Layout.astro";
 
 const title = "Learn Morse Code – Alphabet, Numbers, Punctuation";
 const description =
-  "Learn Morse code with clean reference pages: alphabet (A–Z), numbers (0–9), and punctuation. Practice with the translator.";
+  "Learn Morse code step-by-step with clean reference pages: alphabet (A–Z), numbers (0–9), and punctuation. Practice instantly with the translator.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Learn Morse Code",
+  description,
+  url: `${site}/morse-code/`,
+  isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+  hasPart: [
+    { "@type": "WebPage", name: "Morse Code Alphabet (A–Z)", url: `${site}/morse-code/a/` },
+    { "@type": "WebPage", name: "Morse Code Numbers (0–9)", url: `${site}/morse-code/numbers/` },
+    { "@type": "WebPage", name: "Morse Code Punctuation", url: `${site}/morse-code/punctuation/` },
+    { "@type": "WebPage", name: "Text to Morse Translator", url: `${site}/translate/` },
+    { "@type": "WebPage", name: "Common Morse Code Phrases", url: `${site}/phrases/` },
+  ],
+};
+
+// A tiny “starter set” shown on the hub page (not the full alphabet).
+const starter = [
+  ["E", "."],
+  ["T", "-"],
+  ["A", ".-"],
+  ["N", "-."],
+  ["I", ".."],
+  ["M", "--"],
+  ["S", "..."],
+  ["O", "---"],
+];
 ---
 
 <Layout title={title} description={description}>
-  <header>
-    <h1>Learn Morse Code</h1>
-    <p class="muted" style="margin-top:6px; max-width:72ch;">
-      Start with the alphabet, then numbers and punctuation. Use the translator to practice what you learn.
+  <header class="hero">
+    <p class="muted kicker">Learn • Memorize • Practice</p>
+    <h1 class="title">Learn Morse Code</h1>
+    <p class="muted sub">
+      Use the clean reference pages for <strong>alphabet</strong>, <strong>numbers</strong>, and <strong>punctuation</strong>,
+      then practice instantly in the translator.
     </p>
 
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-      <a class="nav-link" href="/translate/">Open Translator</a>
-      <a class="nav-link" href="/phrases/">Common Phrases</a>
+    <div class="actions">
+      <a class="btn primary" href="/translate/">Practice in Translator</a>
+      <a class="btn" href="/phrases/">Practice common phrases</a>
+      <a class="btn" href="/">Back to home</a>
+    </div>
+
+    <div class="chips" aria-label="Formatting rules">
+      <span class="chip">Letters: spaces</span>
+      <span class="chip">Words: “/”</span>
+      <span class="chip muted">Example: <span class="k">HELLO</span> → <span class="k">.... . .-.. .-.. ---</span></span>
     </div>
   </header>
 
   <section class="card" style="margin-top:16px;">
     <div class="section-head">
-      <h2 style="margin:0;">Quick links</h2>
-      <p class="muted" style="margin:0;">Clean references you can bookmark.</p>
+      <h2 style="margin:0;">Reference pages</h2>
+      <p class="muted" style="margin:0;">Bookmark these — they’re built to be clean and fast.</p>
     </div>
 
     <div class="pill-grid" style="margin-top:12px;">
       <a href="/morse-code/a/">Alphabet (A–Z)</a>
       <a href="/morse-code/numbers/">Numbers (0–9)</a>
       <a href="/morse-code/punctuation/">Punctuation</a>
-      <a href="/translate/">Practice in Translator</a>
+      <a href="/translate/">Translator</a>
     </div>
+
+    <p class="muted" style="margin-top:10px;">
+      Want real-world practice? Try the <a href="/phrases/">phrases section</a> (SOS, HELP, MAYDAY, and more).
+    </p>
   </section>
 
   <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Learning tips</h2>
-    <ul>
-      <li>Learn by sound + rhythm (not dots/dashes visually only).</li>
-      <li>Start with E, T, A, N, I, M — then build outward.</li>
-      <li>Short daily practice beats long sessions once a week.</li>
-    </ul>
+    <h2 style="margin-top:0;">Fast start (the 8 symbols to learn first)</h2>
+    <p class="muted" style="margin-top:0; max-width:72ch;">
+      Don’t memorize the whole alphabet at once. Start with the simplest patterns, then expand outward.
+    </p>
+
+    <div class="starter" style="margin-top:12px;">
+      {starter.map(([ch, code]) => (
+        <div class="starter-item">
+          <div class="starter-ch">{ch}</div>
+          <div class="starter-code k">{code}</div>
+          <a class="starter-link" href={`/morse-code/${String(ch).toLowerCase()}/`} aria-label={`Learn ${ch} in Morse`}>
+            View →
+          </a>
+        </div>
+      ))}
+    </div>
+
+    <p class="muted" style="margin-top:12px;">
+      Tip: practice these inside the translator:
+      <a href="/translate/?q=E%20T%20A%20N">E T A N</a> •
+      <a href="/translate/?q=SOS">SOS</a> •
+      <a href="/translate/?q=IM%20SAFE">IM SAFE</a>
+    </p>
   </section>
 
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">A simple practice plan (5 minutes)</h2>
+    <ol>
+      <li>Pick <strong>3–5 letters</strong> from the alphabet page.</li>
+      <li>Type them as a word in the translator (example: <span class="k">E T A N</span>).</li>
+      <li>Copy the Morse output and try to read it back without looking.</li>
+      <li>Repeat daily — short sessions beat long sessions.</li>
+    </ol>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">FAQ</h2>
+
+    <h3 style="margin-bottom:6px;">How are letters and words separated?</h3>
+    <p class="muted" style="margin-top:0;">
+      Letters are separated by spaces. Words are separated with “/”.
+    </p>
+
+    <h3 style="margin-bottom:6px;">Should I learn by sound or by sight?</h3>
+    <p class="muted" style="margin-top:0;">
+      Both help, but rhythm (sound patterns) tends to stick faster than counting dots and dashes.
+    </p>
+
+    <h3 style="margin-bottom:6px;">What should I learn first?</h3>
+    <p class="muted" style="margin-top:0;">
+      Start with simple ones: <span class="k">E</span>, <span class="k">T</span>, then <span class="k">A</span>, <span class="k">N</span>, <span class="k">I</span>, <span class="k">M</span>.
+      Then expand into <span class="k">S</span> and <span class="k">O</span>.
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
   <style>
+    .hero { margin: 6px 0 14px; }
+    .kicker{
+      margin: 0 0 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    .title { margin: 0 0 8px; }
+    .sub { margin: 0; max-width: 74ch; }
+
+    .actions{
+      margin-top: 14px;
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      text-decoration:none;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.92);
+      font-weight: 800;
+      line-height: 1;
+    }
+    .btn.primary{
+      border-color: rgba(138,180,255,0.30);
+      background: rgba(138,180,255,0.12);
+    }
+    .btn:hover { opacity: .95; }
+
+    .chips{
+      margin-top: 14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      align-items:center;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.82);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
     .section-head{
       display:flex;
       flex-wrap:wrap;
       gap: 6px 14px;
       align-items: baseline;
       justify-content: space-between;
+    }
+
+    .starter{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (min-width: 900px){
+      .starter{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    .starter-item{
+      border: 1px solid rgba(255,255,255,0.11);
+      background: rgba(255,255,255,0.02);
+      border-radius: 16px;
+      padding: 12px;
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 96px;
+    }
+
+    .starter-ch{
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .starter-code{
+      opacity: .92;
+      font-size: 14px;
+    }
+
+    .starter-link{
+      margin-top: auto;
+      text-decoration:none;
+      display:inline-flex;
+      width: fit-content;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(138,180,255,0.26);
+      background: rgba(138,180,255,0.10);
+      color: rgba(255,255,255,0.92);
+      font-weight: 750;
+    }
+    .starter-link:hover{ opacity: .95; }
+
+    @media (max-width: 600px){
+      .actions .btn { width: 100%; }
     }
   </style>
 </Layout>
