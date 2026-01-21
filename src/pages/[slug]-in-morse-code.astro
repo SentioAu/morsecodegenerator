@@ -43,10 +43,13 @@ export function getStaticPaths() {
   const normalize = (x) => String(x ?? "").trim().toLowerCase();
 
   const BLOCKED = new Set(["", "-", "--", "---", "index", "null", "undefined"]);
-  const named = new Set([
+
+  // Keep this list INSIDE getStaticPaths so it never depends on outer scope
+  const EXTRA_NAMED = [
     "comma","period","dot","question","exclamation","colon","semicolon",
     "plus","equals","hyphen","dash","slash","at","dollar","quote","apostrophe","underscore"
-  ]);
+  ];
+  const named = new Set(EXTRA_NAMED);
 
   function isSafeSlug(s) {
     if (!s) return false;
@@ -81,10 +84,16 @@ export function getStaticPaths() {
     return true;
   }
 
-  return (Array.isArray(slugs) ? slugs : [])
-    .map(normalize)
+  // ✅ Critical fix:
+  // Always include the named punctuation slugs in the build output,
+  // even if seo-slugs.json does NOT contain them.
+  const base = (Array.isArray(slugs) ? slugs : []).map(normalize);
+  const combined = new Set([...base, ...EXTRA_NAMED]);
+
+  return Array.from(combined)
     .filter(isSafeSlug)
     .filter((s) => isSingleLetter(s) || isNumber(s) || isNamedPunct(s) || isShortPhrase(s))
+    .sort((a, b) => a.localeCompare(b, "en"))
     .map((s) => ({ params: { slug: s } }));
 }
 
