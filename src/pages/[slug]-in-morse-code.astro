@@ -6,9 +6,8 @@ import slugs from "../data/seo-slugs.json";
 const morseMapRaw = (morsePayload?.morseMap ?? morsePayload) || {};
 
 // Normalize map keys:
-// - Uppercase A–Z keys so textToMorse() matches reliably
-// - Keep digits/punctuation as-is
-// - Drop the " " mapping (we handle word breaks with " / ")
+// - Uppercase A–Z keys so lookups match
+// - Drop the " " mapping (word breaks handled with " / ")
 const morseMap = Object.fromEntries(
   Object.entries(morseMapRaw)
     .filter(([k, v]) => k && v && k !== " ")
@@ -39,43 +38,54 @@ const slugToSymbol = {
   underscore: "_",
 };
 
-// --- Slug hardening / quality gates ---
-const BLOCKED_SLUGS = new Set(["", "-", "--", "---", "index", "null", "undefined"]);
+// ✅ IMPORTANT: getStaticPaths must be self-contained on Cloudflare build
+export function getStaticPaths() {
+  const normalize = (x) => String(x ?? "").trim().toLowerCase();
 
-function isSafeSlug(s) {
-  // Only allow: a-z, 0-9, hyphen
-  // Must start/end with alnum
-  // No consecutive hyphens
-  // Reasonable length cap
-  if (!s) return false;
-  if (BLOCKED_SLUGS.has(s)) return false;
-  if (s.length > 48) return false;
-  if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(s) && !/^[a-z0-9]$/.test(s)) return false;
-  if (s.includes("--")) return false;
-  return true;
-}
+  const BLOCKED = new Set(["", "-", "--", "---", "index", "null", "undefined"]);
+  const named = new Set([
+    "comma","period","dot","question","exclamation","colon","semicolon",
+    "plus","equals","hyphen","dash","slash","at","dollar","quote","apostrophe","underscore"
+  ]);
 
-function isSingleLetterSlug(s) {
-  return /^[a-z]$/.test(s);
-}
+  function isSafeSlug(s) {
+    if (!s) return false;
+    if (BLOCKED.has(s)) return false;
+    if (s.length > 48) return false;
+    // allow single char (a or 7), or multi token with hyphens
+    if (!/^[a-z0-9]$/.test(s) && !/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(s)) return false;
+    if (s.includes("--")) return false;
+    return true;
+  }
 
-function isNumberSlug(s) {
-  if (!/^\d+$/.test(s)) return false;
-  const n = Number(s);
-  return Number.isFinite(n) && n >= 0 && n <= 100;
-}
+  function isSingleLetter(s) {
+    return /^[a-z]$/.test(s);
+  }
 
-function isNamedPunctSlug(s) {
-  return Boolean(slugToSymbol[s]);
-}
+  function isNumber(s) {
+    if (!/^\d+$/.test(s)) return false;
+    const n = Number(s);
+    return Number.isFinite(n) && n >= 0 && n <= 100;
+  }
 
-function isShortPhraseSlug(s) {
-  const parts = s.split("-").filter(Boolean);
-  if (parts.length === 0) return false;
-  if (parts.length > 4) return false; // max 4 words
-  if (s.length > 28) return false; // keep it tight
-  if (!parts.every((p) => /^[a-z0-9]{2,15}$/.test(p))) return false;
-  return true;
+  function isNamedPunct(s) {
+    return named.has(s);
+  }
+
+  function isShortPhrase(s) {
+    const parts = s.split("-").filter(Boolean);
+    if (parts.length === 0) return false;
+    if (parts.length > 4) return false;
+    if (s.length > 28) return false;
+    if (!parts.every((p) => /^[a-z0-9]{2,15}$/.test(p))) return false;
+    return true;
+  }
+
+  return (Array.isArray(slugs) ? slugs : [])
+    .map(normalize)
+    .filter(isSafeSlug)
+    .filter((s) => isSingleLetter(s) || isNumber(s) || isNamedPunct(s) || isShortPhrase(s))
+    .map((s) => ({ params: { slug: s } }));
 }
 
 function titleCase(s) {
@@ -88,64 +98,55 @@ function titleCase(s) {
 
 function termFromSlug(s) {
   if (slugToSymbol[s]) {
-    return { display: `${titleCase(s)} (${slugToSymbol[s]})`, value: slugToSymbol[s], kind: "punct" };
+    return { display: `${titleCase(s)} (${slugToSymbol[s]})`, value: slugToSymbol[s] };
   }
   if (/^[a-z]$/i.test(s)) {
     const up = s.toUpperCase();
-    return { display: up, value: up, kind: "letter" };
+    return { display: up, value: up };
   }
   if (/^\d+$/.test(s)) {
-    return { display: s, value: s, kind: "number" };
+    return { display: s, value: s };
   }
   const phrase = s.replace(/-/g, " ");
-  return { display: titleCase(phrase), value: phrase, kind: "phrase" };
-}
-
-function normText(x) {
-  return (x || "").toUpperCase();
+  return { display: titleCase(phrase), value: phrase };
 }
 
 function textToMorse(input) {
-  const s = normText(input).trim();
+  const s = String(input ?? "").toUpperCase().trim();
   if (!s) return "";
-
   const words = s.split(/\s+/).filter(Boolean);
-
   return words
-    .map((w) =>
-      w
-        .split("")
-        .map((ch) => morseMap[ch] || "?")
-        .join(" ")
-    )
+    .map((w) => w.split("").map((ch) => morseMap[ch] || "?").join(" "))
     .join(" / ");
 }
 
-// IMPORTANT: Only generate safe + useful pages.
-export function getStaticPaths() {
-  const normalize = (x) => String(x ?? "").trim().toLowerCase();
-
-  return (Array.isArray(slugs) ? slugs : [])
-    .map(normalize)
-    .filter(isSafeSlug)
-    .filter((s) => isSingleLetterSlug(s) || isNumberSlug(s) || isNamedPunctSlug(s) || isShortPhraseSlug(s))
-    .map((s) => ({ params: { slug: s } }));
-}
-
-// --- Page logic ---
 const slug = String(Astro.params?.slug ?? "").trim().toLowerCase();
 
-const valid =
-  isSafeSlug(slug) &&
-  (isSingleLetterSlug(slug) || isNumberSlug(slug) || isNamedPunctSlug(slug) || isShortPhraseSlug(slug));
+function pageSlugValid(s) {
+  if (!s) return false;
+  if (s.length > 48) return false;
+  if (!/^[a-z0-9]$/.test(s) && !/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(s)) return false;
+  if (s.includes("--")) return false;
 
+  const isSingleLetter = /^[a-z]$/.test(s);
+  const isNumber = /^\d+$/.test(s) && Number(s) >= 0 && Number(s) <= 100;
+  const isNamed = Boolean(slugToSymbol[s]);
+  const parts = s.split("-").filter(Boolean);
+  const isShortPhrase =
+    parts.length > 0 &&
+    parts.length <= 4 &&
+    s.length <= 28 &&
+    parts.every((p) => /^[a-z0-9]{2,15}$/.test(p));
+
+  return isSingleLetter || isNumber || isNamed || isShortPhrase;
+}
+
+const valid = pageSlugValid(slug);
 const term = termFromSlug(slug);
 const morse = valid ? textToMorse(term.value) : "";
 const hasUnknown = morse.includes("?");
 
-// Robots policy: index only clean conversions; noindex anything thin/unknown
-const robots =
-  valid && morse && !hasUnknown ? "index,follow" : "noindex,follow";
+const robots = valid && morse && !hasUnknown ? "index,follow" : "noindex,follow";
 
 const pageTitle = valid ? `${term.display} in Morse Code` : "Morse Code";
 const description =
