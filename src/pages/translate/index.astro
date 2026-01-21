@@ -1,5 +1,6 @@
 ---
 import Layout from "../../components/Layout.astro";
+import slugs from "../../data/seo-slugs.json";
 
 const title = "Text to Morse Translator – Copy & Convert Instantly";
 const description =
@@ -43,7 +44,7 @@ const jsonLd = {
 };
 
 // Internal-link “word practice” set (safe, clean, high-intent)
-const practiceWords = [
+const practiceWordsRaw = [
   ["hello", "Hello"],
   ["help", "Help"],
   ["sos", "SOS"],
@@ -61,6 +62,10 @@ const practiceWords = [
   ["go-back", "Go back"],
   ["follow-me", "Follow me"],
 ];
+
+// ✅ Prevent broken internal links: only show practice words that exist in seo-slugs.json
+const available = new Set((Array.isArray(slugs) ? slugs : []).map((s) => String(s || "").trim().toLowerCase()));
+const practiceWords = practiceWordsRaw.filter(([slug]) => available.has(String(slug).toLowerCase()));
 ---
 
 <Layout title={title} description={description}>
@@ -148,25 +153,27 @@ const practiceWords = [
     </div>
   </section>
 
-  <!-- ✅ NEW: Internal linking block (SEO) -->
-  <section class="card" style="margin-top:16px;">
-    <div class="section-head">
-      <h2 class="section-title" style="margin:0;">Practice words (instant pages)</h2>
-      <p class="muted section-note" style="margin:0;">
-        Each word opens a dedicated page with its Morse code.
+  <!-- ✅ Internal linking block (SEO) -->
+  {practiceWords.length ? (
+    <section class="card" style="margin-top:16px;">
+      <div class="section-head">
+        <h2 class="section-title" style="margin:0;">Practice words (instant pages)</h2>
+        <p class="muted section-note" style="margin:0;">
+          Each word opens a dedicated page with its Morse code.
+        </p>
+      </div>
+
+      <div class="pill-grid" style="margin-top:12px;" role="list">
+        {practiceWords.map(([slug, label]) => (
+          <a role="listitem" href={`/${slug}-in-morse-code/`}>{label}</a>
+        ))}
+      </div>
+
+      <p class="muted" style="margin-top:10px;">
+        Browse more on <a href="/morse-code/words/">the words hub</a>.
       </p>
-    </div>
-
-    <div class="pill-grid" style="margin-top:12px;" role="list">
-      {practiceWords.map(([slug, label]) => (
-        <a role="listitem" href={`/${slug}-in-morse-code/`}>{label}</a>
-      ))}
-    </div>
-
-    <p class="muted" style="margin-top:10px;">
-      Browse more on <a href="/morse-code/words/">the words hub</a>.
-    </p>
-  </section>
+    </section>
+  ) : null}
 
   <section class="card" style="margin-top:16px;">
     <h2 style="margin-top:0;">How to use</h2>
@@ -257,7 +264,6 @@ const practiceWords = [
           setTimeout(() => btnT2M.click(), 0);
         }
 
-        // Swap/copy should feel instant + keep cursor where user expects
         swap?.addEventListener("click", () => {
           const a = input.value;
           input.value = output.value;
@@ -271,7 +277,6 @@ const practiceWords = [
           input.focus();
         });
 
-        // Nice keyboard shortcut: Ctrl/Cmd+Enter converts depending on what input looks like
         input.addEventListener("keydown", (e) => {
           const isEnter = e.key === "Enter";
           const isMod = e.ctrlKey || e.metaKey;
@@ -280,7 +285,6 @@ const practiceWords = [
           const v = (input.value || "").trim();
           if (!v) return;
 
-          // If it contains dot/dash patterns, decode; else encode
           const looksMorse = /[.\-]/.test(v) && !/[a-zA-Z]/.test(v);
           if (looksMorse && btnM2T) btnM2T.click();
           else if (btnT2M) btnT2M.click();
@@ -380,7 +384,6 @@ const practiceWords = [
       overflow-wrap: anywhere;
     }
 
-    /* Output monospace only */
     .mono{
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       letter-spacing: .25px;
@@ -399,7 +402,6 @@ const practiceWords = [
       font-weight: 750;
     }
 
-    /* Make the main action visually “primary” without changing global button styles */
     .primary-action{
       border-color: rgba(138,180,255,0.42) !important;
       background: rgba(138,180,255,0.18) !important;
