@@ -1,7 +1,15 @@
-# Legacy HTML URLs -> clean trailing-slash URLs
-/*-in-morse-code.html  /:splat-in-morse-code/  301
+# -------------------------------------------------------
+# Canonicalize robots endpoint
+# -------------------------------------------------------
+/robot.txt    /robots.txt    301
 
-# Two weird legacy pages in the ZIP:
-# "-in-morse-code.html" (empty slug) and "--in-morse-code.html" (slug "-")
-/-in-morse-code.html   /semicolon-in-morse-code/  301
-/--in-morse-code.html  /hyphen-in-morse-code/     301
+# -------------------------------------------------------
+# Special-character routes -> safe slug pages
+# (Encoded forms are what bots usually hit)
+# -------------------------------------------------------
+/morse-code/%21/   /exclamation-in-morse-code/   301
+/morse-code/%27/   /apostrophe-in-morse-code/    301
+
+# Optional: if you ever had these without trailing slash
+/morse-code/%21    /exclamation-in-morse-code/   301
+/morse-code/%27    /apostrophe-in-morse-code/    301
