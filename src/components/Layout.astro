@@ -133,6 +133,13 @@ const jsonLd = {
             aria-current={isActive("/morse-code/") ? "page" : undefined}
           >Learn</a>
 
+          <!-- ✅ NEW: Words hub -->
+          <a
+            class:list={["nav-link", isActive("/morse-code/words/") && "active"]}
+            href="/morse-code/words/"
+            aria-current={isActive("/morse-code/words/") ? "page" : undefined}
+          >Words</a>
+
           <a
             class:list={["nav-link", isActive("/phrases/") && "active"]}
             href="/phrases/"
