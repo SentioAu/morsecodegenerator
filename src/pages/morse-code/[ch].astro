@@ -38,12 +38,12 @@ export function getStaticPaths() {
 }
 
 // -------------------------------------------------------------------
-// Page runtime (safe, no shared helper names)
+// Page runtime
 // -------------------------------------------------------------------
 const { ch, prev, next } = Astro.props;
 
-const site =
-  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+// Prefer Astro.site, otherwise import.meta.env.SITE, otherwise hard fallback
+const site = String(Astro.site ?? import.meta.env.SITE ?? "https://morsecodegenerator.com").replace(/\/$/, "");
 
 const CH = String(ch ?? "").toUpperCase();
 
@@ -66,6 +66,10 @@ const description = code
   : `Learn how to write ${CH} in Morse code. Copy it, listen to it, and practice with examples.`;
 
 const translatorHref = `/translate/?q=${encodeURIComponent(CH)}`;
+
+// ✅ Canonical + robots (prevents indexing broken/empty pages)
+const canonical = `${site}/morse-code/${CH.toLowerCase()}/`;
+const robots = code ? "index,follow" : "noindex,follow";
 
 const tips = (() => {
   if (!code) return [];
@@ -94,7 +98,7 @@ const examplesMorse = examples.map((t) => ({
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Learn", url: `${site}/morse-code/` },
-  { name: CH, url: `${site}/morse-code/${CH.toLowerCase()}/` },
+  { name: CH, url: canonical },
 ];
 
 const jsonLd = {
@@ -113,14 +117,14 @@ const jsonLd = {
       "@type": "WebPage",
       name: title,
       description,
-      url: `${site}/morse-code/${CH.toLowerCase()}/`,
+      url: canonical,
       isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
     },
   ],
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} robots={robots} canonical={canonical}>
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
