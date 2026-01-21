@@ -4,12 +4,25 @@
 /robot.txt    /robots.txt    301
 
 # -------------------------------------------------------
+# Canonicalize sitemap variants (keep one public entrypoint)
+# -------------------------------------------------------
+/sitemap-0.xml   /sitemap.xml   301
+/sitemap-index.xml  /sitemap.xml  301
+
+# -------------------------------------------------------
 # Special-character routes -> safe slug pages
-# (Encoded forms are what bots usually hit)
+# Encoded forms (what bots commonly request)
 # -------------------------------------------------------
 /morse-code/%21/   /exclamation-in-morse-code/   301
 /morse-code/%27/   /apostrophe-in-morse-code/    301
-
-# Optional: if you ever had these without trailing slash
 /morse-code/%21    /exclamation-in-morse-code/   301
 /morse-code/%27    /apostrophe-in-morse-code/    301
+
+# -------------------------------------------------------
+# Special-character routes -> safe slug pages
+# Raw forms (some crawlers / referrers hit these)
+# -------------------------------------------------------
+/morse-code/!/    /exclamation-in-morse-code/   301
+/morse-code/'/    /apostrophe-in-morse-code/    301
+/morse-code/!     /exclamation-in-morse-code/   301
+/morse-code/'     /apostrophe-in-morse-code/    301
