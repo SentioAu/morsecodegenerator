@@ -9,6 +9,58 @@ const description =
 const q = (Astro.url.searchParams.get("q") ?? "").toString();
 const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // safety cap
 const hasInitial = Boolean(initial);
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/translate/`;
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Translator", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+    },
+  ],
+};
+
+// Internal-link “word practice” set (safe, clean, high-intent)
+const practiceWords = [
+  ["hello", "Hello"],
+  ["help", "Help"],
+  ["sos", "SOS"],
+  ["yes", "Yes"],
+  ["no", "No"],
+  ["thank-you", "Thank you"],
+  ["please", "Please"],
+  ["good-morning", "Good morning"],
+  ["good-night", "Good night"],
+  ["i-love-you", "I love you"],
+  ["im-safe", "I’m safe"],
+  ["need-help", "Need help"],
+  ["come-here", "Come here"],
+  ["wait", "Wait"],
+  ["go-back", "Go back"],
+  ["follow-me", "Follow me"],
+];
 ---
 
 <Layout title={title} description={description}>
@@ -23,6 +75,7 @@ const hasInitial = Boolean(initial);
     <div class="hero-actions">
       <a class="btn primary" href="/phrases/">Practice phrases</a>
       <a class="btn" href="/morse-code/a/">Learn alphabet</a>
+      <a class="btn" href="/morse-code/words/">Practice words</a>
       <a class="btn" href="/">Home</a>
     </div>
 
@@ -95,6 +148,26 @@ const hasInitial = Boolean(initial);
     </div>
   </section>
 
+  <!-- ✅ NEW: Internal linking block (SEO) -->
+  <section class="card" style="margin-top:16px;">
+    <div class="section-head">
+      <h2 class="section-title" style="margin:0;">Practice words (instant pages)</h2>
+      <p class="muted section-note" style="margin:0;">
+        Each word opens a dedicated page with its Morse code.
+      </p>
+    </div>
+
+    <div class="pill-grid" style="margin-top:12px;" role="list">
+      {practiceWords.map(([slug, label]) => (
+        <a role="listitem" href={`/${slug}-in-morse-code/`}>{label}</a>
+      ))}
+    </div>
+
+    <p class="muted" style="margin-top:10px;">
+      Browse more on <a href="/morse-code/words/">the words hub</a>.
+    </p>
+  </section>
+
   <section class="card" style="margin-top:16px;">
     <h2 style="margin-top:0;">How to use</h2>
     <ol>
@@ -148,8 +221,11 @@ const hasInitial = Boolean(initial);
   </section>
 
   <p style="margin-top:16px;">
-    Next: <a href="/morse-code/a/">learn the alphabet</a> or <a href="/morse-code/numbers/">numbers</a>.
+    Next: <a href="/morse-code/a/">learn the alphabet</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/morse-code/words/">words</a>.
   </p>
+
+  <!-- Structured data -->
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <!-- Runtime script -->
   <script defer src="/mcg-tool.js"></script>
