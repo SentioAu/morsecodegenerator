@@ -63,11 +63,192 @@ if (!picked) {
   }
 }
 
+/* ---------------------------------------------------------
+   SEO QUALITY GATE: remove noindex pages from sitemap(s)
+   - reads dist HTML pages and checks meta robots noindex
+   - works for sitemap.xml urlset OR sitemap.xml sitemapindex
+---------------------------------------------------------- */
+
+function isSameOriginUrl(u) {
+  try {
+    const url = new URL(u);
+    const site = new URL(SITE);
+    return url.origin === site.origin;
+  } catch {
+    return false;
+  }
+}
+
+function urlToPathname(u) {
+  try {
+    const url = new URL(u);
+    return url.pathname || "/";
+  } catch {
+    // if it's already a pathname
+    if (typeof u === "string" && u.startsWith("/")) return u;
+    return null;
+  }
+}
+
+// trailingSlash: "always" => pages are usually /x/ => dist/x/index.html
+function pathnameToHtmlFile(pn) {
+  const p = pn || "/";
+  if (p === "/") return path.join(dist, "index.html");
+
+  // If a sitemap accidentally includes /404.html etc.
+  if (p.endsWith(".html")) return path.join(dist, p.replace(/^\//, ""));
+
+  // Normalize to folder/index.html
+  const folder = p.endsWith("/") ? p : `${p}/`;
+  return path.join(dist, folder.replace(/^\//, ""), "index.html");
+}
+
+function htmlIsNoindex(html) {
+  // Fast + robust enough for static output
+  // Matches: <meta name="robots" content="noindex,...">
+  return /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(html);
+}
+
+function shouldExcludeUrl(loc) {
+  if (!loc) return false;
+
+  // only evaluate same-origin URLs; keep external URLs untouched
+  if (!isSameOriginUrl(loc)) return false;
+
+  const pn = urlToPathname(loc);
+  if (!pn) return false;
+
+  const htmlPath = pathnameToHtmlFile(pn);
+
+  // If file missing => exclude (prevents 404s in sitemap)
+  if (!exists(htmlPath)) return true;
+
+  // Check noindex
+  try {
+    // Read only the first chunk typically enough (but read all is fine for small pages)
+    const html = readText(htmlPath);
+    return htmlIsNoindex(html);
+  } catch {
+    // If can't read, be conservative: exclude
+    return true;
+  }
+}
+
+function rewriteUrlsetXml(xmlText, fileLabel) {
+  const openTagMatch = xmlText.match(/<urlset\b[^>]*>/i);
+  const closeTagMatch = xmlText.match(/<\/urlset>/i);
+  if (!openTagMatch || !closeTagMatch) return { changed: false, xml: xmlText };
+
+  const openTag = openTagMatch[0];
+  const urlBlocks = xmlText.match(/<url\b[^>]*>[\s\S]*?<\/url>/gi) || [];
+
+  const kept = [];
+  let removed = 0;
+
+  for (const block of urlBlocks) {
+    const locMatch = block.match(/<loc>\s*([^<]+?)\s*<\/loc>/i);
+    const loc = locMatch ? locMatch[1].trim() : "";
+    if (loc && shouldExcludeUrl(loc)) {
+      removed += 1;
+      continue;
+    }
+    kept.push(block);
+  }
+
+  const xmlDecl = xmlText.startsWith("<?xml") ? xmlText.match(/^<\?xml[^>]*\?>\s*/i)?.[0] || "" : "";
+  const out =
+    `${xmlDecl}${openTag}\n` +
+    (kept.length ? kept.join("\n") + "\n" : "") +
+    `</urlset>\n`;
+
+  return { changed: removed > 0, removed, kept: kept.length, xml: out, fileLabel };
+}
+
+function parseIndexLocs(xmlText) {
+  const isIndex = /<sitemapindex\b/i.test(xmlText);
+  if (!isIndex) return null;
+  const sitemapBlocks = xmlText.match(/<sitemap\b[^>]*>[\s\S]*?<\/sitemap>/gi) || [];
+  const locs = [];
+  for (const block of sitemapBlocks) {
+    const locMatch = block.match(/<loc>\s*([^<]+?)\s*<\/loc>/i);
+    if (locMatch?.[1]) locs.push(locMatch[1].trim());
+  }
+  return locs;
+}
+
+function indexLocToLocalFile(loc) {
+  // Usually loc is absolute: https://site/sitemap-0.xml
+  // or relative: /sitemap-0.xml
+  try {
+    const u = new URL(loc);
+    const pn = u.pathname || "";
+    const base = path.basename(pn);
+    return path.join(dist, base);
+  } catch {
+    if (loc.startsWith("/")) return path.join(dist, path.basename(loc));
+    return path.join(dist, path.basename(loc));
+  }
+}
+
+// 1) Always try filtering urlset sitemap.xml itself if it is urlset
+// 2) If sitemap.xml is sitemapindex, filter each referenced sitemap file
+try {
+  if (exists(outSitemap)) {
+    const sm = readText(outSitemap);
+
+    if (/<urlset\b/i.test(sm)) {
+      const res = rewriteUrlsetXml(sm, "sitemap.xml");
+      if (res.changed) {
+        writeText(outSitemap, res.xml);
+        console.log(
+          `[postbuild-sitemap] Filtered ${res.fileLabel}: removed ${res.removed}, kept ${res.kept}`
+        );
+      } else {
+        console.log("[postbuild-sitemap] sitemap.xml filter: no changes");
+      }
+    } else if (/<sitemapindex\b/i.test(sm)) {
+      const locs = parseIndexLocs(sm) || [];
+      let totalRemoved = 0;
+      let totalKept = 0;
+      let touched = 0;
+
+      for (const loc of locs) {
+        const local = indexLocToLocalFile(loc);
+        if (!exists(local)) continue;
+
+        const childXml = readText(local);
+        if (!/<urlset\b/i.test(childXml)) continue;
+
+        const res = rewriteUrlsetXml(childXml, path.basename(local));
+        if (res.changed) {
+          writeText(local, res.xml);
+          touched += 1;
+          totalRemoved += res.removed;
+          totalKept += res.kept;
+          console.log(
+            `[postbuild-sitemap] Filtered ${res.fileLabel}: removed ${res.removed}, kept ${res.kept}`
+          );
+        }
+      }
+
+      if (touched === 0) {
+        console.log("[postbuild-sitemap] sitemap index filter: no child sitemaps changed");
+      } else {
+        console.log(
+          `[postbuild-sitemap] sitemap index filter summary: changed ${touched} file(s), removed ${totalRemoved}, kept ${totalKept}`
+        );
+      }
+    } else {
+      console.log("[postbuild-sitemap] sitemap.xml is not urlset or index — skipping filter");
+    }
+  }
+} catch (e) {
+  console.log("[postbuild-sitemap] sitemap filter failed (non-fatal):", e?.message || e);
+}
+
 // Ensure dist/robots.txt has the correct Sitemap line (keep existing rules)
 try {
-  let robots = exists(robotsPath)
-    ? readText(robotsPath)
-    : `User-agent: *\nAllow: /\n`;
+  let robots = exists(robotsPath) ? readText(robotsPath) : `User-agent: *\nAllow: /\n`;
 
   // remove any existing Sitemap lines
   robots = robots
