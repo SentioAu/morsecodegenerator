@@ -38,7 +38,11 @@ const slugToSymbol = {
   underscore: "_",
 };
 
-// ✅ IMPORTANT: getStaticPaths must be self-contained on Cloudflare build
+// ✅ IMPORTANT: After canonical consolidation, this route should ONLY build:
+// - short phrases / words (slug-style), and
+// - named punctuation slugs (exclamation, apostrophe, etc.)
+// It should NOT build single letters (a–z) or numbers (0–100),
+// because those are canonical at /morse-code/{slug}/.
 export function getStaticPaths() {
   const normalize = (x) => String(x ?? "").trim().toLowerCase();
 
@@ -55,12 +59,12 @@ export function getStaticPaths() {
     if (!s) return false;
     if (BLOCKED.has(s)) return false;
     if (s.length > 48) return false;
-    // allow single char (a or 7), or multi token with hyphens
     if (!/^[a-z0-9]$/.test(s) && !/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(s)) return false;
     if (s.includes("--")) return false;
     return true;
   }
 
+  // IMPORTANT: letters/numbers are excluded from this route (canonical elsewhere)
   function isSingleLetter(s) {
     return /^[a-z]$/.test(s);
   }
@@ -84,7 +88,6 @@ export function getStaticPaths() {
     return true;
   }
 
-  // ✅ Critical fix:
   // Always include the named punctuation slugs in the build output,
   // even if seo-slugs.json does NOT contain them.
   const base = (Array.isArray(slugs) ? slugs : []).map(normalize);
@@ -92,7 +95,10 @@ export function getStaticPaths() {
 
   return Array.from(combined)
     .filter(isSafeSlug)
-    .filter((s) => isSingleLetter(s) || isNumber(s) || isNamedPunct(s) || isShortPhrase(s))
+    // ✅ Only build named punctuation + short phrases/words here
+    .filter((s) => isNamedPunct(s) || isShortPhrase(s))
+    // ✅ Explicitly prevent building single-letter and numeric pages here
+    .filter((s) => !isSingleLetter(s) && !isNumber(s))
     .sort((a, b) => a.localeCompare(b, "en"))
     .map((s) => ({ params: { slug: s } }));
 }
@@ -109,6 +115,7 @@ function termFromSlug(s) {
   if (slugToSymbol[s]) {
     return { display: `${titleCase(s)} (${slugToSymbol[s]})`, value: slugToSymbol[s] };
   }
+  // ✅ letters/numbers are no longer canonical here; still handled safely if visited
   if (/^[a-z]$/i.test(s)) {
     const up = s.toUpperCase();
     return { display: up, value: up };
@@ -131,15 +138,16 @@ function textToMorse(input) {
 
 const slug = String(Astro.params?.slug ?? "").trim().toLowerCase();
 
-function pageSlugValid(s) {
+function pageSlugValidForThisRoute(s) {
   if (!s) return false;
   if (s.length > 48) return false;
   if (!/^[a-z0-9]$/.test(s) && !/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(s)) return false;
   if (s.includes("--")) return false;
 
+  const isNamed = Boolean(slugToSymbol[s]);
   const isSingleLetter = /^[a-z]$/.test(s);
   const isNumber = /^\d+$/.test(s) && Number(s) >= 0 && Number(s) <= 100;
-  const isNamed = Boolean(slugToSymbol[s]);
+
   const parts = s.split("-").filter(Boolean);
   const isShortPhrase =
     parts.length > 0 &&
@@ -147,10 +155,11 @@ function pageSlugValid(s) {
     s.length <= 28 &&
     parts.every((p) => /^[a-z0-9]{2,15}$/.test(p));
 
-  return isSingleLetter || isNumber || isNamed || isShortPhrase;
+  // ✅ Only allow named punctuation + phrases here (not letters/numbers)
+  return (isNamed || isShortPhrase) && !isSingleLetter && !isNumber;
 }
 
-const valid = pageSlugValid(slug);
+const valid = pageSlugValidForThisRoute(slug);
 const term = termFromSlug(slug);
 const morse = valid ? textToMorse(term.value) : "";
 const hasUnknown = morse.includes("?");
@@ -191,7 +200,7 @@ const description =
         <p style="margin-top:12px;">
           <a href="/translate/">Open Translator</a>
           {" "}•{" "}
-          <a href="/phrases/">Common Phrases</a>
+          <a href="/morse-code/words/">Browse Words</a>
           {" "}•{" "}
           <a href="/morse-code/a/">Learn the Alphabet</a>
         </p>
@@ -211,7 +220,7 @@ const description =
         This page is not available. Use the <a href="/translate/">translator</a> to convert any text to Morse code.
       </p>
       <p class="muted">
-        You can also learn using <a href="/morse-code/a/">Alphabet</a> and <a href="/phrases/">Phrases</a>.
+        You can also learn using <a href="/morse-code/a/">Alphabet</a>, <a href="/morse-code/words/">Words</a>, and <a href="/phrases/">Phrases</a>.
       </p>
     </>
   )}
