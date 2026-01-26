@@ -1,122 +1,100 @@
-# -------------------------------------------------------
-# Canonicalize robots endpoint
-# -------------------------------------------------------
-/robot.txt    /robots.txt    301
-
-# -------------------------------------------------------
-# Canonicalize sitemap variants (keep one public entrypoint)
-# -------------------------------------------------------
-/sitemap-0.xml       /sitemap.xml   301
-/sitemap-index.xml   /sitemap.xml   301
-
-# -------------------------------------------------------
+# =======================================================
 # Special-character routes -> safe slug pages
-# Encoded forms (what bots commonly request)
-# -------------------------------------------------------
-/morse-code/%21/   /exclamation-in-morse-code/   301
-/morse-code/%27/   /apostrophe-in-morse-code/    301
-/morse-code/%21    /exclamation-in-morse-code/   301
-/morse-code/%27    /apostrophe-in-morse-code/    301
+# (encoded + raw)
+# =======================================================
+/morse-code/%21         /exclamation-in-morse-code/ 301
+/morse-code/%21/        /exclamation-in-morse-code/ 301
+/morse-code/!           /exclamation-in-morse-code/ 301
+/morse-code/!/          /exclamation-in-morse-code/ 301
 
-# -------------------------------------------------------
-# Special-character routes -> safe slug pages
-# Raw forms (some crawlers / referrers hit these)
-# -------------------------------------------------------
-/morse-code/!/    /exclamation-in-morse-code/   301
-/morse-code/'/    /apostrophe-in-morse-code/    301
-/morse-code/!     /exclamation-in-morse-code/   301
-/morse-code/'     /apostrophe-in-morse-code/    301
-
+/morse-code/%27         /apostrophe-in-morse-code/  301
+/morse-code/%27/        /apostrophe-in-morse-code/  301
+/morse-code/'           /apostrophe-in-morse-code/  301
+/morse-code/'/          /apostrophe-in-morse-code/  301
 
 # =======================================================
-# SEO CANONICAL CONSOLIDATION
-# Eliminate duplicate URL families:
-# - /a-in-morse-code/ (old/word-style) -> /morse-code/a/ (reference canonical)
-# - /1-in-morse-code/ -> /morse-code/1/
-# Keep words like /help-in-morse-code/ as-is (DO NOT redirect those).
+# SEO canonical consolidation
+# Only redirect single-character letter/digit pages:
+# - /a-in-morse-code/ -> /morse-code/a/
+# - /7-in-morse-code/ -> /morse-code/7/
+# DO NOT touch multi-word slugs like /help-in-morse-code/
 # =======================================================
 
-# -------------------------------------------------------
-# Letters: /{letter}-in-morse-code/ -> /morse-code/{letter}/
-# -------------------------------------------------------
-/a-in-morse-code/   /morse-code/a/   301
-/b-in-morse-code/   /morse-code/b/   301
-/c-in-morse-code/   /morse-code/c/   301
-/d-in-morse-code/   /morse-code/d/   301
-/e-in-morse-code/   /morse-code/e/   301
-/f-in-morse-code/   /morse-code/f/   301
-/g-in-morse-code/   /morse-code/g/   301
-/h-in-morse-code/   /morse-code/h/   301
-/i-in-morse-code/   /morse-code/i/   301
-/j-in-morse-code/   /morse-code/j/   301
-/k-in-morse-code/   /morse-code/k/   301
-/l-in-morse-code/   /morse-code/l/   301
-/m-in-morse-code/   /morse-code/m/   301
-/n-in-morse-code/   /morse-code/n/   301
-/o-in-morse-code/   /morse-code/o/   301
-/p-in-morse-code/   /morse-code/p/   301
-/q-in-morse-code/   /morse-code/q/   301
-/r-in-morse-code/   /morse-code/r/   301
-/s-in-morse-code/   /morse-code/s/   301
-/t-in-morse-code/   /morse-code/t/   301
-/u-in-morse-code/   /morse-code/u/   301
-/v-in-morse-code/   /morse-code/v/   301
-/w-in-morse-code/   /morse-code/w/   301
-/x-in-morse-code/   /morse-code/x/   301
-/y-in-morse-code/   /morse-code/y/   301
-/z-in-morse-code/   /morse-code/z/   301
+# Letters only (single a-z)
+/:a-in-morse-code       /morse-code/a/             301
+/:b-in-morse-code       /morse-code/b/             301
+/:c-in-morse-code       /morse-code/c/             301
+/:d-in-morse-code       /morse-code/d/             301
+/:e-in-morse-code       /morse-code/e/             301
+/:f-in-morse-code       /morse-code/f/             301
+/:g-in-morse-code       /morse-code/g/             301
+/:h-in-morse-code       /morse-code/h/             301
+/:i-in-morse-code       /morse-code/i/             301
+/:j-in-morse-code       /morse-code/j/             301
+/:k-in-morse-code       /morse-code/k/             301
+/:l-in-morse-code       /morse-code/l/             301
+/:m-in-morse-code       /morse-code/m/             301
+/:n-in-morse-code       /morse-code/n/             301
+/:o-in-morse-code       /morse-code/o/             301
+/:p-in-morse-code       /morse-code/p/             301
+/:q-in-morse-code       /morse-code/q/             301
+/:r-in-morse-code       /morse-code/r/             301
+/:s-in-morse-code       /morse-code/s/             301
+/:t-in-morse-code       /morse-code/t/             301
+/:u-in-morse-code       /morse-code/u/             301
+/:v-in-morse-code       /morse-code/v/             301
+/:w-in-morse-code       /morse-code/w/             301
+/:x-in-morse-code       /morse-code/x/             301
+/:y-in-morse-code       /morse-code/y/             301
+/:z-in-morse-code       /morse-code/z/             301
 
-# No trailing slash variants (optional but good)
-/a-in-morse-code    /morse-code/a/   301
-/b-in-morse-code    /morse-code/b/   301
-/c-in-morse-code    /morse-code/c/   301
-/d-in-morse-code    /morse-code/d/   301
-/e-in-morse-code    /morse-code/e/   301
-/f-in-morse-code    /morse-code/f/   301
-/g-in-morse-code    /morse-code/g/   301
-/h-in-morse-code    /morse-code/h/   301
-/i-in-morse-code    /morse-code/i/   301
-/j-in-morse-code    /morse-code/j/   301
-/k-in-morse-code    /morse-code/k/   301
-/l-in-morse-code    /morse-code/l/   301
-/m-in-morse-code    /morse-code/m/   301
-/n-in-morse-code    /morse-code/n/   301
-/o-in-morse-code    /morse-code/o/   301
-/p-in-morse-code    /morse-code/p/   301
-/q-in-morse-code    /morse-code/q/   301
-/r-in-morse-code    /morse-code/r/   301
-/s-in-morse-code    /morse-code/s/   301
-/t-in-morse-code    /morse-code/t/   301
-/u-in-morse-code    /morse-code/u/   301
-/v-in-morse-code    /morse-code/v/   301
-/w-in-morse-code    /morse-code/w/   301
-/x-in-morse-code    /morse-code/x/   301
-/y-in-morse-code    /morse-code/y/   301
-/z-in-morse-code    /morse-code/z/   301
+# Digits only (single 0-9)
+/0-in-morse-code        /morse-code/0/             301
+/1-in-morse-code        /morse-code/1/             301
+/2-in-morse-code        /morse-code/2/             301
+/3-in-morse-code        /morse-code/3/             301
+/4-in-morse-code        /morse-code/4/             301
+/5-in-morse-code        /morse-code/5/             301
+/6-in-morse-code        /morse-code/6/             301
+/7-in-morse-code        /morse-code/7/             301
+/8-in-morse-code        /morse-code/8/             301
+/9-in-morse-code        /morse-code/9/             301
 
+# (Optional) explicit slash variants, if your platform treats them differently
+/a-in-morse-code/       /morse-code/a/             301
+/b-in-morse-code/       /morse-code/b/             301
+/c-in-morse-code/       /morse-code/c/             301
+/d-in-morse-code/       /morse-code/d/             301
+/e-in-morse-code/       /morse-code/e/             301
+/f-in-morse-code/       /morse-code/f/             301
+/g-in-morse-code/       /morse-code/g/             301
+/h-in-morse-code/       /morse-code/h/             301
+/i-in-morse-code/       /morse-code/i/             301
+/j-in-morse-code/       /morse-code/j/             301
+/k-in-morse-code/       /morse-code/k/             301
+/l-in-morse-code/       /morse-code/l/             301
+/m-in-morse-code/       /morse-code/m/             301
+/n-in-morse-code/       /morse-code/n/             301
+/o-in-morse-code/       /morse-code/o/             301
+/p-in-morse-code/       /morse-code/p/             301
+/q-in-morse-code/       /morse-code/q/             301
+/r-in-morse-code/       /morse-code/r/             301
+/s-in-morse-code/       /morse-code/s/             301
+/t-in-morse-code/       /morse-code/t/             301
+/u-in-morse-code/       /morse-code/u/             301
+/v-in-morse-code/       /morse-code/v/             301
+/w-in-morse-code/       /morse-code/w/             301
+/x-in-morse-code/       /morse-code/x/             301
+/y-in-morse-code/       /morse-code/y/             301
+/z-in-morse-code/       /morse-code/z/             301
 
-# -------------------------------------------------------
-# Digits: /{digit}-in-morse-code/ -> /morse-code/{digit}/
-# -------------------------------------------------------
-/0-in-morse-code/   /morse-code/0/   301
-/1-in-morse-code/   /morse-code/1/   301
-/2-in-morse-code/   /morse-code/2/   301
-/3-in-morse-code/   /morse-code/3/   301
-/4-in-morse-code/   /morse-code/4/   301
-/5-in-morse-code/   /morse-code/5/   301
-/6-in-morse-code/   /morse-code/6/   301
-/7-in-morse-code/   /morse-code/7/   301
-/8-in-morse-code/   /morse-code/8/   301
-/9-in-morse-code/   /morse-code/9/   301
-
-# No trailing slash variants (optional but good)
-/0-in-morse-code    /morse-code/0/   301
-/1-in-morse-code    /morse-code/1/   301
-/2-in-morse-code    /morse-code/2/   301
-/3-in-morse-code    /morse-code/3/   301
-/4-in-morse-code    /morse-code/4/   301
-/5-in-morse-code    /morse-code/5/   301
-/6-in-morse-code    /morse-code/6/   301
-/7-in-morse-code    /morse-code/7/   301
-/8-in-morse-code    /morse-code/8/   301
-/9-in-morse-code    /morse-code/9/   301
+/0-in-morse-code/       /morse-code/0/             301
+/1-in-morse-code/       /morse-code/1/             301
+/2-in-morse-code/       /morse-code/2/             301
+/3-in-morse-code/       /morse-code/3/             301
+/4-in-morse-code/       /morse-code/4/             301
+/5-in-morse-code/       /morse-code/5/             301
+/6-in-morse-code/       /morse-code/6/             301
+/7-in-morse-code/       /morse-code/7/             301
+/8-in-morse-code/       /morse-code/8/             301
+/9-in-morse-code/       /morse-code/9/             301
