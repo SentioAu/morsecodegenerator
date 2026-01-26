@@ -9,6 +9,8 @@ const description =
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
+const canonical = `${site}/morse-code/words/`;
+
 // -------- slug helpers (self-contained) --------
 const toStr = (x) => String(x ?? "").trim().toLowerCase();
 
@@ -57,19 +59,53 @@ const groups = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))
 
 const count = all.length;
 
+const alpha = groups.map((g) => g.L);
+
+// ✅ Breadcrumbs (structured data)
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Learn", url: `${site}/morse-code/` },
+  { name: "Words", url: canonical },
+];
+
+// ✅ JSON-LD: breadcrumbs + collection page + optional search action
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Morse Code Words",
-  description,
-  url: `${site}/morse-code/words/`,
-  isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "CollectionPage",
+      name: "Morse Code Words",
+      description,
+      url: canonical,
+      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${canonical}?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
 };
-
-const alpha = groups.map((g) => g.L);
 ---
 
 <Layout title={title} description={description}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/morse-code/">Learn</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Words</span>
+  </nav>
+
   <header class="hero">
     <p class="muted kicker">Browse • Click • Practice</p>
     <h1 class="title">Morse Code Words (A–Z)</h1>
@@ -81,6 +117,8 @@ const alpha = groups.map((g) => g.L);
 
     <div class="actions">
       <a class="btn primary" href="/translate/">Open Translator</a>
+      <a class="btn" href="/morse-code/">Learn hub</a>
+      <a class="btn" href="/phrases/">Phrases</a>
       <a class="btn" href="/morse-code/a/">Alphabet</a>
       <a class="btn" href="/morse-code/numbers/">Numbers</a>
       <a class="btn" href="/morse-code/punctuation/">Punctuation</a>
@@ -136,6 +174,14 @@ const alpha = groups.map((g) => g.L);
       const items = Array.from(document.querySelectorAll(".item"));
       const groups = Array.from(document.querySelectorAll(".group"));
 
+      // ✅ Support ?q= for shareable filtered views
+      function setFromQuery() {
+        try {
+          const v = new URL(window.location.href).searchParams.get("q");
+          if (v && q && !q.value) q.value = v;
+        } catch {}
+      }
+
       function applyFilter() {
         const v = String(q?.value || "").trim().toLowerCase();
         if (!v) {
@@ -157,11 +203,18 @@ const alpha = groups.map((g) => g.L);
         });
       }
 
+      setFromQuery();
+      applyFilter();
       q?.addEventListener("input", applyFilter, { passive: true });
     })();
   </script>
 
   <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.02); padding:6px 10px; border-radius:999px; color:rgba(255,255,255,0.92); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.10); background:rgba(255,255,255,0.015); color:rgba(255,255,255,0.78); }
+
     .hero { margin: 6px 0 14px; }
     .kicker{
       margin: 0 0 10px;
