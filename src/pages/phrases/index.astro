@@ -1,4 +1,3 @@
-
 ---
 import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
@@ -9,9 +8,9 @@ const description =
   "Browse common Morse code phrases (SOS, HELP, MAYDAY, and more). Copy Morse instantly and practice with the translator.";
 
 // -------------------------
-// Helpers
+// Helpers (NO TS annotations)
 // -------------------------
-function slugify(s: any) {
+function slugify(s) {
   return (
     String(s || "")
       .toLowerCase()
@@ -36,7 +35,7 @@ const map = Object.fromEntries(
 // 2) [{slug:"sos", phrase:"SOS"}, ...]
 // 3) [{slug:"sos", text:"SOS"}, ...]
 const rawPhrases = data?.phrases;
-let phrases: { slug: string; phrase: string }[] = [];
+let phrases = [];
 
 if (Array.isArray(rawPhrases)) {
   if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
@@ -94,44 +93,56 @@ const fallback = [
 const hasRealPhrases = phrases.length > 0;
 const list = hasRealPhrases ? phrases : fallback;
 
-// Site URL for JSON-LD
+// Site URL for JSON-LD + canonical
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
-const crumbs = [
-  { name: "Home", url: `${site}/` },
-  { name: "Phrases", url: `${site}/phrases/` },
-];
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: crumbs.map((c, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    name: c.name,
-    item: c.url,
-  })),
-};
-
-const collectionJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Common Morse Code Phrases",
-  url: `${site}/phrases/`,
-  isPartOf: { "@type": "WebSite", url: site, name: "Morse Code Generator" },
-};
+const canonical = `${site}/phrases/`;
 
 // If real phrase pages exist, link to them. Otherwise link to translator to avoid 404.
-const hrefFor = (item: { slug: string; phrase: string }) =>
+const hrefFor = (item) =>
   hasRealPhrases
     ? `/phrases/${item.slug}/`
     : `/translate/?q=${encodeURIComponent(item.phrase)}`;
+
+// Structured data (single graph)
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Phrases", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "CollectionPage",
+      name: "Common Morse Code Phrases",
+      description,
+      url: canonical,
+      isPartOf: { "@type": "WebSite", url: site, name: "Morse Code Generator" },
+    },
+  ],
+};
+
+// Hub should always be indexable
+const robots = "index,follow";
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} robots={robots} canonical={canonical}>
   <header class="hero">
+    <p class="muted kicker">Browse • Copy • Practice</p>
+
     <h1 class="hero-title">Common Morse Code Phrases</h1>
+
     <p class="muted hero-sub">
       Search, copy Morse instantly, and practice inside the translator.
       {hasRealPhrases ? " Each phrase also has its own page." : ""}
@@ -139,7 +150,9 @@ const hrefFor = (item: { slug: string; phrase: string }) =>
 
     <div class="hero-actions">
       <a class="btn primary" href="/translate/">Open Translator</a>
-      <a class="btn" href="/morse-code/a/">Learn Alphabet</a>
+      <a class="btn" href="/morse-code/">Learn hub</a>
+      <a class="btn" href="/morse-code/words/">Practice words</a>
+      <a class="btn" href="/">Home</a>
     </div>
 
     {!hasRealPhrases && (
@@ -168,7 +181,7 @@ const hrefFor = (item: { slug: string; phrase: string }) =>
 
     <div class="pill-grid phrase-pills" id="phraseList" style="margin-top:12px;">
       {list.map((p) => (
-        <a class="pill" href={hrefFor(p)} data-phrase={p.phrase.toLowerCase()}>
+        <a class="pill" href={hrefFor(p)} data-phrase={String(p.phrase).toLowerCase()}>
           {p.phrase}
         </a>
       ))}
@@ -212,12 +225,16 @@ const hrefFor = (item: { slug: string; phrase: string }) =>
   </section>
 
   <p class="muted" style="margin-top:16px;">
-    Explore: <a href="/morse-code/a/">alphabet</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/morse-code/punctuation/">punctuation</a>
+    Explore:
+    <a href="/morse-code/"> learn hub</a> •
+    <a href="/morse-code/a/"> alphabet</a> •
+    <a href="/morse-code/numbers/"> numbers</a> •
+    <a href="/morse-code/punctuation/"> punctuation</a> •
+    <a href="/morse-code/words/"> words</a>
   </p>
 
   <!-- Structured Data -->
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(collectionJsonLd)}></script>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <script is:inline define:vars={{ map }}>
     const select = document.getElementById("phraseSelect");
@@ -230,10 +247,16 @@ const hrefFor = (item: { slug: string; phrase: string }) =>
     function toMorse(text){
       const s = (text || "").toString().toUpperCase().trim();
       if (!s) return "";
+
+      // Convert words -> letters -> morse. Unsupported chars become "?"
       return s
-        .split(/\s+/)
+        .split(/\\s+/)
         .filter(Boolean)
-        .map(w => w.split("").map(ch => (map?.[ch] || "")).filter(Boolean).join(" "))
+        .map(w =>
+          w.split("")
+            .map(ch => (map?.[ch] ? map[ch] : "?"))
+            .join(" ")
+        )
         .join(" / ");
     }
 
@@ -293,9 +316,16 @@ const hrefFor = (item: { slug: string; phrase: string }) =>
 
   <style>
     .hero { margin-top: 6px; }
+    .kicker{
+      margin: 0 0 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
     .hero-title { margin: 0 0 8px; }
     .hero-sub { margin: 0; max-width: 72ch; }
     .hero-actions { margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+
     .warn { margin-top: 12px; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; background: rgba(255,255,255,0.03); }
 
     .btn{
@@ -362,7 +392,6 @@ const hrefFor = (item: { slug: string; phrase: string }) =>
       background: rgba(255,255,255,0.06);
     }
 
-    /* Make the tool grid go 2-col earlier (feels better on laptop widths) */
     @media (min-width: 760px) {
       .tool-grid { grid-template-columns: 1fr 1fr; }
     }
