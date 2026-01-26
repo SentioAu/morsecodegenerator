@@ -9,7 +9,11 @@ const description =
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
+// ✅ Force canonical for this page (avoid ?q= variants becoming canonical)
 const canonical = `${site}/morse-code/words/`;
+
+// ✅ Optional: allow indexing this hub page
+const robots = "index,follow";
 
 // -------- slug helpers (self-contained) --------
 const toStr = (x) => String(x ?? "").trim().toLowerCase();
@@ -97,7 +101,16 @@ const jsonLd = {
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} robots={robots} canonical={canonical}>
+  <!-- ✅ Ensure canonical is correct even if Layout isn’t updated -->
+  <head>
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={robots} />
+
+    <!-- Keep social URL stable (avoid ?q= in OG) -->
+    <meta property="og:url" content={canonical} />
+  </head>
+
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
