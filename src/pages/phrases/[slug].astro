@@ -5,15 +5,20 @@ import { textToMorse } from "../../utils/morse";
 
 // Hoisted helper (safe)
 function slugify(input) {
-  return String(input ?? "")
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "phrase";
+  return (
+    String(input ?? "")
+      .toLowerCase()
+      .trim()
+      .replace(/['"]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "phrase"
+  );
 }
 
+// -------------------------------------------------------------------
+// getStaticPaths (self-contained, safe in Cloudflare build)
+// -------------------------------------------------------------------
 export function getStaticPaths() {
   const rawPhrases = data?.phrases ?? [];
   let list = [];
@@ -49,7 +54,9 @@ export function getStaticPaths() {
   }));
 }
 
-// Build map once for rendering
+// -------------------------------------------------------------------
+// Map for rendering (normalized)
+// -------------------------------------------------------------------
 const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
   Object.entries(rawMap)
@@ -57,64 +64,114 @@ const map = Object.fromEntries(
     .map(([k, v]) => [String(k).toUpperCase(), String(v)])
 );
 
+// -------------------------------------------------------------------
+// Page runtime
+// -------------------------------------------------------------------
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
 const { phrase: propPhrase, slug: propSlug } = Astro.props;
-const slug = String(propSlug ?? Astro.params.slug ?? "");
+
+const slug = String(propSlug ?? Astro.params?.slug ?? "").trim();
 const phrase = String(propPhrase ?? "").trim();
 
+// Canonical must follow trailingSlash: "always"
+const canonical = `${site}/phrases/${encodeURIComponent(slug)}/`;
+
+// Convert phrase to Morse (but detect unknowns)
 const morse = phrase ? textToMorse(phrase, map, " ") : "";
+const hasUnknown = morse.includes("?");
+
+// Robots:
+// - Only index pages that have a phrase AND a valid morse output AND no unknown chars
+const robots =
+  phrase && morse && !hasUnknown ? "index,follow" : "noindex,follow";
 
 const title = phrase ? `${phrase} in Morse code` : "Phrase in Morse code";
 const description = phrase
   ? `See how to write ${phrase} in Morse code. Copy it instantly and practice with the translator.`
   : `See how to write common phrases in Morse code. Copy them instantly and practice.`;
 
-const translatorHref = phrase ? `/translate/?q=${encodeURIComponent(phrase)}` : "/translate/";
+const translatorHref = phrase
+  ? `/translate/?q=${encodeURIComponent(phrase)}`
+  : "/translate/";
 
-// Related phrases (simple, deterministic)
-const rawPhrases = data?.phrases ?? [];
+// Related phrases (deterministic)
+const rawPhrases2 = data?.phrases ?? [];
 let phraseList = [];
 
-if (Array.isArray(rawPhrases)) {
-  if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
-    phraseList = rawPhrases
+if (Array.isArray(rawPhrases2)) {
+  if (rawPhrases2.length && Array.isArray(rawPhrases2[0])) {
+    phraseList = rawPhrases2
       .map((row) => ({ slug: String(row?.[0] ?? ""), phrase: String(row?.[1] ?? "") }))
       .filter((x) => x.slug && x.phrase);
   } else {
-    phraseList = rawPhrases
+    phraseList = rawPhrases2
       .map((p) => {
         const ph = p?.phrase ?? p?.text ?? p?.value ?? p?.name;
+        if (!ph) return null;
         const sl = p?.slug ?? slugify(ph);
         return { slug: String(sl ?? ""), phrase: String(ph ?? "") };
       })
+      .filter(Boolean)
       .filter((x) => x.slug && x.phrase);
   }
 }
 
-const related = phraseList
-  .filter((p) => p.slug !== slug)
-  .slice(0, 10);
+const related = phraseList.filter((p) => p.slug !== slug).slice(0, 10);
 
-// Breadcrumb JSON-LD
-const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+// Internal-link “word practice” set (safe, clean, high-intent)
+const practiceWords = [
+  ["hello", "Hello"],
+  ["help", "Help"],
+  ["sos", "SOS"],
+  ["yes", "Yes"],
+  ["no", "No"],
+  ["thank-you", "Thank you"],
+  ["please", "Please"],
+  ["good-morning", "Good morning"],
+  ["good-night", "Good night"],
+  ["i-love-you", "I love you"],
+  ["im-safe", "I’m safe"],
+  ["need-help", "Need help"],
+];
+
+// Structured data (single graph)
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Phrases", url: `${site}/phrases/` },
-  ...(phrase ? [{ name: phrase, url: `${site}/phrases/${slug}/` }] : []),
+  ...(phrase ? [{ name: phrase, url: canonical }] : []),
 ];
 
-const breadcrumbJsonLd = {
+const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: crumbs.map((c, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    name: c.name,
-    item: c.url,
-  })),
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+    },
+  ],
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout
+  title={title}
+  description={description}
+  robots={robots}
+  canonical={canonical}
+>
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
@@ -128,15 +185,20 @@ const breadcrumbJsonLd = {
   </nav>
 
   <header class="hero">
+    <p class="muted kicker">Copy • Practice • Learn</p>
+
     <h1 class="hero-title">{title}</h1>
+
     <p class="muted hero-sub">
       Copy the Morse translation, then practice it in the translator.
+      {!phrase ? " (This phrase wasn’t found.)" : ""}
     </p>
 
     <div class="hero-actions">
       <a class="btn primary" href={translatorHref}>Open in translator</a>
       <a class="btn" href="/phrases/">Browse all phrases</a>
-      <a class="btn" href="/morse-code/a/">Learn alphabet</a>
+      <a class="btn" href="/morse-code/">Learn hub</a>
+      <a class="btn" href="/morse-code/words/">Practice words</a>
     </div>
   </header>
 
@@ -147,14 +209,38 @@ const breadcrumbJsonLd = {
       <span class="chip chip-morse">{morse || "(not available)"}</span>
     </div>
 
+    {hasUnknown ? (
+      <p class="muted" style="margin-top:10px;">
+        Note: this output includes <span class="k">?</span> for unsupported characters.
+      </p>
+    ) : null}
+
     <div class="actions" style="margin-top:12px;">
-      <button id="copy" type="button" disabled={!morse}>Copy Morse</button>
+      <button id="copy" type="button" disabled={!morse || hasUnknown}>Copy Morse</button>
       <a class="btn" href={translatorHref}>Practice</a>
-      <a class="btn" href="/translate/?q=SOS">Try SOS</a>
+      <a class="btn ghost" href="/translate/?q=SOS">Try SOS</a>
     </div>
 
     <p class="muted" style="margin-top:12px;">
       Format: spaces between letters • “/” between words.
+    </p>
+  </section>
+
+  <!-- ✅ Internal linking block (SEO) -->
+  <section class="card" style="margin-top:16px;">
+    <div class="section-head">
+      <h2 style="margin:0;">Practice words</h2>
+      <p class="muted" style="margin:0;">Open a dedicated word page, or practice in the translator.</p>
+    </div>
+
+    <div class="pill-grid" style="margin-top:12px;" role="list">
+      {practiceWords.map(([s, label]) => (
+        <a role="listitem" href={`/${s}-in-morse-code/`}>{label}</a>
+      ))}
+    </div>
+
+    <p class="muted" style="margin-top:10px;">
+      Browse more on <a href="/morse-code/words/">the words hub</a>.
     </p>
   </section>
 
@@ -201,7 +287,7 @@ const breadcrumbJsonLd = {
     </section>
   )}
 
-  <script is:inline define:vars={{ morse }}>
+  <script is:inline define:vars={{ morse, hasUnknown }}>
     const btn = document.getElementById("copy");
 
     async function copyText(text) {
@@ -219,6 +305,7 @@ const breadcrumbJsonLd = {
     }
 
     btn?.addEventListener("click", async () => {
+      if (hasUnknown) return;
       const value = (morse || "").toString();
       if (!value) return;
       const ok = await copyText(value);
@@ -229,10 +316,16 @@ const breadcrumbJsonLd = {
     });
   </script>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)}></script>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
     .hero { margin-top: 10px; }
+    .kicker{
+      margin: 0 0 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
     .hero-title { margin-bottom: 8px; }
     .hero-sub { margin-top: 0; max-width: 72ch; }
 
