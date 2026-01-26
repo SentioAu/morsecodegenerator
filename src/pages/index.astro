@@ -4,6 +4,37 @@ import Layout from "../components/Layout.astro";
 const title = "Morse Code Generator – Translate Text to Morse Instantly";
 const description =
   "Free online Morse code generator. Convert text to Morse code, decode Morse to text, and copy results instantly.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/`;
+
+const crumbs = [
+  { name: "Home", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+    },
+  ],
+};
 ---
 
 <Layout title={title} description={description}>
@@ -21,7 +52,8 @@ const description =
 
         <div class="hero-actions">
           <a class="btn primary" href="/translate/">Open Translator</a>
-          <a class="btn" href="/morse-code/a/">Learn Alphabet</a>
+          <a class="btn" href="/morse-code/">Learn hub</a>
+          <a class="btn" href="/morse-code/words/">Practice Words</a>
           <a class="btn" href="/phrases/">Practice Phrases</a>
         </div>
 
@@ -37,11 +69,12 @@ const description =
           <div>
             <h2 style="margin:0;">Quick translate</h2>
             <p class="muted" style="margin:6px 0 0;">
-              Type text or Morse. Auto-detect converts as you type.
+              Type text or Morse and convert instantly. (Full tool available on the translator page.)
             </p>
           </div>
 
           <div class="muted tool-mini-links">
+            <a href="/morse-code/words/">Words</a> •
             <a href="/morse-code/numbers/">Numbers</a> •
             <a href="/morse-code/punctuation/">Punctuation</a>
           </div>
@@ -74,7 +107,7 @@ const description =
 
           <div>
             <label for="mcg-output"><strong>Output</strong></label><br />
-            <textarea id="mcg-output" rows="7" placeholder="Your result will appear here..."></textarea>
+            <textarea id="mcg-output" rows="7" placeholder="Your result will appear here..." readonly></textarea>
 
             <p class="muted" style="margin-top:10px;">
               Want the full tool? <a href="/translate/">Open the translator</a>.
@@ -96,6 +129,7 @@ const description =
         <a href="/morse-code/a/">Alphabet (A–Z)</a>
         <a href="/morse-code/numbers/">Numbers (0–9)</a>
         <a href="/morse-code/punctuation/">Punctuation</a>
+        <a href="/morse-code/words/">Words (A–Z)</a>
         <a href="/translate/">Practice in Translator</a>
       </div>
 
@@ -125,16 +159,42 @@ const description =
         Browse all phrases in the <a href="/phrases/">phrases section</a>.
       </p>
     </section>
+
+    <!-- ✅ NEW: Words hub teaser (internal linking) -->
+    <section class="card">
+      <h2 style="margin-top:0;">Morse Code Words</h2>
+      <p class="muted" style="margin-top:0;">
+        Click any word to open a dedicated page with its Morse code.
+      </p>
+
+      <div class="pill-grid" style="margin-top:12px;">
+        <a href="/morse-code/words/">Browse words A–Z</a>
+        <a href="/hello-in-morse-code/">HELLO</a>
+        <a href="/thank-you-in-morse-code/">THANK YOU</a>
+        <a href="/good-night-in-morse-code/">GOOD NIGHT</a>
+        <a href="/i-love-you-in-morse-code/">I LOVE YOU</a>
+        <a href="/help-in-morse-code/">HELP</a>
+        <a href="/water-in-morse-code/">WATER</a>
+        <a href="/welcome-in-morse-code/">WELCOME</a>
+      </div>
+
+      <p class="muted" style="margin-top:10px;">
+        Tip: you can also practice any word instantly in the <a href="/translate/">translator</a>.
+      </p>
+    </section>
   </section>
 
   <section class="card" style="margin-top:16px;">
     <h2 style="margin-top:0;">How it works</h2>
     <ol>
       <li>Type text or paste Morse into the input box.</li>
-      <li>The tool auto-detects (or use the convert buttons).</li>
-      <li>Copy output and practice using alphabet and phrases.</li>
+      <li>Use the convert buttons (Text → Morse / Morse → Text).</li>
+      <li>Copy output and practice using alphabet, words, and phrases.</li>
     </ol>
   </section>
+
+  <!-- Structured data -->
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <!-- Runtime tool -->
   <script defer src="/mcg-tool.js"></script>
@@ -217,13 +277,13 @@ const description =
     }
     .spacer{ flex:1; min-width: 8px; }
 
-    /* Hub grid: 1-col on mobile, 2-col on desktop */
+    /* Hub grid: 1-col on mobile, 3-col on desktop */
     .hub{
       grid-template-columns: 1fr;
     }
     @media (min-width: 980px){
       .hero-grid{ grid-template-columns: 0.95fr 1.05fr; }
-      .hub{ grid-template-columns: 1fr 1fr; }
+      .hub{ grid-template-columns: 1fr 1fr 1fr; }
     }
 
     @media (max-width: 520px){
