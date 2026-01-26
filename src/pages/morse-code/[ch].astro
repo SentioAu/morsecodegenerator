@@ -60,16 +60,19 @@ const code = map[CH] ?? "";
 const isLetter = /^[A-Z]$/.test(CH);
 const isNumber = /^[0-9]$/.test(CH);
 
+// Title/description (SEO)
 const title = code ? `${CH} in Morse Code (${code})` : `${CH} in Morse Code`;
 const description = code
   ? `Learn how to write ${CH} in Morse code (${code}). Copy it, listen to it, and practice with examples.`
   : `Learn how to write ${CH} in Morse code. Copy it, listen to it, and practice with examples.`;
 
-const translatorHref = `/translate/?q=${encodeURIComponent(CH)}`;
-
-// ✅ Canonical + robots (prevents indexing broken/empty pages)
+// ✅ Canonical used for JSON-LD + breadcrumbs (Layout already sets <link rel="canonical">)
 const canonical = `${site}/morse-code/${CH.toLowerCase()}/`;
+
+// ✅ Robots (prevents indexing broken/empty pages)
 const robots = code ? "index,follow" : "noindex,follow";
+
+const translatorHref = `/translate/?q=${encodeURIComponent(CH)}`;
 
 const tips = (() => {
   if (!code) return [];
@@ -122,9 +125,17 @@ const jsonLd = {
     },
   ],
 };
+
+// A small internal-link set (high-intent pages)
+const practiceLinks = [
+  { label: "Translator", href: "/translate/" },
+  { label: "Words", href: "/morse-code/words/" },
+  { label: "Punctuation", href: "/morse-code/punctuation/" },
+  { label: "Phrases", href: "/phrases/" },
+];
 ---
 
-<Layout title={title} description={description} robots={robots} canonical={canonical}>
+<Layout title={title} description={description} robots={robots}>
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
@@ -136,6 +147,14 @@ const jsonLd = {
   <header class="hero">
     <p class="muted kicker">{isLetter ? "Alphabet" : isNumber ? "Numbers" : "Reference"}</p>
     <h1 class="title">{CH} in Morse code</h1>
+
+    <p class="muted" style="margin-top:0; max-width:72ch;">
+      {code ? (
+        <>Below is the standard Morse code for <strong>{CH}</strong>. Copy it, listen to it, and practice with real examples.</>
+      ) : (
+        <>This character isn’t available in the current Morse map.</>
+      )}
+    </p>
 
     <div class="code-row">
       <span class="badge">{CH}</span>
@@ -149,17 +168,19 @@ const jsonLd = {
           <span class="chip">{t}</span>
         ))}
       </div>
-    ) : (
-      <p class="muted" style="margin-top:10px;">
-        This character isn’t available in the current Morse map.
-      </p>
-    )}
+    ) : null}
 
     <div class="actions">
       <button id="copy" type="button" disabled={!code}>Copy</button>
       <button id="listen" type="button" class="ghost" disabled={!code}>Listen</button>
       <a class="btn" href={translatorHref}>Practice in translator</a>
       <a class="btn ghost" href="/morse-code/">Back to Learn hub</a>
+    </div>
+
+    <div class="pill-grid" style="margin-top:12px;" role="list" aria-label="Quick navigation">
+      {practiceLinks.map((x) => (
+        <a role="listitem" href={x.href}>{x.label}</a>
+      ))}
     </div>
   </header>
 
@@ -197,7 +218,23 @@ const jsonLd = {
       <a href="/morse-code/a/"> alphabet</a> •
       <a href="/morse-code/numbers/"> numbers</a> •
       <a href="/morse-code/punctuation/"> punctuation</a> •
+      <a href="/morse-code/words/"> words</a> •
       <a href="/phrases/"> phrases</a>
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">FAQ</h2>
+
+    <h3 style="margin-bottom:6px;">How do I separate letters and words?</h3>
+    <p class="muted" style="margin-top:0;">
+      Letters are separated by spaces. Words are separated by <span class="k">/</span>.
+      Example: <span class="k">HELLO</span> → <span class="k">.... . .-.. .-.. ---</span>.
+    </p>
+
+    <h3 style="margin-bottom:6px;">Can I practice {CH} in the translator?</h3>
+    <p class="muted" style="margin-top:0;">
+      Yes — open <a href={translatorHref}>the translator</a> with {CH} prefilled.
     </p>
   </section>
 
