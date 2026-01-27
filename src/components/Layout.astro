@@ -3,6 +3,7 @@ const {
   title = "Morse Code Generator",
   description = "Translate text to Morse code instantly, learn the alphabet, and practice common phrases.",
   robots = "index,follow",
+  canonical: canonicalProp,
 } = Astro.props;
 
 const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
@@ -16,7 +17,11 @@ const path = Astro.url.pathname || "/";
 const normalizedPath =
   path === "/" ? "/" : path.endsWith("/") ? path : `${path}/`;
 
-const canonical = `${site}${normalizedPath}`;
+// Default canonical (auto)
+const canonicalAuto = `${site}${normalizedPath}`;
+
+// Final canonical (page override wins)
+const canonical = String(canonicalProp || canonicalAuto);
 
 // Active nav helper
 const isActive = (href) => {
