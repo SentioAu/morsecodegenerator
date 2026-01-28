@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const SITE = process.env.SITE_URL || "https://morsecodegenerator.com";
+const SITE = String(process.env.SITE_URL || "https://morsecodegenerator.com").replace(/\/$/, "");
 
 /**
  * Detect Cloudflare Pages style output (dist/public) vs plain dist.
@@ -30,23 +30,29 @@ function walk(dir) {
 
 function toUrlPath(webRoot, filePath) {
   const rel = path.relative(webRoot, filePath).replace(/\\/g, "/");
-  // Only index.html pages => trailingSlash canonical
-  if (!rel.endsWith("/index.html") && rel !== "index.html") return null;
 
+  // Only index.html pages => trailingSlash canonical
   if (rel === "index.html") return "/";
+  if (!rel.endsWith("/index.html")) return null;
+
   const dir = rel.replace(/\/index\.html$/, "");
   return `/${dir}/`;
 }
 
 function isExcluded(urlPath) {
-  // basic excludes
   if (!urlPath) return true;
+
+  // core excludes
   if (urlPath === "/404/" || urlPath === "/404.html") return true;
   if (urlPath.startsWith("/assets/")) return true;
   if (urlPath.startsWith("/_astro/")) return true;
-  if (urlPath === "/sitemap.xml") return true;
 
-  // exclude duplicates you are redirecting away (in case they still exist)
+  // sitemap variants (we generate a single sitemap.xml)
+  if (urlPath === "/sitemap.xml") return true;
+  if (urlPath === "/sitemap-index.xml") return true;
+  if (urlPath === "/sitemap-0.xml") return true;
+
+  // exclude duplicate URL families you redirect away
   // letters old family: /a-in-morse-code/
   if (/^\/[a-z]-in-morse-code\/$/i.test(urlPath)) return true;
   // digits old family: /0-in-morse-code/
@@ -67,7 +73,8 @@ function escapeXml(s) {
 function buildSitemapXml(urls) {
   const lines = [];
   lines.push(`<?xml version="1.0" encoding="UTF-8"?>`);
-  lines.push(`<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">`);
+  // ✅ Correct namespace must be http (spec)
+  lines.push(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`);
   for (const u of urls) {
     lines.push(`  <url><loc>${escapeXml(u)}</loc></url>`);
   }
@@ -86,6 +93,7 @@ function main() {
   const files = walk(webRoot);
 
   const urlSet = new Set();
+
   for (const f of files) {
     if (!f.endsWith(".html")) continue;
 
@@ -103,6 +111,7 @@ function main() {
   const outPath = path.join(webRoot, "sitemap.xml");
   fs.writeFileSync(outPath, sitemapXml, "utf8");
 
+  console.log(`[postbuild-sitemap] SITE=${SITE}`);
   console.log(`[postbuild-sitemap] Wrote ${urls.length} URLs -> ${outPath}`);
 }
 
