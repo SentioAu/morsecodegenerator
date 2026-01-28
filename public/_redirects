@@ -1,7 +1,8 @@
 # =======================================================
-# Canonicalize robots endpoint
+# Canonicalize common typos / variants
 # =======================================================
 /robot.txt               /robots.txt                 301
+/sitemap.xml/            /sitemap.xml                301
 
 # =======================================================
 # Canonicalize sitemap variants -> single entrypoint
@@ -10,18 +11,38 @@
 /sitemap-0.xml           /sitemap.xml                301
 
 # =======================================================
+# Enforce trailing slash on key hubs (Astro trailingSlash:"always")
+# =======================================================
+/translate               /translate/                  301
+/morse-code              /morse-code/                 301
+/morse-code/words        /morse-code/words/           301
+/morse-code/numbers      /morse-code/numbers/         301
+/morse-code/punctuation  /morse-code/punctuation/     301
+/phrases                 /phrases/                    301
+/about                   /about/                      301
+/contact                 /contact/                    301
+/privacy                 /privacy/                    301
+/terms                   /terms/                      301
+
+# Letter pages under /morse-code/: no-slash -> slash
+/morse-code/:ch          /morse-code/:ch/             301
+
+# Phrase pages: no-slash -> slash
+/phrases/:slug           /phrases/:slug/              301
+
+# =======================================================
 # Special-character routes -> safe slug pages
 # (encoded + raw)
 # =======================================================
-/morse-code/%21          /exclamation-in-morse-code/ 301
-/morse-code/%21/         /exclamation-in-morse-code/ 301
-/morse-code/!            /exclamation-in-morse-code/ 301
-/morse-code/!/           /exclamation-in-morse-code/ 301
+/morse-code/%21          /exclamation-in-morse-code/  301
+/morse-code/%21/         /exclamation-in-morse-code/  301
+/morse-code/!            /exclamation-in-morse-code/  301
+/morse-code/!/           /exclamation-in-morse-code/  301
 
-/morse-code/%27          /apostrophe-in-morse-code/  301
-/morse-code/%27/         /apostrophe-in-morse-code/  301
-/morse-code/'            /apostrophe-in-morse-code/  301
-/morse-code/'/           /apostrophe-in-morse-code/  301
+/morse-code/%27          /apostrophe-in-morse-code/   301
+/morse-code/%27/         /apostrophe-in-morse-code/   301
+/morse-code/'            /apostrophe-in-morse-code/   301
+/morse-code/'/           /apostrophe-in-morse-code/   301
 
 # =======================================================
 # SEO canonical consolidation
