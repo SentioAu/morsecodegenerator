@@ -37,11 +37,15 @@
   }
 
   function normMorse(s) {
+    // Normalize common dot/dash glyphs + normalize separators.
     return (s || "")
       .replaceAll("·", ".")
+      .replaceAll("•", ".")
       .replaceAll("–", "-")
       .replaceAll("—", "-")
       .replace(/\s*\|\s*/g, " / ")
+      .replace(/\s*\/+\s*/g, " / ")
+      .replace(/\s+/g, " ")
       .trim();
   }
 
@@ -54,85 +58,95 @@
     return out;
   }
 
-  // text -> morse (ignore unsupported chars, preserve word breaks)
-  function textToMorse(input, CHAR_TO_MORSE) {
-    const s = normText(input).trim();
-    if (!s) return "";
+  function uniqSorted(arr) {
+    return Array.from(new Set(arr)).sort();
+  }
+
+  // text -> morse + report unsupported chars (preserve word breaks)
+  function textToMorseWithReport(input, CHAR_TO_MORSE) {
+    const raw = normText(input);
+    const s = raw.trim();
+    if (!s) return { out: "", unsupported: [] };
+
+    const unsupported = [];
     const words = s.split(/\s+/).filter(Boolean);
 
-    return words
+    const out = words
       .map((w) =>
         w
           .split("")
-          .map((ch) => CHAR_TO_MORSE[ch] || "")
+          .map((ch) => {
+            const v = CHAR_TO_MORSE[ch];
+            if (!v) {
+              // Ignore whitespace (already split) but record other unsupported chars
+              unsupported.push(ch);
+              return "";
+            }
+            return v;
+          })
           .filter(Boolean)
           .join(" ")
       )
       .filter(Boolean)
       .join(" / ");
+
+    return { out, unsupported: uniqSorted(unsupported) };
   }
 
-  function morseToText(input, MORSE_TO_CHAR) {
+  // morse -> text + report unsupported codes
+  function morseToTextWithReport(input, MORSE_TO_CHAR) {
     const s = normMorse(input);
-    if (!s) return "";
+    if (!s) return { out: "", unsupported: [] };
 
-    const words = s.split(/\s*\/+\s*/).filter(Boolean);
+    const unsupported = [];
+    const words = s.split(/\s*\/\s*/).filter(Boolean);
 
-    return words
+    const out = words
       .map((w) =>
         w
           .trim()
           .split(/\s+/)
           .filter(Boolean)
-          .map((code) => MORSE_TO_CHAR[code] || "")
+          .map((code) => {
+            const ch = MORSE_TO_CHAR[code];
+            if (!ch) {
+              unsupported.push(code);
+              return "";
+            }
+            return ch;
+          })
           .join("")
       )
       .join(" ");
+
+    return { out, unsupported: uniqSorted(unsupported) };
   }
 
-  // simple heuristic: if it contains mostly .-/ and spaces, treat as morse
+  // Improved heuristic:
+  // - If letters exist => text
+  // - If it contains dot/dash and consists ONLY of morse-ish chars => morse
   function looksLikeMorse(raw) {
     const s = (raw || "").trim();
     if (!s) return false;
-    // any letters strongly suggests text
-    if (/[A-Za-z0-9]/.test(s)) {
-      // allow numbers in morse input too, but if there are many letters, it’s text
-      const letters = (s.match(/[A-Za-z]/g) || []).length;
-      if (letters > 0) return false;
-    }
-    // if it contains dot/dash, likely morse
-    return /[.\-·–—]/.test(s);
+
+    if (/[A-Za-z]/.test(s)) return false;
+
+    // Must contain dot/dash somewhere
+    if (!/[.\-·–—•]/.test(s)) return false;
+
+    // If it contains lots of non-morse characters, treat as text
+    // Allowed: dot/dash, spaces, slash, pipes (will normalize), line breaks
+    const nonMorse = s.replace(/[.\-·–—•/\s|]/g, "");
+    if (nonMorse.length > 0) return false;
+
+    return true;
   }
 
-  async function copyToClipboard(text) {
-    const t = text || "";
-    try {
-      await navigator.clipboard.writeText(t);
-      return true;
-    } catch {
-      try {
-        const ta = document.createElement("textarea");
-        ta.value = t;
-        ta.setAttribute("readonly", "true");
-        ta.style.position = "fixed";
-        ta.style.top = "-9999px";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
-        const ok = document.execCommand("copy");
-        document.body.removeChild(ta);
-        return !!ok;
-      } catch {
-        return false;
-      }
-    }
-  }
-
-  function setBtnToast(btn, text) {
-    if (!btn) return;
-    const old = btn.textContent;
-    btn.textContent = text;
-    setTimeout(() => (btn.textContent = old), 900);
+  function formatWarning(kind, list) {
+    if (!list || !list.length) return "";
+    const shown = list.slice(0, 10).join(", ");
+    const more = list.length > 10 ? ` (+${list.length - 10} more)` : "";
+    return `\n\n⚠ Unsupported ${kind}: ${shown}${more}`;
   }
 
   onReady(async () => {
@@ -140,12 +154,11 @@
     const output = document.getElementById("mcg-output");
     const btnT2M = document.getElementById("mcg-text-to-morse");
     const btnM2T = document.getElementById("mcg-morse-to-text");
-    const btnCopy = document.getElementById("mcg-copy");
     const btnSwap = document.getElementById("mcg-swap");
     const btnClear = document.getElementById("mcg-clear");
 
     // If page doesn't have the tool, do nothing
-    if (!input || !output || !btnT2M || !btnM2T || !btnCopy) return;
+    if (!input || !output || !btnT2M || !btnM2T) return;
 
     let CHAR_TO_MORSE;
     let MORSE_TO_CHAR;
@@ -167,36 +180,31 @@
     }
 
     function runTextToMorse() {
-      output.value = textToMorse(input.value, CHAR_TO_MORSE);
+      const { out, unsupported } = textToMorseWithReport(input.value, CHAR_TO_MORSE);
+      output.value = out + formatWarning("characters", unsupported);
     }
+
     function runMorseToText() {
-      output.value = morseToText(input.value, MORSE_TO_CHAR);
+      const { out, unsupported } = morseToTextWithReport(input.value, MORSE_TO_CHAR);
+      output.value = out + formatWarning("codes", unsupported);
     }
 
     // Buttons
     btnT2M.addEventListener("click", runTextToMorse);
     btnM2T.addEventListener("click", runMorseToText);
 
-    btnCopy.addEventListener("click", async () => {
-      const val = (output.value || "").trim();
-      if (!val) return;
-      const ok = await copyToClipboard(val);
-      setBtnToast(btnCopy, ok ? "Copied ✓" : "Copy failed");
-    });
-
     btnSwap?.addEventListener("click", () => {
       const a = input.value || "";
       const b = output.value || "";
       input.value = b;
       output.value = a;
-      setBtnToast(btnSwap, "Swapped ✓");
+      input.focus();
     });
 
     btnClear?.addEventListener("click", () => {
       input.value = "";
       output.value = "";
       input.focus();
-      setBtnToast(btnClear, "Cleared ✓");
     });
 
     // Auto-detect on input (throttled)
