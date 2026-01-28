@@ -31,7 +31,7 @@
 # DO NOT touch multi-word slugs like /help-in-morse-code/
 # =======================================================
 
-# Letters only (single a-z) - no slash variants
+# Letters (a-z) - no slash variants
 /a-in-morse-code         /morse-code/a/              301
 /b-in-morse-code         /morse-code/b/              301
 /c-in-morse-code         /morse-code/c/              301
@@ -59,7 +59,7 @@
 /y-in-morse-code         /morse-code/y/              301
 /z-in-morse-code         /morse-code/z/              301
 
-# Letters only (single a-z) - slash variants
+# Letters (a-z) - slash variants
 /a-in-morse-code/        /morse-code/a/              301
 /b-in-morse-code/        /morse-code/b/              301
 /c-in-morse-code/        /morse-code/c/              301
@@ -87,7 +87,7 @@
 /y-in-morse-code/        /morse-code/y/              301
 /z-in-morse-code/        /morse-code/z/              301
 
-# Digits only (single 0-9) - no slash variants
+# Digits (0-9) - no slash variants
 /0-in-morse-code         /morse-code/0/              301
 /1-in-morse-code         /morse-code/1/              301
 /2-in-morse-code         /morse-code/2/              301
@@ -99,7 +99,7 @@
 /8-in-morse-code         /morse-code/8/              301
 /9-in-morse-code         /morse-code/9/              301
 
-# Digits only (single 0-9) - slash variants
+# Digits (0-9) - slash variants
 /0-in-morse-code/        /morse-code/0/              301
 /1-in-morse-code/        /morse-code/1/              301
 /2-in-morse-code/        /morse-code/2/              301
