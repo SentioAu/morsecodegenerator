@@ -3,6 +3,57 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
+// -------------------------------------------------------------------
+// getStaticPaths (self-contained, Cloudflare-safe)
+// -------------------------------------------------------------------
+export function getStaticPaths() {
+  function slugify(input) {
+    return (
+      String(input ?? "")
+        .toLowerCase()
+        .trim()
+        .replace(/['"]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 80) || "phrase"
+    );
+  }
+
+  const raw = data?.phrases ?? [];
+  const items = [];
+
+  if (Array.isArray(raw)) {
+    // pairs: [slug, phrase]
+    if (raw.length && Array.isArray(raw[0])) {
+      for (const row of raw) {
+        const sl = row?.[0];
+        const ph = row?.[1];
+        if (!sl || !ph) continue;
+        items.push({ slug: String(sl), phrase: String(ph) });
+      }
+    } else {
+      // objects
+      for (const p of raw) {
+        if (!p) continue;
+        const ph = p.phrase ?? p.text ?? p.value ?? p.name;
+        if (!ph) continue;
+        const sl = p.slug ?? slugify(ph);
+        items.push({ slug: String(sl), phrase: String(ph) });
+      }
+    }
+  }
+
+  if (!items.length) return [];
+
+  return items.map((item) => ({
+    params: { slug: item.slug },
+    props: { phrase: item.phrase, slug: item.slug },
+  }));
+}
+
+// -------------------------------------------------------------------
+// Helpers for runtime rendering (safe; NOT used by getStaticPaths)
+// -------------------------------------------------------------------
 function slugify(input) {
   return (
     String(input ?? "")
@@ -15,11 +66,10 @@ function slugify(input) {
   );
 }
 
-function normalizeList(raw) {
+function normalizePhraseList(raw) {
   const out = [];
   if (!Array.isArray(raw)) return out;
 
-  // pairs: [slug, phrase]
   if (raw.length && Array.isArray(raw[0])) {
     for (const row of raw) {
       const sl = row?.[0];
@@ -30,7 +80,6 @@ function normalizeList(raw) {
     return out;
   }
 
-  // objects
   for (const p of raw) {
     if (!p) continue;
     const ph = p.phrase ?? p.text ?? p.value ?? p.name;
@@ -42,16 +91,9 @@ function normalizeList(raw) {
   return out;
 }
 
-export function getStaticPaths() {
-  // ✅ No identifier named "phrases" anywhere in this function
-  const items = normalizeList(data?.phrases ?? []);
-  if (!items.length) return [];
-  return items.map((item) => ({
-    params: { slug: item.slug },
-    props: { phrase: item.phrase, slug: item.slug },
-  }));
-}
-
+// -------------------------------------------------------------------
+// Map for rendering (normalized)
+// -------------------------------------------------------------------
 const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
   Object.entries(rawMap)
@@ -59,6 +101,9 @@ const map = Object.fromEntries(
     .map(([k, v]) => [String(k).toUpperCase(), String(v)])
 );
 
+// -------------------------------------------------------------------
+// Page runtime
+// -------------------------------------------------------------------
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
@@ -72,20 +117,17 @@ const canonical = `${site}/phrases/${encodeURIComponent(slug)}/`;
 const morse = phrase ? textToMorse(phrase, map, " ") : "";
 const hasUnknown = morse.includes("?");
 
-const robots =
-  phrase && morse && !hasUnknown ? "index,follow" : "noindex,follow";
+const robots = phrase && morse && !hasUnknown ? "index,follow" : "noindex,follow";
 
 const title = phrase ? `${phrase} in Morse code` : "Phrase in Morse code";
 const description = phrase
   ? `See how to write ${phrase} in Morse code. Copy it instantly and practice with the translator.`
   : `See how to write common phrases in Morse code. Copy them instantly and practice.`;
 
-const translatorHref = phrase
-  ? `/translate/?q=${encodeURIComponent(phrase)}`
-  : "/translate/";
+const translatorHref = phrase ? `/translate/?q=${encodeURIComponent(phrase)}` : "/translate/";
 
-const listAll = normalizeList(data?.phrases ?? []);
-const related = listAll.filter((p) => p.slug !== slug).slice(0, 10);
+const phraseList = normalizePhraseList(data?.phrases ?? []);
+const related = phraseList.filter((p) => p.slug !== slug).slice(0, 10);
 
 const practiceWords = [
   ["hello", "Hello"],
@@ -146,7 +188,9 @@ const jsonLd = {
 
   <header class="hero">
     <p class="muted kicker">Copy • Practice • Learn</p>
+
     <h1 class="hero-title">{title}</h1>
+
     <p class="muted hero-sub">
       Copy the Morse translation, then practice it in the translator.
       {!phrase ? " (This phrase wasn’t found.)" : ""}
