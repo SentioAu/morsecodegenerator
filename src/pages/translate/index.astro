@@ -16,7 +16,7 @@ const site =
 
 const canonical = `${site}/translate/`;
 
-// ✅ Recommended: Keep translator out of the index (avoid crawl bloat and thin indexing)
+// ✅ Keep translator out of the index (avoid crawl bloat and thin indexing)
 const robots = "noindex,follow";
 
 const crumbs = [
@@ -252,10 +252,10 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
   <!-- Structured data -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
-  <!-- Runtime script -->
+  <!-- Runtime script (owns conversion + swap + clear + auto-detect) -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- UX glue: set initial value safely + swap/clear + auto-run when ?q= -->
+  <!-- Page-only UX: prefill + optional autorun + copy toast -->
   <script is:inline define:vars={{ initial, hasInitial }}>
     (function () {
       function onReady(fn) {
@@ -267,10 +267,7 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
       onReady(function () {
         const input = document.getElementById("mcg-input");
         const output = document.getElementById("mcg-output");
-        const swap = document.getElementById("mcg-swap");
-        const clear = document.getElementById("mcg-clear");
         const btnT2M = document.getElementById("mcg-text-to-morse");
-        const btnM2T = document.getElementById("mcg-morse-to-text");
         const copyBtn = document.getElementById("mcg-copy");
         const toast = document.getElementById("mcg-toast");
 
@@ -287,28 +284,16 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
           );
         }
 
+        // Prefill from query param or set a friendly default
         if (initial && !input.value.trim()) input.value = String(initial);
         if (!initial && !input.value.trim()) input.value = "HELLO";
 
-        // Only auto-run on query links (avoid surprising behavior)
+        // Auto-run conversion only when arriving from a share link
         if (hasInitial && btnT2M && !output.value.trim()) {
           setTimeout(() => btnT2M.click(), 0);
         }
 
-        swap?.addEventListener("click", () => {
-          const a = input.value;
-          input.value = output.value;
-          output.value = a;
-          input.focus();
-        });
-
-        clear?.addEventListener("click", () => {
-          input.value = "";
-          output.value = "";
-          input.focus();
-        });
-
-        // Copy output with toast + fallback
+        // Copy output + toast (mcg-tool.js does not attach copy UX)
         copyBtn?.addEventListener("click", async () => {
           const v = (output.value || "").trim();
           if (!v) return showToast("Nothing to copy");
@@ -327,22 +312,6 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
               showToast("Copy failed");
             }
           }
-        });
-
-        // Cmd/Ctrl+Enter converts (auto-detect)
-        input.addEventListener("keydown", (e) => {
-          const isEnter = e.key === "Enter";
-          const isMod = e.ctrlKey || e.metaKey;
-          if (!isEnter || !isMod) return;
-
-          const v = (input.value || "").trim();
-          if (!v) return;
-
-          const looksMorse = /[.\-]/.test(v) && !/[a-zA-Z]/.test(v);
-          if (looksMorse && btnM2T) btnM2T.click();
-          else if (btnT2M) btnT2M.click();
-
-          e.preventDefault();
         });
       });
     })();
