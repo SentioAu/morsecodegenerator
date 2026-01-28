@@ -8,7 +8,7 @@ const description =
   "Browse common Morse code phrases (SOS, HELP, MAYDAY, and more). Copy Morse instantly and practice with the translator.";
 
 // -------------------------
-// Helpers (NO TS annotations)
+// Helpers
 // -------------------------
 function slugify(s) {
   return (
@@ -22,6 +22,48 @@ function slugify(s) {
   );
 }
 
+function normalizePhraseList(raw) {
+  const out = [];
+  if (!Array.isArray(raw)) return out;
+
+  // pairs: [["sos","SOS"], ...]
+  if (raw.length && Array.isArray(raw[0])) {
+    for (const row of raw) {
+      const sl = row?.[0];
+      const ph = row?.[1];
+      if (!sl || !ph) continue;
+      out.push({ slug: String(sl), phrase: String(ph) });
+    }
+    return out;
+  }
+
+  // objects: [{slug:"sos", phrase:"SOS"}, ...] or [{text:"SOS"}, ...]
+  for (const p of raw) {
+    if (!p) continue;
+    const ph = p.phrase ?? p.text ?? p.value ?? p.name;
+    if (!ph) continue;
+    const sl = p.slug ?? slugify(ph);
+    out.push({ slug: String(sl), phrase: String(ph) });
+  }
+
+  return out;
+}
+
+function dedupeBySlug(items) {
+  const seen = new Set();
+  const out = [];
+  for (const it of items) {
+    const sl = String(it?.slug || "").trim();
+    const ph = String(it?.phrase || "").trim();
+    if (!sl || !ph) continue;
+    const key = sl.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ slug: sl, phrase: ph });
+  }
+  return out;
+}
+
 // Normalize map: uppercase keys, ignore " " key if present
 const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
@@ -30,37 +72,8 @@ const map = Object.fromEntries(
     .map(([k, v]) => [String(k).toUpperCase(), String(v)])
 );
 
-// Robust phrase parsing (supports:
-// 1) [["sos","SOS"], ...]
-// 2) [{slug:"sos", phrase:"SOS"}, ...]
-// 3) [{slug:"sos", text:"SOS"}, ...]
-const rawPhrases = data?.phrases;
-let phrases = [];
-
-if (Array.isArray(rawPhrases)) {
-  if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
-    // Array of pairs
-    phrases = rawPhrases
-      .map((row) => {
-        const slug = row?.[0];
-        const phrase = row?.[1];
-        if (!slug || !phrase) return null;
-        return { slug: String(slug), phrase: String(phrase) };
-      })
-      .filter(Boolean);
-  } else {
-    // Array of objects
-    phrases = rawPhrases
-      .map((p) => {
-        if (!p) return null;
-        const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
-        if (!phrase) return null;
-        const slug = p.slug ?? slugify(phrase);
-        return { slug: String(slug), phrase: String(phrase) };
-      })
-      .filter(Boolean);
-  }
-}
+// Phrases from JSON (robust)
+const phrasesFromJson = dedupeBySlug(normalizePhraseList(data?.phrases ?? []));
 
 // Fallback list (works even if JSON is missing phrases)
 const fallback = [
@@ -90,8 +103,12 @@ const fallback = [
   "I LOVE YOU",
 ].map((phrase) => ({ slug: slugify(phrase), phrase }));
 
-const hasRealPhrases = phrases.length > 0;
-const list = hasRealPhrases ? phrases : fallback;
+const hasRealPhrases = phrasesFromJson.length > 0;
+
+// Final list used for UI
+const list = (hasRealPhrases ? phrasesFromJson : fallback).slice().sort((a, b) => {
+  return String(a.phrase).localeCompare(String(b.phrase));
+});
 
 // Site URL for JSON-LD + canonical
 const site =
@@ -105,7 +122,7 @@ const hrefFor = (item) =>
     ? `/phrases/${item.slug}/`
     : `/translate/?q=${encodeURIComponent(item.phrase)}`;
 
-// Structured data (single graph)
+// Structured data
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Phrases", url: canonical },
@@ -250,18 +267,18 @@ const robots = "index,follow";
 
       // Convert words -> letters -> morse. Unsupported chars become "?"
       return s
-        .split(/\\s+/)
+        .split(/\s+/)
         .filter(Boolean)
         .map(w =>
           w.split("")
-            .map(ch => (map?.[ch] ? map[ch] : "?"))
+            .map(ch => (map && map[ch] ? map[ch] : "?"))
             .join(" ")
         )
         .join(" / ");
     }
 
     function refresh(){
-      const phrase = (select?.value || "").toString();
+      const phrase = (select && select.value ? select.value : "").toString();
       const morse = toMorse(phrase);
       if (morseBox) morseBox.value = morse;
       if (practiceLink) practiceLink.href = "/translate/?q=" + encodeURIComponent(phrase);
@@ -288,11 +305,11 @@ const robots = "index,follow";
       }
     }
 
-    select?.addEventListener("change", refresh);
+    select && select.addEventListener("change", refresh);
     refresh();
 
-    copyBtn?.addEventListener("click", async () => {
-      const value = (morseBox?.value || "").toString();
+    copyBtn && copyBtn.addEventListener("click", async () => {
+      const value = (morseBox && morseBox.value ? morseBox.value : "").toString();
       if (!value) return;
 
       const ok = await copyText(value);
@@ -304,10 +321,12 @@ const robots = "index,follow";
     });
 
     // Search filter
-    search?.addEventListener("input", () => {
+    search && search.addEventListener("input", () => {
       const q = (search.value || "").trim().toLowerCase();
-      const pills = listEl?.querySelectorAll("a[data-phrase]");
-      pills?.forEach((a) => {
+      const pills = listEl ? listEl.querySelectorAll("a[data-phrase]") : null;
+      if (!pills) return;
+
+      pills.forEach((a) => {
         const text = a.getAttribute("data-phrase") || "";
         a.style.display = !q || text.includes(q) ? "" : "none";
       });
