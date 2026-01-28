@@ -1,7 +1,12 @@
+// path: scripts/verify-build.mjs
 import fs from "node:fs";
 import path from "node:path";
 
 const SITE = (process.env.SITE_URL || "https://morsecodegenerator.com").replace(/\/$/, "");
+
+// If your site is small early on, lower this.
+// As soon as you have word/phrase slugs, this should be much larger.
+const MIN_SITEMAP_URLS = Number(process.env.MIN_SITEMAP_URLS || 25);
 
 function detectWebRoot() {
   const dist = path.resolve("dist");
@@ -80,11 +85,26 @@ function redirectsContainRule(lines, from, to) {
 
   return lines.some((line) => {
     if (!line || line.startsWith("#")) return false;
-    // collapse whitespace
     const parts = line.split(/\s+/).filter(Boolean);
     if (parts.length < 2) return false;
     return parts[0] === f && parts[1] === t;
   });
+}
+
+function parseSitemapLocs(xml) {
+  const out = [];
+  const re = /<loc>([^<]+)<\/loc>/gi;
+  let m;
+  while ((m = re.exec(xml))) out.push(String(m[1]).trim());
+  return out;
+}
+
+function hasMetaRobotsNoindex(html) {
+  if (!html) return false;
+  return (
+    /<meta\s+[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex[^"']*["'][^>]*>/i.test(html) ||
+    /<meta\s+[^>]*content=["'][^"']*noindex[^"']*["'][^>]*name=["']robots["'][^>]*>/i.test(html)
+  );
 }
 
 function main() {
@@ -114,11 +134,30 @@ function main() {
     `robots.txt sitemap line matches exactly: "${expectedSitemapLine}"`
   );
 
-  // ensure no other sitemap lines point somewhere else (strict)
   const bad = sitemapLines.filter(
     (l) => l.toLowerCase() !== expectedSitemapLine.toLowerCase()
   );
   assert(bad.length === 0, "robots.txt has no unexpected Sitemap: lines");
+
+  // ---- Verify sitemap.xml quality ----
+  const sitemapPath = path.join(webRoot, "sitemap.xml");
+  const sitemap = readFileSafe(sitemapPath);
+
+  assert(sitemap.length > 0, "sitemap.xml is not empty");
+
+  const locs = parseSitemapLocs(sitemap);
+  assert(locs.length >= MIN_SITEMAP_URLS, `sitemap.xml contains at least ${MIN_SITEMAP_URLS} URLs`);
+
+  // Ensure no translate entries land in sitemap (tool page should never be included)
+  const translateInSitemap = locs.some((u) => {
+    try {
+      const url = new URL(u);
+      return url.pathname === "/translate/" || url.pathname.startsWith("/translate/");
+    } catch {
+      return String(u).includes("/translate/");
+    }
+  });
+  assert(!translateInSitemap, "sitemap.xml does not include /translate/");
 
   // ---- NEW: verify special-character redirect rules exist ----
   const redirectsRaw = readFileSafe(redirectsPath);
@@ -160,6 +199,10 @@ function main() {
     const html = readFileSafe(p);
     verifyCanonicalAndH1(html, `page ${s.label}`);
   }
+
+  // ---- Translator must be noindex (prevents query crawl bloat) ----
+  const translateHtml = readFileSafe(path.join(webRoot, "translate", "index.html"));
+  assert(hasMetaRobotsNoindex(translateHtml), "/translate/ has meta robots noindex");
 
   // ---- Ensure legacy duplicate families are NOT built ----
   // Old: /a-in-morse-code/ etc => must not exist
