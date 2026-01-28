@@ -1,134 +1,153 @@
 ---
 import Layout from "../components/Layout.astro";
 
-const title = "Privacy Policy – Morse Code Generator";
+const title = "Privacy Policy";
 const description =
-  "Privacy policy for MorseCodeGenerator.com. Learn what data is collected, how analytics and ads work, and how we handle text you translate.";
+  "Privacy Policy for MorseCodeGenerator.com. Learn what data we collect, how analytics and ads work, and your choices.";
 const canonical = "https://morsecodegenerator.com/privacy/";
+const robots = "index,follow";
+
+const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
+const EFFECTIVE_DATE = "2026-01-28";
 ---
 
-<Layout title={title} description={description} canonical={canonical}>
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
   <article class="prose">
     <h1>Privacy Policy</h1>
-    <p class="muted">Last updated: {new Date().toISOString().slice(0, 10)}</p>
-
-    <div class="card">
-      <p>
-        <span class="chip">Short version</span>
-      </p>
-      <ul>
-        <li>
-          The translator runs in your browser. We do not ask you to create an
-          account.
-        </li>
-        <li>
-          Your text may be processed locally in the page. We do not intentionally
-          store the text you type into the translator.
-        </li>
-        <li>
-          We use Google Analytics (GA4) to understand site usage and Google
-          AdSense to show ads. These services may use cookies and similar
-          technologies.
-        </li>
-      </ul>
-    </div>
-
-    <h2>Who we are</h2>
-    <p>
-      This website is operated as <strong>MorseCodeGenerator.com</strong>
-      (the “Site”, “we”, “us”).
-    </p>
-
-    <h2>What data we collect</h2>
-    <h3>1) Text you enter in the translator</h3>
-    <p>
-      The translator is designed to run locally in your browser. We do not
-      intentionally collect or store the text you type or paste into the
-      translator.
-    </p>
     <p class="muted">
-      Note: Like most websites, standard web infrastructure (hosting/CDN/server
-      logs) may record basic request data (for example IP address, user-agent,
-      timestamps) for security and reliability. This is not used to read your
-      translation input.
+      Effective date: <span class="mono">{EFFECTIVE_DATE}</span>
     </p>
 
-    <h3>2) Analytics (Google Analytics / GA4)</h3>
     <p>
-      We use Google Analytics 4 to measure aggregated usage (for example: which
-      pages are visited, approximate location, device type). This helps us
-      improve the site.
+      This Privacy Policy explains how <strong>MorseCodeGenerator.com</strong> (“we”, “us”, “our”) handles information
+      when you use this website (the “Service”).
     </p>
+
+    <hr />
+
+    <h2>Quick summary</h2>
     <ul>
       <li>
-        We configure analytics with IP anonymization where supported.
+        The translator runs locally in your browser. We do not require accounts or logins to use the tool.
       </li>
       <li>
-        Google may set cookies or use similar identifiers to provide analytics.
+        We use analytics (Google Analytics 4) to understand general usage (for example, which pages are popular).
+      </li>
+      <li>
+        We may show ads (Google AdSense). Ads and analytics may use cookies or similar identifiers depending on your settings and region.
+      </li>
+      <li>
+        You can control cookies/ads via your browser settings and Google’s ad/analytics controls.
       </li>
     </ul>
 
-    <h3>3) Advertising (Google AdSense)</h3>
+    <hr />
+
+    <h2>Information we process</h2>
+
+    <h3>1) Information you provide</h3>
     <p>
-      We use Google AdSense to display ads. Ad providers may use cookies or
-      similar technologies to show relevant ads and measure performance.
+      If you contact us by email, you provide your email address and the content of your message. We use it only to respond.
+      Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
     </p>
 
-    <h2>Cookies and your choices</h2>
+    <h3>2) Usage data (analytics)</h3>
     <p>
-      Cookies are small text files stored on your device. Third-party services
-      like Google Analytics and Google AdSense may use cookies and similar
-      technologies.
+      We use <strong>Google Analytics 4 (GA4)</strong> to measure and improve the Service. GA4 may collect information such as:
+      page views, approximate location, device/browser information, and interaction events. We configure GA4 with IP anonymization
+      (where supported) to reduce identifiability.
     </p>
 
-    <div class="card">
-      <h3 style="margin-top:0">Opt-out options</h3>
-      <ul>
-        <li>
-          You can block or delete cookies in your browser settings.
-        </li>
-        <li>
-          You can learn about Google’s advertising controls and opt-out options
-          in Google’s settings and policy pages.
-        </li>
-      </ul>
-      <p class="muted">
-        (If you want, we can add a cookie consent banner later depending on your
-        target regions.)
-      </p>
-    </div>
-
-    <h2>Sharing links</h2>
+    <h3>3) Advertising data (AdSense)</h3>
     <p>
-      The translator may support shareable URLs that include the text you entered
-      via a query parameter (for example <span class="k">/translate/?q=...</span>).
-      If you share that link, anyone with the link can see the prefilled text in
-      their browser.
+      We use <strong>Google AdSense</strong> to display ads. AdSense may use cookies or similar technologies to show ads and measure
+      performance. Depending on your region and settings, Google may serve personalized or non-personalized ads.
+    </p>
+
+    <h3>4) Translator input</h3>
+    <p>
+      The translator runs in your browser. We do not intentionally collect the text you type into the translator through the website’s
+      own servers. However, remember that your browser, extensions, operating system, or third-party scripts may still have access to what
+      you type.
+    </p>
+
+    <hr />
+
+    <h2>Cookies and similar technologies</h2>
+    <p>
+      Cookies are small files stored by your browser. Analytics and advertising providers may use cookies, local storage, or similar
+      identifiers for measurement, fraud prevention, and ad delivery.
+    </p>
+
+    <h2>Your choices</h2>
+    <ul>
+      <li>
+        <strong>Browser controls:</strong> You can block or delete cookies in your browser settings. Some site functionality may be affected.
+      </li>
+      <li>
+        <strong>Google ad controls:</strong> You can manage ad personalization in your Google account settings (if applicable).
+      </li>
+      <li>
+        <strong>Google Analytics controls:</strong> Google provides tools and settings to control analytics collection (availability depends on region/device).
+      </li>
+      <li>
+        <strong>Do Not Track:</strong> Some browsers offer “Do Not Track” signals. There is no universal standard; we do not guarantee a specific response.
+      </li>
+    </ul>
+
+    <hr />
+
+    <h2>How we use information</h2>
+    <ul>
+      <li>Operate and maintain the Service</li>
+      <li>Understand what content is helpful and improve pages/features</li>
+      <li>Detect abuse, security issues, or fraud (including via third parties like Google)</li>
+      <li>Respond to inquiries you send us</li>
+    </ul>
+
+    <h2>How we share information</h2>
+    <p>
+      We do not sell your personal information. We may share information in these cases:
+    </p>
+    <ul>
+      <li>
+        <strong>Service providers:</strong> Analytics and ads providers (e.g., Google) process usage data to provide their services.
+      </li>
+      <li>
+        <strong>Legal:</strong> If required by law or to protect rights, safety, and security.
+      </li>
+      <li>
+        <strong>Business changes:</strong> If the site is transferred, information may be transferred as part of that change.
+      </li>
+    </ul>
+
+    <hr />
+
+    <h2>Data retention</h2>
+    <p>
+      Email messages are kept as long as needed to respond and maintain reasonable records. Analytics and ad data retention is controlled by
+      the relevant providers and their settings.
     </p>
 
     <h2>Children’s privacy</h2>
     <p>
-      This Site is not directed to children under 13. We do not knowingly
-      collect personal information from children under 13.
+      The Service is not intended for children under 13 (or the relevant minimum age in your jurisdiction). We do not knowingly collect
+      personal information from children.
     </p>
 
-    <h2>Data retention</h2>
+    <h2>International visitors</h2>
     <p>
-      We do not intentionally store translator input. Analytics and ad-related
-      data retention is managed by the relevant providers (e.g., Google) under
-      their own policies.
+      If you access the site from outside the country where hosting or providers operate, your data may be processed in other countries.
     </p>
 
     <h2>Changes to this policy</h2>
     <p>
-      We may update this Privacy Policy from time to time. The “Last updated”
-      date above reflects the latest version.
+      We may update this Privacy Policy from time to time. The “Effective date” above indicates the most recent revision.
     </p>
 
     <h2>Contact</h2>
     <p>
-      If you have questions about this policy, contact us at
-      <a href="mailto:morsecodegenerator@gmail.com">morsecodegenerator@gmail.com</a>.
+      Questions? Email us at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
     </p>
   </article>
 </Layout>
