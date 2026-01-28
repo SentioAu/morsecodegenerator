@@ -53,7 +53,7 @@
     const out = {};
     for (const [k, v] of Object.entries(map || {})) {
       if (!k || !v) continue;
-      if (out[v] == null) out[v] = k;
+      if (out[v] == null) out[v] = k; // keep first mapping
     }
     return out;
   }
@@ -78,7 +78,6 @@
           .map((ch) => {
             const v = CHAR_TO_MORSE[ch];
             if (!v) {
-              // Ignore whitespace (already split) but record other unsupported chars
               unsupported.push(ch);
               return "";
             }
@@ -131,11 +130,9 @@
 
     if (/[A-Za-z]/.test(s)) return false;
 
-    // Must contain dot/dash somewhere
     if (!/[.\-·–—•]/.test(s)) return false;
 
-    // If it contains lots of non-morse characters, treat as text
-    // Allowed: dot/dash, spaces, slash, pipes (will normalize), line breaks
+    // Allowed chars: dot/dash variants, spaces, slash, pipe
     const nonMorse = s.replace(/[.\-·–—•/\s|]/g, "");
     if (nonMorse.length > 0) return false;
 
