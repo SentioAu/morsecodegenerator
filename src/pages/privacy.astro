@@ -1,0 +1,134 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Privacy Policy – Morse Code Generator";
+const description =
+  "Privacy policy for MorseCodeGenerator.com. Learn what data is collected, how analytics and ads work, and how we handle text you translate.";
+const canonical = "https://morsecodegenerator.com/privacy/";
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <article class="prose">
+    <h1>Privacy Policy</h1>
+    <p class="muted">Last updated: {new Date().toISOString().slice(0, 10)}</p>
+
+    <div class="card">
+      <p>
+        <span class="chip">Short version</span>
+      </p>
+      <ul>
+        <li>
+          The translator runs in your browser. We do not ask you to create an
+          account.
+        </li>
+        <li>
+          Your text may be processed locally in the page. We do not intentionally
+          store the text you type into the translator.
+        </li>
+        <li>
+          We use Google Analytics (GA4) to understand site usage and Google
+          AdSense to show ads. These services may use cookies and similar
+          technologies.
+        </li>
+      </ul>
+    </div>
+
+    <h2>Who we are</h2>
+    <p>
+      This website is operated as <strong>MorseCodeGenerator.com</strong>
+      (the “Site”, “we”, “us”).
+    </p>
+
+    <h2>What data we collect</h2>
+    <h3>1) Text you enter in the translator</h3>
+    <p>
+      The translator is designed to run locally in your browser. We do not
+      intentionally collect or store the text you type or paste into the
+      translator.
+    </p>
+    <p class="muted">
+      Note: Like most websites, standard web infrastructure (hosting/CDN/server
+      logs) may record basic request data (for example IP address, user-agent,
+      timestamps) for security and reliability. This is not used to read your
+      translation input.
+    </p>
+
+    <h3>2) Analytics (Google Analytics / GA4)</h3>
+    <p>
+      We use Google Analytics 4 to measure aggregated usage (for example: which
+      pages are visited, approximate location, device type). This helps us
+      improve the site.
+    </p>
+    <ul>
+      <li>
+        We configure analytics with IP anonymization where supported.
+      </li>
+      <li>
+        Google may set cookies or use similar identifiers to provide analytics.
+      </li>
+    </ul>
+
+    <h3>3) Advertising (Google AdSense)</h3>
+    <p>
+      We use Google AdSense to display ads. Ad providers may use cookies or
+      similar technologies to show relevant ads and measure performance.
+    </p>
+
+    <h2>Cookies and your choices</h2>
+    <p>
+      Cookies are small text files stored on your device. Third-party services
+      like Google Analytics and Google AdSense may use cookies and similar
+      technologies.
+    </p>
+
+    <div class="card">
+      <h3 style="margin-top:0">Opt-out options</h3>
+      <ul>
+        <li>
+          You can block or delete cookies in your browser settings.
+        </li>
+        <li>
+          You can learn about Google’s advertising controls and opt-out options
+          in Google’s settings and policy pages.
+        </li>
+      </ul>
+      <p class="muted">
+        (If you want, we can add a cookie consent banner later depending on your
+        target regions.)
+      </p>
+    </div>
+
+    <h2>Sharing links</h2>
+    <p>
+      The translator may support shareable URLs that include the text you entered
+      via a query parameter (for example <span class="k">/translate/?q=...</span>).
+      If you share that link, anyone with the link can see the prefilled text in
+      their browser.
+    </p>
+
+    <h2>Children’s privacy</h2>
+    <p>
+      This Site is not directed to children under 13. We do not knowingly
+      collect personal information from children under 13.
+    </p>
+
+    <h2>Data retention</h2>
+    <p>
+      We do not intentionally store translator input. Analytics and ad-related
+      data retention is managed by the relevant providers (e.g., Google) under
+      their own policies.
+    </p>
+
+    <h2>Changes to this policy</h2>
+    <p>
+      We may update this Privacy Policy from time to time. The “Last updated”
+      date above reflects the latest version.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      If you have questions about this policy, contact us at
+      <a href="mailto:morsecodegenerator@gmail.com">morsecodegenerator@gmail.com</a>.
+    </p>
+  </article>
+</Layout>
