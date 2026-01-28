@@ -39,9 +39,24 @@ const starter = [
   ["S", "..."],
   ["O", "---"],
 ];
+
+const popular = [
+  { label: "SOS", href: "/phrases/sos/" },
+  { label: "HELP", href: "/phrases/help/" },
+  { label: "MAYDAY", href: "/phrases/mayday/" },
+  { label: "HELLO", href: "/hello-in-morse-code/" },
+  { label: "I LOVE YOU", href: "/i-love-you-in-morse-code/" },
+  { label: "THANK YOU", href: "/thank-you-in-morse-code/" },
+];
 ---
 
 <Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Learn</span>
+  </nav>
+
   <header class="hero">
     <p class="muted kicker">Learn • Memorize • Practice</p>
     <h1 class="title">Learn Morse Code</h1>
@@ -113,6 +128,19 @@ const starter = [
   </section>
 
   <section class="card" style="margin-top:16px;">
+    <div class="section-head">
+      <h2 style="margin:0;">Popular pages</h2>
+      <p class="muted" style="margin:0;">Quick jumps people actually use.</p>
+    </div>
+
+    <div class="pill-grid" style="margin-top:12px;">
+      {popular.map((x) => (
+        <a href={x.href}>{x.label}</a>
+      ))}
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
     <h2 style="margin-top:0;">Next steps (what to learn after the starter set)</h2>
     <p class="muted" style="margin-top:0; max-width:72ch;">
       Once you know the starter set, expand into numbers, punctuation, and real words.
@@ -161,6 +189,34 @@ const starter = [
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
+    .crumbs{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-size:13px;
+      opacity:.92;
+      margin-top:2px;
+    }
+    .crumb{
+      text-decoration:none;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.02);
+      padding:6px 10px;
+      border-radius:999px;
+      color:rgba(255,255,255,0.92);
+    }
+    .sep{ opacity:.65; }
+    .crumb-current{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.015);
+      color:rgba(255,255,255,0.78);
+    }
+
     .hero { margin: 6px 0 14px; }
     .kicker{
       margin: 0 0 10px;
