@@ -4,7 +4,7 @@ import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
 // ------------------------------------------------------------
-// ✅ Hoisted helpers (Cloudflare-safe)
+// ✅ Runtime helpers (NOT used by getStaticPaths)
 // ------------------------------------------------------------
 function slugify(input) {
   return (
@@ -46,13 +46,49 @@ function normalizePhraseList(raw) {
 }
 
 // ------------------------------------------------------------
-// ✅ getStaticPaths (pure, self-contained)
+// ✅ getStaticPaths (FULLY self-contained for Cloudflare build)
 // ------------------------------------------------------------
 export function getStaticPaths() {
-  const list = normalizePhraseList(data?.phrases ?? []);
-  if (!list.length) return [];
+  // Keep everything inside this function (Cloudflare-safe)
+  function localSlugify(input) {
+    return (
+      String(input ?? "")
+        .toLowerCase()
+        .trim()
+        .replace(/['"]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 80) || "phrase"
+    );
+  }
 
-  return list.map((item) => ({
+  const raw = data?.phrases ?? [];
+  const items = [];
+
+  if (Array.isArray(raw)) {
+    // pairs: [slug, phrase]
+    if (raw.length && Array.isArray(raw[0])) {
+      for (const row of raw) {
+        const sl = row?.[0];
+        const ph = row?.[1];
+        if (!sl || !ph) continue;
+        items.push({ slug: String(sl), phrase: String(ph) });
+      }
+    } else {
+      // objects
+      for (const p of raw) {
+        if (!p) continue;
+        const ph = p.phrase ?? p.text ?? p.value ?? p.name;
+        if (!ph) continue;
+        const sl = p.slug ?? localSlugify(ph);
+        items.push({ slug: String(sl), phrase: String(ph) });
+      }
+    }
+  }
+
+  if (!items.length) return [];
+
+  return items.map((item) => ({
     params: { slug: item.slug },
     props: { phrase: item.phrase, slug: item.slug },
   }));
