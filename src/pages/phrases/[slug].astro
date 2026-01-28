@@ -3,8 +3,7 @@ import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
-// Hoisted helper (safe)
-function slugify(input: any) {
+function slugify(input) {
   return (
     String(input ?? "")
       .toLowerCase()
@@ -16,18 +15,17 @@ function slugify(input: any) {
   );
 }
 
-// Normalize phrases into a stable [{slug, phrase}] list
-function normalizePhrases(raw: any): Array<{ slug: string; phrase: string }> {
-  const out: Array<{ slug: string; phrase: string }> = [];
+function normalizeList(raw) {
+  const out = [];
   if (!Array.isArray(raw)) return out;
 
   // pairs: [slug, phrase]
   if (raw.length && Array.isArray(raw[0])) {
     for (const row of raw) {
-      const slug = row?.[0];
-      const phrase = row?.[1];
-      if (!slug || !phrase) continue;
-      out.push({ slug: String(slug), phrase: String(phrase) });
+      const sl = row?.[0];
+      const ph = row?.[1];
+      if (!sl || !ph) continue;
+      out.push({ slug: String(sl), phrase: String(ph) });
     }
     return out;
   }
@@ -35,44 +33,32 @@ function normalizePhrases(raw: any): Array<{ slug: string; phrase: string }> {
   // objects
   for (const p of raw) {
     if (!p) continue;
-    const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
-    if (!phrase) continue;
-    const slug = p.slug ?? slugify(phrase);
-    out.push({ slug: String(slug), phrase: String(phrase) });
+    const ph = p.phrase ?? p.text ?? p.value ?? p.name;
+    if (!ph) continue;
+    const sl = p.slug ?? slugify(ph);
+    out.push({ slug: String(sl), phrase: String(ph) });
   }
 
   return out;
 }
 
-// -------------------------------------------------------------------
-// getStaticPaths (Cloudflare-safe)
-// -------------------------------------------------------------------
 export function getStaticPaths() {
-  // ✅ Ensure `phrases` is ALWAYS defined (fixes Cloudflare "phrases is not defined")
-  const phrases = normalizePhrases(data?.phrases ?? []);
-
-  // Defensive: never crash build
-  if (!phrases.length) return [];
-
-  return phrases.map((item) => ({
+  // ✅ No identifier named "phrases" anywhere in this function
+  const items = normalizeList(data?.phrases ?? []);
+  if (!items.length) return [];
+  return items.map((item) => ({
     params: { slug: item.slug },
     props: { phrase: item.phrase, slug: item.slug },
   }));
 }
 
-// -------------------------------------------------------------------
-// Map for rendering (normalized)
-// -------------------------------------------------------------------
-const rawMap = (data as any)?.morseMap ?? {};
+const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
   Object.entries(rawMap)
     .filter(([k, v]) => k && v && k !== " ")
     .map(([k, v]) => [String(k).toUpperCase(), String(v)])
 );
 
-// -------------------------------------------------------------------
-// Page runtime
-// -------------------------------------------------------------------
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
@@ -81,15 +67,11 @@ const { phrase: propPhrase, slug: propSlug } = Astro.props;
 const slug = String(propSlug ?? Astro.params?.slug ?? "").trim();
 const phrase = String(propPhrase ?? "").trim();
 
-// Canonical must follow trailingSlash: "always"
 const canonical = `${site}/phrases/${encodeURIComponent(slug)}/`;
 
-// Convert phrase to Morse (but detect unknowns)
 const morse = phrase ? textToMorse(phrase, map, " ") : "";
 const hasUnknown = morse.includes("?");
 
-// Robots:
-// - Only index pages that have a phrase AND a valid morse output AND no unknown chars
 const robots =
   phrase && morse && !hasUnknown ? "index,follow" : "noindex,follow";
 
@@ -102,12 +84,10 @@ const translatorHref = phrase
   ? `/translate/?q=${encodeURIComponent(phrase)}`
   : "/translate/";
 
-// Related phrases (deterministic)
-const phraseList = normalizePhrases(data?.phrases ?? []);
-const related = phraseList.filter((p) => p.slug !== slug).slice(0, 10);
+const listAll = normalizeList(data?.phrases ?? []);
+const related = listAll.filter((p) => p.slug !== slug).slice(0, 10);
 
-// Internal-link “word practice” set (safe, clean, high-intent)
-const practiceWords: Array<[string, string]> = [
+const practiceWords = [
   ["hello", "Hello"],
   ["help", "Help"],
   ["sos", "SOS"],
@@ -122,7 +102,6 @@ const practiceWords: Array<[string, string]> = [
   ["need-help", "Need help"],
 ];
 
-// Structured data (single graph)
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Phrases", url: `${site}/phrases/` },
@@ -167,9 +146,7 @@ const jsonLd = {
 
   <header class="hero">
     <p class="muted kicker">Copy • Practice • Learn</p>
-
     <h1 class="hero-title">{title}</h1>
-
     <p class="muted hero-sub">
       Copy the Morse translation, then practice it in the translator.
       {!phrase ? " (This phrase wasn’t found.)" : ""}
@@ -207,7 +184,6 @@ const jsonLd = {
     </p>
   </section>
 
-  <!-- ✅ Internal linking block (SEO) -->
   <section class="card" style="margin-top:16px;">
     <div class="section-head">
       <h2 style="margin:0;">Practice words</h2>
@@ -223,34 +199,6 @@ const jsonLd = {
     <p class="muted" style="margin-top:10px;">
       Browse more on <a href="/morse-code/words/">the words hub</a>.
     </p>
-  </section>
-
-  <section class="grid" style="margin-top:16px;">
-    <section class="card">
-      <h2 style="margin-top:0;">How to send this</h2>
-      <ol>
-        <li>Copy the Morse code above.</li>
-        <li>Use <span class="k">.</span> (dot) and <span class="k">-</span> (dash) visually, or tap it out.</li>
-        <li>Separate words with <span class="k">/</span> if you’re writing it.</li>
-      </ol>
-      <p class="muted" style="margin-top:10px;">
-        Want to decode a reply? Paste Morse into the <a href="/translate/">translator</a>.
-      </p>
-    </section>
-
-    <section class="card">
-      <h2 style="margin-top:0;">Learn more</h2>
-      <div class="pill-grid" style="margin-top:12px;">
-        <a href="/morse-code/a/">Alphabet (A–Z)</a>
-        <a href="/morse-code/numbers/">Numbers (0–9)</a>
-        <a href="/morse-code/punctuation/">Punctuation</a>
-        <a href="/translate/">Translator</a>
-      </div>
-
-      <p class="muted" style="margin-top:12px;">
-        Tip: learn 3–5 characters per day and test yourself in the translator.
-      </p>
-    </section>
   </section>
 
   {related.length > 0 && (
@@ -301,90 +249,21 @@ const jsonLd = {
 
   <style>
     .hero { margin-top: 10px; }
-    .kicker{
-      margin: 0 0 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
+    .kicker{ margin: 0 0 10px; letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; }
     .hero-title { margin-bottom: 8px; }
     .hero-sub { margin-top: 0; max-width: 72ch; }
+    .hero-actions{ margin-top: 12px; display:flex; gap: 10px; flex-wrap:wrap; }
 
-    .hero-actions{
-      margin-top: 12px;
-      display:flex;
-      gap: 10px;
-      flex-wrap:wrap;
-    }
-
-    .crumbs{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-      font-size: 13px;
-      opacity: .92;
-      margin-top: 2px;
-    }
-
-    .crumb{
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.02);
-      padding: 6px 10px;
-      border-radius: 999px;
-      color: rgba(255,255,255,0.92);
-    }
-
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size: 13px; opacity: .92; margin-top: 2px; }
+    .crumb{ text-decoration:none; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 999px; color: rgba(255,255,255,0.92); }
     .sep { opacity: .65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.015); color: rgba(255,255,255,0.78); }
 
-    .crumb-current{
-      display:inline-flex;
-      align-items:center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.015);
-      color: rgba(255,255,255,0.78);
-    }
+    .phrase-row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .chip{ display:inline-flex; align-items:center; justify-content:center; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.92); font-weight: 650; }
+    .chip-morse{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .4px; }
 
-    .phrase-row{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.92);
-      font-weight: 650;
-    }
-
-    .chip-morse{
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      letter-spacing: .4px;
-    }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .section-head{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px 14px;
-      align-items: baseline;
-      justify-content: space-between;
-    }
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .section-head{ display:flex; flex-wrap:wrap; gap: 6px 14px; align-items: baseline; justify-content: space-between; }
   </style>
 </Layout>
