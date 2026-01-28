@@ -61,6 +61,24 @@ function isExcluded(urlPath) {
   return false;
 }
 
+function readFileSafe(p) {
+  try {
+    return fs.readFileSync(p, "utf8");
+  } catch {
+    return "";
+  }
+}
+
+function isNoindexHtml(html) {
+  if (!html) return false;
+
+  // detect common noindex patterns
+  // <meta name="robots" content="noindex,follow">
+  // <meta content="noindex" name="robots">
+  return /<meta\s+[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex[^"']*["'][^>]*>/i.test(html) ||
+         /<meta\s+[^>]*content=["'][^"']*noindex[^"']*["'][^>]*name=["']robots["'][^>]*>/i.test(html);
+}
+
 function escapeXml(s) {
   return String(s)
     .replace(/&/g, "&amp;")
@@ -70,14 +88,32 @@ function escapeXml(s) {
     .replace(/'/g, "&apos;");
 }
 
-function buildSitemapXml(urls) {
+function toLastmod(filePath) {
+  try {
+    const mtime = fs.statSync(filePath).mtime;
+    // Sitemap accepts YYYY-MM-DD or full datetime; keep it simple + stable:
+    return new Date(mtime).toISOString().slice(0, 10);
+  } catch {
+    return "";
+  }
+}
+
+function buildSitemapXml(entries) {
   const lines = [];
   lines.push(`<?xml version="1.0" encoding="UTF-8"?>`);
   // ✅ Correct namespace must be http (spec)
   lines.push(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`);
-  for (const u of urls) {
-    lines.push(`  <url><loc>${escapeXml(u)}</loc></url>`);
+
+  for (const e of entries) {
+    const loc = escapeXml(e.loc);
+    const lastmod = e.lastmod ? escapeXml(e.lastmod) : "";
+    if (lastmod) {
+      lines.push(`  <url><loc>${loc}</loc><lastmod>${lastmod}</lastmod></url>`);
+    } else {
+      lines.push(`  <url><loc>${loc}</loc></url>`);
+    }
   }
+
   lines.push(`</urlset>`);
   return lines.join("\n") + "\n";
 }
@@ -92,27 +128,35 @@ function main() {
 
   const files = walk(webRoot);
 
-  const urlSet = new Set();
+  // url -> { loc, lastmod }
+  const map = new Map();
 
   for (const f of files) {
     if (!f.endsWith(".html")) continue;
 
-    const p = toUrlPath(webRoot, f);
-    if (!p) continue;
-    if (isExcluded(p)) continue;
+    const urlPath = toUrlPath(webRoot, f);
+    if (!urlPath) continue;
+    if (isExcluded(urlPath)) continue;
 
-    urlSet.add(`${SITE}${p}`);
+    // ✅ Systemic: skip noindex pages (prevents invalid slug pages from entering sitemap)
+    const html = readFileSafe(f);
+    if (isNoindexHtml(html)) continue;
+
+    const loc = `${SITE}${urlPath}`;
+    const lastmod = toLastmod(f);
+
+    map.set(loc, { loc, lastmod });
   }
 
-  const urls = Array.from(urlSet).sort((a, b) => a.localeCompare(b, "en"));
+  const entries = Array.from(map.values()).sort((a, b) => a.loc.localeCompare(b.loc, "en"));
 
-  const sitemapXml = buildSitemapXml(urls);
+  const sitemapXml = buildSitemapXml(entries);
 
   const outPath = path.join(webRoot, "sitemap.xml");
   fs.writeFileSync(outPath, sitemapXml, "utf8");
 
   console.log(`[postbuild-sitemap] SITE=${SITE}`);
-  console.log(`[postbuild-sitemap] Wrote ${urls.length} URLs -> ${outPath}`);
+  console.log(`[postbuild-sitemap] Wrote ${entries.length} URLs -> ${outPath}`);
 }
 
 main();
