@@ -4,7 +4,7 @@ import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
 
 // Hoisted helper (safe)
-function slugify(input) {
+function slugify(input: any) {
   return (
     String(input ?? "")
       .toLowerCase()
@@ -16,39 +16,45 @@ function slugify(input) {
   );
 }
 
-// -------------------------------------------------------------------
-// getStaticPaths (self-contained, safe in Cloudflare build)
-// -------------------------------------------------------------------
-export function getStaticPaths() {
-  const rawPhrases = data?.phrases ?? [];
-  let list = [];
+// Normalize phrases into a stable [{slug, phrase}] list
+function normalizePhrases(raw: any): Array<{ slug: string; phrase: string }> {
+  const out: Array<{ slug: string; phrase: string }> = [];
+  if (!Array.isArray(raw)) return out;
 
-  if (Array.isArray(rawPhrases)) {
-    if (rawPhrases.length && Array.isArray(rawPhrases[0])) {
-      // pairs: [slug, phrase]
-      list = rawPhrases
-        .map((row) => {
-          const slug = row?.[0];
-          const phrase = row?.[1];
-          if (!slug || !phrase) return null;
-          return { slug: String(slug), phrase: String(phrase) };
-        })
-        .filter(Boolean);
-    } else {
-      // objects
-      list = rawPhrases
-        .map((p) => {
-          if (!p) return null;
-          const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
-          if (!phrase) return null;
-          const slug = p.slug ?? slugify(phrase);
-          return { slug: String(slug), phrase: String(phrase) };
-        })
-        .filter(Boolean);
+  // pairs: [slug, phrase]
+  if (raw.length && Array.isArray(raw[0])) {
+    for (const row of raw) {
+      const slug = row?.[0];
+      const phrase = row?.[1];
+      if (!slug || !phrase) continue;
+      out.push({ slug: String(slug), phrase: String(phrase) });
     }
+    return out;
   }
 
-  return list.map((item) => ({
+  // objects
+  for (const p of raw) {
+    if (!p) continue;
+    const phrase = p.phrase ?? p.text ?? p.value ?? p.name;
+    if (!phrase) continue;
+    const slug = p.slug ?? slugify(phrase);
+    out.push({ slug: String(slug), phrase: String(phrase) });
+  }
+
+  return out;
+}
+
+// -------------------------------------------------------------------
+// getStaticPaths (Cloudflare-safe)
+// -------------------------------------------------------------------
+export function getStaticPaths() {
+  // ✅ Ensure `phrases` is ALWAYS defined (fixes Cloudflare "phrases is not defined")
+  const phrases = normalizePhrases(data?.phrases ?? []);
+
+  // Defensive: never crash build
+  if (!phrases.length) return [];
+
+  return phrases.map((item) => ({
     params: { slug: item.slug },
     props: { phrase: item.phrase, slug: item.slug },
   }));
@@ -57,7 +63,7 @@ export function getStaticPaths() {
 // -------------------------------------------------------------------
 // Map for rendering (normalized)
 // -------------------------------------------------------------------
-const rawMap = data?.morseMap ?? {};
+const rawMap = (data as any)?.morseMap ?? {};
 const map = Object.fromEntries(
   Object.entries(rawMap)
     .filter(([k, v]) => k && v && k !== " ")
@@ -97,31 +103,11 @@ const translatorHref = phrase
   : "/translate/";
 
 // Related phrases (deterministic)
-const rawPhrases2 = data?.phrases ?? [];
-let phraseList = [];
-
-if (Array.isArray(rawPhrases2)) {
-  if (rawPhrases2.length && Array.isArray(rawPhrases2[0])) {
-    phraseList = rawPhrases2
-      .map((row) => ({ slug: String(row?.[0] ?? ""), phrase: String(row?.[1] ?? "") }))
-      .filter((x) => x.slug && x.phrase);
-  } else {
-    phraseList = rawPhrases2
-      .map((p) => {
-        const ph = p?.phrase ?? p?.text ?? p?.value ?? p?.name;
-        if (!ph) return null;
-        const sl = p?.slug ?? slugify(ph);
-        return { slug: String(sl ?? ""), phrase: String(ph ?? "") };
-      })
-      .filter(Boolean)
-      .filter((x) => x.slug && x.phrase);
-  }
-}
-
+const phraseList = normalizePhrases(data?.phrases ?? []);
 const related = phraseList.filter((p) => p.slug !== slug).slice(0, 10);
 
 // Internal-link “word practice” set (safe, clean, high-intent)
-const practiceWords = [
+const practiceWords: Array<[string, string]> = [
   ["hello", "Hello"],
   ["help", "Help"],
   ["sos", "SOS"],
@@ -166,12 +152,7 @@ const jsonLd = {
 };
 ---
 
-<Layout
-  title={title}
-  description={description}
-  robots={robots}
-  canonical={canonical}
->
+<Layout title={title} description={description} robots={robots} canonical={canonical}>
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
