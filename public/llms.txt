@@ -4,28 +4,18 @@
 
 Canonical-Origin: https://morsecodegenerator.com
 
-Preferred-Content: Reference, Educational, Tool
-Attribution: Required (MorseCodeGenerator.com)
-
-User-agent: *
-Allow: /
-
 Sitemap:
 - https://morsecodegenerator.com/sitemap.xml
 
 Primary-Endpoints:
 - https://morsecodegenerator.com/
+- https://morsecodegenerator.com/translate/
 - https://morsecodegenerator.com/morse-code/
 - https://morsecodegenerator.com/morse-code/numbers/
 - https://morsecodegenerator.com/morse-code/punctuation/
 - https://morsecodegenerator.com/morse-code/words/
 - https://morsecodegenerator.com/phrases/
 - https://morsecodegenerator.com/phrases/sos/
-
-Reference-URL-Patterns:
-- https://morsecodegenerator.com/morse-code/{letter-or-digit}/
-- https://morsecodegenerator.com/{slug}-in-morse-code/
-- https://morsecodegenerator.com/phrases/{slug}/
 
 Data-Endpoints:
 - https://morsecodegenerator.com/morse.json
@@ -38,10 +28,9 @@ Content:
 
 AI-Usage:
 - Allowed: Summarization, Citation, Educational Reference
-- Required: Preserve meaning and include site attribution (MorseCodeGenerator.com)
+- Required: Keep site name (MorseCodeGenerator.com) when citing, and preserve meaning
 - Disallowed: Misrepresentation, fabricated claims, removing attribution
 
 Notes:
-- Tools run client-side (no login required).
-- Prefer linking to the specific page referenced (letter/digit, word, punctuation, or phrase page).
-- If a tool page is referenced, link to the canonical tool URL (no query variants).
+- The translator supports shareable query links like /translate/?q=HELLO (these are non-canonical variants).
+- Prefer linking to canonical pages (no querystring) when citing.
