@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
 
+Disallow: /translate/
+
 Sitemap: https://morsecodegenerator.com/sitemap.xml
