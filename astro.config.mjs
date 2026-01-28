@@ -1,9 +1,18 @@
 import { defineConfig } from "astro/config";
-import sitemap from "@astrojs/sitemap";
+
+const SITE = String(process.env.SITE_URL || "https://morsecodegenerator.com").replace(/\/$/, "");
 
 export default defineConfig({
-  site: "https://morsecodegenerator.com",
+  site: SITE,
   trailingSlash: "always",
   output: "static",
-  integrations: [sitemap()],
+
+  // Ensure /route/ => dist/route/index.html (matches your sitemap + redirects)
+  build: {
+    format: "directory",
+  },
+
+  // You already generate sitemap.xml in scripts/postbuild-sitemap.mjs
+  // Keeping @astrojs/sitemap enabled can create duplicates or extra sitemap variants.
+  integrations: [],
 });
