@@ -9,10 +9,10 @@ const description =
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
-// ✅ Force canonical for this page (avoid ?q= variants becoming canonical)
+// ✅ Canonical fixed (avoid ?q= variants)
 const canonical = `${site}/morse-code/words/`;
 
-// ✅ Optional: allow indexing this hub page
+// ✅ Index the hub page itself
 const robots = "index,follow";
 
 // -------- slug helpers (self-contained) --------
@@ -27,8 +27,8 @@ function isWordSlug(s) {
   if (!s) return false;
   if (s.length > 28) return false;
   if (namedPunct.has(s)) return false;
-  if (/^\d+$/.test(s)) return false;         // numbers handled elsewhere
-  if (/^[a-z]$/.test(s)) return false;       // letters handled elsewhere
+  if (/^\d+$/.test(s)) return false;   // numbers handled elsewhere
+  if (/^[a-z]$/.test(s)) return false; // letters handled elsewhere
   if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(s)) return false;
   if (s.includes("--")) return false;
 
@@ -51,7 +51,7 @@ const all = (Array.isArray(slugs) ? slugs : [])
   .map(toStr)
   .filter(isWordSlug);
 
-// Group A–Z (numbers excluded already)
+// Group A–Z
 const groups = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))
   .map((L) => {
     const items = all
@@ -62,7 +62,6 @@ const groups = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))
   .filter((g) => g.items.length > 0);
 
 const count = all.length;
-
 const alpha = groups.map((g) => g.L);
 
 // ✅ Breadcrumbs (structured data)
@@ -72,7 +71,8 @@ const crumbs = [
   { name: "Words", url: canonical },
 ];
 
-// ✅ JSON-LD: breadcrumbs + collection page + optional search action
+// ✅ JSON-LD: breadcrumbs + collection page
+// (No SearchAction because filtering is client-side and we don't want ?q= treated as a real endpoint.)
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -91,26 +91,12 @@ const jsonLd = {
       description,
       url: canonical,
       isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: `${canonical}?q={search_term_string}`,
-        "query-input": "required name=search_term_string",
-      },
     },
   ],
 };
 ---
 
 <Layout title={title} description={description} robots={robots} canonical={canonical}>
-  <!-- ✅ Ensure canonical is correct even if Layout isn’t updated -->
-  <head>
-    <link rel="canonical" href={canonical} />
-    <meta name="robots" content={robots} />
-
-    <!-- Keep social URL stable (avoid ?q= in OG) -->
-    <meta property="og:url" content={canonical} />
-  </head>
-
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
@@ -124,8 +110,8 @@ const jsonLd = {
     <h1 class="title">Morse Code Words (A–Z)</h1>
 
     <p class="muted sub">
-      A curated list of <strong>{count}</strong> word pages. Click any word to open its Morse page,
-      or practice it instantly in the translator.
+      A curated list of <strong>{count}</strong> word pages. Click any word to open its Morse page.
+      Use search to filter instantly.
     </p>
 
     <div class="actions">
@@ -139,9 +125,22 @@ const jsonLd = {
 
     <div class="search-row">
       <label class="muted" for="q"><strong>Search</strong> (filters instantly)</label>
-      <input id="q" name="q" type="search" placeholder="Type a word… (example: help, water, good)" />
+
+      <div class="search-controls">
+        <input
+          id="q"
+          name="q"
+          type="search"
+          placeholder="Type a word… (example: help, water, good)"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="clear" type="button" class="ghost">Clear</button>
+      </div>
+
       <p class="muted tiny">
         Tip: hyphenated phrases also work (example: <span class="k">good-night</span>).
+        Share a filtered view using <span class="k">?q=</span> — canonical stays <span class="k">/morse-code/words/</span>.
       </p>
     </div>
 
@@ -160,14 +159,20 @@ const jsonLd = {
 
     <div id="list">
       {groups.map((g) => (
-        <section class="group" id={g.L}>
+        <section class="group" id={g.L} data-group={g.L}>
           <h3 class="group-title">{g.L}</h3>
 
           <div class="grid">
             {g.items.map((s) => {
               const label = titleCaseWordsFromSlug(s);
               return (
-                <a class="item" href={`/${s}-in-morse-code/`} data-slug={s} data-label={label.toLowerCase()}>
+                <a
+                  class="item"
+                  href={`/${s}-in-morse-code/`}
+                  data-group={g.L}
+                  data-slug={s}
+                  data-label={label.toLowerCase()}
+                >
                   <span class="item-name">{label}</span>
                   <span class="muted item-slug">/{s}-in-morse-code/</span>
                 </a>
@@ -184,41 +189,71 @@ const jsonLd = {
   <script is:inline>
     (function () {
       const q = document.getElementById("q");
+      const clearBtn = document.getElementById("clear");
       const items = Array.from(document.querySelectorAll(".item"));
-      const groups = Array.from(document.querySelectorAll(".group"));
+      const groupEls = Array.from(document.querySelectorAll(".group"));
 
-      // ✅ Support ?q= for shareable filtered views
-      function setFromQuery() {
+      function readQueryQ() {
+        try { return new URL(window.location.href).searchParams.get("q") || ""; }
+        catch { return ""; }
+      }
+
+      function setQueryQ(v) {
+        // Keep shareability without making it "canonical"
         try {
-          const v = new URL(window.location.href).searchParams.get("q");
-          if (v && q && !q.value) q.value = v;
+          const url = new URL(window.location.href);
+          if (v) url.searchParams.set("q", v);
+          else url.searchParams.delete("q");
+          window.history.replaceState({}, "", url.toString());
         } catch {}
       }
 
-      function applyFilter() {
+      function applyFilter(pushUrl) {
         const v = String(q?.value || "").trim().toLowerCase();
+        if (pushUrl) setQueryQ(v);
+
         if (!v) {
           items.forEach((el) => (el.style.display = ""));
-          groups.forEach((g) => (g.style.display = ""));
+          groupEls.forEach((g) => (g.style.display = ""));
           return;
         }
 
-        items.forEach((el) => {
+        // Count visible items per group deterministically
+        const visibleByGroup = Object.create(null);
+
+        for (const el of items) {
           const slug = el.getAttribute("data-slug") || "";
           const label = el.getAttribute("data-label") || "";
           const ok = slug.includes(v) || label.includes(v);
-          el.style.display = ok ? "" : "none";
-        });
 
-        groups.forEach((g) => {
-          const anyVisible = !!g.querySelector(".item:not([style*='display: none'])");
-          g.style.display = anyVisible ? "" : "none";
-        });
+          el.style.display = ok ? "" : "none";
+
+          if (ok) {
+            const g = el.getAttribute("data-group") || "";
+            if (g) visibleByGroup[g] = (visibleByGroup[g] || 0) + 1;
+          }
+        }
+
+        for (const g of groupEls) {
+          const key = g.getAttribute("data-group") || "";
+          g.style.display = visibleByGroup[key] ? "" : "none";
+        }
       }
 
-      setFromQuery();
-      applyFilter();
-      q?.addEventListener("input", applyFilter, { passive: true });
+      // Init from ?q=
+      const initial = readQueryQ();
+      if (initial && q) q.value = initial;
+
+      applyFilter(false);
+
+      q?.addEventListener("input", () => applyFilter(true), { passive: true });
+
+      clearBtn?.addEventListener("click", () => {
+        if (!q) return;
+        q.value = "";
+        q.focus();
+        applyFilter(true);
+      });
     })();
   </script>
 
@@ -250,6 +285,14 @@ const jsonLd = {
       margin-top: 14px;
       max-width: 72ch;
     }
+    .search-controls{
+      margin-top: 8px;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .search-controls input{ flex: 1; min-width: 240px; }
     .tiny{ font-size: 13px; }
 
     .az{
