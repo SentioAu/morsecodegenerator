@@ -16,9 +16,8 @@ const site =
 
 const canonical = `${site}/translate/`;
 
-// ✅ Prevent indexing infinite query variants (/translate/?q=...)
-// Canonical still points to /translate/; robots helps crawl control.
-const robots = hasInitial ? "noindex,follow" : "index,follow";
+// ✅ Recommended: Keep translator out of the index (avoid crawl bloat and thin indexing)
+const robots = "noindex,follow";
 
 const crumbs = [
   { name: "Home", url: `${site}/` },
@@ -90,7 +89,7 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
 
     <div class="hero-actions">
       <a class="btn primary" href="/phrases/">Practice phrases</a>
-      <a class="btn" href="/morse-code/a/">Learn alphabet</a>
+      <a class="btn" href="/morse-code/">Learn alphabet</a>
       <a class="btn" href="/morse-code/words/">Practice words</a>
       <a class="btn" href="/">Home</a>
     </div>
@@ -163,6 +162,9 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
       </div>
     </div>
   </section>
+
+  <!-- Toast for copy feedback (accessibility-friendly) -->
+  <div id="mcg-toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Internal linking block -->
   {practiceWords.length ? (
@@ -244,7 +246,7 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
   </section>
 
   <p style="margin-top:16px;">
-    Next: <a href="/morse-code/a/">learn the alphabet</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/morse-code/words/">words</a>.
+    Next: <a href="/morse-code/">learn the alphabet</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/morse-code/words/">words</a>.
   </p>
 
   <!-- Structured data -->
@@ -269,8 +271,21 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
         const clear = document.getElementById("mcg-clear");
         const btnT2M = document.getElementById("mcg-text-to-morse");
         const btnM2T = document.getElementById("mcg-morse-to-text");
+        const copyBtn = document.getElementById("mcg-copy");
+        const toast = document.getElementById("mcg-toast");
 
         if (!input || !output) return;
+
+        function showToast(msg) {
+          if (!toast) return;
+          toast.textContent = msg;
+          toast.classList.add("show");
+          window.clearTimeout(showToast._t);
+          showToast._t = window.setTimeout(
+            () => toast.classList.remove("show"),
+            1800
+          );
+        }
 
         if (initial && !input.value.trim()) input.value = String(initial);
         if (!initial && !input.value.trim()) input.value = "HELLO";
@@ -293,6 +308,28 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
           input.focus();
         });
 
+        // Copy output with toast + fallback
+        copyBtn?.addEventListener("click", async () => {
+          const v = (output.value || "").trim();
+          if (!v) return showToast("Nothing to copy");
+
+          try {
+            await navigator.clipboard.writeText(v);
+            showToast("Copied output");
+          } catch {
+            try {
+              output.focus();
+              output.select();
+              const ok = document.execCommand("copy");
+              showToast(ok ? "Copied output" : "Copy failed");
+              window.getSelection()?.removeAllRanges?.();
+            } catch {
+              showToast("Copy failed");
+            }
+          }
+        });
+
+        // Cmd/Ctrl+Enter converts (auto-detect)
         input.addEventListener("keydown", (e) => {
           const isEnter = e.key === "Enter";
           const isMod = e.ctrlKey || e.metaKey;
@@ -330,25 +367,6 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
       flex-wrap:wrap;
     }
 
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 14px;
-      border-radius: 999px;
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.92);
-      font-weight: 800;
-      line-height: 1;
-    }
-    .btn.primary{
-      border-color: rgba(138,180,255,0.30);
-      background: rgba(138,180,255,0.12);
-    }
-    .btn:hover { opacity: .95; }
-
     .chips{
       margin-top: 14px;
       display:flex;
@@ -356,17 +374,6 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
       gap: 8px;
       justify-content:center;
       align-items:center;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.82);
-      font-size: 13px;
-      line-height: 1.2;
     }
 
     .tool-card { margin-top: 16px; }
@@ -398,11 +405,6 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
       overflow: auto;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
-    }
-
-    .mono{
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      letter-spacing: .25px;
     }
 
     .actions{
@@ -440,6 +442,30 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
       .sub { margin-left: 0; }
       .hero-actions, .chips { justify-content: flex-start; }
       .ta{ min-height: 180px; }
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      max-width: min(560px, calc(100vw - 24px));
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.92);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .14s ease, transform .14s ease;
+      transform: translateX(-50%) translateY(8px);
+      font-weight: 750;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
   </style>
 </Layout>
