@@ -16,6 +16,10 @@ const site =
 
 const canonical = `${site}/translate/`;
 
+// ✅ Prevent indexing infinite query variants (/translate/?q=...)
+// Canonical still points to /translate/; robots helps crawl control.
+const robots = hasInitial ? "noindex,follow" : "index,follow";
+
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Translator", url: canonical },
@@ -43,9 +47,11 @@ const jsonLd = {
   ],
 };
 
-// Practice links: word pages use /{slug}-in-morse-code/ (must exist in seo-slugs.json)
-// Phrase pages use /phrases/{slug}/ (allowed unconditionally)
-const practiceWordsRaw: Array<[string, string, "word" | "phrase"]> = [
+// Practice links:
+// - Word pages use /{slug}-in-morse-code/ (must exist in seo-slugs.json)
+// - Phrase pages use /phrases/{slug}/ (allowed unconditionally)
+/** @type {Array<[string, string, "word" | "phrase"]>} */
+const practiceWordsRaw = [
   // Word pages (/{slug}-in-morse-code/)
   ["help", "Help", "word"],
   ["yes", "Yes", "word"],
@@ -68,11 +74,12 @@ const available = new Set(
 
 const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
   const s = String(slug).toLowerCase();
+  // phrases do not depend on seo-slugs.json; word pages do
   return kind === "phrase" ? true : available.has(s);
 });
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
   <header class="hero">
     <p class="muted kicker">Fast • Private • No logins</p>
     <h1 class="title">Text to Morse Translator</h1>
