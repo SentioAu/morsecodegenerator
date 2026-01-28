@@ -186,6 +186,9 @@ const practiceLinks = [
         <a role="listitem" href={x.href}>{x.label}</a>
       ))}
     </div>
+
+    <!-- Accessible toast (used by Copy/Listen) -->
+    <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
   </header>
 
   <section class="card" style="margin-top:16px;">
@@ -245,108 +248,163 @@ const practiceLinks = [
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <script is:inline define:vars={{ code }}>
-    (function(){
+    (function () {
       const copyBtn = document.getElementById("copy");
       const listenBtn = document.getElementById("listen");
+      const toastEl = document.getElementById("toast");
+
       const reducedMotion =
         typeof window !== "undefined" &&
         window.matchMedia &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+      let toastTimer = null;
+      function toast(msg) {
+        if (!toastEl) return;
+        toastEl.textContent = String(msg || "");
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove("show"), reducedMotion ? 600 : 1200);
+      }
+
       async function copyText(text) {
-        try { await navigator.clipboard.writeText(text); return true; }
-        catch {
+        const t = String(text || "");
+        try {
+          await navigator.clipboard.writeText(t);
+          return true;
+        } catch {
           try {
             const ta = document.createElement("textarea");
-            ta.value = text;
-            ta.setAttribute("readonly","true");
-            ta.style.position="fixed";
-            ta.style.left="-9999px";
+            ta.value = t;
+            ta.setAttribute("readonly", "true");
+            ta.style.position = "fixed";
+            ta.style.top = "-9999px";
+            ta.style.left = "-9999px";
             document.body.appendChild(ta);
             ta.select();
             const ok = document.execCommand("copy");
             document.body.removeChild(ta);
             return !!ok;
-          } catch { return false; }
+          } catch {
+            return false;
+          }
         }
-      }
-
-      function toast(btn, text){
-        if (!btn || reducedMotion) {
-          // minimal feedback when reduced motion is requested
-          if (btn) btn.setAttribute("aria-label", text);
-          return;
-        }
-        const old = btn.textContent;
-        btn.textContent = text;
-        window.setTimeout(() => (btn.textContent = old), 950);
       }
 
       copyBtn?.addEventListener("click", async () => {
         const value = String(code || "");
         if (!value) return;
         const ok = await copyText(value);
-        if (!ok) return;
-        toast(copyBtn, "Copied ✓");
+        toast(ok ? "Copied ✓" : "Copy failed");
       });
 
-      function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+      function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+      // --- Audio playback (dot/dash) ---
+      let playing = false;
+      let stopFlag = false;
 
       listenBtn?.addEventListener("click", async () => {
         const value = String(code || "");
         if (!value) return;
 
-        listenBtn.disabled = true;
-        const old = listenBtn.textContent;
-        listenBtn.textContent = "Playing…";
+        // Toggle stop if already playing
+        if (playing) {
+          stopFlag = true;
+          toast("Stopping…");
+          return;
+        }
+
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) {
+          toast("Audio not supported");
+          return;
+        }
+
+        playing = true;
+        stopFlag = false;
+
+        const oldText = listenBtn.textContent;
+        listenBtn.textContent = "Stop";
+        listenBtn.classList.add("danger");
 
         const unit = 90; // ms
-        const Ctx = window.AudioContext || window.webkitAudioContext;
+        const freq = 700;
+
         const ctx = new Ctx();
 
+        try {
+          // iOS/Safari often starts suspended; must resume on gesture
+          if (ctx.state === "suspended") await ctx.resume();
+        } catch {}
+
         const master = ctx.createGain();
-        master.gain.value = 0.0;
         master.connect(ctx.destination);
 
-        // quick fade-in to avoid clicks
-        master.gain.setValueAtTime(0.0, ctx.currentTime);
-        master.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.02);
+        // default volume
+        const volume = 0.06;
+        master.gain.setValueAtTime(0.0001, ctx.currentTime);
 
-        async function beep(durationMs){
+        function startBeep(durationMs) {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          gain.gain.value = 1.0;
-          osc.frequency.value = 700;
           osc.type = "sine";
+          osc.frequency.value = freq;
+
+          // small attack/release to reduce clicks
+          const now = ctx.currentTime;
+          const dur = durationMs / 1000;
+
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.linearRampToValueAtTime(1.0, now + 0.008);
+          gain.gain.setValueAtTime(1.0, now + Math.max(0.008, dur - 0.02));
+          gain.gain.linearRampToValueAtTime(0.0001, now + dur);
+
           osc.connect(gain);
           gain.connect(master);
 
-          const now = ctx.currentTime;
           osc.start(now);
-          osc.stop(now + (durationMs / 1000));
-          await sleep(durationMs);
+          osc.stop(now + dur + 0.01);
+          return osc;
+        }
+
+        async function play() {
+          toast("Playing…");
+          for (const s of value) {
+            if (stopFlag) break;
+
+            if (s === ".") {
+              startBeep(unit);
+              await sleep(unit);
+              await sleep(unit); // intra-symbol gap
+            } else if (s === "-") {
+              startBeep(unit * 3);
+              await sleep(unit * 3);
+              await sleep(unit);
+            } else {
+              // spacing / unknown
+              await sleep(unit * 2);
+            }
+          }
         }
 
         try {
-          for (const s of value) {
-            if (s === ".") { await beep(unit); await sleep(unit); }
-            else if (s === "-") { await beep(unit * 3); await sleep(unit); }
-            else { await sleep(unit * 2); }
-          }
-        } catch {}
-
-        try {
-          // fade out
-          master.gain.cancelScheduledValues(ctx.currentTime);
-          master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
-          master.gain.linearRampToValueAtTime(0.0, ctx.currentTime + 0.03);
-          await sleep(40);
-        } catch {}
+          // set master volume after resume (some browsers ignore before resume)
+          master.gain.setValueAtTime(volume, ctx.currentTime);
+          await play();
+        } catch {
+          // ignore
+        }
 
         try { await ctx.close(); } catch {}
 
-        listenBtn.textContent = old;
-        listenBtn.disabled = false;
+        // reset UI
+        playing = false;
+        stopFlag = false;
+
+        listenBtn.textContent = oldText;
+        listenBtn.classList.remove("danger");
+        toast("Done ✓");
       });
     })();
   </script>
@@ -409,9 +467,21 @@ const practiceLinks = [
     }
     .badge-code{ font-weight:700; letter-spacing:.4px; }
 
-    .chips{ margin-top:12px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .chips{
+      margin-top:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
 
-    .actions{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .actions{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
 
     .section-head{
       display:flex;
@@ -447,6 +517,36 @@ const practiceLinks = [
     }
     .ex-text{ font-weight:850; }
     .ex-morse{ opacity:.92; font-size:14px; }
+
+    /* toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(10px);
+      opacity: 0;
+      pointer-events: none;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.72);
+      color: rgba(255,255,255,0.92);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.45);
+      transition: opacity .16s ease, transform .16s ease;
+      z-index: 999;
+      max-width: calc(100vw - 28px);
+      text-align: center;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* stop state */
+    button.danger{
+      border-color: rgba(255,255,255,0.24) !important;
+      background: rgba(255,255,255,0.06) !important;
+    }
 
     @media (max-width: 600px){
       .actions > *{ width:100%; justify-content:center; }
