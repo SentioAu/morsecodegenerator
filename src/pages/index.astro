@@ -9,10 +9,9 @@ const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
 const canonical = `${site}/`;
+const robots = "index,follow";
 
-const crumbs = [
-  { name: "Home", url: canonical },
-];
+const crumbs = [{ name: "Home", url: canonical }];
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -37,7 +36,7 @@ const jsonLd = {
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
   <header class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
@@ -57,7 +56,7 @@ const jsonLd = {
           <a class="btn" href="/phrases/">Practice Phrases</a>
         </div>
 
-        <div class="hint-row">
+        <div class="hint-row" aria-label="Morse formatting tips">
           <span class="hint">Letters: spaces</span>
           <span class="hint">Words: “/”</span>
           <span class="hint muted">Example: <span class="k">SOS</span> → <span class="k">... --- ...</span></span>
@@ -87,7 +86,12 @@ const jsonLd = {
               id="mcg-input"
               rows="7"
               placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
-            ></textarea>
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              inputmode="text"
+              maxlength="5000"
+            >HELLO</textarea>
 
             <div class="tool-row" style="margin-top:10px;">
               <button id="mcg-text-to-morse" type="button">Text → Morse</button>
@@ -107,7 +111,16 @@ const jsonLd = {
 
           <div>
             <label for="mcg-output"><strong>Output</strong></label><br />
-            <textarea id="mcg-output" rows="7" placeholder="Your result will appear here..." readonly></textarea>
+            <textarea
+              id="mcg-output"
+              rows="7"
+              class="mono"
+              placeholder="Your result will appear here..."
+              readonly
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+            ></textarea>
 
             <p class="muted" style="margin-top:10px;">
               Want the full tool? <a href="/translate/">Open the translator</a>.
@@ -117,6 +130,9 @@ const jsonLd = {
       </section>
     </div>
   </header>
+
+  <!-- Toast for copy feedback -->
+  <div id="mcg-toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <section class="grid hub" style="margin-top:16px;">
     <section class="card">
@@ -160,7 +176,6 @@ const jsonLd = {
       </p>
     </section>
 
-    <!-- ✅ NEW: Words hub teaser (internal linking) -->
     <section class="card">
       <h2 style="margin-top:0;">Morse Code Words</h2>
       <p class="muted" style="margin-top:0;">
@@ -196,10 +211,10 @@ const jsonLd = {
   <!-- Structured data -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
-  <!-- Runtime tool -->
+  <!-- Runtime tool (owns conversion + swap + clear + auto-detect) -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- Minimal glue: set default input without whitespace bugs -->
+  <!-- Page-only UX: Copy toast -->
   <script is:inline>
     (function () {
       function onReady(fn) {
@@ -207,9 +222,42 @@ const jsonLd = {
           document.addEventListener("DOMContentLoaded", fn, { once: true });
         } else fn();
       }
-      onReady(() => {
-        const input = document.getElementById("mcg-input");
-        if (input && !input.value.trim()) input.value = "HELLO";
+
+      onReady(function () {
+        const output = document.getElementById("mcg-output");
+        const copyBtn = document.getElementById("mcg-copy");
+        const toast = document.getElementById("mcg-toast");
+
+        function showToast(msg) {
+          if (!toast) return;
+          toast.textContent = msg;
+          toast.classList.add("show");
+          window.clearTimeout(showToast._t);
+          showToast._t = window.setTimeout(
+            () => toast.classList.remove("show"),
+            1800
+          );
+        }
+
+        copyBtn?.addEventListener("click", async () => {
+          const v = (output?.value || "").trim();
+          if (!v) return showToast("Nothing to copy");
+
+          try {
+            await navigator.clipboard.writeText(v);
+            showToast("Copied output");
+          } catch {
+            try {
+              output?.focus();
+              output?.select();
+              const ok = document.execCommand("copy");
+              showToast(ok ? "Copied output" : "Copy failed");
+              window.getSelection()?.removeAllRanges?.();
+            } catch {
+              showToast("Copy failed");
+            }
+          }
+        });
       });
     })();
   </script>
@@ -277,7 +325,6 @@ const jsonLd = {
     }
     .spacer{ flex:1; min-width: 8px; }
 
-    /* Hub grid: 1-col on mobile, 3-col on desktop */
     .hub{
       grid-template-columns: 1fr;
     }
@@ -290,6 +337,31 @@ const jsonLd = {
       .hero-actions .btn{ width:100%; }
       .spacer{ display:none; }
       .tool-row button{ width:100%; }
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      max-width: min(560px, calc(100vw - 24px));
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.92);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .14s ease, transform .14s ease;
+      transform: translateX(-50%) translateY(8px);
+      font-weight: 750;
+      z-index: 50;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
   </style>
 </Layout>
