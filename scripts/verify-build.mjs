@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+const SITE = (process.env.SITE_URL || "https://morsecodegenerator.com").replace(/\/$/, "");
+
 function detectWebRoot() {
   const dist = path.resolve("dist");
   const distPublic = path.join(dist, "public");
@@ -41,25 +43,34 @@ function assert(condition, msg) {
 }
 
 function verifyCanonicalAndH1(html, label) {
-  // canonical
+  // canonical tag exists
   const hasCanonical = /<link\s+[^>]*rel=["']canonical["'][^>]*>/i.test(html);
   assert(hasCanonical, `${label}: canonical tag exists`);
 
-  // ensure canonical has an href
-  const hrefMatch = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i);
+  // canonical has href
+  const hrefMatch = html.match(
+    /<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i
+  );
   assert(!!hrefMatch && !!hrefMatch[1], `${label}: canonical href exists`);
 
-  // optional: encourage trailing slash canonical (your Layout enforces this)
+  // encourage trailing slash canonical (Layout enforces this)
   if (hrefMatch?.[1]) {
     const href = String(hrefMatch[1]);
-    // allow query canonicals if any, but your canonical should generally end with /
     const ok = href.includes("?") ? true : href.endsWith("/");
     assert(ok, `${label}: canonical ends with "/" (or contains "?")`);
   }
 
-  // h1
+  // h1 exists
   const hasH1 = /<h1(\s|>)/i.test(html);
   assert(hasH1, `${label}: <h1> exists`);
+}
+
+function normalizeLines(s) {
+  return String(s || "")
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
 }
 
 function main() {
@@ -70,15 +81,31 @@ function main() {
   mustExist(path.join(webRoot, "robots.txt"), "robots.txt");
   mustExist(path.join(webRoot, "sitemap.xml"), "sitemap.xml");
 
-  // robots should reference sitemap.xml (absolute OR relative accepted)
+  // Cloudflare Pages routing rules must exist
+  mustExist(path.join(webRoot, "_redirects"), "_redirects");
+
+  // robots must reference sitemap.xml EXACTLY (strict)
   const robotsPath = path.join(webRoot, "robots.txt");
   const robots = readFileSafe(robotsPath);
-  const hasSitemapLine =
-    /Sitemap:\s*\S+/i.test(robots) && (robots.includes("/sitemap.xml") || robots.includes("sitemap.xml"));
-  assert(hasSitemapLine, "robots.txt references sitemap.xml");
+
+  const expectedSitemapLine = `Sitemap: ${SITE}/sitemap.xml`;
+
+  const lines = normalizeLines(robots);
+  const sitemapLines = lines.filter((l) => /^sitemap:/i.test(l));
+
+  assert(sitemapLines.length > 0, "robots.txt contains a Sitemap: line");
+  assert(
+    sitemapLines.some((l) => l.toLowerCase() === expectedSitemapLine.toLowerCase()),
+    `robots.txt sitemap line matches exactly: "${expectedSitemapLine}"`
+  );
+
+  // ensure no other sitemap lines point somewhere else (strict)
+  const bad = sitemapLines.filter(
+    (l) => l.toLowerCase() !== expectedSitemapLine.toLowerCase()
+  );
+  assert(bad.length === 0, `robots.txt has no unexpected Sitemap: lines`);
 
   // ---- Representative page checks (canonical + h1) ----
-  // Keep this list small but meaningful; add more later if you want.
   const samples = [
     { file: "index.html", label: "/" },
     { file: path.join("translate", "index.html"), label: "/translate/" },
@@ -95,11 +122,10 @@ function main() {
   }
 
   // ---- Ensure legacy duplicate families are NOT built ----
-  // Old: /a-in-morse-code/ => must not exist in output after consolidation
+  // Old: /a-in-morse-code/ etc => must not exist
   for (let i = 0; i < 26; i++) {
     const ch = String.fromCharCode(97 + i); // a-z
     const legacyDir = path.join(webRoot, `${ch}-in-morse-code`);
-    // In Astro trailingSlash "always" builds as folder/index.html
     mustNotExist(path.join(legacyDir, "index.html"), `legacy letter page /${ch}-in-morse-code/`);
   }
 
