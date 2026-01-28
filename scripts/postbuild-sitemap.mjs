@@ -1,3 +1,4 @@
+// path: scripts/postbuild-sitemap.mjs
 import fs from "node:fs";
 import path from "node:path";
 
@@ -28,11 +29,17 @@ function walk(dir) {
   return out;
 }
 
+/**
+ * Convert a built HTML file path to a URL path that matches trailingSlash: "always".
+ * Only index.html pages become canonical URL entries.
+ */
 function toUrlPath(webRoot, filePath) {
   const rel = path.relative(webRoot, filePath).replace(/\\/g, "/");
 
-  // Only index.html pages => trailingSlash canonical
+  // Root index
   if (rel === "index.html") return "/";
+
+  // Only include .../index.html routes
   if (!rel.endsWith("/index.html")) return null;
 
   const dir = rel.replace(/\/index\.html$/, "");
@@ -46,6 +53,9 @@ function isExcluded(urlPath) {
   if (urlPath === "/404/" || urlPath === "/404.html") return true;
   if (urlPath.startsWith("/assets/")) return true;
   if (urlPath.startsWith("/_astro/")) return true;
+
+  // ✅ Tool pages: keep out of sitemap (crawl bloat + thin indexing)
+  if (urlPath === "/translate/" || urlPath.startsWith("/translate/")) return true;
 
   // sitemap variants (we generate a single sitemap.xml)
   if (urlPath === "/sitemap.xml") return true;
@@ -75,8 +85,10 @@ function isNoindexHtml(html) {
   // detect common noindex patterns
   // <meta name="robots" content="noindex,follow">
   // <meta content="noindex" name="robots">
-  return /<meta\s+[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex[^"']*["'][^>]*>/i.test(html) ||
-         /<meta\s+[^>]*content=["'][^"']*noindex[^"']*["'][^>]*name=["']robots["'][^>]*>/i.test(html);
+  return (
+    /<meta\s+[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex[^"']*["'][^>]*>/i.test(html) ||
+    /<meta\s+[^>]*content=["'][^"']*noindex[^"']*["'][^>]*name=["']robots["'][^>]*>/i.test(html)
+  );
 }
 
 function escapeXml(s) {
@@ -91,7 +103,7 @@ function escapeXml(s) {
 function toLastmod(filePath) {
   try {
     const mtime = fs.statSync(filePath).mtime;
-    // Sitemap accepts YYYY-MM-DD or full datetime; keep it simple + stable:
+    // Sitemap accepts YYYY-MM-DD or full datetime; keep it simple + stable
     return new Date(mtime).toISOString().slice(0, 10);
   } catch {
     return "";
@@ -128,7 +140,7 @@ function main() {
 
   const files = walk(webRoot);
 
-  // url -> { loc, lastmod }
+  // loc -> { loc, lastmod }
   const map = new Map();
 
   for (const f of files) {
@@ -138,7 +150,7 @@ function main() {
     if (!urlPath) continue;
     if (isExcluded(urlPath)) continue;
 
-    // ✅ Systemic: skip noindex pages (prevents invalid slug pages from entering sitemap)
+    // ✅ Skip noindex pages (prevents tool pages / invalid pages from entering sitemap)
     const html = readFileSafe(f);
     if (isNoindexHtml(html)) continue;
 
@@ -156,6 +168,7 @@ function main() {
   fs.writeFileSync(outPath, sitemapXml, "utf8");
 
   console.log(`[postbuild-sitemap] SITE=${SITE}`);
+  console.log(`[postbuild-sitemap] WebRoot=${webRoot}`);
   console.log(`[postbuild-sitemap] Wrote ${entries.length} URLs -> ${outPath}`);
 }
 
