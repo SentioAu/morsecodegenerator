@@ -8,12 +8,15 @@ const description =
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
+const canonical = `${site}/morse-code/`;
+const robots = "index,follow";
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   name: "Learn Morse Code",
   description,
-  url: `${site}/morse-code/`,
+  url: canonical,
   isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
   hasPart: [
     { "@type": "WebPage", name: "Morse Code Alphabet (A–Z)", url: `${site}/morse-code/a/` },
@@ -38,7 +41,7 @@ const starter = [
 ];
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
   <header class="hero">
     <p class="muted kicker">Learn • Memorize • Practice</p>
     <h1 class="title">Learn Morse Code</h1>
@@ -90,7 +93,11 @@ const starter = [
         <div class="starter-item">
           <div class="starter-ch">{ch}</div>
           <div class="starter-code k">{code}</div>
-          <a class="starter-link" href={`/morse-code/${String(ch).toLowerCase()}/`} aria-label={`Learn ${ch} in Morse`}>
+          <a
+            class="starter-link"
+            href={`/morse-code/${String(ch).toLowerCase()}/`}
+            aria-label={`Learn ${ch} in Morse`}
+          >
             View →
           </a>
         </div>
@@ -103,6 +110,22 @@ const starter = [
       <a href="/translate/?q=SOS">SOS</a> •
       <a href="/translate/?q=IM%20SAFE">IM SAFE</a>
     </p>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Next steps (what to learn after the starter set)</h2>
+    <p class="muted" style="margin-top:0; max-width:72ch;">
+      Once you know the starter set, expand into numbers, punctuation, and real words.
+    </p>
+
+    <div class="pill-grid" style="margin-top:12px;">
+      <a href="/morse-code/a/">Continue the alphabet</a>
+      <a href="/morse-code/numbers/">Learn numbers</a>
+      <a href="/morse-code/punctuation/">Learn punctuation</a>
+      <a href="/morse-code/words/">Practice words A–Z</a>
+      <a href="/phrases/">Practice phrases</a>
+      <a href="/translate/">Test yourself in translator</a>
+    </div>
   </section>
 
   <section class="card" style="margin-top:16px;">
@@ -156,42 +179,12 @@ const starter = [
       align-items:center;
     }
 
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 14px;
-      border-radius: 999px;
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.92);
-      font-weight: 800;
-      line-height: 1;
-    }
-    .btn.primary{
-      border-color: rgba(138,180,255,0.30);
-      background: rgba(138,180,255,0.12);
-    }
-    .btn:hover { opacity: .95; }
-
     .chips{
       margin-top: 14px;
       display:flex;
       flex-wrap:wrap;
       gap: 8px;
       align-items:center;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.82);
-      font-size: 13px;
-      line-height: 1.2;
     }
 
     .section-head{
