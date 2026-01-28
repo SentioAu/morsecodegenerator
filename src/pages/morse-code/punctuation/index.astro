@@ -6,6 +6,11 @@ const title = "Punctuation in Morse Code – Chart, Copy, Practice";
 const description =
   "Morse code punctuation chart (., ?, !, /, (), @, etc.) with copy buttons and practice links. Learn symbols fast and practice in the translator.";
 
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/morse-code/punctuation/`;
+
 // Normalize map: keep exact punctuation keys, ignore " " if present
 const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
@@ -34,19 +39,19 @@ const items = [
   ["@", "At sign"],
   ["'", "Apostrophe"],
 ].map(([ch, label]) => ({
-  ch,
-  label,
-  morse: map[ch] ?? "",
-  practice: `/translate/?q=${encodeURIComponent(ch)}`,
+  ch: String(ch),
+  label: String(label),
+  morse: map[String(ch)] ?? "",
+  practice: `/translate/?q=${encodeURIComponent(String(ch))}`,
 }));
 
-const site =
-  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+const hasPunctuation = items.some((x) => x.morse && String(x.morse).trim().length > 0);
+const robots = hasPunctuation ? "index,follow" : "noindex,follow";
 
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Learn", url: `${site}/morse-code/` },
-  { name: "Punctuation", url: `${site}/morse-code/punctuation/` },
+  { name: "Punctuation", url: canonical },
 ];
 
 const jsonLd = {
@@ -65,14 +70,14 @@ const jsonLd = {
       "@type": "WebPage",
       name: title,
       description,
-      url: `${site}/morse-code/punctuation/`,
+      url: canonical,
       isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
     },
   ],
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
@@ -101,13 +106,16 @@ const jsonLd = {
     </div>
   </header>
 
+  <!-- Toast for copy feedback -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
   <section class="card" style="margin-top:16px;">
     <div class="section-head">
       <h2 style="margin:0;">Chart</h2>
       <p class="muted" style="margin:0;">Copy a pattern or practice the symbol directly.</p>
     </div>
 
-    <div class="grid" style="margin-top:12px;">
+    <div class="chart" style="margin-top:12px;">
       {items.map((row) => (
         <div class="row">
           <div class="symbol" aria-label={`Symbol ${row.ch}`}>{row.ch}</div>
@@ -115,6 +123,16 @@ const jsonLd = {
           <div class="info">
             <div class="label">{row.label}</div>
             <div class="k morse">{row.morse || "—"}</div>
+
+            {/* Internal-linking: surface the SEO-safe slugs you already redirect to */}
+            {(row.ch === "!" || row.ch === "'") ? (
+              <div class="muted mini">
+                See page:{" "}
+                <a href={row.ch === "!" ? "/exclamation-in-morse-code/" : "/apostrophe-in-morse-code/"}>
+                  {row.ch === "!" ? "Exclamation in Morse code" : "Apostrophe in Morse code"}
+                </a>
+              </div>
+            ) : null}
           </div>
 
           <div class="row-actions">
@@ -160,16 +178,30 @@ const jsonLd = {
 
   <script is:inline>
     (function(){
+      const toastEl = document.getElementById("toast");
+
+      function showToast(msg){
+        if (!toastEl) return;
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        window.clearTimeout(showToast._t);
+        showToast._t = window.setTimeout(() => toastEl.classList.remove("show"), 1700);
+      }
+
       async function copyText(text){
         try { await navigator.clipboard.writeText(text); return true; }
         catch {
           try{
             const ta = document.createElement("textarea");
-            ta.value = text; ta.style.position="fixed"; ta.style.left="-9999px";
-            document.body.appendChild(ta); ta.select();
+            ta.value = text;
+            ta.setAttribute("readonly","true");
+            ta.style.position="fixed";
+            ta.style.left="-9999px";
+            document.body.appendChild(ta);
+            ta.select();
             const ok = document.execCommand("copy");
             document.body.removeChild(ta);
-            return ok;
+            return !!ok;
           } catch { return false; }
         }
       }
@@ -181,20 +213,39 @@ const jsonLd = {
         if (!val) return;
 
         const ok = await copyText(val);
-        if (!ok) return;
-
-        const old = btn.textContent;
-        btn.textContent = "Copied ✓";
-        setTimeout(() => (btn.textContent = old), 900);
+        showToast(ok ? "Copied" : "Copy failed");
       });
     })();
   </script>
 
   <style>
-    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
-    .crumb{ text-decoration:none; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.02); padding:6px 10px; border-radius:999px; color:rgba(255,255,255,0.92); }
+    .crumbs{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-size:13px;
+      opacity:.92;
+      margin-top:2px;
+    }
+    .crumb{
+      text-decoration:none;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.02);
+      padding:6px 10px;
+      border-radius:999px;
+      color:rgba(255,255,255,0.92);
+    }
     .sep{ opacity:.65; }
-    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.10); background:rgba(255,255,255,0.015); color:rgba(255,255,255,0.78); }
+    .crumb-current{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.015);
+      color:rgba(255,255,255,0.78);
+    }
 
     .hero{ margin-top:10px; }
     .kicker{ margin:0 0 10px; letter-spacing:.08em; text-transform:uppercase; font-size:12px; }
@@ -202,17 +253,26 @@ const jsonLd = {
     .sub{ margin:0; max-width:72ch; }
 
     .actions{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:999px; text-decoration:none; border:1px solid rgba(255,255,255,0.16); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.92); font-weight:800; line-height:1; }
-    .btn.ghost{ border-color:rgba(255,255,255,0.16); background:rgba(255,255,255,0.03); font-weight:750; }
-    .btn.small{ padding:8px 12px; font-weight:750; }
 
     .chips{ margin-top:12px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-    .chip{ display:inline-flex; align-items:center; padding:7px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.10); background:rgba(255,255,255,0.02); color:rgba(255,255,255,0.82); font-size:13px; line-height:1.2; }
 
-    .section-head{ display:flex; flex-wrap:wrap; gap:6px 14px; align-items:baseline; justify-content:space-between; }
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px 14px;
+      align-items:baseline;
+      justify-content:space-between;
+    }
 
-    .grid{ display:grid; grid-template-columns: 1fr; gap:10px; }
-    @media (min-width: 900px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    /* Chart layout */
+    .chart{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 980px){
+      .chart{ grid-template-columns: 1fr 1fr; }
+    }
 
     .row{
       display:grid;
@@ -238,14 +298,22 @@ const jsonLd = {
       color: rgba(255,255,255,0.92);
       font-weight: 900;
       font-size: 22px;
-      text-decoration:none;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     }
 
     .info .label{ font-weight: 800; }
     .morse{ margin-top: 2px; opacity: .88; overflow-wrap:anywhere; }
+    .mini{ margin-top: 6px; font-size: 13px; }
 
-    .row-actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
+    .row-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .btn.small{ padding:8px 12px; font-weight:750; }
 
     .copy{
       padding: 10px 14px;
@@ -264,6 +332,31 @@ const jsonLd = {
       .actions > *{ width:100%; justify-content:center; }
       .row{ grid-template-columns: 64px 1fr; }
       .row-actions{ grid-column: 1 / -1; justify-content:flex-start; }
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      max-width: min(560px, calc(100vw - 24px));
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.92);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .14s ease, transform .14s ease;
+      transform: translateX(-50%) translateY(8px);
+      font-weight: 750;
+      z-index: 50;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
   </style>
 </Layout>
