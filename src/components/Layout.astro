@@ -1,4 +1,3 @@
-
 ---
 const {
   title = "Morse Code Generator",
@@ -97,7 +96,11 @@ const jsonLd = {
     <meta name="theme-color" content="#0b0b0b" />
 
     <!-- ✅ JSON-LD must be unescaped -->
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(jsonLd)}
+    ></script>
 
     <!-- Google AdSense (loader only) -->
     <script
@@ -107,7 +110,10 @@ const jsonLd = {
     ></script>
 
     <!-- GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L"
+    ></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -133,13 +139,13 @@ const jsonLd = {
             aria-current={isActive("/translate/") ? "page" : undefined}
           >Translate</a>
 
+          <!-- ✅ FIX: Learn should go to the hub (/morse-code/) -->
           <a
             class:list={["nav-link", isActive("/morse-code/") && "active"]}
-            href="/morse-code/a/"
+            href="/morse-code/"
             aria-current={isActive("/morse-code/") ? "page" : undefined}
           >Learn</a>
 
-          <!-- ✅ NEW: Words hub -->
           <a
             class:list={["nav-link", isActive("/morse-code/words/") && "active"]}
             href="/morse-code/words/"
@@ -158,7 +164,6 @@ const jsonLd = {
             aria-current={isActive("/about/") ? "page" : undefined}
           >About</a>
 
-          <!-- ✅ Header contact should be an internal page (mailto is unreliable in some contexts) -->
           <a
             class:list={["nav-link", "contact", isActive("/contact/") && "active"]}
             href="/contact/"
@@ -181,10 +186,19 @@ const jsonLd = {
         </small>
 
         <small class="foot-brand">
+          <a class="foot-link" href="/privacy/">Privacy</a>
+          <span class="dot" aria-hidden="true">•</span>
+          <a class="foot-link" href="/terms/">Terms</a>
+          <span class="dot" aria-hidden="true">•</span>
           <a class="foot-link" href={`mailto:${CONTACT_EMAIL}`}>Email</a>
           <span class="dot" aria-hidden="true">•</span>
           Project by
-          <a class="foot-link" href="https://sentioaurum.com/" target="_blank" rel="noopener noreferrer">SentioAurum</a>
+          <a
+            class="foot-link"
+            href="https://sentioaurum.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >SentioAurum</a>
         </small>
       </div>
     </footer>
@@ -256,8 +270,9 @@ const jsonLd = {
         width:auto;height:auto;
         padding: 10px 12px;
         border-radius: 12px;
-        background: rgba(0,0,0,0.75);
+        background: rgba(0,0,0,0.82);
         border: 1px solid var(--border);
+        box-shadow: 0 0 0 3px var(--focus);
         z-index: 999;
       }
 
@@ -289,6 +304,12 @@ const jsonLd = {
         backdrop-filter: blur(12px);
         background: rgba(11,11,11,0.70);
         border-bottom: 1px solid var(--border);
+      }
+
+      /* Slightly tighter header padding than the rest of the page */
+      .site-header .wrap{
+        padding-top: 14px;
+        padding-bottom: 14px;
       }
 
       .header-inner{
@@ -324,13 +345,20 @@ const jsonLd = {
 
       .nav{
         display:flex;
-        flex-wrap: wrap;
         gap: 10px;
         justify-content:flex-end;
         align-items:center;
+
+        /* ✅ Mobile UX: keep pills in a single row and allow horizontal scroll */
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
       }
+      .nav::-webkit-scrollbar{ display:none; }
 
       .nav-link{
+        flex: 0 0 auto;
         text-decoration:none;
         color: var(--text);
         padding: 9px 12px;
@@ -339,6 +367,7 @@ const jsonLd = {
         background: rgba(255,255,255,0.025);
         font-weight: 750;
         transition: background .12s ease, border-color .12s ease, transform .12s ease;
+        white-space: nowrap;
       }
       .nav-link:hover{
         border-color: rgba(255,255,255,0.20);
@@ -379,6 +408,7 @@ const jsonLd = {
       /* ---------- Global UI primitives (used across pages) ---------- */
       .muted{ color: var(--muted); }
       .k{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .2px; }
 
       .btn{
         display:inline-flex;
@@ -466,6 +496,37 @@ const jsonLd = {
       }
       .pill-grid a:active{ transform: translateY(1px); }
 
+      /* ---------- Prose + tables (for dense reference pages) ---------- */
+      .prose{ max-width: var(--contentMax); }
+      .prose h2{ margin-top: 28px; }
+      .prose hr{
+        border:0;
+        border-top:1px solid var(--border);
+        margin: 18px 0;
+      }
+
+      table{
+        width:100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border:1px solid var(--border);
+        border-radius: 14px;
+        overflow:hidden;
+        background: rgba(255,255,255,0.015);
+      }
+      th, td{
+        text-align:left;
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        vertical-align: top;
+      }
+      th{
+        color: rgba(255,255,255,0.86);
+        font-weight: 800;
+        background: rgba(255,255,255,0.02);
+      }
+      tr:last-child td{ border-bottom: 0; }
+
       /* ---------- Form controls ---------- */
       textarea, input, select, button{
         font-family: inherit;
@@ -494,12 +555,6 @@ const jsonLd = {
         color: rgba(255,255,255,0.50);
       }
 
-      /* ✅ Only output is monospace */
-      #mcg-output{
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        letter-spacing: .2px;
-      }
-
       select{
         appearance:none;
         -webkit-appearance:none;
@@ -520,7 +575,8 @@ const jsonLd = {
         color: rgba(255,255,255,0.92);
       }
 
-      textarea:focus, input:focus, select:focus, button:focus, a.nav-link:focus, a.btn:focus{
+      textarea:focus, input:focus, select:focus, button:focus,
+      a.nav-link:focus, a.btn:focus{
         box-shadow: 0 0 0 3px var(--focus);
         border-color: rgba(138,180,255,0.38);
       }
