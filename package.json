@@ -7,15 +7,13 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "postbuild": "node ./scripts/postbuild-sitemap.mjs && node ./scripts/verify-build.mjs",
+    "build": "astro build && node ./scripts/postbuild-sitemap.mjs && node ./scripts/verify-build.mjs",
     "verify": "node ./scripts/verify-build.mjs",
     "preview": "astro preview",
     "typecheck": "astro check",
-    "clean": "rm -rf dist .astro"
+    "clean": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true})); import('node:fs').then(fs=>fs.rmSync('.astro',{recursive:true,force:true}));\""
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.1.6",
     "astro": "^4.16.0"
   }
 }
