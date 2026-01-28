@@ -73,6 +73,20 @@ function normalizeLines(s) {
     .filter(Boolean);
 }
 
+// Very small helper to check redirect rules in a robust way (spacing-insensitive)
+function redirectsContainRule(lines, from, to) {
+  const f = String(from).trim();
+  const t = String(to).trim();
+
+  return lines.some((line) => {
+    if (!line || line.startsWith("#")) return false;
+    // collapse whitespace
+    const parts = line.split(/\s+/).filter(Boolean);
+    if (parts.length < 2) return false;
+    return parts[0] === f && parts[1] === t;
+  });
+}
+
 function main() {
   const webRoot = detectWebRoot();
 
@@ -82,7 +96,8 @@ function main() {
   mustExist(path.join(webRoot, "sitemap.xml"), "sitemap.xml");
 
   // Cloudflare Pages routing rules must exist
-  mustExist(path.join(webRoot, "_redirects"), "_redirects");
+  const redirectsPath = path.join(webRoot, "_redirects");
+  mustExist(redirectsPath, "_redirects");
 
   // robots must reference sitemap.xml EXACTLY (strict)
   const robotsPath = path.join(webRoot, "robots.txt");
@@ -103,7 +118,32 @@ function main() {
   const bad = sitemapLines.filter(
     (l) => l.toLowerCase() !== expectedSitemapLine.toLowerCase()
   );
-  assert(bad.length === 0, `robots.txt has no unexpected Sitemap: lines`);
+  assert(bad.length === 0, "robots.txt has no unexpected Sitemap: lines");
+
+  // ---- NEW: verify special-character redirect rules exist ----
+  const redirectsRaw = readFileSafe(redirectsPath);
+  const redirectLines = normalizeLines(redirectsRaw);
+
+  const exclaimTo = "/exclamation-in-morse-code/";
+  const apostTo = "/apostrophe-in-morse-code/";
+
+  assert(
+    redirectsContainRule(redirectLines, "/morse-code/%21", exclaimTo),
+    `_redirects contains: /morse-code/%21 -> ${exclaimTo}`
+  );
+  assert(
+    redirectsContainRule(redirectLines, "/morse-code/%21/", exclaimTo),
+    `_redirects contains: /morse-code/%21/ -> ${exclaimTo}`
+  );
+
+  assert(
+    redirectsContainRule(redirectLines, "/morse-code/%27", apostTo),
+    `_redirects contains: /morse-code/%27 -> ${apostTo}`
+  );
+  assert(
+    redirectsContainRule(redirectLines, "/morse-code/%27/", apostTo),
+    `_redirects contains: /morse-code/%27/ -> ${apostTo}`
+  );
 
   // ---- Representative page checks (canonical + h1) ----
   const samples = [
@@ -126,13 +166,19 @@ function main() {
   for (let i = 0; i < 26; i++) {
     const ch = String.fromCharCode(97 + i); // a-z
     const legacyDir = path.join(webRoot, `${ch}-in-morse-code`);
-    mustNotExist(path.join(legacyDir, "index.html"), `legacy letter page /${ch}-in-morse-code/`);
+    mustNotExist(
+      path.join(legacyDir, "index.html"),
+      `legacy letter page /${ch}-in-morse-code/`
+    );
   }
 
   // Old: /0-in-morse-code/ etc => must not exist
   for (let d = 0; d <= 9; d++) {
     const legacyDir = path.join(webRoot, `${d}-in-morse-code`);
-    mustNotExist(path.join(legacyDir, "index.html"), `legacy digit page /${d}-in-morse-code/`);
+    mustNotExist(
+      path.join(legacyDir, "index.html"),
+      `legacy digit page /${d}-in-morse-code/`
+    );
   }
 
   console.log("✅ verify-build: all checks passed");
