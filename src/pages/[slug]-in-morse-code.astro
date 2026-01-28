@@ -21,7 +21,7 @@ const morseMap = Object.fromEntries(
 );
 
 // Named punctuation slugs (safe URLs)
-const slugToSymbol: Record<string, string> = {
+const slugToSymbol = {
   comma: ",",
   period: ".",
   dot: ".",
@@ -36,18 +36,18 @@ const slugToSymbol: Record<string, string> = {
   slash: "/",
   at: "@",
   dollar: "$",
-  quote: "\"",
+  quote: '"',
   apostrophe: "'",
   underscore: "_",
 };
 
-// ✅ IMPORTANT: After canonical consolidation, this route should ONLY build:
+// ✅ IMPORTANT: This route should ONLY build:
 // - short phrases / words (slug-style), and
 // - named punctuation slugs (exclamation, apostrophe, etc.)
 // It should NOT build single letters (a–z) or numbers (0–100),
 // because those are canonical at /morse-code/{slug}/.
 export function getStaticPaths() {
-  const normalize = (x: any) => String(x ?? "").trim().toLowerCase();
+  const normalize = (x) => String(x ?? "").trim().toLowerCase();
 
   const BLOCKED = new Set(["", "-", "--", "---", "index", "null", "undefined"]);
 
@@ -58,7 +58,7 @@ export function getStaticPaths() {
   ];
   const named = new Set(EXTRA_NAMED);
 
-  function isSafeSlug(s: string) {
+  function isSafeSlug(s) {
     if (!s) return false;
     if (BLOCKED.has(s)) return false;
     if (s.length > 48) return false;
@@ -67,22 +67,22 @@ export function getStaticPaths() {
     return true;
   }
 
-  // IMPORTANT: letters/numbers are excluded from this route (canonical elsewhere)
-  function isSingleLetter(s: string) {
+  // Letters/numbers are excluded from this route (canonical elsewhere)
+  function isSingleLetter(s) {
     return /^[a-z]$/.test(s);
   }
 
-  function isNumber(s: string) {
+  function isNumber(s) {
     if (!/^\d+$/.test(s)) return false;
     const n = Number(s);
     return Number.isFinite(n) && n >= 0 && n <= 100;
   }
 
-  function isNamedPunct(s: string) {
+  function isNamedPunct(s) {
     return named.has(s);
   }
 
-  function isShortPhrase(s: string) {
+  function isShortPhrase(s) {
     const parts = s.split("-").filter(Boolean);
     if (parts.length === 0) return false;
     if (parts.length > 4) return false;
@@ -94,7 +94,7 @@ export function getStaticPaths() {
   // Always include the named punctuation slugs in the build output,
   // even if seo-slugs.json does NOT contain them.
   const base = (Array.isArray(slugs) ? slugs : []).map(normalize);
-  const combined = new Set<string>([...base, ...EXTRA_NAMED]);
+  const combined = new Set([...base, ...EXTRA_NAMED]);
 
   return Array.from(combined)
     .filter(isSafeSlug)
@@ -106,7 +106,7 @@ export function getStaticPaths() {
     .map((s) => ({ params: { slug: s } }));
 }
 
-function titleCase(s: string) {
+function titleCaseWords(s) {
   return (s || "")
     .split(" ")
     .filter(Boolean)
@@ -114,10 +114,12 @@ function titleCase(s: string) {
     .join(" ");
 }
 
-function termFromSlug(s: string) {
+function termFromSlug(s) {
+  // named punctuation slugs -> symbol term
   if (slugToSymbol[s]) {
-    return { display: `${titleCase(s)} (${slugToSymbol[s]})`, value: slugToSymbol[s] };
+    return { display: `${titleCaseWords(s)} (${slugToSymbol[s]})`, value: slugToSymbol[s] };
   }
+
   // letters/numbers are not canonical here; still handled safely if visited
   if (/^[a-z]$/i.test(s)) {
     const up = s.toUpperCase();
@@ -126,16 +128,28 @@ function termFromSlug(s: string) {
   if (/^\d+$/.test(s)) {
     return { display: s, value: s };
   }
+
+  // phrase
   const phrase = s.replace(/-/g, " ");
-  return { display: titleCase(phrase), value: phrase };
+  return { display: titleCaseWords(phrase), value: phrase };
 }
 
-function textToMorse(input: any) {
+// ✅ Match your main tool behavior: ignore unsupported chars (do NOT output "?")
+function textToMorse(input) {
   const s = String(input ?? "").toUpperCase().trim();
   if (!s) return "";
+
   const words = s.split(/\s+/).filter(Boolean);
+
   return words
-    .map((w) => w.split("").map((ch) => morseMap[ch] || "?").join(" "))
+    .map((w) =>
+      w
+        .split("")
+        .map((ch) => morseMap[ch] || "")
+        .filter(Boolean)
+        .join(" ")
+    )
+    .filter(Boolean)
     .join(" / ");
 }
 
@@ -147,9 +161,9 @@ const isNumber = /^\d+$/.test(slug) && Number(slug) >= 0 && Number(slug) <= 100;
 
 // Canonical targets
 const canonicalWord = `${site}/${slug}-in-morse-code/`;
-const canonicalRef = isSingleLetter || isNumber ? `${site}/morse-code/${slug}/` : canonicalWord;
+const canonicalRef = (isSingleLetter || isNumber) ? `${site}/morse-code/${slug}/` : canonicalWord;
 
-function pageSlugValidForThisRoute(s: string) {
+function pageSlugValidForThisRoute(s) {
   if (!s) return false;
   if (s.length > 48) return false;
   if (!/^[a-z0-9]$/.test(s) && !/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(s)) return false;
@@ -171,14 +185,13 @@ function pageSlugValidForThisRoute(s: string) {
 const valid = pageSlugValidForThisRoute(slug);
 const term = termFromSlug(slug);
 const morse = valid ? textToMorse(term.value) : "";
-const hasUnknown = morse.includes("?");
 
 // Robots rules:
 // - If this is a letter/number, do NOT index here (canonical is /morse-code/{slug}/)
-// - If invalid OR has "?" output, do NOT index
+// - If invalid OR empty output, do NOT index
 const robots =
   (isSingleLetter || isNumber) ? "noindex,follow" :
-  (valid && morse && !hasUnknown) ? "index,follow" :
+  (valid && morse) ? "index,follow" :
   "noindex,follow";
 
 const pageTitle =
@@ -245,9 +258,7 @@ const jsonLd = {
     )}
   </nav>
 
-  <h1 style="margin-top:10px;">
-    {pageTitle}
-  </h1>
+  <h1 style="margin-top:10px;">{pageTitle}</h1>
 
   {(isSingleLetter || isNumber) ? (
     <>
@@ -282,12 +293,6 @@ const jsonLd = {
         ) : (
           <p class="muted">No Morse output available for this term.</p>
         )}
-
-        {hasUnknown ? (
-          <p class="muted" style="margin-top:10px;">
-            Note: this result includes <span class="k">?</span> for unsupported characters.
-          </p>
-        ) : null}
 
         <p style="margin-top:12px;">
           <a href={`/translate/?q=${encodeURIComponent(term.value)}`}>Open Translator</a>
