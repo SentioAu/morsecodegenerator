@@ -3,9 +3,61 @@ import Layout from "../components/Layout.astro";
 
 const title = "Page not found (404)";
 const description = "The page you requested does not exist.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/404/`;
+
+// Keep 404 out of index; allow bots to follow links out
+const robots = "noindex,follow";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "404", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+    },
+  ],
+};
+
+// Popular, canonical recovery links
+const quickLinks = [
+  { href: "/translate/", label: "Open translator" },
+  { href: "/morse-code/", label: "Learn Morse" },
+  { href: "/morse-code/numbers/", label: "Numbers (0–9)" },
+  { href: "/morse-code/punctuation/", label: "Punctuation" },
+  { href: "/morse-code/words/", label: "Words A–Z" },
+  { href: "/phrases/", label: "Common phrases" },
+  { href: "/phrases/sos/", label: "SOS" },
+];
 ---
 
-<Layout title={title} description={description} robots="noindex,nofollow">
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <!-- Help crawlers treat this as a real 404 page (plus stable social URL) -->
+  <head>
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:url" content={canonical} />
+  </head>
+
   <header class="hero">
     <p class="muted kicker">404</p>
     <h1 class="title">Page not found</h1>
@@ -30,7 +82,15 @@ const description = "The page you requested does not exist.";
       </label>
 
       <div class="row">
-        <input id="q" name="q" type="text" placeholder="Example: SOS or HELLO or ... --- ..." />
+        <input
+          id="q"
+          name="q"
+          type="text"
+          inputmode="text"
+          maxlength="5000"
+          placeholder="Example: SOS or HELLO or ... --- ..."
+          aria-label="Enter text or Morse to open the translator"
+        />
         <button type="submit">Open</button>
       </div>
 
@@ -41,13 +101,15 @@ const description = "The page you requested does not exist.";
   </section>
 
   <section class="card" style="margin-top:16px;">
-    <h2 style="margin:0 0 10px;">Popular pages</h2>
+    <div class="section-head">
+      <h2 style="margin:0;">Popular pages</h2>
+      <p class="muted" style="margin:0;">Canonical links that always work.</p>
+    </div>
 
-    <div class="pill-grid">
-      <a href="/morse-code/a/">A in Morse</a>
-      <a href="/morse-code/numbers/">Numbers (0–9)</a>
-      <a href="/morse-code/punctuation/">Punctuation</a>
-      <a href="/phrases/sos/">SOS</a>
+    <div class="pill-grid" style="margin-top:12px;">
+      {quickLinks.map((x) => (
+        <a href={x.href}>{x.label}</a>
+      ))}
     </div>
 
     <p class="muted" style="margin-top:12px;">
@@ -55,15 +117,21 @@ const description = "The page you requested does not exist.";
     </p>
   </section>
 
+  <!-- Structured data -->
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
   <script is:inline>
-    const form = document.getElementById("search");
-    const input = document.getElementById("q");
-    form?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const q = (input?.value || "").trim();
-      const url = q ? `/translate/?q=${encodeURIComponent(q)}` : "/translate/";
-      window.location.href = url;
-    });
+    (function () {
+      const form = document.getElementById("search");
+      const input = document.getElementById("q");
+
+      form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const q = (input?.value || "").trim();
+        const url = q ? `/translate/?q=${encodeURIComponent(q)}` : "/translate/";
+        window.location.href = url;
+      });
+    })();
   </script>
 
   <style>
@@ -97,6 +165,14 @@ const description = "The page you requested does not exist.";
       border-color: rgba(255,255,255,0.16);
       background: rgba(255,255,255,0.03);
       font-weight: 750;
+    }
+
+    .section-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      justify-content: space-between;
     }
 
     .row{
