@@ -24,12 +24,6 @@
 /privacy                 /privacy/                    301
 /terms                   /terms/                      301
 
-# Letter pages under /morse-code/: no-slash -> slash
-/morse-code/:ch          /morse-code/:ch/             301
-
-# Phrase pages: no-slash -> slash
-/phrases/:slug           /phrases/:slug/              301
-
 # =======================================================
 # Special-character routes -> safe slug pages
 # (encoded + raw)
@@ -95,7 +89,7 @@
 /l-in-morse-code/        /morse-code/l/              301
 /m-in-morse-code/        /morse-code/m/              301
 /n-in-morse-code/        /morse-code/n/              301
-/o-in-morse-code/        /morse-code/o/              301
+/o-in-morse-code         /morse-code/o/              301
 /p-in-morse-code/        /morse-code/p/              301
 /q-in-morse-code/        /morse-code/q/              301
 /r-in-morse-code/        /morse-code/r/              301
