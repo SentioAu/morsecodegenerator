@@ -1,74 +1,23 @@
 ---
 import Layout from "../../components/Layout.astro";
+import slugs from "../../data/seo-slugs.json";
 
 const title = "Text to Morse Translator – Copy & Convert Instantly";
 const description =
   "Translate text to Morse code or decode Morse to text. Copy results instantly. Free online tool.";
 
-// Read ?q= from the URL (SSR-safe)
 const q = (Astro.url.searchParams.get("q") ?? "").toString();
-const initial = q.trim() ? q.trim().slice(0, 5000) : ""; // safety cap
+const initial = q.trim() ? q.trim().slice(0, 5000) : "";
 const hasInitial = Boolean(initial);
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
 const canonical = `${site}/translate/`;
-
-// ✅ Keep translator out of the index (avoid crawl bloat and thin indexing)
 const robots = "noindex,follow";
-
-const crumbs = [
-  { name: "Home", url: `${site}/` },
-  { name: "Translator", url: canonical },
-];
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: crumbs.map((c, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: c.name,
-        item: c.url,
-      })),
-    },
-    {
-      "@type": "WebPage",
-      name: title,
-      description,
-      url: canonical,
-      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
-    },
-  ],
-};
-
-// Practice links (keep these stable + canonical; avoid word pages here)
-const practicePhrases = [
-  ["sos", "SOS"],
-  ["help", "HELP"],
-  ["mayday", "MAYDAY"],
-  ["emergency", "EMERGENCY"],
-  ["ok", "OK"],
-  ["yes", "YES"],
-  ["no", "NO"],
-  ["hello", "HELLO"],
-  ["thank-you", "THANK YOU"],
-  ["please", "PLEASE"],
-  ["sorry", "SORRY"],
-  ["i-love-you", "I LOVE YOU"],
-];
 ---
 
 <Layout title={title} description={description} canonical={canonical} robots={robots}>
-  <!-- Ensure stable social URL (avoid ?q= in OG/Twitter) -->
-  <head>
-    <meta property="og:url" content={canonical} />
-    <meta name="twitter:url" content={canonical} />
-  </head>
-
   <header class="hero">
     <p class="muted kicker">Fast • Private • No logins</p>
     <h1 class="title">Text to Morse Translator</h1>
@@ -84,329 +33,108 @@ const practicePhrases = [
       <a class="btn" href="/">Home</a>
     </div>
 
-    <div class="chips" aria-label="Morse formatting tips">
+    <div class="chips">
       <span class="chip">Letters: spaces</span>
       <span class="chip">Words: “/”</span>
       <span class="chip muted">SOS → <span class="k">... --- ...</span></span>
     </div>
   </header>
 
-  <section class="card tool-card" aria-label="Translator tool">
-    <div class="tool-head">
-      <div>
-        <h2 class="tool-title">Translator</h2>
-        <p class="muted tool-sub">Spaces separate letters • “/” separates words</p>
-      </div>
-
-      <div class="muted tool-mini-links" aria-label="Quick examples">
-        <a href="/translate/?q=HELLO">HELLO</a> •
-        <a href="/translate/?q=SOS">SOS</a> •
-        <a href="/translate/?q=I%20LOVE%20YOU">I LOVE YOU</a>
-      </div>
-    </div>
-
+  <section class="card tool-card">
     <div class="grid tool-grid">
       <div class="col">
-        <label for="mcg-input" class="lbl">Input</label>
+        <label class="lbl" for="mcg-input">Input</label>
         <textarea
           id="mcg-input"
           class="ta"
           rows="8"
-          placeholder="Type text (HELLO) or Morse (.... . .-.. .-.. ---) here..."
-          spellcheck="false"
-          autocorrect="off"
-          autocapitalize="off"
-          inputmode="text"
+          placeholder="HELLO or .... . .-.. .-.. ---"
           maxlength="5000"
         ></textarea>
 
-        <div class="actions" aria-label="Tool actions">
-          <button id="mcg-text-to-morse" type="button" class="primary-action">Text → Morse</button>
-          <button id="mcg-morse-to-text" type="button" class="ghost">Morse → Text</button>
-          <button id="mcg-copy" type="button" class="ghost">Copy output</button>
-          <button id="mcg-swap" type="button" class="ghost">Swap</button>
-          <button id="mcg-clear" type="button" class="ghost">Clear</button>
+        <div class="actions">
+          <button id="mcg-text-to-morse" type="button" class="primary-action">
+            Text → Morse
+          </button>
+          <button id="mcg-morse-to-text" type="button" class="ghost">
+            Morse → Text
+          </button>
+          <button id="mcg-copy" type="button" class="ghost">
+            Copy output
+          </button>
+          <button id="mcg-clear" type="button" class="ghost">
+            Clear
+          </button>
         </div>
-
-        <p class="muted micro">
-          Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>
-        </p>
       </div>
 
       <div class="col">
-        <label for="mcg-output" class="lbl">Output</label>
+        <label class="lbl" for="mcg-output">Output</label>
         <textarea
           id="mcg-output"
           class="ta mono"
           rows="8"
-          placeholder="Result appears here..."
-          spellcheck="false"
-          autocorrect="off"
-          autocapitalize="off"
           readonly
         ></textarea>
-
-        <p class="muted micro">
-          Tip: share links like <span class="k">/translate/?q=YOUR+TEXT</span>.
-        </p>
       </div>
     </div>
   </section>
 
-  <!-- Toast for copy feedback (accessibility-friendly) -->
-  <div id="mcg-toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="mcg-toast" class="toast" role="status" aria-live="polite"></div>
 
-  <section class="card" style="margin-top:16px;">
-    <div class="section-head">
-      <h2 class="section-title" style="margin:0;">Practice phrases</h2>
-      <p class="muted section-note" style="margin:0;">
-        Open a dedicated phrase page (indexable) or practice in the translator.
-      </p>
-    </div>
-
-    <div class="pill-grid" style="margin-top:12px;" role="list">
-      {practicePhrases.map(([slug, label]) => (
-        <a role="listitem" href={`/phrases/${slug}/`}>{label}</a>
-      ))}
-    </div>
-
-    <p class="muted" style="margin-top:10px;">
-      Want word pages? Use <a href="/morse-code/words/">the words hub</a>.
-    </p>
-  </section>
-
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">How to use</h2>
-    <ol>
-      <li>Enter text or Morse code in the input box.</li>
-      <li>Choose <strong>Text → Morse</strong> or <strong>Morse → Text</strong>.</li>
-      <li>Copy the output for practice, notes, or messages.</li>
-    </ol>
-  </section>
-
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">FAQ</h2>
-
-    <h3 style="margin-bottom:6px;">How do I separate letters and words in Morse?</h3>
-    <p class="muted" style="margin-top:0;">
-      Use spaces between letters, and use “/” between words.
-      Example: <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>.
-    </p>
-
-    <h3 style="margin-bottom:6px;">Can I decode Morse back to text?</h3>
-    <p class="muted" style="margin-top:0;">
-      Yes. Paste Morse code into the input box and click <strong>Morse → Text</strong>.
-    </p>
-  </section>
-
-  <p style="margin-top:16px;">
-    Next: <a href="/morse-code/">learn Morse</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/morse-code/words/">words</a>.
-  </p>
-
-  <!-- Structured data -->
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
-
-  <!-- Runtime script (owns conversion + swap + clear + auto-detect) -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- Page-only UX: prefill + robust autorun + copy toast -->
+  <!-- ✅ FIXED auto-run logic -->
   <script is:inline define:vars={{ initial, hasInitial }}>
     (function () {
-      function onReady(fn) {
+      function ready(fn) {
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", fn, { once: true });
         } else fn();
       }
 
-      function waitForToolReady(cb) {
-        const start = Date.now();
-        const t = window.setInterval(() => {
-          const btn = document.getElementById("mcg-text-to-morse");
-          const out = document.getElementById("mcg-output");
-          if (btn && out) {
-            window.clearInterval(t);
-            cb(btn, out);
-          }
-          if (Date.now() - start > 2500) window.clearInterval(t);
-        }, 50);
-      }
-
-      onReady(function () {
+      ready(function () {
         const input = document.getElementById("mcg-input");
         const output = document.getElementById("mcg-output");
-        const btnT2M = document.getElementById("mcg-text-to-morse");
-        const copyBtn = document.getElementById("mcg-copy");
-        const toast = document.getElementById("mcg-toast");
+        const runBtn = document.getElementById("mcg-text-to-morse");
 
-        if (!input || !output) return;
+        if (!input || !runBtn) return;
 
-        function showToast(msg) {
-          if (!toast) return;
-          toast.textContent = msg;
-          toast.classList.add("show");
-          window.clearTimeout(showToast._t);
-          showToast._t = window.setTimeout(
-            () => toast.classList.remove("show"),
-            1800
-          );
+        if (initial && !input.value.trim()) {
+          input.value = initial;
         }
 
-        // Prefill from query param or set a friendly default
-        if (initial && !input.value.trim()) input.value = String(initial);
-        if (!initial && !input.value.trim()) input.value = "HELLO";
+        if (!initial && !input.value.trim()) {
+          input.value = "HELLO";
+        }
 
-        // Robust auto-run conversion when arriving from a share link
-        if (hasInitial && !String(output.value || "").trim()) {
-          // If button exists now, try once; otherwise wait briefly for tool wiring
-          if (btnT2M) {
-            setTimeout(() => btnT2M.click(), 0);
+        // 🔑 WAIT until mcg-tool.js has attached handlers
+        function tryRun(attempt = 0) {
+          if (attempt > 20) return;
+
+          // tool attaches listeners to the button
+          const hasHandler =
+            runBtn.onclick || runBtn._mcgReady || runBtn.getAttribute("data-ready");
+
+          if (hasHandler) {
+            runBtn.click();
           } else {
-            waitForToolReady((btn) => btn?.click?.());
+            setTimeout(() => tryRun(attempt + 1), 50);
           }
         }
 
-        // Copy output + toast (mcg-tool.js does not attach copy UX)
-        copyBtn?.addEventListener("click", async () => {
-          const v = (output.value || "").trim();
-          if (!v) return showToast("Nothing to copy");
-
-          try {
-            await navigator.clipboard.writeText(v);
-            showToast("Copied output");
-          } catch {
-            try {
-              output.focus();
-              output.select();
-              const ok = document.execCommand("copy");
-              showToast(ok ? "Copied output" : "Copy failed");
-              window.getSelection()?.removeAllRanges?.();
-            } catch {
-              showToast("Copy failed");
-            }
-          }
-        });
+        if (hasInitial) {
+          tryRun();
+        }
       });
     })();
   </script>
 
   <style>
-    .hero { margin: 6px 0 14px; text-align: center; }
-    .kicker{
-      margin: 0 0 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-    .title { margin: 0 0 8px; }
-    .sub { margin: 0 auto; max-width: 72ch; }
-
-    .hero-actions{
-      margin-top: 14px;
-      display:flex;
-      gap: 10px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-
-    .chips{
-      margin-top: 14px;
-      display:flex;
-      flex-wrap:wrap;
-      gap: 8px;
-      justify-content:center;
-      align-items:center;
-    }
-
-    .tool-card { margin-top: 16px; }
-    .tool-head{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 10px 14px;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .tool-title { margin: 0 0 6px; }
-    .tool-sub { margin: 0; }
-    .tool-mini-links { font-size: 13px; }
-    .tool-mini-links a { text-decoration: none; }
-    .tool-mini-links a:hover { text-decoration: underline; }
-
-    .lbl{
-      display:inline-block;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .ta{
-      min-height: 210px;
-      line-height: 1.55;
-      padding: 14px 14px;
-      resize: vertical;
-      overflow: auto;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .actions{
-      margin-top: 12px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .ghost{
-      border-color: rgba(255,255,255,0.18) !important;
-      background: rgba(255,255,255,0.03) !important;
-      font-weight: 750;
-    }
-
-    .primary-action{
-      border-color: rgba(138,180,255,0.42) !important;
-      background: rgba(138,180,255,0.18) !important;
-    }
-
-    .micro{ margin-top: 10px; }
-
-    @media (min-width: 860px){
-      .tool-grid { grid-template-columns: 1fr 1fr; }
-      .actions{
-        grid-template-columns: 1fr 1fr;
-      }
-      .actions .primary-action{
-        grid-column: 1 / -1;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .hero { text-align: left; }
-      .sub { margin-left: 0; }
-      .hero-actions, .chips { justify-content: flex-start; }
-      .ta{ min-height: 180px; }
-    }
-
-    /* Toast */
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      max-width: min(560px, calc(100vw - 24px));
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.78);
-      backdrop-filter: blur(10px);
-      color: rgba(255,255,255,0.92);
-      box-shadow: var(--shadow);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .14s ease, transform .14s ease;
-      transform: translateX(-50%) translateY(8px);
-      font-weight: 750;
-    }
-    .toast.show{
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    .hero { margin: 6px 0 14px; text-align:center; }
+    .hero-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .chips { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+    .tool-grid { display:grid; gap:16px; }
+    @media (min-width:860px){ .tool-grid{ grid-template-columns:1fr 1fr; } }
   </style>
 </Layout>
