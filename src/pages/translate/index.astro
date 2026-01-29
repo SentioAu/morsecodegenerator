@@ -1,6 +1,5 @@
 ---
 import Layout from "../../components/Layout.astro";
-import slugs from "../../data/seo-slugs.json";
 
 const title = "Text to Morse Translator – Copy & Convert Instantly";
 const description =
@@ -46,39 +45,30 @@ const jsonLd = {
   ],
 };
 
-// Practice links:
-// - Word pages use /{slug}-in-morse-code/ (must exist in seo-slugs.json)
-// - Phrase pages use /phrases/{slug}/ (allowed unconditionally)
-/** @type {Array<[string, string, "word" | "phrase"]>} */
-const practiceWordsRaw = [
-  // Word pages (/{slug}-in-morse-code/)
-  ["help", "Help", "word"],
-  ["yes", "Yes", "word"],
-  ["no", "No", "word"],
-  ["wait", "Wait", "word"],
-
-  // Phrase pages (/phrases/{slug}/)
-  ["sos", "SOS", "phrase"],
-  ["hello", "Hello", "phrase"],
-  ["thank-you", "Thank you", "phrase"],
-  ["please", "Please", "phrase"],
-  ["i-love-you", "I love you", "phrase"],
+// Practice links (keep these stable + canonical; avoid word pages here)
+const practicePhrases = [
+  ["sos", "SOS"],
+  ["help", "HELP"],
+  ["mayday", "MAYDAY"],
+  ["emergency", "EMERGENCY"],
+  ["ok", "OK"],
+  ["yes", "YES"],
+  ["no", "NO"],
+  ["hello", "HELLO"],
+  ["thank-you", "THANK YOU"],
+  ["please", "PLEASE"],
+  ["sorry", "SORRY"],
+  ["i-love-you", "I LOVE YOU"],
 ];
-
-const available = new Set(
-  (Array.isArray(slugs) ? slugs : []).map((s) =>
-    String(s || "").trim().toLowerCase()
-  )
-);
-
-const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
-  const s = String(slug).toLowerCase();
-  // phrases do not depend on seo-slugs.json; word pages do
-  return kind === "phrase" ? true : available.has(s);
-});
 ---
 
 <Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <!-- Ensure stable social URL (avoid ?q= in OG/Twitter) -->
+  <head>
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:url" content={canonical} />
+  </head>
+
   <header class="hero">
     <p class="muted kicker">Fast • Private • No logins</p>
     <h1 class="title">Text to Morse Translator</h1>
@@ -89,7 +79,7 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
 
     <div class="hero-actions">
       <a class="btn primary" href="/phrases/">Practice phrases</a>
-      <a class="btn" href="/morse-code/">Learn alphabet</a>
+      <a class="btn" href="/morse-code/">Learn Morse</a>
       <a class="btn" href="/morse-code/words/">Practice words</a>
       <a class="btn" href="/">Home</a>
     </div>
@@ -166,32 +156,24 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
   <!-- Toast for copy feedback (accessibility-friendly) -->
   <div id="mcg-toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Internal linking block -->
-  {practiceWords.length ? (
-    <section class="card" style="margin-top:16px;">
-      <div class="section-head">
-        <h2 class="section-title" style="margin:0;">Practice words (instant pages)</h2>
-        <p class="muted section-note" style="margin:0;">
-          Each item opens a dedicated page with its Morse code.
-        </p>
-      </div>
-
-      <div class="pill-grid" style="margin-top:12px;" role="list">
-        {practiceWords.map(([slug, label, kind]) => (
-          <a
-            role="listitem"
-            href={kind === "phrase" ? `/phrases/${slug}/` : `/${slug}-in-morse-code/`}
-          >
-            {label}
-          </a>
-        ))}
-      </div>
-
-      <p class="muted" style="margin-top:10px;">
-        Browse more on <a href="/morse-code/words/">the words hub</a>.
+  <section class="card" style="margin-top:16px;">
+    <div class="section-head">
+      <h2 class="section-title" style="margin:0;">Practice phrases</h2>
+      <p class="muted section-note" style="margin:0;">
+        Open a dedicated phrase page (indexable) or practice in the translator.
       </p>
-    </section>
-  ) : null}
+    </div>
+
+    <div class="pill-grid" style="margin-top:12px;" role="list">
+      {practicePhrases.map(([slug, label]) => (
+        <a role="listitem" href={`/phrases/${slug}/`}>{label}</a>
+      ))}
+    </div>
+
+    <p class="muted" style="margin-top:10px;">
+      Want word pages? Use <a href="/morse-code/words/">the words hub</a>.
+    </p>
+  </section>
 
   <section class="card" style="margin-top:16px;">
     <h2 style="margin-top:0;">How to use</h2>
@@ -200,34 +182,6 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
       <li>Choose <strong>Text → Morse</strong> or <strong>Morse → Text</strong>.</li>
       <li>Copy the output for practice, notes, or messages.</li>
     </ol>
-  </section>
-
-  <section class="card" style="margin-top:16px;">
-    <div class="section-head">
-      <h2 class="section-title">Common phrases</h2>
-      <p class="muted section-note">Practice using phrases people recognize.</p>
-    </div>
-
-    <div class="pill-grid" style="margin-top:12px;" role="list">
-      <a role="listitem" href="/phrases/sos/">SOS</a>
-      <a role="listitem" href="/phrases/help/">HELP</a>
-      <a role="listitem" href="/phrases/mayday/">MAYDAY</a>
-      <a role="listitem" href="/phrases/emergency/">EMERGENCY</a>
-
-      <a role="listitem" href="/phrases/ok/">OK</a>
-      <a role="listitem" href="/phrases/yes/">YES</a>
-      <a role="listitem" href="/phrases/no/">NO</a>
-      <a role="listitem" href="/phrases/hello/">HELLO</a>
-
-      <a role="listitem" href="/phrases/thank-you/">THANK YOU</a>
-      <a role="listitem" href="/phrases/please/">PLEASE</a>
-      <a role="listitem" href="/phrases/sorry/">SORRY</a>
-      <a role="listitem" href="/phrases/i-love-you/">I LOVE YOU</a>
-    </div>
-
-    <p class="muted" style="margin-top:10px;">
-      Want more? Browse the <a href="/phrases/">phrases section</a>.
-    </p>
   </section>
 
   <section class="card" style="margin-top:16px;">
@@ -246,7 +200,7 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
   </section>
 
   <p style="margin-top:16px;">
-    Next: <a href="/morse-code/">learn the alphabet</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/morse-code/words/">words</a>.
+    Next: <a href="/morse-code/">learn Morse</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/morse-code/words/">words</a>.
   </p>
 
   <!-- Structured data -->
@@ -255,13 +209,26 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
   <!-- Runtime script (owns conversion + swap + clear + auto-detect) -->
   <script defer src="/mcg-tool.js"></script>
 
-  <!-- Page-only UX: prefill + optional autorun + copy toast -->
+  <!-- Page-only UX: prefill + robust autorun + copy toast -->
   <script is:inline define:vars={{ initial, hasInitial }}>
     (function () {
       function onReady(fn) {
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", fn, { once: true });
         } else fn();
+      }
+
+      function waitForToolReady(cb) {
+        const start = Date.now();
+        const t = window.setInterval(() => {
+          const btn = document.getElementById("mcg-text-to-morse");
+          const out = document.getElementById("mcg-output");
+          if (btn && out) {
+            window.clearInterval(t);
+            cb(btn, out);
+          }
+          if (Date.now() - start > 2500) window.clearInterval(t);
+        }, 50);
       }
 
       onReady(function () {
@@ -288,9 +255,14 @@ const practiceWords = practiceWordsRaw.filter(([slug, _label, kind]) => {
         if (initial && !input.value.trim()) input.value = String(initial);
         if (!initial && !input.value.trim()) input.value = "HELLO";
 
-        // Auto-run conversion only when arriving from a share link
-        if (hasInitial && btnT2M && !output.value.trim()) {
-          setTimeout(() => btnT2M.click(), 0);
+        // Robust auto-run conversion when arriving from a share link
+        if (hasInitial && !String(output.value || "").trim()) {
+          // If button exists now, try once; otherwise wait briefly for tool wiring
+          if (btnT2M) {
+            setTimeout(() => btnT2M.click(), 0);
+          } else {
+            waitForToolReady((btn) => btn?.click?.());
+          }
         }
 
         // Copy output + toast (mcg-tool.js does not attach copy UX)
