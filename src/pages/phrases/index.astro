@@ -155,21 +155,21 @@ const robots = "index,follow";
 ---
 
 <Layout title={title} description={description} robots={robots} canonical={canonical}>
-  <header class="hero">
-    <p class="muted kicker">Browse • Copy • Practice</p>
+  <header class="page-hero">
+    <p class="page-hero-kicker">Browse • Copy • Practice</p>
 
-    <h1 class="hero-title">Common Morse Code Phrases</h1>
+    <h1 class="page-hero-title">Common Morse Code Phrases</h1>
 
-    <p class="muted hero-sub">
+    <p class="muted page-hero-sub">
       Search, copy Morse instantly, and practice inside the translator.
       {hasRealPhrases ? " Each phrase also has its own page." : ""}
     </p>
 
-    <div class="hero-actions">
+    <div class="page-hero-actions">
       <a class="btn primary" href="/translate/">Open Translator</a>
-      <a class="btn" href="/morse-code/">Learn hub</a>
-      <a class="btn" href="/morse-code/words/">Practice words</a>
-      <a class="btn" href="/">Home</a>
+      <a class="btn secondary" href="/morse-code/">Learn hub</a>
+      <a class="btn ghost" href="/morse-code/words/">Practice words</a>
+      <a class="btn ghost" href="/">Home</a>
     </div>
 
     {!hasRealPhrases && (
@@ -181,11 +181,11 @@ const robots = "index,follow";
     )}
   </header>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="section card soft">
     <div class="toprow">
       <div>
-        <h2 style="margin:0;">Browse phrases</h2>
-        <p class="muted" style="margin:6px 0 0;">
+        <h2>Browse phrases</h2>
+        <p class="muted">
           Tip: click a phrase to open it (or open in translator if fallback mode).
         </p>
       </div>
@@ -198,17 +198,17 @@ const robots = "index,follow";
 
     <div class="pill-grid phrase-pills" id="phraseList" style="margin-top:12px;">
       {list.map((p) => (
-        <a class="pill" href={hrefFor(p)} data-phrase={String(p.phrase).toLowerCase()}>
+        <a href={hrefFor(p)} data-phrase={String(p.phrase).toLowerCase()}>
           {p.phrase}
         </a>
       ))}
     </div>
   </section>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="section card soft">
     <div class="section-head">
-      <h2 style="margin:0;">Copy Morse quickly</h2>
-      <p class="muted" style="margin:0;">Pick a phrase → copy its Morse.</p>
+      <h2 class="section-title">Copy Morse quickly</h2>
+      <p class="muted section-sub">Pick a phrase → copy its Morse.</p>
     </div>
 
     <div class="grid tool-grid" style="margin-top:12px;">
@@ -231,7 +231,7 @@ const robots = "index,follow";
 
         <div class="tool-row" style="margin-top:10px;">
           <button id="copyMorse" type="button">Copy Morse</button>
-          <a class="btn" id="practiceLink" href="/translate/">Practice in Translator</a>
+          <a class="btn ghost" id="practiceLink" href="/translate/">Practice in Translator</a>
         </div>
 
         <p class="muted" style="margin-top:10px;">
@@ -334,36 +334,7 @@ const robots = "index,follow";
   </script>
 
   <style>
-    .hero { margin-top: 6px; }
-    .kicker{
-      margin: 0 0 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-    .hero-title { margin: 0 0 8px; }
-    .hero-sub { margin: 0; max-width: 72ch; }
-    .hero-actions { margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
-
     .warn { margin-top: 12px; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; background: rgba(255,255,255,0.03); }
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 14px;
-      border-radius: 999px;
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.92);
-      font-weight: 750;
-    }
-    .btn.primary{
-      border-color: rgba(138,180,255,0.30);
-      background: rgba(138,180,255,0.12);
-    }
-    .btn:hover{ opacity: .95; }
 
     .toprow{
       display:flex;
@@ -373,14 +344,6 @@ const robots = "index,follow";
       flex-wrap:wrap;
     }
     .searchbox{ min-width: min(360px, 100%); }
-
-    .section-head{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px 14px;
-      align-items: baseline;
-      justify-content: space-between;
-    }
 
     .tool-row{
       display:flex;
@@ -393,22 +356,6 @@ const robots = "index,follow";
       max-height: 520px;
       overflow: auto;
       padding-right: 6px;
-    }
-
-    .pill{
-      display:block;
-      text-decoration:none;
-      color: rgba(255,255,255,0.92);
-      text-align:center;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.02);
-      font-weight: 650;
-    }
-    .pill:hover{
-      border-color: rgba(255,255,255,0.22);
-      background: rgba(255,255,255,0.06);
     }
 
     @media (min-width: 760px) {
