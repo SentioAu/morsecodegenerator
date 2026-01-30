@@ -2,9 +2,71 @@
 import Layout from "../../components/Layout.astro";
 import slugs from "../../data/seo-slugs.json";
 
-const title = "Text to Morse Translator – Copy & Convert Instantly";
-const description =
-  "Translate text to Morse code or decode Morse to text. Copy results instantly. Free online tool.";
+const lang = (Astro.url.searchParams.get("lang") ?? "en").toString();
+
+const translations = {
+  en: {
+    title: "Text to Morse Translator – Copy & Convert Instantly",
+    description:
+      "Translate text to Morse code or decode Morse to text. Copy results instantly. Free online tool.",
+    kicker: "Fast • Private • No logins",
+    heroTitle: "Text to Morse Translator",
+    heroSub:
+      "Paste text, convert to Morse, decode Morse back to text, and copy results instantly. Runs locally in your browser.",
+    practicePhrases: "Practice phrases",
+    learnMorse: "Learn Morse",
+    practiceWords: "Practice words",
+    home: "Home",
+    input: "Input",
+    output: "Output",
+    textToMorse: "Text → Morse",
+    morseToText: "Morse → Text",
+    copyOutput: "Copy output",
+    copyLink: "Copy share link",
+    clear: "Clear",
+    play: "Play Morse",
+    stop: "Stop",
+    speed: "Speed",
+    popularTitle: "Popular translations",
+    popularSub: "Quick links to common phrases people translate.",
+  },
+  es: {
+    title: "Traductor de texto a Morse – Copia y convierte al instante",
+    description:
+      "Traduce texto a código Morse o decodifica Morse a texto. Copia resultados al instante.",
+    kicker: "Rápido • Privado • Sin inicios",
+    heroTitle: "Traductor de texto a Morse",
+    heroSub:
+      "Pega texto, convierte a Morse, decodifica Morse a texto y copia resultados al instante.",
+    practicePhrases: "Practicar frases",
+    learnMorse: "Aprender Morse",
+    practiceWords: "Practicar palabras",
+    home: "Inicio",
+    input: "Entrada",
+    output: "Salida",
+    textToMorse: "Texto → Morse",
+    morseToText: "Morse → Texto",
+    copyOutput: "Copiar salida",
+    copyLink: "Copiar enlace",
+    clear: "Borrar",
+    play: "Reproducir Morse",
+    stop: "Detener",
+    speed: "Velocidad",
+    popularTitle: "Traducciones populares",
+    popularSub: "Enlaces rápidos a frases comunes.",
+  },
+};
+
+const t = translations[lang] ?? translations.en;
+
+const withLang = (href) => {
+  if (!lang || lang === "en") return href;
+  const joiner = href.includes("?") ? "&" : "?";
+  return `${href}${joiner}lang=${encodeURIComponent(lang)}`;
+};
+
+const title = t.title;
+const description = t.description;
 
 const q = (Astro.url.searchParams.get("q") ?? "").toString();
 const initial = q.trim() ? q.trim().slice(0, 5000) : "";
@@ -18,32 +80,29 @@ const robots = "noindex,follow";
 ---
 
 <Layout title={title} description={description} canonical={canonical} robots={robots}>
-  <header class="hero">
-    <p class="muted kicker">Fast • Private • No logins</p>
-    <h1 class="title">Text to Morse Translator</h1>
-    <p class="muted sub">
-      Paste text, convert to Morse, decode Morse back to text, and copy results instantly.
-      Runs locally in your browser.
-    </p>
+  <header class="page-hero center">
+    <p class="page-hero-kicker">{t.kicker}</p>
+    <h1 class="page-hero-title">{t.heroTitle}</h1>
+    <p class="muted page-hero-sub">{t.heroSub}</p>
 
-    <div class="hero-actions">
-      <a class="btn primary" href="/phrases/">Practice phrases</a>
-      <a class="btn" href="/morse-code/">Learn Morse</a>
-      <a class="btn" href="/morse-code/words/">Practice words</a>
-      <a class="btn" href="/">Home</a>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={withLang("/phrases/")}>{t.practicePhrases}</a>
+      <a class="btn secondary" href={withLang("/morse-code/")}>{t.learnMorse}</a>
+      <a class="btn ghost" href={withLang("/morse-code/words/")}>{t.practiceWords}</a>
+      <a class="btn ghost" href={withLang("/")}>{t.home}</a>
     </div>
 
-    <div class="chips">
+    <div class="page-hero-chips">
       <span class="chip">Letters: spaces</span>
       <span class="chip">Words: “/”</span>
       <span class="chip muted">SOS → <span class="k">... --- ...</span></span>
     </div>
   </header>
 
-  <section class="card tool-card">
+  <section class="section card glow tool-card">
     <div class="grid tool-grid">
       <div class="col">
-        <label class="lbl" for="mcg-input">Input</label>
+        <label class="lbl" for="mcg-input">{t.input}</label>
         <textarea
           id="mcg-input"
           class="ta"
@@ -54,35 +113,194 @@ const robots = "noindex,follow";
 
         <div class="actions">
           <button id="mcg-text-to-morse" type="button" class="primary-action">
-            Text → Morse
+            {t.textToMorse}
           </button>
           <button id="mcg-morse-to-text" type="button" class="ghost">
-            Morse → Text
+            {t.morseToText}
           </button>
           <button id="mcg-copy" type="button" class="ghost">
-            Copy output
+            {t.copyOutput}
+          </button>
+          <button id="mcg-copy-link" type="button" class="ghost">
+            {t.copyLink}
           </button>
           <button id="mcg-clear" type="button" class="ghost">
-            Clear
+            {t.clear}
           </button>
         </div>
       </div>
 
       <div class="col">
-        <label class="lbl" for="mcg-output">Output</label>
+        <label class="lbl" for="mcg-output">{t.output}</label>
         <textarea
           id="mcg-output"
           class="ta mono"
           rows="8"
           readonly
         ></textarea>
+
+        <div class="actions audio-actions">
+          <button id="mcg-play" type="button" class="ghost">{t.play}</button>
+          <button id="mcg-stop" type="button" class="ghost">{t.stop}</button>
+          <label class="speed">
+            <span class="muted">{t.speed}</span>
+            <input id="mcg-speed" type="range" min="10" max="30" value="18" step="1" />
+            <span id="mcg-speed-value" class="muted">18 WPM</span>
+          </label>
+        </div>
       </div>
+    </div>
+  </section>
+
+  <section class="section card soft">
+    <div class="section-head">
+      <h2 class="section-title">{t.popularTitle}</h2>
+      <p class="muted section-sub">{t.popularSub}</p>
+    </div>
+    <div class="pill-grid">
+      <a href={withLang("/translate/?q=SOS")}>SOS</a>
+      <a href={withLang("/translate/?q=HELP")}>HELP</a>
+      <a href={withLang("/translate/?q=HELLO")}>HELLO</a>
+      <a href={withLang("/translate/?q=THANK%20YOU")}>THANK YOU</a>
+      <a href={withLang("/translate/?q=I%20LOVE%20YOU")}>I LOVE YOU</a>
+      <a href={withLang("/translate/?q=MAYDAY")}>MAYDAY</a>
+      <a href={withLang("/translate/?q=PLEASE")}>PLEASE</a>
+      <a href={withLang("/translate/?q=GOOD%20NIGHT")}>GOOD NIGHT</a>
     </div>
   </section>
 
   <div id="mcg-toast" class="toast" role="status" aria-live="polite"></div>
 
   <script defer src="/mcg-tool.js"></script>
+
+  <script is:inline>
+    (function () {
+      function ready(fn) {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", fn, { once: true });
+        } else fn();
+      }
+
+      async function copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return true;
+        } catch {
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            const ok = document.execCommand("copy");
+            document.body.removeChild(ta);
+            return ok;
+          } catch {
+            return false;
+          }
+        }
+      }
+
+      let audioCtx;
+      let stopFlag = false;
+
+      function getAudioContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioCtx;
+      }
+
+      async function playMorse(sequence, wpm) {
+        if (!sequence) return;
+        const ctx = getAudioContext();
+        const unit = 1200 / wpm;
+        const now = ctx.currentTime;
+        let t = now;
+
+        const trimmed = sequence.split("\n")[0];
+        const cleaned = trimmed.replace(/[^.\-\/\s]/g, "").trim();
+        if (!cleaned) return;
+
+        const parts = cleaned.split(/\s+/);
+
+        for (let i = 0; i < parts.length; i += 1) {
+          if (stopFlag) return;
+          const part = parts[i];
+          if (part === "/") {
+            t += (unit * 7) / 1000;
+            continue;
+          }
+          for (let j = 0; j < part.length; j += 1) {
+            if (stopFlag) return;
+            const symbol = part[j];
+            const duration = symbol === "-" ? unit * 3 : unit;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.value = 600;
+            gain.gain.setValueAtTime(0.001, t);
+            gain.gain.exponentialRampToValueAtTime(0.2, t + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + duration / 1000);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(t);
+            osc.stop(t + duration / 1000);
+            t += duration / 1000;
+            t += unit / 1000;
+          }
+          t += (unit * 2) / 1000;
+        }
+      }
+
+      ready(function () {
+        const input = document.getElementById("mcg-input");
+        const copyLinkBtn = document.getElementById("mcg-copy-link");
+        const playBtn = document.getElementById("mcg-play");
+        const stopBtn = document.getElementById("mcg-stop");
+        const output = document.getElementById("mcg-output");
+        const speed = document.getElementById("mcg-speed");
+        const speedValue = document.getElementById("mcg-speed-value");
+        if (!input || !copyLinkBtn) return;
+
+        copyLinkBtn.addEventListener("click", async () => {
+          const value = (input.value || "").trim();
+          const url = new URL(window.location.href);
+          if (value) {
+            url.searchParams.set("q", value);
+          } else {
+            url.searchParams.delete("q");
+          }
+          const ok = await copyText(url.toString());
+          if (!ok) return;
+          const old = copyLinkBtn.textContent;
+          copyLinkBtn.textContent = "Copied link ✓";
+          setTimeout(() => (copyLinkBtn.textContent = old), 1200);
+        });
+
+        speed?.addEventListener("input", () => {
+          if (!speedValue || !speed) return;
+          speedValue.textContent = `${speed.value} WPM`;
+        });
+
+        playBtn?.addEventListener("click", async () => {
+          if (!output) return;
+          stopFlag = false;
+          const wpm = Number(speed?.value || 18);
+          await playMorse(output.value || "", wpm);
+        });
+
+        stopBtn?.addEventListener("click", () => {
+          stopFlag = true;
+          if (audioCtx) {
+            audioCtx.close();
+            audioCtx = undefined;
+          }
+        });
+      });
+    })();
+  </script>
 
   <!-- ✅ FIXED auto-run logic -->
   <script is:inline define:vars={{ initial, hasInitial }}>
@@ -131,10 +349,21 @@ const robots = "noindex,follow";
   </script>
 
   <style>
-    .hero { margin: 6px 0 14px; text-align:center; }
-    .hero-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-    .chips { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
     .tool-grid { display:grid; gap:16px; }
+    .audio-actions{
+      margin-top: 12px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    .speed{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .speed input{
+      width: 160px;
+    }
     @media (min-width:860px){ .tool-grid{ grid-template-columns:1fr 1fr; } }
   </style>
 </Layout>

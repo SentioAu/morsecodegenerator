@@ -8,40 +8,72 @@ const description =
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
+const faqItems = [
+  {
+    question: "Does this site store what I type?",
+    answer:
+      "The translator runs in your browser. We designed it to be lightweight and privacy-friendly.",
+  },
+  {
+    question: "Why do I see “/” in the output?",
+    answer: "“/” separates words. Letters are separated by spaces.",
+  },
+  {
+    question: "What if a character doesn’t have a Morse mapping?",
+    answer:
+      "Unsupported characters are skipped so your output stays clean. If you find a missing symbol you need, email us and we’ll consider adding it.",
+  },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "AboutPage",
-  name: "About MorseCodeGenerator.com",
-  url: `${site}/about/`,
-  isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
-  description,
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      name: "About MorseCodeGenerator.com",
+      url: `${site}/about/`,
+      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+      description,
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      })),
+    },
+  ],
 };
 ---
 
 <Layout title={title} description={description}>
-  <header class="hero">
-    <p class="muted kicker">Learn • Practice • Translate</p>
-    <h1 class="title">About MorseCodeGenerator.com</h1>
-    <p class="muted sub">
+  <header class="page-hero">
+    <p class="page-hero-kicker">Learn • Practice • Translate</p>
+    <h1 class="page-hero-title">About MorseCodeGenerator.com</h1>
+    <p class="muted page-hero-sub">
       MorseCodeGenerator.com is a fast, privacy-friendly Morse code translator and learning hub.
       Translate text to Morse, decode Morse back to text, and practice common patterns — all in your browser.
     </p>
 
-    <div class="actions">
+    <div class="page-hero-actions">
       <a class="btn primary" href="/translate/">Open Translator</a>
-      <a class="btn" href="/morse-code/a/">Learn Alphabet</a>
-      <a class="btn" href="/phrases/">Practice Phrases</a>
+      <a class="btn secondary" href="/morse-code/a/">Learn Alphabet</a>
+      <a class="btn ghost" href="/phrases/">Practice Phrases</a>
     </div>
 
-    <div class="chips" aria-label="Formatting rules">
+    <div class="page-hero-chips" aria-label="Formatting rules">
       <span class="chip">Letters: spaces</span>
       <span class="chip">Words: “/”</span>
       <span class="chip muted">Example: <span class="k">SOS</span> → <span class="k">... --- ...</span></span>
     </div>
   </header>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">What is Morse code?</h2>
+  <section class="section card soft">
+    <h2>What is Morse code?</h2>
     <p class="muted">
       Morse code is an encoding system that represents letters, numbers, and punctuation using
       <strong>dots</strong> and <strong>dashes</strong>. It was historically used for telegraphy,
@@ -50,17 +82,17 @@ const jsonLd = {
     </p>
 
     <div class="grid" style="margin-top:12px;">
-      <div class="card" style="background: rgba(255,255,255,0.015);">
-        <h3 style="margin-top:0;">Quick reading tip</h3>
-        <p class="muted" style="margin-top:0;">
+      <div class="card soft">
+        <h3>Quick reading tip</h3>
+        <p class="muted">
           Start by recognizing whole-letter shapes (like <span class="k">A = .-</span>, <span class="k">N = -.</span>)
           before trying to “count” dots and dashes.
         </p>
       </div>
 
-      <div class="card" style="background: rgba(255,255,255,0.015);">
-        <h3 style="margin-top:0;">How we separate symbols</h3>
-        <p class="muted" style="margin-top:0;">
+      <div class="card soft">
+        <h3>How we separate symbols</h3>
+        <p class="muted">
           This site uses <strong>spaces</strong> between letters and a <strong>slash (/)</strong> between words.
           Example: <span class="k">HELLO WORLD</span> → <span class="k">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</span>.
         </p>
@@ -68,13 +100,13 @@ const jsonLd = {
     </div>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">What you can do here</h2>
+  <section class="section card soft">
+    <h2>What you can do here</h2>
 
     <div class="grid" style="margin-top:12px;">
       <div>
-        <h3 style="margin-top:0;">1) Translate instantly</h3>
-        <p class="muted" style="margin-top:0;">
+        <h3>1) Translate instantly</h3>
+        <p class="muted">
           Convert <strong>Text → Morse</strong> and <strong>Morse → Text</strong> with copy-ready output.
           Try it now: <a href="/translate/?q=HELLO">HELLO</a>, <a href="/translate/?q=SOS">SOS</a>,
           <a href="/translate/?q=I%20LOVE%20YOU">I LOVE YOU</a>.
@@ -85,8 +117,8 @@ const jsonLd = {
       </div>
 
       <div>
-        <h3 style="margin-top:0;">2) Learn the reference tables</h3>
-        <p class="muted" style="margin-top:0;">
+        <h3>2) Learn the reference tables</h3>
+        <p class="muted">
           Browse clean reference pages for letters, numbers, and punctuation — great for memorization.
         </p>
         <p style="margin-top:10px;">
@@ -95,8 +127,8 @@ const jsonLd = {
       </div>
 
       <div>
-        <h3 style="margin-top:0;">3) Practice common phrases</h3>
-        <p class="muted" style="margin-top:0;">
+        <h3>3) Practice common phrases</h3>
+        <p class="muted">
           Use phrases people actually search for (emergency, greetings, confirmations) and copy Morse quickly.
         </p>
         <p style="margin-top:10px;">
@@ -105,8 +137,8 @@ const jsonLd = {
       </div>
 
       <div>
-        <h3 style="margin-top:0;">4) Share links</h3>
-        <p class="muted" style="margin-top:0;">
+        <h3>4) Share links</h3>
+        <p class="muted">
           You can share a prefilled translator link like
           <span class="k">/translate/?q=YOUR%20TEXT</span> to help someone practice.
         </p>
@@ -114,100 +146,43 @@ const jsonLd = {
     </div>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">FAQ</h2>
+  <section class="section card soft">
+    <h2>FAQ</h2>
 
-    <h3 style="margin-bottom:6px;">Does this site store what I type?</h3>
-    <p class="muted" style="margin-top:0;">
+    <h3>Does this site store what I type?</h3>
+    <p class="muted">
       The translator runs in your browser. We designed it to be lightweight and privacy-friendly.
     </p>
 
-    <h3 style="margin-bottom:6px;">Why do I see “/” in the output?</h3>
-    <p class="muted" style="margin-top:0;">
+    <h3>Why do I see “/” in the output?</h3>
+    <p class="muted">
       “/” separates words. Letters are separated by spaces.
     </p>
 
-    <h3 style="margin-bottom:6px;">What if a character doesn’t have a Morse mapping?</h3>
-    <p class="muted" style="margin-top:0;">
+    <h3>What if a character doesn’t have a Morse mapping?</h3>
+    <p class="muted">
       Unsupported characters are skipped so your output stays clean. If you find a missing symbol you need,
       email us and we’ll consider adding it.
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Feedback / contact</h2>
+  <section class="section card soft">
+    <h2>Feedback / contact</h2>
     <p class="muted">
       If you spot a broken link, formatting edge case, or missing character mapping, please email us.
     </p>
 
-    <div class="actions" style="margin-top:10px;">
+    <div class="page-hero-actions">
       <a class="btn primary" href="mailto:morsecodegenerator@gmail.com">Email feedback</a>
-      <a class="btn" href="/translate/">Back to Translator</a>
+      <a class="btn ghost" href="/translate/">Back to Translator</a>
     </div>
   </section>
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
-    .hero { margin: 6px 0 14px; }
-    .kicker{
-      margin: 0 0 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-    .title { margin: 0 0 8px; }
-    .sub { margin: 0; max-width: 74ch; }
-
-    .actions{
-      margin-top: 14px;
-      display:flex;
-      gap: 10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 14px;
-      border-radius: 999px;
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.92);
-      font-weight: 800;
-      line-height: 1;
-    }
-    .btn.primary{
-      border-color: rgba(138,180,255,0.30);
-      background: rgba(138,180,255,0.12);
-    }
-    .btn:hover { opacity: .95; }
-
-    .chips{
-      margin-top: 14px;
-      display:flex;
-      flex-wrap:wrap;
-      gap: 8px;
-      align-items:center;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.82);
-      font-size: 13px;
-      line-height: 1.2;
-    }
-
     @media (max-width: 600px) {
-      .hero { margin-top: 2px; }
-      .actions .btn { width: 100%; }
+      .page-hero-actions .btn { width: 100%; }
     }
   </style>
 </Layout>

@@ -72,11 +72,11 @@ const jsonLd = {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate icon" href="/favicon.ico" />
 
-    <!-- Typography (Inter) -->
+    <!-- Typography (Inter + Space Grotesk) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
 
@@ -86,11 +86,16 @@ const jsonLd = {
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Morse Code Generator" />
+    <meta property="og:image" content={`${site}/og-image.svg`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Morse Code Generator preview banner" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${site}/og-image.svg`} />
 
     <meta name="application-name" content="Morse Code Generator" />
     <meta name="theme-color" content="#0b0b0b" />
@@ -170,6 +175,20 @@ const jsonLd = {
             aria-current={isActive("/contact/") ? "page" : undefined}
           >Contact</a>
         </nav>
+
+        <div class="header-tools" aria-label="Site controls">
+          <label class="lang-select">
+            <span class="sr-only">Language</span>
+            <select id="langToggle" aria-label="Language">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
+          </label>
+
+          <button class="theme-toggle" type="button" id="themeToggle" aria-label="Toggle theme">
+            <span aria-hidden="true">🌓</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -221,6 +240,9 @@ const jsonLd = {
 
         --accent: #8ab4ff;
         --accentBg: rgba(138,180,255,0.14);
+        --accentStrong: #a7c5ff;
+        --accentSoft: rgba(138,180,255,0.22);
+        --accentAlt: #7ef0ff;
 
         --shadow: 0 14px 40px rgba(0,0,0,0.45);
 
@@ -230,22 +252,43 @@ const jsonLd = {
         --radius-xl: 24px;
         --radius-lg: 18px;
 
-        --pageMax: 1120px;
-        --panelMax: 1040px;
+        --font-body: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+
+        --pageMax: 1160px;
+        --panelMax: 1080px;
       }
 
+      :root[data-theme="light"]{
+        color-scheme: light;
+        --bg: #f6f7fb;
+        --bg2: rgba(0,0,0,0.04);
+        --panel: rgba(255,255,255,0.9);
+        --panel2: rgba(255,255,255,0.7);
+        --border: rgba(0,0,0,0.08);
+        --border2: rgba(0,0,0,0.12);
+        --text: rgba(14,18,24,0.96);
+        --muted: rgba(14,18,24,0.65);
+        --accent: #2b6dff;
+        --accentBg: rgba(43,109,255,0.15);
+        --accentStrong: #1f5ae8;
+        --accentSoft: rgba(43,109,255,0.20);
+        --accentAlt: #1db4c7;
+        --shadow: 0 18px 36px rgba(15,20,30,0.15);
+      }
       *{ box-sizing:border-box; }
       html, body{ height:100%; }
       html{ overflow-x: clip; }
       body{ overflow-x: clip; }
 
       body{
-        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        font-family: var(--font-body);
         margin:0;
         line-height:1.65;
         background:
-          radial-gradient(1200px 600px at 50% -10%, rgba(138,180,255,0.10), transparent 60%),
-          radial-gradient(900px 500px at 90% 30%, rgba(138,180,255,0.06), transparent 55%),
+          radial-gradient(1200px 600px at 50% -10%, rgba(138,180,255,0.10), transparent 65%),
+          radial-gradient(900px 520px at 90% 18%, rgba(126,240,255,0.08), transparent 60%),
+          radial-gradient(800px 460px at 10% 65%, rgba(138,180,255,0.06), transparent 60%),
           var(--bg);
         color: var(--text);
         text-rendering: optimizeLegibility;
@@ -276,7 +319,7 @@ const jsonLd = {
         z-index: 999;
       }
 
-      h1,h2,h3{ line-height:1.18; letter-spacing:-0.012em; margin:0 0 10px; }
+      h1,h2,h3{ line-height:1.12; letter-spacing:-0.02em; margin:0 0 10px; font-family: var(--font-display); }
       h1{ font-size: clamp(30px, 3.1vw, 44px); }
       h2{ font-size: clamp(20px, 2.0vw, 28px); margin-top: 22px; }
       h3{ font-size: 16px; margin-top: 12px; }
@@ -305,6 +348,9 @@ const jsonLd = {
         background: rgba(11,11,11,0.70);
         border-bottom: 1px solid var(--border);
       }
+      :root[data-theme="light"] .site-header{
+        background: rgba(246,247,251,0.86);
+      }
 
       /* Slightly tighter header padding than the rest of the page */
       .site-header .wrap{
@@ -317,6 +363,52 @@ const jsonLd = {
         align-items:center;
         justify-content:space-between;
         gap: 14px;
+      }
+
+      .header-tools{
+        display:flex;
+        align-items:center;
+        gap: 8px;
+      }
+      .lang-select select{
+        min-height: 36px;
+        padding: 6px 28px 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+        font-size: 14px;
+        width: auto;
+      }
+      :root[data-theme="light"] .lang-select select{
+        border-color: rgba(0,0,0,0.12);
+        background: rgba(255,255,255,0.8);
+      }
+      .theme-toggle{
+        min-height: 36px;
+        min-width: 36px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+      }
+      :root[data-theme="light"] .theme-toggle{
+        border-color: rgba(0,0,0,0.12);
+        background: rgba(255,255,255,0.8);
+      }
+
+      .sr-only{
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+        border: 0;
       }
 
       .brand{
@@ -397,7 +489,8 @@ const jsonLd = {
         max-width: var(--panelMax);
         margin-left:auto;
         margin-right:auto;
-        background: linear-gradient(to bottom, var(--panel), var(--panel2));
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
         border: 1px solid var(--border);
         border-radius: var(--radius-xl);
         box-shadow: var(--shadow);
@@ -423,13 +516,20 @@ const jsonLd = {
         color: rgba(255,255,255,0.92);
         font-weight: 850;
         line-height: 1;
+        gap: 8px;
         transition: opacity .12s ease, transform .12s ease, border-color .12s ease, background .12s ease;
       }
       .btn:hover{ opacity: .95; }
       .btn:active{ transform: translateY(1px); }
       .btn.primary{
-        border-color: rgba(138,180,255,0.30);
-        background: rgba(138,180,255,0.12);
+        border-color: rgba(138,180,255,0.45);
+        background: linear-gradient(120deg, rgba(138,180,255,0.30), rgba(126,240,255,0.16));
+        box-shadow: 0 10px 24px rgba(74,110,192,0.28);
+      }
+      .btn.secondary{
+        border-color: rgba(255,255,255,0.22);
+        background: rgba(255,255,255,0.07);
+        font-weight: 750;
       }
       .btn.ghost{
         border-color: rgba(255,255,255,0.16);
@@ -452,8 +552,70 @@ const jsonLd = {
       .card{
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 16px;
+        padding: 18px;
+        background: rgba(255,255,255,0.025);
+      }
+      .card.soft{
+        border-color: rgba(255,255,255,0.10);
         background: rgba(255,255,255,0.02);
+      }
+      .card.glow{
+        border-color: rgba(138,180,255,0.30);
+        background: linear-gradient(180deg, rgba(138,180,255,0.10), rgba(255,255,255,0.02));
+        box-shadow: 0 18px 38px rgba(12,20,48,0.40);
+      }
+
+      .section{
+        margin-top: 32px;
+      }
+      .section.alt{
+        padding: 22px;
+        border-radius: 20px;
+        border: 1px solid rgba(138,180,255,0.18);
+        background: linear-gradient(140deg, rgba(138,180,255,0.08), rgba(255,255,255,0.02));
+      }
+      .section-head{
+        display:flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .section-title{
+        margin: 0;
+        font-size: clamp(22px, 2.2vw, 32px);
+      }
+      .section-sub{
+        margin: 0;
+        max-width: 72ch;
+      }
+
+      .page-hero{
+        margin: 6px 0 18px;
+      }
+      .page-hero.center{ text-align:center; }
+      .page-hero-kicker{
+        margin: 0 0 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 12px;
+        color: var(--accentStrong);
+      }
+      .page-hero-title{ margin: 0 0 10px; font-size: clamp(28px, 3vw, 44px); }
+      .page-hero-sub{ margin: 0; max-width: 72ch; }
+      .page-hero-actions{
+        margin-top: 14px;
+        display:flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items:center;
+      }
+      .page-hero.center .page-hero-actions{ justify-content:center; }
+      .page-hero-chips{
+        margin-top: 14px;
+        display:flex;
+        flex-wrap:wrap;
+        gap: 8px;
+        align-items:center;
       }
 
       .grid{
@@ -613,16 +775,52 @@ const jsonLd = {
       .foot-link:hover{ opacity:0.92; text-decoration: underline; }
       .dot{ opacity:.55; margin: 0 8px; }
 
+      @media (min-width: 980px){
+        .section-head{ flex-direction: row; align-items: flex-end; justify-content: space-between; }
+        .section-sub{ text-align: right; }
+      }
+
       @media (max-width: 820px){
         .wrap{ padding: 14px; }
         .panel{ padding: 18px; }
         .header-inner{ flex-direction: column; align-items: flex-start; }
         .nav{ justify-content:flex-start; width:100%; }
+        .header-tools{ width:100%; justify-content:flex-start; }
         p, ol, ul{ max-width: 100%; }
         .foot-inner{ flex-direction: column; align-items: flex-start; }
         .foot-brand{ white-space: normal; }
         .dot{ display:none; }
       }
     </style>
+
+    <script is:inline>
+      (function () {
+        const root = document.documentElement;
+        const savedTheme = localStorage.getItem("mcg-theme");
+        const systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const initialTheme = savedTheme || (systemDark ? "dark" : "light");
+        root.dataset.theme = initialTheme;
+
+        const themeBtn = document.getElementById("themeToggle");
+        themeBtn?.addEventListener("click", () => {
+          const next = root.dataset.theme === "light" ? "dark" : "light";
+          root.dataset.theme = next;
+          localStorage.setItem("mcg-theme", next);
+        });
+
+        const langSelect = document.getElementById("langToggle");
+        if (langSelect) {
+          const url = new URL(window.location.href);
+          const current = url.searchParams.get("lang") || "en";
+          langSelect.value = current;
+          langSelect.addEventListener("change", () => {
+            const nextLang = langSelect.value;
+            if (nextLang === "en") url.searchParams.delete("lang");
+            else url.searchParams.set("lang", nextLang);
+            window.location.href = url.toString();
+          });
+        }
+      })();
+    </script>
   </body>
 </html>
