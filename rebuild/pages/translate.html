@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morse Translator | Text to Morse and Morse to Text</title>
+  <meta name="description" content="Convert text to Morse and Morse to text instantly. Copy, share, play, and download results." />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#071326" />
+  <link rel="canonical" href="https://morsecodegenerator.com/pages/translate.html" />
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+  <meta property="og:title" content="Morse Translator" />
+  <meta property="og:description" content="Professional text↔Morse translator with playback, share-link and practice workflow." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://morsecodegenerator.com/pages/translate.html" />
+  <meta property="og:image" content="https://morsecodegenerator.com/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Morse Translator",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "url": "https://morsecodegenerator.com/pages/translate.html"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="Morse Code Generator logo" /><span>Morse Code Generator</span></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../index.html">Home</a>
+      <a class="active" href="./translate.html">Translator</a>
+      <a href="./phrases.html">Phrases</a>
+      <a href="./keywords.html">Keywords</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+    </nav>
+    <button id="themeToggle" class="btn ghost" aria-label="Toggle theme">Theme</button>
+  </header>
+
+  <main class="container" id="content">
+    <section class="card">
+      <h1>Text ⇄ Morse Translator</h1>
+      <p class="muted">Type text or Morse, then convert, copy, share, play, and download your output.</p>
+
+      <label for="input">Input</label>
+      <textarea id="input" rows="6" placeholder="HELLO or .... . .-.. .-.. ---"></textarea>
+
+      <div class="actions">
+        <button id="toMorse" class="btn primary" type="button">Text → Morse</button>
+        <button id="toText" class="btn" type="button">Morse → Text</button>
+        <button id="auto" class="btn ghost" type="button">Auto</button>
+        <button id="swap" class="btn ghost" type="button">Swap</button>
+      </div>
+
+      <label for="output">Output</label>
+      <textarea id="output" rows="6" readonly></textarea>
+
+      <div class="helper-row">
+        <label for="wpm" style="margin:0;">Playback speed (WPM)</label>
+        <span class="muted">6–28</span>
+      </div>
+      <input id="wpm" type="range" min="6" max="28" value="14" aria-label="WPM speed" />
+
+      <div class="actions">
+        <button id="copy" class="btn ghost" type="button">Copy output</button>
+        <button id="share" class="btn ghost" type="button">Copy share link</button>
+        <button id="play" class="btn ghost" type="button">Play Morse</button>
+        <button id="stop" class="btn ghost" type="button">Stop</button>
+        <button id="download" class="btn ghost" type="button">Download TXT</button>
+        <button id="loadHistory" class="btn ghost" type="button">Load latest history</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <footer class="site-footer">Project By <a href="https://sentioaurum.com" target="_blank" rel="noopener noreferrer">SentioAurum.com</a></footer>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+[
+  {
+    "slug": "learn-morse-code-fast",
+    "title": "How to Learn Morse Code Faster (Without Burning Out)",
+    "description": "A practical system to learn Morse code quickly using spaced repetition, sound-first drills, and measurable weekly milestones.",
+    "primaryKeyword": "learn morse code fast",
+    "intent": "education",
+    "audience": "Beginners who want a structured daily plan",
+    "takeaways": [
+      "Use sound-first practice before visual memorization",
+      "Train in short sessions with clear progression",
+      "Track WPM and error rate weekly"
+    ]
+  },
+  {
+    "slug": "sos-and-emergency-morse-guide",
+    "title": "SOS and Emergency Morse: A Real-World Quick Guide",
+    "description": "Understand SOS timing, emergency word priorities, and practical drill routines for high-stress Morse signaling scenarios.",
+    "primaryKeyword": "sos morse code emergency guide",
+    "intent": "emergency",
+    "audience": "Preparedness-focused users and outdoor communicators",
+    "takeaways": [
+      "Memorize SOS rhythm and spacing standards",
+      "Prioritize short emergency terms first",
+      "Practice in low-visibility and audio-only conditions"
+    ]
+  },
+  {
+    "slug": "morse-code-practice-plan-30-days",
+    "title": "30-Day Morse Code Practice Plan for Consistent Progress",
+    "description": "A complete 30-day Morse practice roadmap with daily goals, review checkpoints, and quality benchmarks for retention.",
+    "primaryKeyword": "30 day morse code practice plan",
+    "intent": "education",
+    "audience": "Learners who want accountability and momentum",
+    "takeaways": [
+      "Set micro-goals per week",
+      "Alternate recognition and production drills",
+      "Use end-of-week review tests"
+    ]
+  },
+  {
+    "slug": "morse-code-for-ham-radio-beginners",
+    "title": "Morse Code for Ham Radio Beginners: What Actually Matters",
+    "description": "Focus on the Morse skills that transfer directly to ham radio communication: timing, clarity, and on-air operating discipline.",
+    "primaryKeyword": "morse code for ham radio beginners",
+    "intent": "use-case",
+    "audience": "Entry-level ham radio operators",
+    "takeaways": [
+      "Learn operating etiquette with concise messages",
+      "Train call signs and common abbreviations first",
+      "Practice clean spacing under moderate speed"
+    ]
+  },
+  {
+    "slug": "common-morse-code-mistakes-and-fixes",
+    "title": "Common Morse Code Mistakes (and How to Fix Them)",
+    "description": "Identify high-frequency Morse mistakes and apply targeted fixes for rhythm, spacing, and confidence under speed.",
+    "primaryKeyword": "common morse code mistakes",
+    "intent": "education",
+    "audience": "Learners plateauing after initial progress",
+    "takeaways": [
+      "Diagnose spacing errors quickly",
+      "Reduce random guessing with slower review loops",
+      "Use confidence thresholds before increasing speed"
+    ]
+  },
+  {
+    "slug": "morse-code-study-tools-that-work",
+    "title": "Morse Code Study Tools That Actually Work in 2026",
+    "description": "A modern tool stack for Morse learners: translator workflows, repetition methods, and objective progress tracking.",
+    "primaryKeyword": "best morse code study tools",
+    "intent": "education",
+    "audience": "Self-directed learners building a personal workflow",
+    "takeaways": [
+      "Combine translator + phrase drills",
+      "Measure speed and accuracy separately",
+      "Keep a rolling error log"
+    ]
+  }
+]

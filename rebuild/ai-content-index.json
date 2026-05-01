@@ -1,0 +1,2526 @@
+{
+  "version": 2,
+  "generatedAt": "2026-03-07T05:00:39.152Z",
+  "canonical": "https://morsecodegenerator.com/",
+  "keywordsIndex": "https://morsecodegenerator.com/pages/keywords.html",
+  "totalPages": 358,
+  "intents": {
+    "general": 347,
+    "education": 7,
+    "emergency": 4
+  },
+  "templateFeatures": [
+    "intent-snippets",
+    "example-block",
+    "faq-block",
+    "related-links"
+  ],
+  "pages": [
+    {
+      "slug": "0",
+      "term": "0",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/0.html",
+      "morse": "-----"
+    },
+    {
+      "slug": "1",
+      "term": "1",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/1.html",
+      "morse": ".----"
+    },
+    {
+      "slug": "2",
+      "term": "2",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/2.html",
+      "morse": "..---"
+    },
+    {
+      "slug": "3",
+      "term": "3",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/3.html",
+      "morse": "...--"
+    },
+    {
+      "slug": "4",
+      "term": "4",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/4.html",
+      "morse": "....-"
+    },
+    {
+      "slug": "5",
+      "term": "5",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/5.html",
+      "morse": "....."
+    },
+    {
+      "slug": "6",
+      "term": "6",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/6.html",
+      "morse": "-...."
+    },
+    {
+      "slug": "7",
+      "term": "7",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/7.html",
+      "morse": "--..."
+    },
+    {
+      "slug": "8",
+      "term": "8",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/8.html",
+      "morse": "---.."
+    },
+    {
+      "slug": "9",
+      "term": "9",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/9.html",
+      "morse": "----."
+    },
+    {
+      "slug": "10",
+      "term": "10",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/10.html",
+      "morse": ".---- -----"
+    },
+    {
+      "slug": "11",
+      "term": "11",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/11.html",
+      "morse": ".---- .----"
+    },
+    {
+      "slug": "12",
+      "term": "12",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/12.html",
+      "morse": ".---- ..---"
+    },
+    {
+      "slug": "13",
+      "term": "13",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/13.html",
+      "morse": ".---- ...--"
+    },
+    {
+      "slug": "14",
+      "term": "14",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/14.html",
+      "morse": ".---- ....-"
+    },
+    {
+      "slug": "15",
+      "term": "15",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/15.html",
+      "morse": ".---- ....."
+    },
+    {
+      "slug": "16",
+      "term": "16",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/16.html",
+      "morse": ".---- -...."
+    },
+    {
+      "slug": "17",
+      "term": "17",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/17.html",
+      "morse": ".---- --..."
+    },
+    {
+      "slug": "18",
+      "term": "18",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/18.html",
+      "morse": ".---- ---.."
+    },
+    {
+      "slug": "19",
+      "term": "19",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/19.html",
+      "morse": ".---- ----."
+    },
+    {
+      "slug": "20",
+      "term": "20",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/20.html",
+      "morse": "..--- -----"
+    },
+    {
+      "slug": "21",
+      "term": "21",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/21.html",
+      "morse": "..--- .----"
+    },
+    {
+      "slug": "22",
+      "term": "22",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/22.html",
+      "morse": "..--- ..---"
+    },
+    {
+      "slug": "23",
+      "term": "23",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/23.html",
+      "morse": "..--- ...--"
+    },
+    {
+      "slug": "24",
+      "term": "24",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/24.html",
+      "morse": "..--- ....-"
+    },
+    {
+      "slug": "25",
+      "term": "25",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/25.html",
+      "morse": "..--- ....."
+    },
+    {
+      "slug": "26",
+      "term": "26",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/26.html",
+      "morse": "..--- -...."
+    },
+    {
+      "slug": "27",
+      "term": "27",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/27.html",
+      "morse": "..--- --..."
+    },
+    {
+      "slug": "28",
+      "term": "28",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/28.html",
+      "morse": "..--- ---.."
+    },
+    {
+      "slug": "29",
+      "term": "29",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/29.html",
+      "morse": "..--- ----."
+    },
+    {
+      "slug": "30",
+      "term": "30",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/30.html",
+      "morse": "...-- -----"
+    },
+    {
+      "slug": "31",
+      "term": "31",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/31.html",
+      "morse": "...-- .----"
+    },
+    {
+      "slug": "32",
+      "term": "32",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/32.html",
+      "morse": "...-- ..---"
+    },
+    {
+      "slug": "33",
+      "term": "33",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/33.html",
+      "morse": "...-- ...--"
+    },
+    {
+      "slug": "34",
+      "term": "34",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/34.html",
+      "morse": "...-- ....-"
+    },
+    {
+      "slug": "35",
+      "term": "35",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/35.html",
+      "morse": "...-- ....."
+    },
+    {
+      "slug": "36",
+      "term": "36",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/36.html",
+      "morse": "...-- -...."
+    },
+    {
+      "slug": "37",
+      "term": "37",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/37.html",
+      "morse": "...-- --..."
+    },
+    {
+      "slug": "38",
+      "term": "38",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/38.html",
+      "morse": "...-- ---.."
+    },
+    {
+      "slug": "39",
+      "term": "39",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/39.html",
+      "morse": "...-- ----."
+    },
+    {
+      "slug": "40",
+      "term": "40",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/40.html",
+      "morse": "....- -----"
+    },
+    {
+      "slug": "41",
+      "term": "41",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/41.html",
+      "morse": "....- .----"
+    },
+    {
+      "slug": "42",
+      "term": "42",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/42.html",
+      "morse": "....- ..---"
+    },
+    {
+      "slug": "43",
+      "term": "43",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/43.html",
+      "morse": "....- ...--"
+    },
+    {
+      "slug": "44",
+      "term": "44",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/44.html",
+      "morse": "....- ....-"
+    },
+    {
+      "slug": "45",
+      "term": "45",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/45.html",
+      "morse": "....- ....."
+    },
+    {
+      "slug": "46",
+      "term": "46",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/46.html",
+      "morse": "....- -...."
+    },
+    {
+      "slug": "47",
+      "term": "47",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/47.html",
+      "morse": "....- --..."
+    },
+    {
+      "slug": "48",
+      "term": "48",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/48.html",
+      "morse": "....- ---.."
+    },
+    {
+      "slug": "49",
+      "term": "49",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/49.html",
+      "morse": "....- ----."
+    },
+    {
+      "slug": "50",
+      "term": "50",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/50.html",
+      "morse": "..... -----"
+    },
+    {
+      "slug": "51",
+      "term": "51",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/51.html",
+      "morse": "..... .----"
+    },
+    {
+      "slug": "52",
+      "term": "52",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/52.html",
+      "morse": "..... ..---"
+    },
+    {
+      "slug": "53",
+      "term": "53",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/53.html",
+      "morse": "..... ...--"
+    },
+    {
+      "slug": "54",
+      "term": "54",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/54.html",
+      "morse": "..... ....-"
+    },
+    {
+      "slug": "55",
+      "term": "55",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/55.html",
+      "morse": "..... ....."
+    },
+    {
+      "slug": "56",
+      "term": "56",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/56.html",
+      "morse": "..... -...."
+    },
+    {
+      "slug": "57",
+      "term": "57",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/57.html",
+      "morse": "..... --..."
+    },
+    {
+      "slug": "58",
+      "term": "58",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/58.html",
+      "morse": "..... ---.."
+    },
+    {
+      "slug": "59",
+      "term": "59",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/59.html",
+      "morse": "..... ----."
+    },
+    {
+      "slug": "60",
+      "term": "60",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/60.html",
+      "morse": "-.... -----"
+    },
+    {
+      "slug": "61",
+      "term": "61",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/61.html",
+      "morse": "-.... .----"
+    },
+    {
+      "slug": "62",
+      "term": "62",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/62.html",
+      "morse": "-.... ..---"
+    },
+    {
+      "slug": "63",
+      "term": "63",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/63.html",
+      "morse": "-.... ...--"
+    },
+    {
+      "slug": "64",
+      "term": "64",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/64.html",
+      "morse": "-.... ....-"
+    },
+    {
+      "slug": "65",
+      "term": "65",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/65.html",
+      "morse": "-.... ....."
+    },
+    {
+      "slug": "66",
+      "term": "66",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/66.html",
+      "morse": "-.... -...."
+    },
+    {
+      "slug": "67",
+      "term": "67",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/67.html",
+      "morse": "-.... --..."
+    },
+    {
+      "slug": "68",
+      "term": "68",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/68.html",
+      "morse": "-.... ---.."
+    },
+    {
+      "slug": "69",
+      "term": "69",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/69.html",
+      "morse": "-.... ----."
+    },
+    {
+      "slug": "70",
+      "term": "70",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/70.html",
+      "morse": "--... -----"
+    },
+    {
+      "slug": "71",
+      "term": "71",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/71.html",
+      "morse": "--... .----"
+    },
+    {
+      "slug": "72",
+      "term": "72",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/72.html",
+      "morse": "--... ..---"
+    },
+    {
+      "slug": "73",
+      "term": "73",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/73.html",
+      "morse": "--... ...--"
+    },
+    {
+      "slug": "74",
+      "term": "74",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/74.html",
+      "morse": "--... ....-"
+    },
+    {
+      "slug": "75",
+      "term": "75",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/75.html",
+      "morse": "--... ....."
+    },
+    {
+      "slug": "76",
+      "term": "76",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/76.html",
+      "morse": "--... -...."
+    },
+    {
+      "slug": "77",
+      "term": "77",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/77.html",
+      "morse": "--... --..."
+    },
+    {
+      "slug": "78",
+      "term": "78",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/78.html",
+      "morse": "--... ---.."
+    },
+    {
+      "slug": "79",
+      "term": "79",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/79.html",
+      "morse": "--... ----."
+    },
+    {
+      "slug": "80",
+      "term": "80",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/80.html",
+      "morse": "---.. -----"
+    },
+    {
+      "slug": "81",
+      "term": "81",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/81.html",
+      "morse": "---.. .----"
+    },
+    {
+      "slug": "82",
+      "term": "82",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/82.html",
+      "morse": "---.. ..---"
+    },
+    {
+      "slug": "83",
+      "term": "83",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/83.html",
+      "morse": "---.. ...--"
+    },
+    {
+      "slug": "84",
+      "term": "84",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/84.html",
+      "morse": "---.. ....-"
+    },
+    {
+      "slug": "85",
+      "term": "85",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/85.html",
+      "morse": "---.. ....."
+    },
+    {
+      "slug": "86",
+      "term": "86",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/86.html",
+      "morse": "---.. -...."
+    },
+    {
+      "slug": "87",
+      "term": "87",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/87.html",
+      "morse": "---.. --..."
+    },
+    {
+      "slug": "88",
+      "term": "88",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/88.html",
+      "morse": "---.. ---.."
+    },
+    {
+      "slug": "89",
+      "term": "89",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/89.html",
+      "morse": "---.. ----."
+    },
+    {
+      "slug": "90",
+      "term": "90",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/90.html",
+      "morse": "----. -----"
+    },
+    {
+      "slug": "91",
+      "term": "91",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/91.html",
+      "morse": "----. .----"
+    },
+    {
+      "slug": "92",
+      "term": "92",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/92.html",
+      "morse": "----. ..---"
+    },
+    {
+      "slug": "93",
+      "term": "93",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/93.html",
+      "morse": "----. ...--"
+    },
+    {
+      "slug": "94",
+      "term": "94",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/94.html",
+      "morse": "----. ....-"
+    },
+    {
+      "slug": "95",
+      "term": "95",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/95.html",
+      "morse": "----. ....."
+    },
+    {
+      "slug": "96",
+      "term": "96",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/96.html",
+      "morse": "----. -...."
+    },
+    {
+      "slug": "97",
+      "term": "97",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/97.html",
+      "morse": "----. --..."
+    },
+    {
+      "slug": "98",
+      "term": "98",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/98.html",
+      "morse": "----. ---.."
+    },
+    {
+      "slug": "99",
+      "term": "99",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/99.html",
+      "morse": "----. ----."
+    },
+    {
+      "slug": "100",
+      "term": "100",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/100.html",
+      "morse": ".---- ----- -----"
+    },
+    {
+      "slug": "a",
+      "term": "A",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/a.html",
+      "morse": ".-"
+    },
+    {
+      "slug": "air",
+      "term": "Air",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/air.html",
+      "morse": ".- .. .-."
+    },
+    {
+      "slug": "all",
+      "term": "All",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/all.html",
+      "morse": ".- .-.. .-.."
+    },
+    {
+      "slug": "am",
+      "term": "Am",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/am.html",
+      "morse": ".- --"
+    },
+    {
+      "slug": "an",
+      "term": "An",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/an.html",
+      "morse": ".- -."
+    },
+    {
+      "slug": "and",
+      "term": "And",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/and.html",
+      "morse": ".- -. -.."
+    },
+    {
+      "slug": "any",
+      "term": "Any",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/any.html",
+      "morse": ".- -. -.--"
+    },
+    {
+      "slug": "are",
+      "term": "Are",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/are.html",
+      "morse": ".- .-. ."
+    },
+    {
+      "slug": "as",
+      "term": "As",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/as.html",
+      "morse": ".- ..."
+    },
+    {
+      "slug": "at",
+      "term": "At",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/at.html",
+      "morse": ".- -"
+    },
+    {
+      "slug": "back",
+      "term": "Back",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/back.html",
+      "morse": "-... .- -.-. -.-"
+    },
+    {
+      "slug": "be",
+      "term": "Be",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/be.html",
+      "morse": "-... ."
+    },
+    {
+      "slug": "because",
+      "term": "Because",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/because.html",
+      "morse": "-... . -.-. .- ..- ... ."
+    },
+    {
+      "slug": "been",
+      "term": "Been",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/been.html",
+      "morse": "-... . . -."
+    },
+    {
+      "slug": "before",
+      "term": "Before",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/before.html",
+      "morse": "-... . ..-. --- .-. ."
+    },
+    {
+      "slug": "best",
+      "term": "Best",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/best.html",
+      "morse": "-... . ... -"
+    },
+    {
+      "slug": "better",
+      "term": "Better",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/better.html",
+      "morse": "-... . - - . .-."
+    },
+    {
+      "slug": "black",
+      "term": "Black",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/black.html",
+      "morse": "-... .-.. .- -.-. -.-"
+    },
+    {
+      "slug": "blue",
+      "term": "Blue",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/blue.html",
+      "morse": "-... .-.. ..- ."
+    },
+    {
+      "slug": "boy",
+      "term": "Boy",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/boy.html",
+      "morse": "-... --- -.--"
+    },
+    {
+      "slug": "but",
+      "term": "But",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/but.html",
+      "morse": "-... ..- -"
+    },
+    {
+      "slug": "by",
+      "term": "By",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/by.html",
+      "morse": "-... -.--"
+    },
+    {
+      "slug": "call",
+      "term": "Call",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/call.html",
+      "morse": "-.-. .- .-.. .-.."
+    },
+    {
+      "slug": "can",
+      "term": "Can",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/can.html",
+      "morse": "-.-. .- -."
+    },
+    {
+      "slug": "car",
+      "term": "Car",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/car.html",
+      "morse": "-.-. .- .-."
+    },
+    {
+      "slug": "children",
+      "term": "Children",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/children.html",
+      "morse": "-.-. .... .. .-.. -.. .-. . -."
+    },
+    {
+      "slug": "city",
+      "term": "City",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/city.html",
+      "morse": "-.-. .. - -.--"
+    },
+    {
+      "slug": "come",
+      "term": "Come",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/come.html",
+      "morse": "-.-. --- -- ."
+    },
+    {
+      "slug": "could",
+      "term": "Could",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/could.html",
+      "morse": "-.-. --- ..- .-.. -.."
+    },
+    {
+      "slug": "day",
+      "term": "Day",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/day.html",
+      "morse": "-.. .- -.--"
+    },
+    {
+      "slug": "did",
+      "term": "Did",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/did.html",
+      "morse": "-.. .. -.."
+    },
+    {
+      "slug": "do",
+      "term": "Do",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/do.html",
+      "morse": "-.. ---"
+    },
+    {
+      "slug": "does",
+      "term": "Does",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/does.html",
+      "morse": "-.. --- . ..."
+    },
+    {
+      "slug": "dog",
+      "term": "Dog",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/dog.html",
+      "morse": "-.. --- --."
+    },
+    {
+      "slug": "done",
+      "term": "Done",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/done.html",
+      "morse": "-.. --- -. ."
+    },
+    {
+      "slug": "down",
+      "term": "Down",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/down.html",
+      "morse": "-.. --- .-- -."
+    },
+    {
+      "slug": "each",
+      "term": "Each",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/each.html",
+      "morse": ". .- -.-. ...."
+    },
+    {
+      "slug": "earth",
+      "term": "Earth",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/earth.html",
+      "morse": ". .- .-. - ...."
+    },
+    {
+      "slug": "eat",
+      "term": "Eat",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/eat.html",
+      "morse": ". .- -"
+    },
+    {
+      "slug": "end",
+      "term": "End",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/end.html",
+      "morse": ". -. -.."
+    },
+    {
+      "slug": "even",
+      "term": "Even",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/even.html",
+      "morse": ". ...- . -."
+    },
+    {
+      "slug": "every",
+      "term": "Every",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/every.html",
+      "morse": ". ...- . .-. -.--"
+    },
+    {
+      "slug": "example",
+      "term": "Example",
+      "intent": "education",
+      "url": "https://morsecodegenerator.com/words/example.html",
+      "morse": ". -..- .- -- .--. .-.. ."
+    },
+    {
+      "slug": "eye",
+      "term": "Eye",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/eye.html",
+      "morse": ". -.-- ."
+    },
+    {
+      "slug": "face",
+      "term": "Face",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/face.html",
+      "morse": "..-. .- -.-. ."
+    },
+    {
+      "slug": "fact",
+      "term": "Fact",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/fact.html",
+      "morse": "..-. .- -.-. -"
+    },
+    {
+      "slug": "fall",
+      "term": "Fall",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/fall.html",
+      "morse": "..-. .- .-.. .-.."
+    },
+    {
+      "slug": "family",
+      "term": "Family",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/family.html",
+      "morse": "..-. .- -- .. .-.. -.--"
+    },
+    {
+      "slug": "far",
+      "term": "Far",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/far.html",
+      "morse": "..-. .- .-."
+    },
+    {
+      "slug": "few",
+      "term": "Few",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/few.html",
+      "morse": "..-. . .--"
+    },
+    {
+      "slug": "find",
+      "term": "Find",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/find.html",
+      "morse": "..-. .. -. -.."
+    },
+    {
+      "slug": "first",
+      "term": "First",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/first.html",
+      "morse": "..-. .. .-. ... -"
+    },
+    {
+      "slug": "fish",
+      "term": "Fish",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/fish.html",
+      "morse": "..-. .. ... ...."
+    },
+    {
+      "slug": "food",
+      "term": "Food",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/food.html",
+      "morse": "..-. --- --- -.."
+    },
+    {
+      "slug": "for",
+      "term": "For",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/for.html",
+      "morse": "..-. --- .-."
+    },
+    {
+      "slug": "form",
+      "term": "Form",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/form.html",
+      "morse": "..-. --- .-. --"
+    },
+    {
+      "slug": "found",
+      "term": "Found",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/found.html",
+      "morse": "..-. --- ..- -. -.."
+    },
+    {
+      "slug": "four",
+      "term": "Four",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/four.html",
+      "morse": "..-. --- ..- .-."
+    },
+    {
+      "slug": "from",
+      "term": "From",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/from.html",
+      "morse": "..-. .-. --- --"
+    },
+    {
+      "slug": "get",
+      "term": "Get",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/get.html",
+      "morse": "--. . -"
+    },
+    {
+      "slug": "give",
+      "term": "Give",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/give.html",
+      "morse": "--. .. ...- ."
+    },
+    {
+      "slug": "go",
+      "term": "Go",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/go.html",
+      "morse": "--. ---"
+    },
+    {
+      "slug": "good",
+      "term": "Good",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/good.html",
+      "morse": "--. --- --- -.."
+    },
+    {
+      "slug": "great",
+      "term": "Great",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/great.html",
+      "morse": "--. .-. . .- -"
+    },
+    {
+      "slug": "group",
+      "term": "Group",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/group.html",
+      "morse": "--. .-. --- ..- .--."
+    },
+    {
+      "slug": "grow",
+      "term": "Grow",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/grow.html",
+      "morse": "--. .-. --- .--"
+    },
+    {
+      "slug": "had",
+      "term": "Had",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/had.html",
+      "morse": ".... .- -.."
+    },
+    {
+      "slug": "hand",
+      "term": "Hand",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/hand.html",
+      "morse": ".... .- -. -.."
+    },
+    {
+      "slug": "has",
+      "term": "Has",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/has.html",
+      "morse": ".... .- ..."
+    },
+    {
+      "slug": "have",
+      "term": "Have",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/have.html",
+      "morse": ".... .- ...- ."
+    },
+    {
+      "slug": "he",
+      "term": "He",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/he.html",
+      "morse": ".... ."
+    },
+    {
+      "slug": "head",
+      "term": "Head",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/head.html",
+      "morse": ".... . .- -.."
+    },
+    {
+      "slug": "help",
+      "term": "Help",
+      "intent": "emergency",
+      "url": "https://morsecodegenerator.com/words/help.html",
+      "morse": ".... . .-.. .--."
+    },
+    {
+      "slug": "her",
+      "term": "Her",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/her.html",
+      "morse": ".... . .-."
+    },
+    {
+      "slug": "here",
+      "term": "Here",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/here.html",
+      "morse": ".... . .-. ."
+    },
+    {
+      "slug": "high",
+      "term": "High",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/high.html",
+      "morse": ".... .. --. ...."
+    },
+    {
+      "slug": "him",
+      "term": "Him",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/him.html",
+      "morse": ".... .. --"
+    },
+    {
+      "slug": "his",
+      "term": "His",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/his.html",
+      "morse": ".... .. ..."
+    },
+    {
+      "slug": "home",
+      "term": "Home",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/home.html",
+      "morse": ".... --- -- ."
+    },
+    {
+      "slug": "horse",
+      "term": "Horse",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/horse.html",
+      "morse": ".... --- .-. ... ."
+    },
+    {
+      "slug": "hot",
+      "term": "Hot",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/hot.html",
+      "morse": ".... --- -"
+    },
+    {
+      "slug": "hour",
+      "term": "Hour",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/hour.html",
+      "morse": ".... --- ..- .-."
+    },
+    {
+      "slug": "house",
+      "term": "House",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/house.html",
+      "morse": ".... --- ..- ... ."
+    },
+    {
+      "slug": "how",
+      "term": "How",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/how.html",
+      "morse": ".... --- .--"
+    },
+    {
+      "slug": "i",
+      "term": "I",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/i.html",
+      "morse": ".."
+    },
+    {
+      "slug": "if",
+      "term": "If",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/if.html",
+      "morse": ".. ..-."
+    },
+    {
+      "slug": "in",
+      "term": "In",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/in.html",
+      "morse": ".. -."
+    },
+    {
+      "slug": "interest",
+      "term": "Interest",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/interest.html",
+      "morse": ".. -. - . .-. . ... -"
+    },
+    {
+      "slug": "into",
+      "term": "Into",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/into.html",
+      "morse": ".. -. - ---"
+    },
+    {
+      "slug": "is",
+      "term": "Is",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/is.html",
+      "morse": ".. ..."
+    },
+    {
+      "slug": "it",
+      "term": "It",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/it.html",
+      "morse": ".. -"
+    },
+    {
+      "slug": "its",
+      "term": "Its",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/its.html",
+      "morse": ".. - ..."
+    },
+    {
+      "slug": "just",
+      "term": "Just",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/just.html",
+      "morse": ".--- ..- ... -"
+    },
+    {
+      "slug": "keep",
+      "term": "Keep",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/keep.html",
+      "morse": "-.- . . .--."
+    },
+    {
+      "slug": "kind",
+      "term": "Kind",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/kind.html",
+      "morse": "-.- .. -. -.."
+    },
+    {
+      "slug": "know",
+      "term": "Know",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/know.html",
+      "morse": "-.- -. --- .--"
+    },
+    {
+      "slug": "land",
+      "term": "Land",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/land.html",
+      "morse": ".-.. .- -. -.."
+    },
+    {
+      "slug": "large",
+      "term": "Large",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/large.html",
+      "morse": ".-.. .- .-. --. ."
+    },
+    {
+      "slug": "last",
+      "term": "Last",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/last.html",
+      "morse": ".-.. .- ... -"
+    },
+    {
+      "slug": "late",
+      "term": "Late",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/late.html",
+      "morse": ".-.. .- - ."
+    },
+    {
+      "slug": "learn",
+      "term": "Learn",
+      "intent": "education",
+      "url": "https://morsecodegenerator.com/words/learn.html",
+      "morse": ".-.. . .- .-. -."
+    },
+    {
+      "slug": "left",
+      "term": "Left",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/left.html",
+      "morse": ".-.. . ..-. -"
+    },
+    {
+      "slug": "letter",
+      "term": "Letter",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/letter.html",
+      "morse": ".-.. . - - . .-."
+    },
+    {
+      "slug": "life",
+      "term": "Life",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/life.html",
+      "morse": ".-.. .. ..-. ."
+    },
+    {
+      "slug": "light",
+      "term": "Light",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/light.html",
+      "morse": ".-.. .. --. .... -"
+    },
+    {
+      "slug": "like",
+      "term": "Like",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/like.html",
+      "morse": ".-.. .. -.- ."
+    },
+    {
+      "slug": "line",
+      "term": "Line",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/line.html",
+      "morse": ".-.. .. -. ."
+    },
+    {
+      "slug": "list",
+      "term": "List",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/list.html",
+      "morse": ".-.. .. ... -"
+    },
+    {
+      "slug": "little",
+      "term": "Little",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/little.html",
+      "morse": ".-.. .. - - .-.. ."
+    },
+    {
+      "slug": "long",
+      "term": "Long",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/long.html",
+      "morse": ".-.. --- -. --."
+    },
+    {
+      "slug": "look",
+      "term": "Look",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/look.html",
+      "morse": ".-.. --- --- -.-"
+    },
+    {
+      "slug": "made",
+      "term": "Made",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/made.html",
+      "morse": "-- .- -.. ."
+    },
+    {
+      "slug": "make",
+      "term": "Make",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/make.html",
+      "morse": "-- .- -.- ."
+    },
+    {
+      "slug": "man",
+      "term": "Man",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/man.html",
+      "morse": "-- .- -."
+    },
+    {
+      "slug": "many",
+      "term": "Many",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/many.html",
+      "morse": "-- .- -. -.--"
+    },
+    {
+      "slug": "may",
+      "term": "May",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/may.html",
+      "morse": "-- .- -.--"
+    },
+    {
+      "slug": "me",
+      "term": "Me",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/me.html",
+      "morse": "-- ."
+    },
+    {
+      "slug": "mean",
+      "term": "Mean",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/mean.html",
+      "morse": "-- . .- -."
+    },
+    {
+      "slug": "men",
+      "term": "Men",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/men.html",
+      "morse": "-- . -."
+    },
+    {
+      "slug": "might",
+      "term": "Might",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/might.html",
+      "morse": "-- .. --. .... -"
+    },
+    {
+      "slug": "mile",
+      "term": "Mile",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/mile.html",
+      "morse": "-- .. .-.. ."
+    },
+    {
+      "slug": "miss",
+      "term": "Miss",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/miss.html",
+      "morse": "-- .. ... ..."
+    },
+    {
+      "slug": "money",
+      "term": "Money",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/money.html",
+      "morse": "-- --- -. . -.--"
+    },
+    {
+      "slug": "more",
+      "term": "More",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/more.html",
+      "morse": "-- --- .-. ."
+    },
+    {
+      "slug": "most",
+      "term": "Most",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/most.html",
+      "morse": "-- --- ... -"
+    },
+    {
+      "slug": "mother",
+      "term": "Mother",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/mother.html",
+      "morse": "-- --- - .... . .-."
+    },
+    {
+      "slug": "mr",
+      "term": "Mr",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/mr.html",
+      "morse": "-- .-."
+    },
+    {
+      "slug": "much",
+      "term": "Much",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/much.html",
+      "morse": "-- ..- -.-. ...."
+    },
+    {
+      "slug": "must",
+      "term": "Must",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/must.html",
+      "morse": "-- ..- ... -"
+    },
+    {
+      "slug": "my",
+      "term": "My",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/my.html",
+      "morse": "-- -.--"
+    },
+    {
+      "slug": "name",
+      "term": "Name",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/name.html",
+      "morse": "-. .- -- ."
+    },
+    {
+      "slug": "near",
+      "term": "Near",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/near.html",
+      "morse": "-. . .- .-."
+    },
+    {
+      "slug": "need",
+      "term": "Need",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/need.html",
+      "morse": "-. . . -.."
+    },
+    {
+      "slug": "never",
+      "term": "Never",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/never.html",
+      "morse": "-. . ...- . .-."
+    },
+    {
+      "slug": "new",
+      "term": "New",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/new.html",
+      "morse": "-. . .--"
+    },
+    {
+      "slug": "next",
+      "term": "Next",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/next.html",
+      "morse": "-. . -..- -"
+    },
+    {
+      "slug": "night",
+      "term": "Night",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/night.html",
+      "morse": "-. .. --. .... -"
+    },
+    {
+      "slug": "no",
+      "term": "No",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/no.html",
+      "morse": "-. ---"
+    },
+    {
+      "slug": "not",
+      "term": "Not",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/not.html",
+      "morse": "-. --- -"
+    },
+    {
+      "slug": "now",
+      "term": "Now",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/now.html",
+      "morse": "-. --- .--"
+    },
+    {
+      "slug": "number",
+      "term": "Number",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/number.html",
+      "morse": "-. ..- -- -... . .-."
+    },
+    {
+      "slug": "of",
+      "term": "Of",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/of.html",
+      "morse": "--- ..-."
+    },
+    {
+      "slug": "off",
+      "term": "Off",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/off.html",
+      "morse": "--- ..-. ..-."
+    },
+    {
+      "slug": "often",
+      "term": "Often",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/often.html",
+      "morse": "--- ..-. - . -."
+    },
+    {
+      "slug": "old",
+      "term": "Old",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/old.html",
+      "morse": "--- .-.. -.."
+    },
+    {
+      "slug": "on",
+      "term": "On",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/on.html",
+      "morse": "--- -."
+    },
+    {
+      "slug": "one",
+      "term": "One",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/one.html",
+      "morse": "--- -. ."
+    },
+    {
+      "slug": "only",
+      "term": "Only",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/only.html",
+      "morse": "--- -. .-.. -.--"
+    },
+    {
+      "slug": "open",
+      "term": "Open",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/open.html",
+      "morse": "--- .--. . -."
+    },
+    {
+      "slug": "or",
+      "term": "Or",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/or.html",
+      "morse": "--- .-."
+    },
+    {
+      "slug": "order",
+      "term": "Order",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/order.html",
+      "morse": "--- .-. -.. . .-."
+    },
+    {
+      "slug": "other",
+      "term": "Other",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/other.html",
+      "morse": "--- - .... . .-."
+    },
+    {
+      "slug": "our",
+      "term": "Our",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/our.html",
+      "morse": "--- ..- .-."
+    },
+    {
+      "slug": "out",
+      "term": "Out",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/out.html",
+      "morse": "--- ..- -"
+    },
+    {
+      "slug": "over",
+      "term": "Over",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/over.html",
+      "morse": "--- ...- . .-."
+    },
+    {
+      "slug": "own",
+      "term": "Own",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/own.html",
+      "morse": "--- .-- -."
+    },
+    {
+      "slug": "paper",
+      "term": "Paper",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/paper.html",
+      "morse": ".--. .- .--. . .-."
+    },
+    {
+      "slug": "part",
+      "term": "Part",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/part.html",
+      "morse": ".--. .- .-. -"
+    },
+    {
+      "slug": "people",
+      "term": "People",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/people.html",
+      "morse": ".--. . --- .--. .-.. ."
+    },
+    {
+      "slug": "place",
+      "term": "Place",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/place.html",
+      "morse": ".--. .-.. .- -.-. ."
+    },
+    {
+      "slug": "point",
+      "term": "Point",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/point.html",
+      "morse": ".--. --- .. -. -"
+    },
+    {
+      "slug": "put",
+      "term": "Put",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/put.html",
+      "morse": ".--. ..- -"
+    },
+    {
+      "slug": "question",
+      "term": "Question",
+      "intent": "education",
+      "url": "https://morsecodegenerator.com/words/question.html",
+      "morse": "--.- ..- . ... - .. --- -."
+    },
+    {
+      "slug": "read",
+      "term": "Read",
+      "intent": "education",
+      "url": "https://morsecodegenerator.com/words/read.html",
+      "morse": ".-. . .- -.."
+    },
+    {
+      "slug": "right",
+      "term": "Right",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/right.html",
+      "morse": ".-. .. --. .... -"
+    },
+    {
+      "slug": "river",
+      "term": "River",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/river.html",
+      "morse": ".-. .. ...- . .-."
+    },
+    {
+      "slug": "run",
+      "term": "Run",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/run.html",
+      "morse": ".-. ..- -."
+    },
+    {
+      "slug": "said",
+      "term": "Said",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/said.html",
+      "morse": "... .- .. -.."
+    },
+    {
+      "slug": "same",
+      "term": "Same",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/same.html",
+      "morse": "... .- -- ."
+    },
+    {
+      "slug": "saw",
+      "term": "Saw",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/saw.html",
+      "morse": "... .- .--"
+    },
+    {
+      "slug": "say",
+      "term": "Say",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/say.html",
+      "morse": "... .- -.--"
+    },
+    {
+      "slug": "school",
+      "term": "School",
+      "intent": "education",
+      "url": "https://morsecodegenerator.com/words/school.html",
+      "morse": "... -.-. .... --- --- .-.."
+    },
+    {
+      "slug": "sea",
+      "term": "Sea",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/sea.html",
+      "morse": "... . .-"
+    },
+    {
+      "slug": "see",
+      "term": "See",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/see.html",
+      "morse": "... . ."
+    },
+    {
+      "slug": "she",
+      "term": "She",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/she.html",
+      "morse": "... .... ."
+    },
+    {
+      "slug": "should",
+      "term": "Should",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/should.html",
+      "morse": "... .... --- ..- .-.. -.."
+    },
+    {
+      "slug": "show",
+      "term": "Show",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/show.html",
+      "morse": "... .... --- .--"
+    },
+    {
+      "slug": "small",
+      "term": "Small",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/small.html",
+      "morse": "... -- .- .-.. .-.."
+    },
+    {
+      "slug": "so",
+      "term": "So",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/so.html",
+      "morse": "... ---"
+    },
+    {
+      "slug": "some",
+      "term": "Some",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/some.html",
+      "morse": "... --- -- ."
+    },
+    {
+      "slug": "something",
+      "term": "Something",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/something.html",
+      "morse": "... --- -- . - .... .. -. --."
+    },
+    {
+      "slug": "song",
+      "term": "Song",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/song.html",
+      "morse": "... --- -. --."
+    },
+    {
+      "slug": "soon",
+      "term": "Soon",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/soon.html",
+      "morse": "... --- --- -."
+    },
+    {
+      "slug": "sound",
+      "term": "Sound",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/sound.html",
+      "morse": "... --- ..- -. -.."
+    },
+    {
+      "slug": "spell",
+      "term": "Spell",
+      "intent": "education",
+      "url": "https://morsecodegenerator.com/words/spell.html",
+      "morse": "... .--. . .-.. .-.."
+    },
+    {
+      "slug": "stand",
+      "term": "Stand",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/stand.html",
+      "morse": "... - .- -. -.."
+    },
+    {
+      "slug": "still",
+      "term": "Still",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/still.html",
+      "morse": "... - .. .-.. .-.."
+    },
+    {
+      "slug": "study",
+      "term": "Study",
+      "intent": "education",
+      "url": "https://morsecodegenerator.com/words/study.html",
+      "morse": "... - ..- -.. -.--"
+    },
+    {
+      "slug": "such",
+      "term": "Such",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/such.html",
+      "morse": "... ..- -.-. ...."
+    },
+    {
+      "slug": "take",
+      "term": "Take",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/take.html",
+      "morse": "- .- -.- ."
+    },
+    {
+      "slug": "tell",
+      "term": "Tell",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/tell.html",
+      "morse": "- . .-.. .-.."
+    },
+    {
+      "slug": "than",
+      "term": "Than",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/than.html",
+      "morse": "- .... .- -."
+    },
+    {
+      "slug": "that",
+      "term": "That",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/that.html",
+      "morse": "- .... .- -"
+    },
+    {
+      "slug": "the",
+      "term": "The",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/the.html",
+      "morse": "- .... ."
+    },
+    {
+      "slug": "their",
+      "term": "Their",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/their.html",
+      "morse": "- .... . .. .-."
+    },
+    {
+      "slug": "them",
+      "term": "Them",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/them.html",
+      "morse": "- .... . --"
+    },
+    {
+      "slug": "then",
+      "term": "Then",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/then.html",
+      "morse": "- .... . -."
+    },
+    {
+      "slug": "there",
+      "term": "There",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/there.html",
+      "morse": "- .... . .-. ."
+    },
+    {
+      "slug": "these",
+      "term": "These",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/these.html",
+      "morse": "- .... . ... ."
+    },
+    {
+      "slug": "they",
+      "term": "They",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/they.html",
+      "morse": "- .... . -.--"
+    },
+    {
+      "slug": "thing",
+      "term": "Thing",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/thing.html",
+      "morse": "- .... .. -. --."
+    },
+    {
+      "slug": "think",
+      "term": "Think",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/think.html",
+      "morse": "- .... .. -. -.-"
+    },
+    {
+      "slug": "this",
+      "term": "This",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/this.html",
+      "morse": "- .... .. ..."
+    },
+    {
+      "slug": "those",
+      "term": "Those",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/those.html",
+      "morse": "- .... --- ... ."
+    },
+    {
+      "slug": "thought",
+      "term": "Thought",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/thought.html",
+      "morse": "- .... --- ..- --. .... -"
+    },
+    {
+      "slug": "three",
+      "term": "Three",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/three.html",
+      "morse": "- .... .-. . ."
+    },
+    {
+      "slug": "time",
+      "term": "Time",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/time.html",
+      "morse": "- .. -- ."
+    },
+    {
+      "slug": "to",
+      "term": "To",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/to.html",
+      "morse": "- ---"
+    },
+    {
+      "slug": "together",
+      "term": "Together",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/together.html",
+      "morse": "- --- --. . - .... . .-."
+    },
+    {
+      "slug": "too",
+      "term": "Too",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/too.html",
+      "morse": "- --- ---"
+    },
+    {
+      "slug": "tree",
+      "term": "Tree",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/tree.html",
+      "morse": "- .-. . ."
+    },
+    {
+      "slug": "two",
+      "term": "Two",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/two.html",
+      "morse": "- .-- ---"
+    },
+    {
+      "slug": "under",
+      "term": "Under",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/under.html",
+      "morse": "..- -. -.. . .-."
+    },
+    {
+      "slug": "up",
+      "term": "Up",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/up.html",
+      "morse": "..- .--."
+    },
+    {
+      "slug": "use",
+      "term": "Use",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/use.html",
+      "morse": "..- ... ."
+    },
+    {
+      "slug": "very",
+      "term": "Very",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/very.html",
+      "morse": "...- . .-. -.--"
+    },
+    {
+      "slug": "wait",
+      "term": "Wait",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/wait.html",
+      "morse": ".-- .- .. -"
+    },
+    {
+      "slug": "war",
+      "term": "War",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/war.html",
+      "morse": ".-- .- .-."
+    },
+    {
+      "slug": "water",
+      "term": "Water",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/water.html",
+      "morse": ".-- .- - . .-."
+    },
+    {
+      "slug": "danger",
+      "term": "Danger",
+      "intent": "emergency",
+      "url": "https://morsecodegenerator.com/words/danger.html",
+      "morse": "-.. .- -. --. . .-."
+    },
+    {
+      "slug": "safe",
+      "term": "Safe",
+      "intent": "emergency",
+      "url": "https://morsecodegenerator.com/words/safe.html",
+      "morse": "... .- ..-. ."
+    },
+    {
+      "slug": "ready",
+      "term": "Ready",
+      "intent": "emergency",
+      "url": "https://morsecodegenerator.com/words/ready.html",
+      "morse": ".-. . .- -.. -.--"
+    },
+    {
+      "slug": "sorry",
+      "term": "Sorry",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/sorry.html",
+      "morse": "... --- .-. .-. -.--"
+    },
+    {
+      "slug": "welcome",
+      "term": "Welcome",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/welcome.html",
+      "morse": ".-- . .-.. -.-. --- -- ."
+    },
+    {
+      "slug": "what",
+      "term": "What",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/what.html",
+      "morse": ".-- .... .- -"
+    },
+    {
+      "slug": "when",
+      "term": "When",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/when.html",
+      "morse": ".-- .... . -."
+    },
+    {
+      "slug": "where",
+      "term": "Where",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/where.html",
+      "morse": ".-- .... . .-. ."
+    },
+    {
+      "slug": "who",
+      "term": "Who",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/who.html",
+      "morse": ".-- .... ---"
+    },
+    {
+      "slug": "why",
+      "term": "Why",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/why.html",
+      "morse": ".-- .... -.--"
+    },
+    {
+      "slug": "work",
+      "term": "Work",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/work.html",
+      "morse": ".-- --- .-. -.-"
+    },
+    {
+      "slug": "world",
+      "term": "World",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/world.html",
+      "morse": ".-- --- .-. .-.. -.."
+    },
+    {
+      "slug": "x",
+      "term": "X",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/x.html",
+      "morse": "-..-"
+    },
+    {
+      "slug": "y",
+      "term": "Y",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/y.html",
+      "morse": "-.--"
+    },
+    {
+      "slug": "yes",
+      "term": "Yes",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/yes.html",
+      "morse": "-.-- . ..."
+    },
+    {
+      "slug": "you",
+      "term": "You",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/you.html",
+      "morse": "-.-- --- ..-"
+    },
+    {
+      "slug": "z",
+      "term": "Z",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/z.html",
+      "morse": "--.."
+    },
+    {
+      "slug": "b",
+      "term": "B",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/b.html",
+      "morse": "-..."
+    },
+    {
+      "slug": "c",
+      "term": "C",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/c.html",
+      "morse": "-.-."
+    },
+    {
+      "slug": "d",
+      "term": "D",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/d.html",
+      "morse": "-.."
+    },
+    {
+      "slug": "e",
+      "term": "E",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/e.html",
+      "morse": "."
+    },
+    {
+      "slug": "f",
+      "term": "F",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/f.html",
+      "morse": "..-."
+    },
+    {
+      "slug": "g",
+      "term": "G",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/g.html",
+      "morse": "--."
+    },
+    {
+      "slug": "h",
+      "term": "H",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/h.html",
+      "morse": "...."
+    },
+    {
+      "slug": "j",
+      "term": "J",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/j.html",
+      "morse": ".---"
+    },
+    {
+      "slug": "k",
+      "term": "K",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/k.html",
+      "morse": "-.-"
+    },
+    {
+      "slug": "l",
+      "term": "L",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/l.html",
+      "morse": ".-.."
+    },
+    {
+      "slug": "m",
+      "term": "M",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/m.html",
+      "morse": "--"
+    },
+    {
+      "slug": "n",
+      "term": "N",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/n.html",
+      "morse": "-."
+    },
+    {
+      "slug": "o",
+      "term": "O",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/o.html",
+      "morse": "---"
+    },
+    {
+      "slug": "p",
+      "term": "P",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/p.html",
+      "morse": ".--."
+    },
+    {
+      "slug": "q",
+      "term": "Q",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/q.html",
+      "morse": "--.-"
+    },
+    {
+      "slug": "r",
+      "term": "R",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/r.html",
+      "morse": ".-."
+    },
+    {
+      "slug": "s",
+      "term": "S",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/s.html",
+      "morse": "..."
+    },
+    {
+      "slug": "t",
+      "term": "T",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/t.html",
+      "morse": "-"
+    },
+    {
+      "slug": "u",
+      "term": "U",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/u.html",
+      "morse": "..-"
+    },
+    {
+      "slug": "v",
+      "term": "V",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/v.html",
+      "morse": "...-"
+    },
+    {
+      "slug": "w",
+      "term": "W",
+      "intent": "general",
+      "url": "https://morsecodegenerator.com/words/w.html",
+      "morse": ".--"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 ---
 import Layout from "../components/Layout.astro";
 
-const title = "Morse Code Generator – Translate Text to Morse Instantly";
+const title = "Morse Code Generator – Fast, Free Morse Translator";
 const description =
-  "Free online Morse code generator. Convert text to Morse code, decode Morse to text, and copy results instantly.";
+  "Translate text to Morse code, decode Morse back to plain text, and practice letters, words, and phrases with instant copy tools.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -40,41 +40,60 @@ const jsonLd = {
   <header class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="muted kicker">Free • Fast • Private</p>
+        <p class="kicker">Free • Fast • Private</p>
 
-        <h1 class="hero-title">Morse Code Generator</h1>
+        <h1 class="hero-title">Translate & Learn Morse Code in Seconds</h1>
 
         <p class="muted hero-sub">
-          Translate text to Morse code instantly, decode Morse back to text, and copy results in one click.
-          Runs entirely in your browser — no accounts, no logins.
+          Convert text to Morse, decode Morse back to plain text, and drill letters, words, and phrases.
+          Everything runs in your browser with instant copy tools and zero sign-up.
         </p>
 
         <div class="hero-actions">
-          <a class="btn primary" href="/translate/">Open Translator</a>
-          <a class="btn" href="/morse-code/">Learn hub</a>
-          <a class="btn" href="/morse-code/words/">Practice Words</a>
-          <a class="btn" href="/phrases/">Practice Phrases</a>
+          <a class="btn primary" href="/translate/">
+            Start translating
+            <span aria-hidden="true">→</span>
+          </a>
+          <a class="btn secondary" href="/morse-code/">Explore the learning hub</a>
+        </div>
+
+        <div class="hero-stats" role="list">
+          <div class="stat" role="listitem">
+            <p class="stat-value">A–Z + 0–9</p>
+            <p class="muted stat-label">Complete alphabet</p>
+          </div>
+          <div class="stat" role="listitem">
+            <p class="stat-value">20+ symbols</p>
+            <p class="muted stat-label">Punctuation & prosigns</p>
+          </div>
+          <div class="stat" role="listitem">
+            <p class="stat-value">Instant copy</p>
+            <p class="muted stat-label">Ready for sharing</p>
+          </div>
         </div>
 
         <div class="hint-row" aria-label="Morse formatting tips">
-          <span class="hint">Letters: spaces</span>
-          <span class="hint">Words: “/”</span>
+          <span class="hint">Letters separated by spaces</span>
+          <span class="hint">Words separated by “/”</span>
           <span class="hint muted">Example: <span class="k">SOS</span> → <span class="k">... --- ...</span></span>
         </div>
       </div>
 
-      <section class="card tool" aria-label="Quick translate">
+      <section class="card glow tool" aria-label="Quick translate">
         <div class="tool-head">
           <div>
-            <h2 style="margin:0;">Quick translate</h2>
+            <p class="muted tool-eyebrow">Quick translator</p>
+            <h2 style="margin:0;">Try it now</h2>
             <p class="muted" style="margin:6px 0 0;">
-              Type text or Morse and convert instantly. (Full tool available on the translator page.)
+              Type text or Morse and convert instantly. The full translator adds autoswap, sharing, and practice tips.
             </p>
           </div>
 
-          <div class="muted tool-mini-links">
-            <a href="/morse-code/words/">Words</a> •
-            <a href="/morse-code/numbers/">Numbers</a> •
+          <div class="tool-mini-links">
+            <a href="/morse-code/words/">Words</a>
+            <span aria-hidden="true">•</span>
+            <a href="/morse-code/numbers/">Numbers</a>
+            <span aria-hidden="true">•</span>
             <a href="/morse-code/punctuation/">Punctuation</a>
           </div>
         </div>
@@ -97,15 +116,18 @@ const jsonLd = {
               <button id="mcg-text-to-morse" type="button">Text → Morse</button>
               <button id="mcg-morse-to-text" type="button">Morse → Text</button>
               <button id="mcg-copy" type="button">Copy output</button>
+              <button id="mcg-play" type="button">Play</button>
+              <button id="mcg-download" type="button">Download</button>
 
               <span class="spacer" aria-hidden="true"></span>
 
+              <button id="mcg-history" type="button">History</button>
               <button id="mcg-swap" type="button">Swap</button>
               <button id="mcg-clear" type="button">Clear</button>
             </div>
 
             <p class="muted" style="margin-top:10px;">
-              Tip: Use <span class="k">/</span> between words.
+              Tip: Use <span class="k">/</span> between words and double-check spacing.
             </p>
           </div>
 
@@ -122,9 +144,13 @@ const jsonLd = {
               autocapitalize="off"
             ></textarea>
 
-            <p class="muted" style="margin-top:10px;">
-              Want the full tool? <a href="/translate/">Open the translator</a>.
-            </p>
+            <div class="output-actions">
+              <p class="muted" style="margin:0;">
+                Want more controls?
+              </p>
+              <button id="mcg-voice" type="button">Voice input</button>
+              <a class="btn ghost" href="/translate/">Open the translator</a>
+            </div>
           </div>
         </div>
       </section>
@@ -134,81 +160,223 @@ const jsonLd = {
   <!-- Toast for copy feedback -->
   <div id="mcg-toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <section class="grid hub" style="margin-top:16px;">
-    <section class="card">
-      <h2 style="margin-top:0;">Learn Morse Code</h2>
-      <p class="muted" style="margin-top:0;">
-        Start with the alphabet, then numbers and punctuation.
-      </p>
-
-      <div class="pill-grid" style="margin-top:12px;">
-        <a href="/morse-code/a/">Alphabet (A–Z)</a>
-        <a href="/morse-code/numbers/">Numbers (0–9)</a>
-        <a href="/morse-code/punctuation/">Punctuation</a>
-        <a href="/morse-code/words/">Words (A–Z)</a>
-        <a href="/translate/">Practice in Translator</a>
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Everything you need</p>
+        <h2 class="section-title">Learn, practice, and share in one place</h2>
       </div>
-
-      <p class="muted" style="margin-top:12px;">
-        Practice tip: learn a few letters per day and test yourself using the translator.
-      </p>
-    </section>
-
-    <section class="card">
-      <h2 style="margin-top:0;">Common Phrases</h2>
-      <p class="muted" style="margin-top:0;">
-        Popular phrases people search for and copy.
-      </p>
-
-      <div class="pill-grid" style="margin-top:12px;">
-        <a href="/phrases/sos/">SOS</a>
-        <a href="/phrases/help/">HELP</a>
-        <a href="/phrases/mayday/">MAYDAY</a>
-        <a href="/phrases/emergency/">EMERGENCY</a>
-        <a href="/phrases/stop/">STOP</a>
-        <a href="/phrases/wait/">WAIT</a>
-        <a href="/phrases/call-me/">CALL ME</a>
-        <a href="/phrases/i-love-you/">I LOVE YOU</a>
-      </div>
-
-      <p class="muted" style="margin-top:10px;">
-        Browse all phrases in the <a href="/phrases/">phrases section</a>.
-      </p>
-    </section>
-
-    <section class="card">
-      <h2 style="margin-top:0;">Morse Code Words</h2>
-      <p class="muted" style="margin-top:0;">
-        Click any word to open a dedicated page with its Morse code.
-      </p>
-
-      <div class="pill-grid" style="margin-top:12px;">
-        <a href="/morse-code/words/">Browse words A–Z</a>
-        <a href="/hello-in-morse-code/">HELLO</a>
-        <a href="/thank-you-in-morse-code/">THANK YOU</a>
-        <a href="/good-night-in-morse-code/">GOOD NIGHT</a>
-        <a href="/i-love-you-in-morse-code/">I LOVE YOU</a>
-        <a href="/help-in-morse-code/">HELP</a>
-        <a href="/water-in-morse-code/">WATER</a>
-        <a href="/welcome-in-morse-code/">WELCOME</a>
-      </div>
-
-      <p class="muted" style="margin-top:10px;">
-        Tip: you can also practice any word instantly in the <a href="/translate/">translator</a>.
-      </p>
-    </section>
+      <p class="muted section-sub">Every page is optimized for quick study sessions, classroom demos, or emergency prep.</p>
+    </div>
+    <div class="grid feature-grid">
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">⚡️</div>
+        <h3>Instant conversion</h3>
+        <p class="muted">Paste text or Morse and get results immediately with copy-ready output.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">📚</div>
+        <h3>Learning-friendly</h3>
+        <p class="muted">Reference pages cover letters, numbers, punctuation, and common words.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">🎯</div>
+        <h3>Practice workflows</h3>
+        <p class="muted">Use phrases, word lists, and the translator to drill patterns fast.</p>
+      </article>
+    </div>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">How it works</h2>
-    <ol>
-      <li>Type text or paste Morse into the input box.</li>
-      <li>Use the convert buttons (Text → Morse / Morse → Text).</li>
-      <li>Copy output and practice using alphabet, words, and phrases.</li>
-    </ol>
+  <section class="section alt">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Fast navigation</p>
+        <h2 class="section-title">Jump into the learning hubs</h2>
+      </div>
+      <p class="muted section-sub">Choose a path: letters, numbers, punctuation, or full words and phrases.</p>
+    </div>
+    <div class="grid hub">
+      <section class="card hub-card">
+        <h3>Learn Morse Code</h3>
+        <p class="muted">
+          Start with the alphabet, then move to numbers and punctuation.
+        </p>
+        <div class="pill-grid">
+          <a href="/morse-code/a/">Alphabet (A–Z)</a>
+          <a href="/morse-code/numbers/">Numbers (0–9)</a>
+          <a href="/morse-code/punctuation/">Punctuation</a>
+          <a href="/morse-code/words/">Words (A–Z)</a>
+          <a href="/translate/">Practice in Translator</a>
+        </div>
+        <p class="muted">
+          Practice tip: learn a few letters per day and test yourself using the translator.
+        </p>
+      </section>
+
+      <section class="card hub-card">
+        <h3>Common Phrases</h3>
+        <p class="muted">
+          Popular phrases people search for and copy.
+        </p>
+        <div class="pill-grid">
+          <a href="/phrases/sos/">SOS</a>
+          <a href="/phrases/help/">HELP</a>
+          <a href="/phrases/mayday/">MAYDAY</a>
+          <a href="/phrases/emergency/">EMERGENCY</a>
+          <a href="/phrases/stop/">STOP</a>
+          <a href="/phrases/wait/">WAIT</a>
+          <a href="/phrases/call-me/">CALL ME</a>
+          <a href="/phrases/i-love-you/">I LOVE YOU</a>
+        </div>
+        <p class="muted">
+          Browse all phrases in the <a href="/phrases/">phrases section</a>.
+        </p>
+      </section>
+
+      <section class="card hub-card">
+        <h3>Morse Code Words</h3>
+        <p class="muted">
+          Click any word to open a dedicated page with its Morse code.
+        </p>
+        <div class="pill-grid">
+          <a href="/morse-code/words/">Browse words A–Z</a>
+          <a href="/hello-in-morse-code/">HELLO</a>
+          <a href="/thank-you-in-morse-code/">THANK YOU</a>
+          <a href="/good-night-in-morse-code/">GOOD NIGHT</a>
+          <a href="/i-love-you-in-morse-code/">I LOVE YOU</a>
+          <a href="/help-in-morse-code/">HELP</a>
+          <a href="/water-in-morse-code/">WATER</a>
+          <a href="/welcome-in-morse-code/">WELCOME</a>
+        </div>
+        <p class="muted">
+          Tip: you can also practice any word instantly in the <a href="/translate/">translator</a>.
+        </p>
+      </section>
+    </div>
   </section>
 
-  <!-- Structured data -->
+  <section class="section steps">
+    <div class="section-head">
+      <div>
+        <p class="kicker">How it works</p>
+        <h2 class="section-title">Translate in three simple steps</h2>
+      </div>
+      <p class="muted section-sub">Perfect for quick conversions or structured practice sessions.</p>
+    </div>
+    <div class="grid step-grid">
+      <div class="step-card">
+        <span class="step-number">01</span>
+        <h3>Paste or type your message</h3>
+        <p class="muted">Use plain text or Morse symbols. The tool detects both.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">02</span>
+        <h3>Convert instantly</h3>
+        <p class="muted">Tap Text → Morse or Morse → Text to get results fast.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">03</span>
+        <h3>Copy + practice</h3>
+        <p class="muted">Save output to share or drill patterns with words and phrases.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card soft">
+    <div class="section-head">
+      <h2 class="section-title">Common words to practice</h2>
+      <p class="muted section-sub">Open a dedicated word page or practice in the translator.</p>
+    </div>
+    <div class="pill-grid">
+      <a href="/help-in-morse-code/">HELP</a>
+      <a href="/water-in-morse-code/">WATER</a>
+      <a href="/danger-in-morse-code/">DANGER</a>
+      <a href="/safe-in-morse-code/">SAFE</a>
+      <a href="/ready-in-morse-code/">READY</a>
+      <a href="/hello-in-morse-code/">HELLO</a>
+      <a href="/thank-you-in-morse-code/">THANK YOU</a>
+      <a href="/sorry-in-morse-code/">SORRY</a>
+    </div>
+  </section>
+
+  <section class="section card soft">
+    <div class="section-head">
+      <h2 class="section-title">Quick answers</h2>
+      <p class="muted section-sub">Common searches with direct links to learn or translate faster.</p>
+    </div>
+    <ul>
+      <li>
+        <strong>SOS in Morse code:</strong> <span class="k">... --- ...</span>. Try it in the
+        <a href="/translate/?q=SOS"> translator</a>.
+      </li>
+      <li>
+        <strong>Morse alphabet chart:</strong> Browse the
+        <a href="/morse-code/a/"> A–Z reference</a>.
+      </li>
+      <li>
+        <strong>Morse numbers:</strong> Learn 0–9 on the
+        <a href="/morse-code/numbers/"> numbers page</a>.
+      </li>
+      <li>
+        <strong>Common phrases:</strong> Explore the
+        <a href="/phrases/"> phrases library</a> for practice.
+      </li>
+    </ul>
+  </section>
+
+
+
+  <section class="section card soft utility-strip">
+    <p class="muted">🔥 <strong>1-day streak</strong> — Convert your first message today and come back tomorrow to keep your streak alive.</p>
+  </section>
+
+  <section class="section checklist card soft" id="quickChecklist">
+    <div class="section-head">
+      <h2 class="section-title">🎯 Quick Start Checklist</h2>
+      <p class="muted section-sub"><span id="checkCount">0</span>/3 complete</p>
+    </div>
+    <div class="check-items">
+      <label><input type="checkbox" data-task="convert" /> Convert your first message</label>
+      <label><input type="checkbox" data-task="learn" /> Learn one letter today</label>
+      <label><input type="checkbox" data-task="play" /> Use play audio once</label>
+    </div>
+  </section>
+
+  <section class="section card soft word-day">
+    <div class="section-head">
+      <h2 class="section-title">📅 Word of the Day</h2>
+      <p class="muted section-sub" id="wordDayText">COURAGE</p>
+    </div>
+    <p class="k" id="wordDayMorse">-.-. --- ..- .-. .- --. .</p>
+    <div class="hero-actions">
+      <button id="wordDayPlay" type="button">Play</button>
+      <button id="wordDayCopy" type="button">Copy</button>
+    </div>
+  </section>
+
+  <section class="section card soft">
+    <div class="section-head">
+      <h2 class="section-title">Did You Know?</h2>
+    </div>
+    <div class="grid facts-grid">
+      <article class="feature-card"><h3>Invented in 1838</h3><p class="muted">Samuel Morse introduced one of the first practical long-distance communication systems.</p></article>
+      <article class="feature-card"><h3>SOS = ... --- ...</h3><p class="muted">The distress signal is used globally due to its clear rhythm and recognizability.</p></article>
+      <article class="feature-card"><h3>Still used today</h3><p class="muted">Aviation, maritime, and amateur radio communities still teach and practice Morse.</p></article>
+    </div>
+  </section>
+
+  <section class="section related card soft">
+    <div class="section-head">
+      <h2 class="section-title">Related Resources</h2>
+    </div>
+    <div class="grid related-grid">
+      <a class="resource-card" href="/morse-code/">Interactive Learning</a>
+      <a class="resource-card" href="/morse-code/a/">Morse Code Alphabet</a>
+      <a class="resource-card" href="/about/">FAQ & Guides</a>
+    </div>
+  </section>
+
+    <!-- Structured data -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <!-- Runtime tool (owns conversion + swap + clear + auto-detect) -->
@@ -224,8 +392,13 @@ const jsonLd = {
       }
 
       onReady(function () {
+        const input = document.getElementById("mcg-input");
         const output = document.getElementById("mcg-output");
         const copyBtn = document.getElementById("mcg-copy");
+        const playBtn = document.getElementById("mcg-play");
+        const downloadBtn = document.getElementById("mcg-download");
+        const historyBtn = document.getElementById("mcg-history");
+        const voiceBtn = document.getElementById("mcg-voice");
         const toast = document.getElementById("mcg-toast");
 
         function showToast(msg) {
@@ -238,6 +411,97 @@ const jsonLd = {
             1800
           );
         }
+
+
+
+        downloadBtn?.addEventListener("click", () => {
+          const v = (output?.value || "").trim();
+          if (!v) return showToast("Nothing to download");
+          const blob = new Blob([v], { type: "text/plain;charset=utf-8" });
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "morse-output.txt";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+
+        historyBtn?.addEventListener("click", () => {
+          const key = "mcg-history";
+          const v = (output?.value || "").trim();
+          if (v) {
+            const arr = JSON.parse(localStorage.getItem(key) || "[]");
+            arr.unshift(v);
+            localStorage.setItem(key, JSON.stringify(arr.slice(0, 10)));
+            showToast("Saved to history");
+            return;
+          }
+          const arr = JSON.parse(localStorage.getItem(key) || "[]");
+          if (!arr.length) return showToast("No history yet");
+          input.value = arr[0];
+          showToast("Loaded latest history item");
+        });
+
+        playBtn?.addEventListener("click", () => {
+          const text = (output?.value || "").split("\n")[0].replace(/[^.\-\/\s]/g, "").trim();
+          if (!text) return showToast("Nothing to play");
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          let t = ctx.currentTime;
+          const unit = 0.09;
+          for (const token of text.split(/\s+/)) {
+            if (token === "/") { t += unit * 7; continue; }
+            for (const c of token) {
+              const dur = c === "-" ? unit * 3 : unit;
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.frequency.value = 620;
+              gain.gain.value = 0.18;
+              osc.connect(gain); gain.connect(ctx.destination);
+              osc.start(t); osc.stop(t + dur);
+              t += dur + unit;
+            }
+            t += unit * 2;
+          }
+          showToast("Playing Morse");
+        });
+
+        voiceBtn?.addEventListener("click", () => {
+          const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+          if (!SR) return showToast("Voice input not supported");
+          const rec = new SR();
+          rec.lang = "en-US";
+          rec.onresult = (e) => {
+            const txt = e.results?.[0]?.[0]?.transcript || "";
+            if (input) input.value = txt;
+            showToast("Voice captured");
+          };
+          rec.start();
+        });
+
+        const checkboxes = Array.from(document.querySelectorAll("#quickChecklist input[type=checkbox]"));
+        const checkCount = document.getElementById("checkCount");
+        const saveChecklist = () => {
+          const done = checkboxes.filter((c) => c.checked).length;
+          if (checkCount) checkCount.textContent = String(done);
+          localStorage.setItem("mcg-checklist", JSON.stringify(checkboxes.map((c) => c.checked)));
+        };
+        try {
+          const saved = JSON.parse(localStorage.getItem("mcg-checklist") || "[]");
+          checkboxes.forEach((c, i) => (c.checked = !!saved[i]));
+        } catch {}
+        checkboxes.forEach((c) => c.addEventListener("change", saveChecklist));
+        saveChecklist();
+
+        const word = "COURAGE";
+        const wordMorse = "-.-. --- ..- .-. .- --. .";
+        const dayPlay = document.getElementById("wordDayPlay");
+        const dayCopy = document.getElementById("wordDayCopy");
+        dayCopy?.addEventListener("click", async () => {
+          try { await navigator.clipboard.writeText(word + " — " + wordMorse); showToast("Word copied"); } catch {}
+        });
+        dayPlay?.addEventListener("click", () => {
+          if (output) output.value = wordMorse;
+          playBtn?.click();
+        });
 
         copyBtn?.addEventListener("click", async () => {
           const v = (output?.value || "").trim();
@@ -263,32 +527,58 @@ const jsonLd = {
   </script>
 
   <style>
+    .hero{
+      position: relative;
+    }
     .hero-grid{
       display:grid;
       grid-template-columns: 1fr;
-      gap: 16px;
+      gap: 20px;
       align-items: start;
     }
 
     .kicker{
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       font-size: 12px;
+      color: var(--accentStrong);
     }
 
-    .hero-title{ margin: 0 0 10px; }
-    .hero-sub{ margin: 0; max-width: 72ch; }
+    .hero-title{ margin: 0 0 12px; font-size: clamp(34px, 3.6vw, 52px); }
+    .hero-sub{ margin: 0; max-width: 70ch; }
 
     .hero-actions{
-      margin-top: 14px;
+      margin-top: 18px;
       display:flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
+    .hero-stats{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .stat{
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(163,195,255,0.30);
+      background: rgba(11,22,46,0.70);
+    }
+    .stat-value{
+      margin: 0;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .stat-label{
+      margin: 4px 0 0;
+      font-size: 13px;
+    }
+
     .hint-row{
-      margin-top: 14px;
+      margin-top: 16px;
       display:flex;
       flex-wrap:wrap;
       gap: 8px;
@@ -299,9 +589,9 @@ const jsonLd = {
       align-items:center;
       padding: 7px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.82);
+      border: 1px solid rgba(163,195,255,0.30);
+      background: rgba(10,20,42,0.68);
+      color: rgba(235,242,255,0.90);
       font-size: 13px;
       line-height: 1.2;
     }
@@ -313,7 +603,20 @@ const jsonLd = {
       justify-content: space-between;
       gap: 10px 14px;
     }
-    .tool-mini-links{ font-size: 13px; }
+    .tool-eyebrow{
+      margin: 0 0 6px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .tool-mini-links{
+      font-size: 13px;
+      display:flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
     .tool-mini-links a{ text-decoration:none; }
     .tool-mini-links a:hover{ text-decoration: underline; }
 
@@ -325,12 +628,104 @@ const jsonLd = {
     }
     .spacer{ flex:1; min-width: 8px; }
 
+    .output-actions{
+      margin-top: 12px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .feature-grid{
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .feature-card{
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(163,195,255,0.26);
+      background: rgba(10,20,42,0.62);
+    }
+    .feature-card h3{
+      margin: 12px 0 6px;
+      font-size: 16px;
+    }
+    .feature-icon{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(138,180,255,0.18);
+      border: 1px solid rgba(138,180,255,0.35);
+      font-size: 18px;
+    }
+
     .hub{
       grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .hub-card{
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      border-color: rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+    }
+    .hub-card h3{
+      margin: 0;
+    }
+    .hub-card .pill-grid{
+      margin: 0;
+    }
+    .hub-card p{ margin: 0; }
+
+    .steps{
+      padding: 0;
+    }
+
+    .utility-strip{ border-color: rgba(125,176,255,0.42); background: linear-gradient(120deg, rgba(22,37,78,0.84), rgba(20,56,90,0.72)); }
+    .checklist{ border-color: rgba(132,160,255,0.45); background: linear-gradient(120deg, rgba(28,33,88,0.78), rgba(34,56,118,0.66)); }
+    .check-items{ display:grid; gap:10px; }
+    .check-items label{ display:flex; gap:10px; align-items:center; padding: 12px; border-radius: 12px; border: 1px solid rgba(167,195,255,0.24); background: rgba(9,20,45,0.68); }
+    .word-day{ text-align:center; }
+    .word-day .k{ font-size: 28px; letter-spacing: .15em; color: var(--accent); }
+    .facts-grid{ grid-template-columns: 1fr; }
+    .related{ border-color: rgba(132,160,255,0.45); background: linear-gradient(120deg, rgba(25,34,86,0.75), rgba(22,57,104,0.66)); }
+    .related-grid{ grid-template-columns: 1fr; }
+    .resource-card{ display:block; padding: 18px; border:1px solid rgba(164,194,255,0.30); border-radius: 14px; text-decoration:none; color: var(--text); font-weight: 750; background: rgba(9,20,45,0.72); }
+
+    .step-grid{
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .step-card{
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(163,195,255,0.28);
+      background: rgba(10,20,42,0.68);
+    }
+    .step-number{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(126,240,255,0.35);
+      background: rgba(126,240,255,0.14);
+      font-weight: 800;
+      margin-bottom: 10px;
     }
     @media (min-width: 980px){
       .hero-grid{ grid-template-columns: 0.95fr 1.05fr; }
-      .hub{ grid-template-columns: 1fr 1fr 1fr; }
+      .feature-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hub{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .step-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .facts-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .related-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
 
     @media (max-width: 520px){
@@ -348,7 +743,7 @@ const jsonLd = {
       padding: 10px 12px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: rgba(0,0,0,0.78);
+      background: rgba(7,18,39,0.92);
       backdrop-filter: blur(10px);
       color: rgba(255,255,255,0.92);
       box-shadow: var(--shadow);

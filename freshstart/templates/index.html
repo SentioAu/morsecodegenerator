@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero card">
+  <p class="eyebrow">Fresh Start</p>
+  <h1>Rebuilt from scratch without Astro</h1>
+  <p class="muted">This foundation uses Flask + vanilla JS so we can fully control design, performance, and feature rollout.</p>
+  <div class="actions">
+    <a class="btn" href="/translate/">Open Translator</a>
+    <a class="ghost" href="/phrases/">Practice Phrases</a>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Popular phrases</h2>
+  <div class="pill-grid">
+    {% for p in phrases %}
+    <span class="pill">{{ p.text }}</span>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

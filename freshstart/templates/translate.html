@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+  <h1>Translator</h1>
+  <p class="muted">Text ⇄ Morse with copy and share link.</p>
+  <label>Input</label>
+  <textarea id="input" rows="7">{{ initial }}</textarea>
+  <div class="actions">
+    <button id="textToMorse">Text → Morse</button>
+    <button id="morseToText">Morse → Text</button>
+    <button id="auto">Auto</button>
+    <button id="copy" class="ghost">Copy</button>
+    <button id="share" class="ghost">Copy share link</button>
+  </div>
+  <label>Output</label>
+  <textarea id="output" rows="7" readonly></textarea>
+</section>
+{% endblock %}

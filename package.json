@@ -11,7 +11,12 @@
     "verify": "node ./scripts/verify-build.mjs",
     "preview": "astro preview",
     "typecheck": "astro check",
-    "clean": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true})); import('node:fs').then(fs=>fs.rmSync('.astro',{recursive:true,force:true}));\""
+    "clean": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true})); import('node:fs').then(fs=>fs.rmSync('.astro',{recursive:true,force:true}));\"",
+    "build:rebuild": "node ./scripts/generate-rebuild-blog.mjs && node ./scripts/generate-rebuild-seo-content.mjs && npm run verify:rebuild",
+    "verify:rebuild": "node ./scripts/verify-rebuild.mjs && node ./scripts/check-rebuild-redirects.mjs && node ./scripts/qa-rebuild-seo.mjs && node ./scripts/qa-rebuild-blog.mjs",
+    "check:rebuild:redirects": "node ./scripts/check-rebuild-redirects.mjs",
+    "qa:rebuild:seo": "node ./scripts/qa-rebuild-seo.mjs",
+    "qa:rebuild:blog": "node ./scripts/qa-rebuild-blog.mjs"
   },
   "dependencies": {
     "astro": "^4.16.0"

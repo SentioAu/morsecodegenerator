@@ -9,15 +9,16 @@ const description =
 ---
 
 <Layout title={title} description={description}>
-  <header style="margin-top:6px;">
-    <h1 style="margin:0 0 8px;">Contact</h1>
-    <p class="muted" style="margin:0; max-width:72ch;">
+  <header class="page-hero">
+    <p class="page-hero-kicker">Feedback • Corrections • Partnerships</p>
+    <h1 class="page-hero-title">Contact</h1>
+    <p class="muted page-hero-sub">
       Send feedback, report an issue, or request a feature. If you’re reporting a bug, include the page URL and what you expected to happen.
     </p>
   </header>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin:0 0 10px;">Email</h2>
+  <section class="section card soft">
+    <h2>Email</h2>
 
     <!-- IMPORTANT: Cloudflare can rewrite mailto links. We show the email as text,
          and provide a safe "copy" button. -->
@@ -26,18 +27,32 @@ const description =
       <button type="button" id="copyEmail">Copy email</button>
     </div>
 
-    <p class="muted" style="margin-top:10px;">
+    <p class="muted">
       If the “Copy email” button doesn’t work, just copy the address manually.
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin:0 0 10px;">What to include</h2>
+  <section class="section card soft">
+    <h2>What to include</h2>
     <ul>
       <li><strong>Bug report:</strong> page URL + device/browser + steps to reproduce</li>
       <li><strong>Correction:</strong> which page is wrong + your suggested correction</li>
       <li><strong>Partnership:</strong> who you are + what you’re proposing</li>
     </ul>
+  </section>
+
+  <section class="section card soft">
+    <h2>Explore more</h2>
+    <div class="pill-grid">
+      <a href="/translate/">Translator</a>
+      <a href="/morse-code/">Learn hub</a>
+      <a href="/morse-code/a/">Alphabet</a>
+      <a href="/morse-code/numbers/">Numbers</a>
+      <a href="/morse-code/punctuation/">Punctuation</a>
+      <a href="/morse-code/words/">Words</a>
+      <a href="/phrases/">Phrases</a>
+      <a href="/about/">About</a>
+    </div>
   </section>
 
   <script is:inline>

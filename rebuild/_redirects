@@ -1,0 +1,70 @@
+# Production redirects for Option B (rebuild as canonical stack)
+
+# Keep robots/sitemap canonical
+/robot.txt                 /robots.txt                   301
+/sitemap-index.xml         /sitemap.xml                  301
+/sitemap-0.xml             /sitemap.xml                  301
+/sitemap.xml/              /sitemap.xml                  301
+
+# Core routes -> rebuild pages
+/translate                 /pages/translate.html         301
+/translate/                /pages/translate.html         301
+/phrases                   /pages/phrases.html           301
+/phrases/                  /pages/phrases.html           301
+/about                     /pages/about.html             301
+/about/                    /pages/about.html             301
+/contact                   /pages/contact.html           301
+/contact/                  /pages/contact.html           301
+
+# Legacy learning hubs
+/morse-code                /pages/keywords.html          301
+/morse-code/               /pages/keywords.html          301
+/morse-code/words          /pages/keywords.html          301
+/morse-code/words/         /pages/keywords.html          301
+/morse-code/numbers        /pages/keywords.html          301
+/morse-code/numbers/       /pages/keywords.html          301
+/morse-code/punctuation    /pages/keywords.html          301
+/morse-code/punctuation/   /pages/keywords.html          301
+
+# Symbol slugs
+/exclamation-in-morse-code /pages/keywords.html          301
+/apostrophe-in-morse-code  /pages/keywords.html          301
+
+# Legacy single-char routes
+/a-in-morse-code/          /words/a.html                 301
+/b-in-morse-code/          /words/b.html                 301
+/c-in-morse-code/          /words/c.html                 301
+/d-in-morse-code/          /words/d.html                 301
+/e-in-morse-code/          /words/e.html                 301
+/f-in-morse-code/          /words/f.html                 301
+/g-in-morse-code/          /words/g.html                 301
+/h-in-morse-code/          /words/h.html                 301
+/i-in-morse-code/          /words/i.html                 301
+/j-in-morse-code/          /words/j.html                 301
+/k-in-morse-code/          /words/k.html                 301
+/l-in-morse-code/          /words/l.html                 301
+/m-in-morse-code/          /words/m.html                 301
+/n-in-morse-code/          /words/n.html                 301
+/o-in-morse-code/          /words/o.html                 301
+/p-in-morse-code/          /words/p.html                 301
+/q-in-morse-code/          /words/q.html                 301
+/r-in-morse-code/          /words/r.html                 301
+/s-in-morse-code/          /words/s.html                 301
+/t-in-morse-code/          /words/t.html                 301
+/u-in-morse-code/          /words/u.html                 301
+/v-in-morse-code/          /words/v.html                 301
+/w-in-morse-code/          /words/w.html                 301
+/x-in-morse-code/          /words/x.html                 301
+/y-in-morse-code/          /words/y.html                 301
+/z-in-morse-code/          /words/z.html                 301
+
+/0-in-morse-code/          /words/0.html                 301
+/1-in-morse-code/          /words/1.html                 301
+/2-in-morse-code/          /words/2.html                 301
+/3-in-morse-code/          /words/3.html                 301
+/4-in-morse-code/          /words/4.html                 301
+/5-in-morse-code/          /words/5.html                 301
+/6-in-morse-code/          /words/6.html                 301
+/7-in-morse-code/          /words/7.html                 301
+/8-in-morse-code/          /words/8.html                 301
+/9-in-morse-code/          /words/9.html                 301

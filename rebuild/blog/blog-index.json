@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-07T05:00:38.877Z",
+  "hub": "https://morsecodegenerator.com/blog/index.html",
+  "totalPosts": 6,
+  "posts": [
+    {
+      "slug": "learn-morse-code-fast",
+      "title": "How to Learn Morse Code Faster (Without Burning Out)",
+      "intent": "education",
+      "primaryKeyword": "learn morse code fast",
+      "url": "https://morsecodegenerator.com/blog/learn-morse-code-fast.html",
+      "publishDate": "2026-03-07",
+      "readingMinutes": 6
+    },
+    {
+      "slug": "sos-and-emergency-morse-guide",
+      "title": "SOS and Emergency Morse: A Real-World Quick Guide",
+      "intent": "emergency",
+      "primaryKeyword": "sos morse code emergency guide",
+      "url": "https://morsecodegenerator.com/blog/sos-and-emergency-morse-guide.html",
+      "publishDate": "2026-03-07",
+      "readingMinutes": 7
+    },
+    {
+      "slug": "morse-code-practice-plan-30-days",
+      "title": "30-Day Morse Code Practice Plan for Consistent Progress",
+      "intent": "education",
+      "primaryKeyword": "30 day morse code practice plan",
+      "url": "https://morsecodegenerator.com/blog/morse-code-practice-plan-30-days.html",
+      "publishDate": "2026-03-07",
+      "readingMinutes": 8
+    },
+    {
+      "slug": "morse-code-for-ham-radio-beginners",
+      "title": "Morse Code for Ham Radio Beginners: What Actually Matters",
+      "intent": "use-case",
+      "primaryKeyword": "morse code for ham radio beginners",
+      "url": "https://morsecodegenerator.com/blog/morse-code-for-ham-radio-beginners.html",
+      "publishDate": "2026-03-07",
+      "readingMinutes": 6
+    },
+    {
+      "slug": "common-morse-code-mistakes-and-fixes",
+      "title": "Common Morse Code Mistakes (and How to Fix Them)",
+      "intent": "education",
+      "primaryKeyword": "common morse code mistakes",
+      "url": "https://morsecodegenerator.com/blog/common-morse-code-mistakes-and-fixes.html",
+      "publishDate": "2026-03-07",
+      "readingMinutes": 7
+    },
+    {
+      "slug": "morse-code-study-tools-that-work",
+      "title": "Morse Code Study Tools That Actually Work in 2026",
+      "intent": "education",
+      "primaryKeyword": "best morse code study tools",
+      "url": "https://morsecodegenerator.com/blog/morse-code-study-tools-that-work.html",
+      "publishDate": "2026-03-07",
+      "readingMinutes": 8
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+# Morse Code Generator
+
+This website provides:
+- text to Morse translation
+- Morse to text decoding
+- keyword-specific Morse pages
+- phrase practice workflows
+
+Canonical: https://morsecodegenerator.com/
+Keywords index: https://morsecodegenerator.com/pages/keywords.html
+AI content index: https://morsecodegenerator.com/ai-content-index.json
+Blog hub: https://morsecodegenerator.com/blog/index.html
+Generated pages: 358
+Generated blog URLs: 7
+Intent buckets: general=347, education=7, emergency=4
+Template features: intent-snippets, example-block, faq-block, related-links

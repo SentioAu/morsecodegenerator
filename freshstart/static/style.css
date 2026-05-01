@@ -1,0 +1,45 @@
+:root {
+  --bg: #071326;
+  --panel: #0d1d37;
+  --line: #2f4873;
+  --text: #ecf3ff;
+  --muted: #b2c4e8;
+  --accent: #8ab8ff;
+}
+:root[data-theme='light'] {
+  --bg: #f6f8ff;
+  --panel: #ffffff;
+  --line: #d6e1f5;
+  --text: #172135;
+  --muted: #4a5874;
+  --accent: #285fde;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(1000px 500px at 50% -10%, rgba(120,170,255,0.2), transparent 60%),
+    var(--bg);
+  font-family: Inter, system-ui, sans-serif;
+}
+.topbar, .container, .footer { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.topbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; position: sticky; top: 0; background: rgba(7,19,38,.88); backdrop-filter: blur(10px); }
+.topbar nav { display: flex; gap: 8px; flex-wrap: wrap; }
+a, button { color: var(--text); }
+.topbar a { text-decoration: none; padding: 8px 10px; border: 1px solid var(--line); border-radius: 999px; }
+.brand { font-weight: 700; }
+.container { display: grid; gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+.hero h1 { margin-top: 6px; }
+.muted { color: var(--muted); }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.btn, button { background: rgba(138,184,255,.2); border: 1px solid rgba(138,184,255,.5); border-radius: 999px; padding: 9px 14px; text-decoration: none; cursor: pointer; }
+.ghost { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 9px 14px; text-decoration: none; }
+textarea { width: 100%; background: #071833; color: var(--text); border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin: 6px 0 12px; }
+.pill-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; background: rgba(138,184,255,.14); }
+.list article { border-top: 1px solid var(--line); padding: 10px 0; }
+.list article:first-child { border-top: 0; }
+.mono { font-family: ui-monospace, Menlo, monospace; letter-spacing: .08em; }
+.footer { color: var(--muted); font-size: 14px; }

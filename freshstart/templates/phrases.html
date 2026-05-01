@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+  <h1>Common Phrases</h1>
+  <div class="list">
+    {% for p in phrases %}
+      <article>
+        <h3>{{ p.text }}</h3>
+        <p class="mono">{{ p.morse }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
