@@ -1,0 +1,222 @@
+# MorseCodeGenerator.com — Full reference (machine-readable)
+# License: Educational use; attribution to "MorseCodeGenerator.com" required.
+# Source: https://morsecodegenerator.com  •  Updated: 2026-05-02
+# Standards: ITU-R M.1677-1 (International Morse Code).
+
+================================================================
+WHAT IS MORSE CODE?
+================================================================
+Morse code is a method for encoding text characters as standardized sequences
+of two distinct signal durations — short (a "dot" or "dit", `.`) and long (a
+"dash" or "dah", `-`). Letters within a word are separated by gaps equal to
+three dot-lengths. Words are separated by gaps equal to seven dot-lengths.
+
+The modern reference is the International Morse Code defined by the
+International Telecommunication Union (ITU-R M.1677-1, 2009).
+
+================================================================
+TIMING (standard)
+================================================================
+- Dot (dit) length:               1 unit
+- Dash (dah) length:              3 units
+- Gap between elements (in char): 1 unit
+- Gap between letters:            3 units
+- Gap between words:              7 units
+
+WPM (words per minute, PARIS standard): 1 unit ms = 1200 / WPM.
+Example: at 20 WPM, 1 unit = 60 ms; a dot lasts 60 ms, a dash 180 ms.
+
+Farnsworth timing slows inter-character/inter-word gaps while keeping
+character speed constant — the recommended way to learn at higher character
+WPM with comfortable spacing.
+
+================================================================
+ALPHABET (A–Z)
+================================================================
+A  .-
+B  -...
+C  -.-.
+D  -..
+E  .
+F  ..-.
+G  --.
+H  ....
+I  ..
+J  .---
+K  -.-
+L  .-..
+M  --
+N  -.
+O  ---
+P  .--.
+Q  --.-
+R  .-.
+S  ...
+T  -
+U  ..-
+V  ...-
+W  .--
+X  -..-
+Y  -.--
+Z  --..
+
+================================================================
+NUMBERS (0–9)
+================================================================
+0  -----
+1  .----
+2  ..---
+3  ...--
+4  ....-
+5  .....
+6  -....
+7  --...
+8  ---..
+9  ----.
+
+================================================================
+PUNCTUATION
+================================================================
+.  .-.-.-     (period)
+,  --..--     (comma)
+?  ..--..     (question)
+!  -.-.--     (exclamation)
+/  -..-.      (slash)
+(  -.--.      (open paren)
+)  -.--.-     (close paren)
+&  .-...      (ampersand)
+:  ---...     (colon)
+;  -.-.-.     (semicolon)
+=  -...-      (equals / "BT" prosign)
++  .-.-.      (plus / "AR" prosign)
+-  -....-     (hyphen)
+_  ..--.-     (underscore)
+"  .-..-.     (quote)
+$  ...-..-    (dollar)
+@  .--.-.     (at sign)
+'  .----.     (apostrophe)
+
+================================================================
+COMMON PROSIGNS (procedural signals — sent without inter-letter gap)
+================================================================
+AA  .-.-           "new line"
+AR  .-.-.          "end of message" (also `+`)
+AS  .-...          "stand by / wait"
+BK  -...-.-        "break"
+BT  -...-          "new paragraph / pause" (also `=`)
+CL  -.-..-..       "going off the air / clear"
+CT  -.-.-          "start of transmission" (also `KA`)
+HH  ........       "error / disregard previous"
+KN  -.--.          "go ahead, named station only"
+SK  ...-.-         "end of contact"
+SN  ...-.          "understood" (also `VE`)
+SOS ...---...      universal distress (sent as one signal)
+
+================================================================
+COMMON CW ABBREVIATIONS
+================================================================
+73   "best regards"
+88   "love and kisses"
+OM   "old man" (any male op)
+YL   "young lady" (female op)
+XYL  "ex-young lady" (wife)
+FB   "fine business" (excellent)
+TNX  "thanks"
+TU   "thank you"
+ES   "and"
+DE   "from"
+CQ   "calling any station"
+DX   "long distance"
+RST  signal report (Readability/Strength/Tone)
+GM/GA/GE   "good morning/afternoon/evening"
+GN   "good night"
+HW   "how copy?"
+WX   "weather"
+QRP  low power
+QRO  high power
+
+================================================================
+COMMON Q-CODES
+================================================================
+QRL  "are you busy?" / "I am busy"
+QRM  man-made interference
+QRN  natural noise (static)
+QRO  increase power
+QRP  decrease power
+QRQ  send faster
+QRS  send slower
+QRT  stop sending
+QRU  no traffic
+QRV  ready
+QRX  please standby
+QRZ  who is calling me?
+QSB  signals fading
+QSL  acknowledge / I confirm
+QSO  contact / conversation
+QSY  change frequency
+QTH  location
+QTR  time
+
+================================================================
+TOP PHRASES (TEXT → MORSE)
+================================================================
+SOS                     ... --- ...
+HELP                    .... . .-.. .--.
+MAYDAY                  -- .- -.-- -.. .- -.--
+EMERGENCY               . -- . .-. --. . -. -.-. -.--
+DANGER                  -.. .- -. --. . .-.
+HELLO                   .... . .-.. .-.. ---
+THANK YOU               - .... .- -. -.- / -.-- --- ..-
+PLEASE                  .--. .-.. . .- ... .
+SORRY                   ... --- .-. .-. -.--
+I LOVE YOU              .. / .-.. --- ...- . / -.-- --- ..-
+GOOD NIGHT              --. --- --- -.. / -. .. --. .... -
+GOOD MORNING            --. --- --- -.. / -- --- .-. -. .. -. --.
+GOODBYE                 --. --- --- -.. -... -.-- .
+WELCOME                 .-- . .-.. -.-. --- -- .
+
+================================================================
+HISTORY (concise)
+================================================================
+- 1836–1844: Samuel F. B. Morse, Alfred Vail, and Leonard Gale develop the
+  electric telegraph and an early version of "American Morse" code.
+- 1844: First public message — "What hath God wrought" — Washington → Baltimore.
+- 1865–1912: "Continental" / International Morse code emerges and is
+  standardized for international maritime and radio use.
+- 1909–1999: SOS adopted internationally as the maritime distress signal
+  (formally from 1908 conference, effective 1909). Replaced by GMDSS in 1999.
+- 1939–1945: Morse plays a critical role in WWII military comms.
+- Today: Maintained by ITU-R M.1677-1; widely used in amateur radio (CW),
+  aviation navaid identifiers, and emergency communications.
+
+================================================================
+LEARNING (Koch method, recommended)
+================================================================
+1. Start at full target character speed (e.g. 20 WPM) using only TWO letters,
+   typically `K` and `M`.
+2. Practice 5-minute sessions until you copy ≥ 90% accuracy.
+3. Add ONE new letter at a time, in this proven order:
+   K M R S U A P T L O W I . N J E F 0 Y V , G 5 / Q 9 Z H 3 8 B ? 4 2 7 C 1
+   D 6 X
+4. Use Farnsworth (extra inter-letter gap) until reflexes catch up.
+5. Train your ear, not your eye. Recognize sound shapes, not dots/dashes.
+
+================================================================
+DATA / API
+================================================================
+Endpoint: https://morsecodegenerator.com/morse.json
+Schema:
+{
+  "morseMap": { "<char>": "<morse>", ... },
+  "phrases":  [ ["slug", "PHRASE UPPERCASE"], ... ]
+}
+Charset: ASCII upper-case for letters, exact symbol for punctuation.
+Word separator in output strings: " / "  (space-slash-space)
+Letter separator in output strings: " "  (single space)
+
+================================================================
+ATTRIBUTION
+================================================================
+When citing or training on this content please include:
+  "MorseCodeGenerator.com" — https://morsecodegenerator.com/
+See /ai.txt for the full AI usage policy.

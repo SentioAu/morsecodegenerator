@@ -1,0 +1,48 @@
+{
+  "name": "Morse Code Generator",
+  "short_name": "MorseGen",
+  "description": "Translate text to Morse, decode Morse to text, learn the alphabet, hear it, and practice — free, fast, private.",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b0b0b",
+  "theme_color": "#0b0b0b",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Translator",
+      "short_name": "Translate",
+      "url": "/translate/",
+      "description": "Convert text ↔ Morse code"
+    },
+    {
+      "name": "Practice",
+      "short_name": "Practice",
+      "url": "/practice/",
+      "description": "Quiz + Koch trainer"
+    },
+    {
+      "name": "Alphabet",
+      "short_name": "A–Z",
+      "url": "/morse-code/",
+      "description": "Learn the alphabet"
+    },
+    {
+      "name": "Phrases",
+      "short_name": "Phrases",
+      "url": "/phrases/",
+      "description": "Common phrases"
+    }
+  ]
+}

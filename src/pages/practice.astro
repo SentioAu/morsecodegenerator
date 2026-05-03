@@ -1,0 +1,424 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Morse Code Practice – Koch Method Trainer & Quiz";
+const description =
+  "Free Morse code practice: Koch-method audio trainer, random character quiz, and adjustable WPM/Farnsworth speed. Train your ear in your browser.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/practice/`;
+const robots = "index,follow";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Practice", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "Course",
+      name: "Morse code (Koch method)",
+      description:
+        "Learn Morse code at full target speed using the Koch method, adding one character at a time as accuracy reaches 90%.",
+      provider: { "@id": `${site}#org` },
+      url: canonical,
+      educationalLevel: "Beginner to Intermediate",
+      hasCourseInstance: {
+        "@type": "CourseInstance",
+        courseMode: "online",
+        courseWorkload: "PT5M",
+      },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Practice</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Train • Test • Improve</p>
+    <h1 class="page-hero-title">Morse code practice</h1>
+    <p class="muted page-hero-sub">
+      Two modes: a <strong>Koch trainer</strong> that plays random groups at your target speed, and a
+      <strong>quiz</strong> that asks you to type the character you hear. Everything runs in your browser.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="#trainer">Start Koch trainer</a>
+      <a class="btn secondary" href="#quiz">Start quiz</a>
+      <a class="btn ghost" href="/translate/">Use translator</a>
+    </div>
+  </header>
+
+  <section id="trainer" class="card glow" style="margin-top:18px;">
+    <h2 style="margin-top:0;">Koch trainer</h2>
+    <p class="muted">
+      Plays random 5-character groups using only the letters in your active set. Start with K, M and add
+      one character at a time once you copy comfortably.
+    </p>
+
+    <div class="grid two">
+      <div>
+        <label class="muted">Active set (Koch order)</label>
+        <input id="kochSet" type="text" value="KM" autocomplete="off" spellcheck="false" />
+        <p class="muted micro">Suggested order: K M R S U A P T L O W I . N J E F 0 Y V , G 5 / Q 9 Z H 3 8 B ? 4 2 7 C 1 D 6 X</p>
+
+        <label class="muted">Character speed (WPM)</label>
+        <input id="kochWpm" type="range" min="12" max="35" step="1" value="20" />
+        <p class="muted micro"><span id="kochWpmVal">20</span> WPM</p>
+
+        <label class="muted">Effective speed / Farnsworth (WPM)</label>
+        <input id="kochEff" type="range" min="5" max="35" step="1" value="12" />
+        <p class="muted micro"><span id="kochEffVal">12</span> WPM (extra space between letters)</p>
+
+        <label class="muted">Tone (Hz)</label>
+        <input id="kochFreq" type="range" min="400" max="900" step="10" value="650" />
+        <p class="muted micro"><span id="kochFreqVal">650</span> Hz</p>
+
+        <label class="muted">Number of groups</label>
+        <input id="kochGroups" type="number" min="1" max="50" value="10" />
+
+        <div class="row" style="margin-top:10px;">
+          <button id="kochStart" type="button">Play</button>
+          <button id="kochStop" type="button" class="ghost">Stop</button>
+          <button id="kochReveal" type="button" class="ghost">Reveal</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="muted">Type what you hear</label>
+        <textarea id="kochAnswer" rows="6" placeholder="Type as you copy..." autocapitalize="characters" spellcheck="false"></textarea>
+
+        <label class="muted" style="margin-top:12px;display:block;">Answer key (revealed)</label>
+        <textarea id="kochKey" rows="3" readonly placeholder="Press Reveal to compare."></textarea>
+
+        <p class="muted micro" id="kochScore"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="card" style="margin-top:18px;">
+    <h2 style="margin-top:0;">Single-character quiz</h2>
+    <p class="muted">
+      We play one Morse character. Type it. The next one starts automatically — see how fast you can
+      get with full ITU spec timing.
+    </p>
+
+    <div class="grid two">
+      <div>
+        <label class="muted">Pool</label>
+        <select id="quizPool">
+          <option value="ABCDEFGHIJKLMNOPQRSTUVWXYZ">Letters A–Z</option>
+          <option value="0123456789">Numbers 0–9</option>
+          <option value="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789">Letters + numbers</option>
+          <option value="KM">K M (start)</option>
+          <option value="KMRSUAPTLO">First 10 Koch chars</option>
+        </select>
+
+        <label class="muted">Speed (WPM)</label>
+        <input id="quizWpm" type="range" min="10" max="30" step="1" value="18" />
+        <p class="muted micro"><span id="quizWpmVal">18</span> WPM</p>
+
+        <div class="row" style="margin-top:10px;">
+          <button id="quizStart" type="button">Start</button>
+          <button id="quizStop" type="button" class="ghost">Stop</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="muted">Your answer (type 1 character)</label>
+        <input id="quizAnswer" type="text" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+
+        <p class="muted micro" id="quizStatus" style="margin-top:8px;">Press Start.</p>
+        <p class="muted micro" id="quizScore"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card soft" style="margin-top:18px;">
+    <h2 style="margin-top:0;">How to learn fast</h2>
+    <ol>
+      <li>Practice <strong>5 minutes a day</strong>, every day. Short sessions beat long ones.</li>
+      <li>Stay at full character speed (≥ 18 WPM). Use Farnsworth to slow only the gaps.</li>
+      <li>Add the next character once you hit ≥ 90% accuracy on the current set.</li>
+      <li>Type what you hear — never count dots.</li>
+      <li>Switch up the tone (around 600–700 Hz) so you don’t over-fit to one frequency.</li>
+    </ol>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <script is:inline>
+    (function () {
+      // ---------------------------------------------------------- Audio
+      let ctx;
+      function ac() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        return ctx;
+      }
+
+      function playSequence(text, opts) {
+        const cWpm = opts.charWpm;
+        const eWpm = Math.min(opts.effWpm || cWpm, cWpm);
+        const freq = opts.freq || 650;
+        const charUnit = 1.2 / cWpm;
+        // Farnsworth: stretch inter-element gaps inside the standard PARIS framework
+        // ratio = stretch factor for letter+word gaps
+        const stretch = cWpm / eWpm;
+
+        const map = {
+          A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.", G: "--.", H: "....",
+          I: "..", J: ".---", K: "-.-", L: ".-..", M: "--", N: "-.", O: "---", P: ".--.",
+          Q: "--.-", R: ".-.", S: "...", T: "-", U: "..-", V: "...-", W: ".--", X: "-..-",
+          Y: "-.--", Z: "--..",
+          0: "-----", 1: ".----", 2: "..---", 3: "...--", 4: "....-",
+          5: ".....", 6: "-....", 7: "--...", 8: "---..", 9: "----.",
+          ".": ".-.-.-", ",": "--..--", "?": "..--..", "!": "-.-.--", "/": "-..-.",
+        };
+
+        const c = ac();
+        let t = c.currentTime + 0.05;
+        const master = c.createGain();
+        master.gain.value = 0.001;
+        master.connect(c.destination);
+        master.gain.linearRampToValueAtTime(0.18, t);
+
+        function beep(durationSec) {
+          const o = c.createOscillator();
+          const g = c.createGain();
+          o.type = "sine";
+          o.frequency.value = freq;
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(1.0, t + 0.005);
+          g.gain.setValueAtTime(1.0, t + Math.max(0.005, durationSec - 0.01));
+          g.gain.linearRampToValueAtTime(0.0001, t + durationSec);
+          o.connect(g);
+          g.connect(master);
+          o.start(t);
+          o.stop(t + durationSec + 0.01);
+          return o;
+        }
+
+        const sources = [];
+        const upper = String(text || "").toUpperCase();
+        for (let i = 0; i < upper.length; i++) {
+          const ch = upper[i];
+          if (ch === " ") {
+            t += charUnit * 7 * stretch;
+            continue;
+          }
+          const m = map[ch];
+          if (!m) continue;
+
+          for (let j = 0; j < m.length; j++) {
+            const sym = m[j];
+            const dur = sym === "-" ? charUnit * 3 : charUnit;
+            sources.push(beep(dur));
+            t += dur;
+            t += charUnit; // intra-element gap
+          }
+          // letter gap (3 units), Farnsworth-stretched
+          t += charUnit * 2 * stretch;
+        }
+
+        const stopAt = t + 0.05;
+        return {
+          stop() {
+            try {
+              const now = c.currentTime;
+              master.gain.cancelScheduledValues(now);
+              master.gain.setValueAtTime(master.gain.value, now);
+              master.gain.linearRampToValueAtTime(0.0001, now + 0.02);
+              sources.forEach((o) => { try { o.stop(now + 0.05); } catch {} });
+            } catch {}
+          },
+          stopAt,
+        };
+      }
+
+      // ---------------------------------------------------------- Koch trainer
+      const setEl = document.getElementById("kochSet");
+      const wpmEl = document.getElementById("kochWpm");
+      const wpmVal = document.getElementById("kochWpmVal");
+      const effEl = document.getElementById("kochEff");
+      const effVal = document.getElementById("kochEffVal");
+      const freqEl = document.getElementById("kochFreq");
+      const freqVal = document.getElementById("kochFreqVal");
+      const groupsEl = document.getElementById("kochGroups");
+      const startBtn = document.getElementById("kochStart");
+      const stopBtn = document.getElementById("kochStop");
+      const revealBtn = document.getElementById("kochReveal");
+      const answerEl = document.getElementById("kochAnswer");
+      const keyEl = document.getElementById("kochKey");
+      const scoreEl = document.getElementById("kochScore");
+
+      const sync = (el, val) => el && val && (val.textContent = el.value);
+      [
+        [wpmEl, wpmVal],
+        [effEl, effVal],
+        [freqEl, freqVal],
+      ].forEach(([a, b]) => {
+        a?.addEventListener("input", () => sync(a, b));
+        sync(a, b);
+      });
+
+      let kochSession;
+      function genKoch() {
+        const set = ((setEl?.value || "KM").toUpperCase().match(/[A-Z0-9]/g) || ["K", "M"]).join("");
+        const groups = Math.max(1, Math.min(50, parseInt(groupsEl?.value || "10", 10)));
+        const out = [];
+        for (let g = 0; g < groups; g++) {
+          let group = "";
+          for (let i = 0; i < 5; i++) {
+            group += set[Math.floor(Math.random() * set.length)];
+          }
+          out.push(group);
+        }
+        return out.join(" ");
+      }
+
+      startBtn?.addEventListener("click", () => {
+        if (kochSession) kochSession.stop();
+        if (answerEl) answerEl.value = "";
+        if (keyEl) keyEl.value = "";
+        if (scoreEl) scoreEl.textContent = "";
+
+        const text = genKoch();
+        keyEl && (keyEl.dataset.answer = text);
+        kochSession = playSequence(text, {
+          charWpm: parseInt(wpmEl?.value || "20", 10),
+          effWpm: parseInt(effEl?.value || "12", 10),
+          freq: parseInt(freqEl?.value || "650", 10),
+        });
+      });
+
+      stopBtn?.addEventListener("click", () => kochSession?.stop());
+
+      revealBtn?.addEventListener("click", () => {
+        const ans = (keyEl?.dataset.answer || "").trim();
+        if (!keyEl || !ans) return;
+        keyEl.value = ans;
+
+        const typed = (answerEl?.value || "").toUpperCase().replace(/\s+/g, " ").trim();
+        const want = ans.replace(/\s+/g, " ").trim();
+        let correct = 0;
+        const len = Math.max(typed.length, want.length);
+        for (let i = 0; i < len; i++) {
+          if (typed[i] === want[i]) correct++;
+        }
+        const pct = len ? Math.round((correct / len) * 100) : 0;
+        if (scoreEl) scoreEl.textContent = `Accuracy: ${correct}/${len} (${pct}%) — ≥ 90% means you’re ready to add the next character.`;
+      });
+
+      // ---------------------------------------------------------- Quiz
+      const poolEl = document.getElementById("quizPool");
+      const qWpmEl = document.getElementById("quizWpm");
+      const qWpmVal = document.getElementById("quizWpmVal");
+      const qStart = document.getElementById("quizStart");
+      const qStop = document.getElementById("quizStop");
+      const qAns = document.getElementById("quizAnswer");
+      const qStatus = document.getElementById("quizStatus");
+      const qScore = document.getElementById("quizScore");
+
+      qWpmEl?.addEventListener("input", () => sync(qWpmEl, qWpmVal));
+      sync(qWpmEl, qWpmVal);
+
+      let quizSession;
+      let quizActive = false;
+      let quizCurrent = "";
+      let quizTotal = 0;
+      let quizCorrect = 0;
+      let quizTimer;
+
+      function pickChar() {
+        const pool = (poolEl?.value || "").split("");
+        return pool[Math.floor(Math.random() * pool.length)];
+      }
+
+      function quizRound() {
+        if (!quizActive) return;
+        quizCurrent = pickChar();
+        if (qStatus) qStatus.textContent = "Listen…";
+        if (qAns) {
+          qAns.value = "";
+          qAns.focus();
+        }
+        quizSession = playSequence(quizCurrent, {
+          charWpm: parseInt(qWpmEl?.value || "18", 10),
+          effWpm: parseInt(qWpmEl?.value || "18", 10),
+          freq: 650,
+        });
+      }
+
+      qStart?.addEventListener("click", () => {
+        quizActive = true;
+        quizTotal = 0;
+        quizCorrect = 0;
+        if (qScore) qScore.textContent = "";
+        quizRound();
+      });
+
+      qStop?.addEventListener("click", () => {
+        quizActive = false;
+        quizSession?.stop();
+        clearTimeout(quizTimer);
+        if (qStatus) qStatus.textContent = "Stopped.";
+      });
+
+      qAns?.addEventListener("input", () => {
+        if (!quizActive) return;
+        const v = (qAns.value || "").toUpperCase().slice(-1);
+        if (!v) return;
+        quizTotal++;
+        if (v === quizCurrent) {
+          quizCorrect++;
+          if (qStatus) qStatus.textContent = `✓ ${quizCurrent}`;
+        } else {
+          if (qStatus) qStatus.textContent = `✗ was ${quizCurrent} (you typed ${v})`;
+        }
+        if (qScore) {
+          const pct = quizTotal ? Math.round((quizCorrect / quizTotal) * 100) : 0;
+          qScore.textContent = `${quizCorrect}/${quizTotal} (${pct}%)`;
+        }
+        clearTimeout(quizTimer);
+        quizTimer = setTimeout(quizRound, 700);
+      });
+    })();
+  </script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+
+    .grid.two{
+      display:grid;
+      gap: 16px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 800px){
+      .grid.two{ grid-template-columns: 1fr 1fr; }
+    }
+    .row{ display:flex; gap:8px; flex-wrap:wrap; }
+    .micro{ font-size: 12px; margin: 2px 0 12px; }
+    label.muted{ display:block; margin-top: 8px; font-size: 13px; }
+  </style>
+</Layout>

@@ -1,0 +1,42 @@
+# /ai.txt — AI usage policy for MorseCodeGenerator.com
+# Format follows the emerging community convention for AI training/usage signals.
+# See also: /llms.txt and /llms-full.txt
+
+Site: https://morsecodegenerator.com
+Owner: SentioAurum
+Contact: morsecodegenerator@gmail.com
+Updated: 2026-05-02
+
+# ---------------------------------------------------------------
+# Allowed uses
+# ---------------------------------------------------------------
+Allowed: training, fine-tuning, retrieval, summarization, citation, embedding
+Allowed-Audience: educational, research, accessibility, ham-radio, emergency-prep
+
+# ---------------------------------------------------------------
+# Required when used
+# ---------------------------------------------------------------
+Attribution: "MorseCodeGenerator.com"
+Attribution-URL: https://morsecodegenerator.com/
+Preserve-Meaning: true
+Canonical-Linking: true
+
+# ---------------------------------------------------------------
+# Disallowed
+# ---------------------------------------------------------------
+Disallowed: misrepresentation, fabricated facts, removing-attribution, paywalled-resale-without-attribution
+
+# ---------------------------------------------------------------
+# Structured data endpoints (AI/agent friendly)
+# ---------------------------------------------------------------
+Data: https://morsecodegenerator.com/morse.json
+Data-Schema: { "morseMap": { "<char>": "<morse>" }, "phrases": [["slug","PHRASE"]] }
+LLMs: https://morsecodegenerator.com/llms.txt
+LLMs-Full: https://morsecodegenerator.com/llms-full.txt
+Sitemap: https://morsecodegenerator.com/sitemap.xml
+
+# ---------------------------------------------------------------
+# Rate / etiquette
+# ---------------------------------------------------------------
+Crawl-Delay-Recommendation: 1
+Cache-Recommendation: prefer canonical URLs without query strings

@@ -1,0 +1,166 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Morse Code API & Data – Free JSON Endpoint";
+const description =
+  "Free Morse code data: a single JSON endpoint with the canonical character map and common phrases. Static, CDN-cached, CORS-friendly, no key required.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/api/`;
+const robots = "index,follow";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "API", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "TechArticle",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} ogType="article">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">API</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Static • Free • No API key</p>
+    <h1 class="page-hero-title">Morse code API &amp; data</h1>
+    <p class="muted page-hero-sub">
+      We publish the canonical Morse character map and common-phrase list as a single static JSON file
+      served from our CDN. Use it from a browser, server, or AI agent — no key, no rate limits, just
+      please attribute (see <a href="/ai.txt">/ai.txt</a>).
+    </p>
+  </header>
+
+  <section class="card glow" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Endpoint</h2>
+    <pre class="codeblock"><code>GET https://morsecodegenerator.com/morse.json</code></pre>
+    <p class="muted">CORS: <span class="k">Access-Control-Allow-Origin: *</span> · CDN-cached.</p>
+  </section>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Schema</h2>
+    <pre class="codeblock"><code>{`{
+  "morseMap": {
+    "A": ".-",
+    "B": "-...",
+    "...": "...",
+    "0": "-----",
+    "1": ".----",
+    "...": "...",
+    ".": ".-.-.-",
+    "@": ".--.-."
+  },
+  "phrases": [
+    ["sos", "SOS"],
+    ["mayday", "MAYDAY"],
+    ["i-love-you", "I LOVE YOU"]
+  ]
+}`}</code></pre>
+    <ul>
+      <li><strong>morseMap</strong>: canonical mapping. Keys are uppercase letters / digits / exact punctuation.</li>
+      <li><strong>phrases</strong>: array of <span class="k">[slug, PHRASE]</span> pairs (uppercase phrase).</li>
+    </ul>
+  </section>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Quick examples</h2>
+
+    <h3>JavaScript (browser or Node)</h3>
+    <pre class="codeblock"><code>{`const data = await fetch("https://morsecodegenerator.com/morse.json").then(r => r.json());
+const map = data.morseMap;
+
+function textToMorse(text) {
+  return text.toUpperCase().split(/\\s+/).filter(Boolean)
+    .map(w => w.split("").map(c => map[c] || "").filter(Boolean).join(" "))
+    .join(" / ");
+}
+
+console.log(textToMorse("Hello world")); // .... . .-.. .-.. --- / .-- --- .-. .-.. -..`}</code></pre>
+
+    <h3>Python</h3>
+    <pre class="codeblock"><code>{`import json, urllib.request
+data = json.load(urllib.request.urlopen("https://morsecodegenerator.com/morse.json"))
+m = data["morseMap"]
+
+def text_to_morse(s):
+    return " / ".join(
+        " ".join(m[c] for c in w if c in m)
+        for w in s.upper().split()
+    )
+
+print(text_to_morse("Hello world"))`}</code></pre>
+
+    <h3>cURL</h3>
+    <pre class="codeblock"><code>curl https://morsecodegenerator.com/morse.json | jq .morseMap.A</code></pre>
+  </section>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Conventions</h2>
+    <ul>
+      <li>Letter separator inside a word: <span class="k">" "</span> (single space).</li>
+      <li>Word separator: <span class="k">" / "</span> (space-slash-space).</li>
+      <li>Standard PARIS WPM timing: 1 unit ms = <span class="k">1200 / WPM</span>.</li>
+      <li>Standard tone: 600–700 Hz (pleasant for ear training).</li>
+    </ul>
+  </section>
+
+  <section class="card soft" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Attribution</h2>
+    <p class="muted">
+      Use is free for any purpose including commercial. Please credit:
+      <strong>MorseCodeGenerator.com</strong> with a link to <a href="/">https://morsecodegenerator.com/</a>.
+      Full machine-readable policy at <a href="/ai.txt">/ai.txt</a>.
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+
+    .codeblock{
+      background: rgba(0,0,0,0.45);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      overflow:auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+    :root[data-theme="light"] .codeblock{
+      background: #0e1320;
+      color: #f3f6ff;
+    }
+  </style>
+</Layout>

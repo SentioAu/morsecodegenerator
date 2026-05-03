@@ -80,16 +80,67 @@ function toLastmod(filePath) {
   }
 }
 
+// URL importance heuristics (priority + changefreq)
+function classifyUrl(urlPath) {
+  // urlPath looks like "/", "/translate/", "/morse-code/a/", etc.
+  const p = urlPath.replace(/\/+$/, "/") || "/";
+
+  // Hubs (highest)
+  if (p === "/") return { priority: "1.0", changefreq: "weekly" };
+  if (p === "/translate/") return { priority: "0.95", changefreq: "weekly" };
+  if (p === "/practice/") return { priority: "0.90", changefreq: "weekly" };
+  if (p === "/morse-code/") return { priority: "0.90", changefreq: "weekly" };
+  if (p === "/phrases/") return { priority: "0.85", changefreq: "weekly" };
+  if (p === "/chart/") return { priority: "0.85", changefreq: "monthly" };
+
+  // Reference clusters
+  if (/^\/morse-code\/(numbers|punctuation|words)\/$/.test(p)) {
+    return { priority: "0.80", changefreq: "monthly" };
+  }
+  if (/^\/(prosigns|abbreviations|q-codes|history|faq|api|embed)\/$/.test(p)) {
+    return { priority: "0.80", changefreq: "monthly" };
+  }
+
+  // Per-letter / per-digit pages
+  if (/^\/morse-code\/[a-z0-9]\/$/.test(p)) {
+    return { priority: "0.70", changefreq: "yearly" };
+  }
+
+  // Per-phrase pages
+  if (/^\/phrases\/[a-z0-9-]+\/$/.test(p)) {
+    return { priority: "0.65", changefreq: "monthly" };
+  }
+
+  // SEO word pages /<slug>-in-morse-code/
+  if (/^\/[a-z0-9-]+-in-morse-code\/$/.test(p)) {
+    return { priority: "0.60", changefreq: "monthly" };
+  }
+
+  // About / contact / legal
+  if (/^\/(about|contact|privacy|terms)\/$/.test(p)) {
+    return { priority: "0.40", changefreq: "yearly" };
+  }
+
+  return { priority: "0.50", changefreq: "monthly" };
+}
+
 function buildSitemapXml(entries) {
   const lines = [];
   lines.push(`<?xml version="1.0" encoding="UTF-8"?>`);
-  lines.push(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`);
+  lines.push(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"`);
+  lines.push(`        xmlns:xhtml="http://www.w3.org/1999/xhtml">`);
 
   for (const e of entries) {
     const loc = escapeXml(e.loc);
     const lastmod = e.lastmod ? escapeXml(e.lastmod) : "";
-    if (lastmod) lines.push(`  <url><loc>${loc}</loc><lastmod>${lastmod}</lastmod></url>`);
-    else lines.push(`  <url><loc>${loc}</loc></url>`);
+    const { priority, changefreq } = classifyUrl(e.path || "/");
+
+    lines.push(`  <url>`);
+    lines.push(`    <loc>${loc}</loc>`);
+    if (lastmod) lines.push(`    <lastmod>${lastmod}</lastmod>`);
+    lines.push(`    <changefreq>${changefreq}</changefreq>`);
+    lines.push(`    <priority>${priority}</priority>`);
+    lines.push(`  </url>`);
   }
 
   lines.push(`</urlset>`);
@@ -130,7 +181,7 @@ function main() {
 
     const loc = `${SITE}${urlPath}`;
     const lastmod = toLastmod(f);
-    map.set(loc, { loc, lastmod });
+    map.set(loc, { loc, lastmod, path: urlPath });
   }
 
   const entries = Array.from(map.values()).sort((a, b) => a.loc.localeCompare(b.loc, "en"));

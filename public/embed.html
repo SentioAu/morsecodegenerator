@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Morse Code Translator (embed) — MorseCodeGenerator.com</title>
+  <link rel="canonical" href="https://morsecodegenerator.com/embed/" />
+  <style>
+    :root{
+      color-scheme: dark;
+      --bg: #0b0b0b;
+      --panel: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.94);
+      --muted: rgba(255,255,255,0.70);
+      --accent: #8ab4ff;
+    }
+    :root[data-theme="light"]{
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: rgba(255,255,255,0.9);
+      --border: rgba(0,0,0,0.10);
+      --text: rgba(14,18,24,0.94);
+      --muted: rgba(14,18,24,0.65);
+      --accent: #2b6dff;
+    }
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; margin: 0; }
+    body{
+      font: 15px/1.55 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 14px;
+    }
+    .embed-wrap{
+      display: grid;
+      gap: 10px;
+    }
+    label{
+      display: block;
+      font-size: 12px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    textarea{
+      width: 100%;
+      min-height: 90px;
+      max-height: 200px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      font: 14px ui-monospace, SFMono-Regular, Menlo, monospace;
+      resize: vertical;
+    }
+    .row{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button{
+      cursor: pointer;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    button.primary{
+      border-color: rgba(138,180,255,0.45);
+      background: linear-gradient(120deg, rgba(138,180,255,0.30), rgba(126,240,255,0.16));
+    }
+    .credit{
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+    }
+    .credit a{ color: var(--accent); text-decoration: none; }
+    .credit a:hover{ text-decoration: underline; }
+    .compact textarea{ min-height: 60px; }
+  </style>
+</head>
+<body>
+  <div class="embed-wrap" id="root">
+    <div>
+      <label for="in">Input (text or Morse)</label>
+      <textarea id="in" spellcheck="false" autocorrect="off" autocapitalize="off">HELLO</textarea>
+    </div>
+
+    <div class="row">
+      <button id="t2m" class="primary" type="button">Text → Morse</button>
+      <button id="m2t" type="button">Morse → Text</button>
+      <button id="copy" type="button">Copy</button>
+      <button id="clear" type="button">Clear</button>
+    </div>
+
+    <div>
+      <label for="out">Output</label>
+      <textarea id="out" readonly spellcheck="false"></textarea>
+    </div>
+
+    <div class="credit">
+      Powered by
+      <a href="https://morsecodegenerator.com/" target="_blank" rel="noopener">MorseCodeGenerator.com</a>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      var params = new URLSearchParams(location.search);
+      var theme = params.get("theme");
+      if (theme === "light" || theme === "dark") {
+        document.documentElement.dataset.theme = theme;
+      }
+      if (params.get("compact") === "1") {
+        document.body.classList.add("compact");
+      }
+
+      var input = document.getElementById("in");
+      var output = document.getElementById("out");
+      var t2m = document.getElementById("t2m");
+      var m2t = document.getElementById("m2t");
+      var copyBtn = document.getElementById("copy");
+      var clearBtn = document.getElementById("clear");
+
+      var initial = params.get("q");
+      if (initial) input.value = initial;
+
+      var MAP = null;
+      var REV = null;
+
+      function buildRev(map){
+        var r = {};
+        for (var k in map){ if (Object.hasOwn(map,k) && !r[map[k]]) r[map[k]] = k; }
+        return r;
+      }
+
+      function textToMorse(text){
+        if (!MAP) return "";
+        return text.toUpperCase().split(/\s+/).filter(Boolean)
+          .map(function(w){
+            return w.split("").map(function(c){ return MAP[c] || ""; }).filter(Boolean).join(" ");
+          }).join(" / ");
+      }
+      function morseToText(s){
+        if (!REV) return "";
+        return s.replace(/[·•]/g,".").replace(/[–—]/g,"-")
+          .split(/\s*\/\s*/).filter(Boolean)
+          .map(function(w){
+            return w.trim().split(/\s+/).map(function(code){ return REV[code] || ""; }).join("");
+          }).join(" ");
+      }
+
+      function isMorse(s){
+        var t = s.trim();
+        if (!t) return false;
+        if (/[A-Za-z]/.test(t)) return false;
+        if (!/[.\-]/.test(t)) return false;
+        return !t.replace(/[.\-/\s|·•–—]/g,"").length;
+      }
+
+      function autoRun(){
+        var v = input.value || "";
+        if (!v.trim()){ output.value = ""; return; }
+        output.value = isMorse(v) ? morseToText(v) : textToMorse(v);
+      }
+
+      t2m.addEventListener("click", function(){ output.value = textToMorse(input.value || ""); });
+      m2t.addEventListener("click", function(){ output.value = morseToText(input.value || ""); });
+      clearBtn.addEventListener("click", function(){ input.value = ""; output.value = ""; });
+      copyBtn.addEventListener("click", function(){
+        var v = output.value || "";
+        if (!v) return;
+        navigator.clipboard?.writeText(v).then(function(){
+          var old = copyBtn.textContent;
+          copyBtn.textContent = "Copied ✓";
+          setTimeout(function(){ copyBtn.textContent = old; }, 1100);
+        }).catch(function(){});
+      });
+
+      var t;
+      input.addEventListener("input", function(){
+        clearTimeout(t);
+        t = setTimeout(autoRun, 140);
+      });
+
+      fetch("/morse.json").then(function(r){ return r.json(); }).then(function(j){
+        var raw = (j && j.morseMap) ? j.morseMap : j;
+        MAP = {};
+        for (var k in raw){
+          if (Object.hasOwn(raw,k) && k !== " ") MAP[k.toUpperCase()] = raw[k];
+        }
+        REV = buildRev(MAP);
+        autoRun();
+      }).catch(function(){
+        output.value = "Error loading data";
+      });
+    })();
+  </script>
+</body>
+</html>

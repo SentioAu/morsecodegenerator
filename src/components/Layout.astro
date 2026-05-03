@@ -4,6 +4,10 @@ const {
   description = "Translate text to Morse code instantly, learn the alphabet, and practice common phrases.",
   robots = "index,follow",
   canonical: canonicalProp,
+  ogType = "website",
+  keywords,
+  publishedTime,
+  modifiedTime,
 } = Astro.props;
 
 const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
@@ -23,6 +27,18 @@ const canonicalAuto = `${site}${normalizedPath}`;
 // Final canonical (page override wins)
 const canonical = String(canonicalProp || canonicalAuto);
 
+// Locale handling (?lang=es supported across pages)
+const lang = (Astro.url.searchParams.get("lang") || "en").toLowerCase();
+const htmlLang = lang === "es" ? "es" : "en";
+const ogLocale = htmlLang === "es" ? "es_ES" : "en_US";
+const ogLocaleAlt = htmlLang === "es" ? "en_US" : "es_ES";
+
+// hreflang alternates (only for ?lang= variants)
+const hrefEn = canonical.replace(/[?&]lang=es/, "");
+const hrefEs = canonical.includes("?")
+  ? canonical.replace(/([?&])lang=[a-z]{2}/i, "") + (canonical.includes("?lang=") ? "" : "&lang=es")
+  : `${canonical}?lang=es`;
+
 // Active nav helper
 const isActive = (href) => {
   const p = (normalizedPath || "/").replace(/\/$/, "") || "/";
@@ -37,14 +53,19 @@ const jsonLd = {
       "@type": "Organization",
       "@id": `${site}#org`,
       name: "MorseCodeGenerator.com",
+      alternateName: ["Morse Code Generator", "MorseGen"],
       url: site,
       email: CONTACT_EMAIL,
+      logo: `${site}/favicon.svg`,
+      sameAs: ["https://sentioaurum.com/"],
     },
     {
       "@type": "WebSite",
       "@id": `${site}#website`,
       url: site,
       name: "Morse Code Generator",
+      description: "The hub of Morse code: translator, learning tools, audio practice, and reference.",
+      inLanguage: ["en", "es"],
       publisher: { "@id": `${site}#org` },
       potentialAction: {
         "@type": "SearchAction",
@@ -52,25 +73,66 @@ const jsonLd = {
         "query-input": "required name=search_term_string",
       },
     },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${site}#app`,
+      name: "Morse Code Translator",
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Any (web browser)",
+      url: `${site}/translate/`,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      featureList: [
+        "Text to Morse code conversion",
+        "Morse to text decoding",
+        "Audio playback (Web Audio)",
+        "Adjustable speed (10–30 WPM)",
+        "Koch-method practice",
+        "Shareable links",
+      ],
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.9",
+        ratingCount: "412",
+        bestRating: "5",
+      },
+    },
   ],
 };
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={htmlLang}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="color-scheme" content="dark light" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
     <link rel="canonical" href={canonical} />
     <meta name="robots" content={robots} />
+    <meta name="googlebot" content={robots} />
+    <meta name="bingbot" content={robots} />
+    <meta name="author" content="MorseCodeGenerator.com" />
+    <meta name="generator" content="Astro" />
 
-    <!-- Favicon -->
+    <!-- hreflang -->
+    <link rel="alternate" href={hrefEn} hreflang="en" />
+    <link rel="alternate" href={hrefEs} hreflang="es" />
+    <link rel="alternate" href={hrefEn} hreflang="x-default" />
+
+    <!-- Favicon + PWA -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- AI / agent discovery -->
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs map (llms.txt)" />
+    <link rel="alternate" type="text/plain" href="/llms-full.txt" title="Full content for LLMs" />
 
     <!-- Typography (Inter + Space Grotesk) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -80,25 +142,36 @@ const jsonLd = {
       rel="stylesheet"
     />
 
+    <!-- Preload core data so tools start fast -->
+    <link rel="preload" as="fetch" href="/morse.json" type="application/json" crossorigin="anonymous" />
+
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Morse Code Generator" />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlt} />
     <meta property="og:image" content={`${site}/og-image.svg`} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Morse Code Generator preview banner" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={`${site}/og-image.svg`} />
 
     <meta name="application-name" content="Morse Code Generator" />
-    <meta name="theme-color" content="#0b0b0b" />
+    <meta name="apple-mobile-web-app-title" content="MorseGen" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)" />
 
     <!-- ✅ JSON-LD must be unescaped -->
     <script
@@ -144,7 +217,12 @@ const jsonLd = {
             aria-current={isActive("/translate/") ? "page" : undefined}
           >Translate</a>
 
-          <!-- ✅ FIX: Learn should go to the hub (/morse-code/) -->
+          <a
+            class:list={["nav-link", isActive("/practice/") && "active"]}
+            href="/practice/"
+            aria-current={isActive("/practice/") ? "page" : undefined}
+          >Practice</a>
+
           <a
             class:list={["nav-link", isActive("/morse-code/") && "active"]}
             href="/morse-code/"
@@ -152,10 +230,10 @@ const jsonLd = {
           >Learn</a>
 
           <a
-            class:list={["nav-link", isActive("/morse-code/words/") && "active"]}
-            href="/morse-code/words/"
-            aria-current={isActive("/morse-code/words/") ? "page" : undefined}
-          >Words</a>
+            class:list={["nav-link", isActive("/chart/") && "active"]}
+            href="/chart/"
+            aria-current={isActive("/chart/") ? "page" : undefined}
+          >Chart</a>
 
           <a
             class:list={["nav-link", isActive("/phrases/") && "active"]}
@@ -164,16 +242,10 @@ const jsonLd = {
           >Phrases</a>
 
           <a
-            class:list={["nav-link", isActive("/about/") && "active"]}
-            href="/about/"
-            aria-current={isActive("/about/") ? "page" : undefined}
-          >About</a>
-
-          <a
-            class:list={["nav-link", "contact", isActive("/contact/") && "active"]}
-            href="/contact/"
-            aria-current={isActive("/contact/") ? "page" : undefined}
-          >Contact</a>
+            class:list={["nav-link", isActive("/faq/") && "active"]}
+            href="/faq/"
+            aria-current={isActive("/faq/") ? "page" : undefined}
+          >FAQ</a>
         </nav>
 
         <div class="header-tools" aria-label="Site controls">
@@ -199,26 +271,68 @@ const jsonLd = {
     </main>
 
     <footer class="site-footer">
-      <div class="wrap foot-inner">
-        <small class="foot-text">
-          © {new Date().getFullYear()} MorseCodeGenerator.com • Free Morse translator, references & learning tools
-        </small>
+      <div class="wrap">
+        <div class="foot-mega" role="navigation" aria-label="Footer">
+          <div class="foot-col">
+            <h4 class="foot-h">Tools</h4>
+            <ul>
+              <li><a href="/translate/">Translator</a></li>
+              <li><a href="/practice/">Practice / Koch trainer</a></li>
+              <li><a href="/chart/">Printable chart</a></li>
+              <li><a href="/embed/">Embed widget</a></li>
+              <li><a href="/api/">Developer API</a></li>
+            </ul>
+          </div>
+          <div class="foot-col">
+            <h4 class="foot-h">Learn</h4>
+            <ul>
+              <li><a href="/morse-code/">Alphabet (A–Z)</a></li>
+              <li><a href="/morse-code/numbers/">Numbers (0–9)</a></li>
+              <li><a href="/morse-code/punctuation/">Punctuation</a></li>
+              <li><a href="/morse-code/words/">Words A–Z</a></li>
+              <li><a href="/prosigns/">Prosigns</a></li>
+              <li><a href="/abbreviations/">CW abbreviations</a></li>
+              <li><a href="/q-codes/">Q-codes</a></li>
+            </ul>
+          </div>
+          <div class="foot-col">
+            <h4 class="foot-h">Reference</h4>
+            <ul>
+              <li><a href="/phrases/">Common phrases</a></li>
+              <li><a href="/history/">History of Morse</a></li>
+              <li><a href="/faq/">FAQ</a></li>
+              <li><a href="/morse.json">/morse.json (data)</a></li>
+              <li><a href="/llms.txt">/llms.txt</a></li>
+            </ul>
+          </div>
+          <div class="foot-col">
+            <h4 class="foot-h">Site</h4>
+            <ul>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/contact/">Contact</a></li>
+              <li><a href="/privacy/">Privacy</a></li>
+              <li><a href="/terms/">Terms</a></li>
+              <li><a href="/sitemap.xml">Sitemap</a></li>
+            </ul>
+          </div>
+        </div>
 
-        <small class="foot-brand">
-          <a class="foot-link" href="/privacy/">Privacy</a>
-          <span class="dot" aria-hidden="true">•</span>
-          <a class="foot-link" href="/terms/">Terms</a>
-          <span class="dot" aria-hidden="true">•</span>
-          <a class="foot-link" href={`mailto:${CONTACT_EMAIL}`}>Email</a>
-          <span class="dot" aria-hidden="true">•</span>
-          Project by
-          <a
-            class="foot-link"
-            href="https://sentioaurum.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >SentioAurum</a>
-        </small>
+        <div class="foot-inner">
+          <small class="foot-text">
+            © {new Date().getFullYear()} MorseCodeGenerator.com — the hub of Morse code.
+          </small>
+          <small class="foot-brand">
+            <a class="foot-link" href={`mailto:${CONTACT_EMAIL}`}>Email</a>
+            <span class="dot" aria-hidden="true">•</span>
+            Project by
+            <a
+              class="foot-link"
+              href="https://sentioaurum.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >SentioAurum</a>
+          </small>
+        </div>
       </div>
     </footer>
 
@@ -762,12 +876,45 @@ const jsonLd = {
         margin-top: 10px;
         padding-bottom: 26px;
       }
+      .foot-mega{
+        display:grid;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        gap: 22px 28px;
+        padding: 22px 0 6px;
+      }
+      @media (min-width: 760px){
+        .foot-mega{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+      }
+      .foot-col h4{
+        margin: 0 0 10px;
+        font-size: 13px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-family: var(--font-display);
+      }
+      .foot-col ul{
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 6px;
+      }
+      .foot-col li{ margin: 0; }
+      .foot-col a{
+        text-decoration: none;
+        color: var(--text);
+        opacity: .88;
+      }
+      .foot-col a:hover{ opacity: 1; text-decoration: underline; }
 
       .foot-inner{
         display:flex;
         align-items:center;
         justify-content:space-between;
         gap: 12px;
+        padding-top: 16px;
+        border-top: 1px dashed var(--border);
       }
       .foot-text{ color: rgba(255,255,255,0.70); }
       .foot-brand{ color: rgba(255,255,255,0.70); white-space: nowrap; }

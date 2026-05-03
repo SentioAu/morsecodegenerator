@@ -1,0 +1,21 @@
+/* TEAM */
+Project: MorseCodeGenerator.com
+Maintainer: SentioAurum
+Contact: morsecodegenerator [at] gmail.com
+From: Online
+
+/* THANKS */
+Inspiration: Samuel F. B. Morse, Alfred Vail
+Standards: ITU-R M.1677-1 (International Morse Code)
+Community: Amateur radio operators worldwide
+
+/* SITE */
+Last update: 2026/05/02
+Standards: HTML5, CSS3, ES2022, Schema.org JSON-LD
+Components: Astro, vanilla JS, Web Audio API
+Software: Astro 4.x, static export
+Hosting: Cloudflare Pages
+
+/* PHILOSOPHY */
+Fast. Free. Private (runs in your browser).
+No accounts. No tracking beyond aggregate analytics.
