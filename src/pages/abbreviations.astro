@@ -1,0 +1,171 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "CW Abbreviations in Morse Code (73, 88, OM, FB, ...)";
+const description =
+  "Common amateur-radio CW abbreviations used in Morse code: 73, 88, OM, YL, FB, TNX, DE, CQ, DX, RST, and more — with meaning and example use.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/abbreviations/`;
+const robots = "index,follow";
+
+const groups = [
+  {
+    name: "Greetings & sign-off",
+    items: [
+      ["73",   "Best regards"],
+      ["88",   "Love and kisses"],
+      ["GM",   "Good morning"],
+      ["GA",   "Good afternoon"],
+      ["GE",   "Good evening"],
+      ["GN",   "Good night"],
+      ["TNX",  "Thanks"],
+      ["TU",   "Thank you"],
+      ["CUL",  "See you later"],
+    ],
+  },
+  {
+    name: "People",
+    items: [
+      ["OM",   "Old man (any male op)"],
+      ["YL",   "Young lady (female op)"],
+      ["XYL",  "Wife (ex-young lady)"],
+      ["DE",   "From / this is"],
+      ["UR",   "Your / you’re"],
+    ],
+  },
+  {
+    name: "Operating",
+    items: [
+      ["CQ",   "Calling any station"],
+      ["DX",   "Long distance"],
+      ["RST",  "Signal report (Readability/Strength/Tone)"],
+      ["FB",   "Fine business (excellent)"],
+      ["AGN",  "Again"],
+      ["PSE",  "Please"],
+      ["HW?",  "How copy?"],
+      ["WX",   "Weather"],
+      ["RIG",  "Radio equipment"],
+      ["ANT",  "Antenna"],
+      ["PWR",  "Power"],
+      ["QRP",  "Low power"],
+      ["QRO",  "High power"],
+      ["ES",   "And"],
+      ["NR",   "Number"],
+      ["ABT",  "About"],
+      ["BTW",  "By the way"],
+      ["WL",   "Well / will"],
+    ],
+  },
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Abbreviations", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "Article",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} ogType="article">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">CW abbreviations</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Ham radio • CW shorthand</p>
+    <h1 class="page-hero-title">CW abbreviations in Morse code</h1>
+    <p class="muted page-hero-sub">
+      Hams shorten everything on CW. Learn the standard abbreviations once and your QSOs become fast,
+      friendly, and surprisingly readable.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/translate/">Open translator</a>
+      <a class="btn secondary" href="/q-codes/">Q-codes</a>
+      <a class="btn ghost" href="/prosigns/">Prosigns</a>
+    </div>
+  </header>
+
+  {groups.map((g) => (
+    <section class="card" style="margin-top:14px;">
+      <h2 style="margin-top:0;">{g.name}</h2>
+      <div class="abbr-grid">
+        {g.items.map(([k, v]) => (
+          <div class="abbr">
+            <div class="abbr-key k">{k}</div>
+            <div class="abbr-val">{v}</div>
+            <a class="abbr-go" href={`/translate/?q=${encodeURIComponent(k)}`}>Send →</a>
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <section class="card soft" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Tip</h2>
+    <p class="muted">
+      A typical CQ goes: <span class="k">CQ CQ CQ DE [your call] [your call] K</span>. Replies often
+      include <span class="k">RST</span>, <span class="k">QTH</span>, name, and rig.
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+
+    .abbr-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .abbr{
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display:flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .abbr-key{ font-weight: 900; letter-spacing: .04em; font-size: 16px; }
+    .abbr-val{ color: var(--muted); font-size: 14px; }
+    .abbr-go{
+      margin-top: 6px;
+      align-self: flex-start;
+      font-size: 13px;
+      text-decoration: none;
+      color: var(--accent);
+    }
+    .abbr-go:hover{ text-decoration: underline; }
+  </style>
+</Layout>

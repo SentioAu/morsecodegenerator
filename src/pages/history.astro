@@ -1,0 +1,145 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "History of Morse Code – From Telegraph to Modern CW";
+const description =
+  "How Morse code was invented, the role of Samuel Morse and Alfred Vail, the shift from American to International Morse, the SOS distress signal, and why CW is still alive today.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/history/`;
+const robots = "index,follow";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "History", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "Article",
+      headline: title,
+      description,
+      url: canonical,
+      datePublished: "2026-05-02",
+      dateModified: "2026-05-02",
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  robots={robots}
+  ogType="article"
+  publishedTime="2026-05-02"
+  modifiedTime="2026-05-02"
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">History</span>
+  </nav>
+
+  <article class="prose">
+    <header class="page-hero">
+      <p class="page-hero-kicker">Long read • ~6 minutes</p>
+      <h1 class="page-hero-title">A short history of Morse code</h1>
+      <p class="muted page-hero-sub">
+        The story of how dots and dashes carried civilization’s most important messages for nearly
+        two centuries — and why operators still send them today.
+      </p>
+    </header>
+
+    <h2>Origins (1830s–1844)</h2>
+    <p>
+      In the 1830s Samuel F. B. Morse, an American painter, began collaborating with the inventor
+      Alfred Vail and physicist Leonard Gale on a practical electric telegraph. Vail in particular
+      contributed the early code itself — what would later be called <strong>American Morse</strong>.
+      The first formally demonstrated message was sent on <strong>May 24, 1844</strong>, between
+      Washington, D.C. and Baltimore: <em>“What hath God wrought.”</em>
+    </p>
+
+    <h2>From American Morse to International Morse (1860s–1912)</h2>
+    <p>
+      American Morse used some odd character lengths (extra-long dashes, internal spaces) that worked
+      on physical wires but suffered on radio. Friedrich Clemens Gerke published a simplified version
+      in 1848, which the European telegraph conferences adopted, refined, and standardized as
+      <strong>International Morse Code</strong> by the early 20th century. Today the ITU maintains the
+      international standard as <a href="/faq/" data-noref>ITU-R M.1677-1</a>.
+    </p>
+
+    <h2>Wireless and the SOS distress signal (1903–1912)</h2>
+    <p>
+      Marconi’s wireless telegraphy turned Morse into a maritime backbone. After several incompatible
+      distress calls (CQD, NC, SOE), the 1906 <strong>Berlin International Radiotelegraphic
+      Conference</strong> chose <strong>SOS</strong> — three dots, three dashes, three dots — purely
+      because the rhythm was unmistakable. It became internationally effective on July 1, 1908, and
+      famously rang out from RMS Titanic in 1912.
+    </p>
+
+    <h2>The world wars and aviation (1914–1945)</h2>
+    <p>
+      Both world wars relied on Morse for low-power, low-bandwidth, often-jammed conditions where
+      voice would have failed. After 1945, aviation held onto Morse for navaid identification — VOR
+      and NDB beacons still transmit their identifiers in Morse today, decoded by pilots reading the
+      chart.
+    </p>
+
+    <h2>The end of maritime Morse (1999)</h2>
+    <p>
+      On <strong>February 1, 1999</strong>, the Global Maritime Distress and Safety System (GMDSS)
+      replaced Morse for ocean distress, retiring nearly a century of dot-dash maritime tradition.
+      The very last commercial U.S. Morse transmission ended on July 12, 1999.
+    </p>
+
+    <h2>Why Morse is still alive in amateur radio</h2>
+    <p>
+      In ham radio, Morse — known as <strong>CW</strong> (continuous wave) — survives because it
+      works. CW signals get through under conditions where SSB voice can’t copy a syllable. A modest
+      QRP transmitter can cross oceans with CW. There’s also a tactile pleasure to it that keeps
+      generations coming back to the key.
+    </p>
+
+    <h2>Learn it the modern way</h2>
+    <ul>
+      <li>Use the <a href="/practice/">Koch-method trainer</a> at full target speed.</li>
+      <li>Memorize sound shapes, not dots and dashes.</li>
+      <li>Practice prosigns from <a href="/prosigns/">our reference</a>.</li>
+      <li>Pick up <a href="/abbreviations/">CW abbreviations</a> and <a href="/q-codes/">Q-codes</a> early.</li>
+      <li>Generate any message in <a href="/translate/">our translator</a> and listen to the audio.</li>
+    </ul>
+
+    <hr />
+    <p class="muted">
+      Sources / further reading: ITU-R M.1677-1 (2009); ARRL CW operating guides; Berlin
+      International Radiotelegraphic Conference Final Acts (1906); IMO GMDSS implementation timeline.
+    </p>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+  </style>
+</Layout>

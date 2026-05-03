@@ -1,0 +1,131 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Morse Code Prosigns – Full Reference (SK, AR, BT, KN, ...)";
+const description =
+  "Complete list of Morse code prosigns: AR, AS, BT, CL, CT, KN, SK, SN, plus how to send them. Sound, meaning, and example use in CW.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/prosigns/`;
+const robots = "index,follow";
+
+const prosigns = [
+  { sign: "AA", code: ".-.-",        meaning: "New line / line break",     when: "End of a line of plain text in a message." },
+  { sign: "AR", code: ".-.-.",        meaning: "End of message (+)",         when: "End of a complete message; same code as the plus sign." },
+  { sign: "AS", code: ".-...",        meaning: "Wait / standby",             when: "Stand by; I’ll be back shortly." },
+  { sign: "BK", code: "-...-.-",      meaning: "Break",                      when: "Invite the receiving station to transmit." },
+  { sign: "BT", code: "-...-",        meaning: "New paragraph (=)",          when: "Pause / new paragraph; same code as equals sign." },
+  { sign: "CL", code: "-.-..-..",     meaning: "Going off the air",          when: "Closing the station; clearing the frequency." },
+  { sign: "CT", code: "-.-.-",        meaning: "Start of transmission (KA)", when: "Attention — start of a new transmission." },
+  { sign: "HH", code: "........",     meaning: "Error",                      when: "Disregard the previous group; eight dots." },
+  { sign: "KN", code: "-.--.",        meaning: "Go ahead, named station",    when: "Only the named station should reply." },
+  { sign: "K",  code: "-.-",          meaning: "Go ahead (any station)",     when: "Invitation to transmit, any station." },
+  { sign: "R",  code: ".-.",          meaning: "Received / roger",           when: "Confirms receipt of the previous transmission." },
+  { sign: "SK", code: "...-.-",       meaning: "End of contact",             when: "Ending a QSO (radio contact)." },
+  { sign: "SN", code: "...-.",        meaning: "Understood (VE)",            when: "Confirms understanding of a transmission." },
+  { sign: "SOS",code: "...---...",    meaning: "International distress",     when: "Sent as a single signal — distress only." },
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Prosigns", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "Article",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} ogType="article">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Prosigns</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">CW reference • ITU-R M.1677-1</p>
+    <h1 class="page-hero-title">Morse code prosigns</h1>
+    <p class="muted page-hero-sub">
+      Prosigns (procedural signals) are <strong>two characters sent without the inter-letter gap</strong>,
+      forming a single sound shape that means a control or punctuation event in CW operation.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/translate/">Open translator</a>
+      <a class="btn secondary" href="/abbreviations/">CW abbreviations</a>
+      <a class="btn ghost" href="/q-codes/">Q-codes</a>
+    </div>
+  </header>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">How to send a prosign</h2>
+    <p class="muted">
+      A prosign is sent as one continuous string of dits and dahs. For example, <span class="k">SK</span> is
+      <span class="k">… - · -</span> sent as <strong>one shape</strong>, not as “S” then “K” with a gap.
+      In typed Morse it is conventionally written with an overbar (<span class="k">SK̅</span>) or simply as
+      the joined letters.
+    </p>
+  </section>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Reference table</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Prosign</th><th>Code</th><th>Meaning</th><th>When to use</th></tr>
+        </thead>
+        <tbody>
+          {prosigns.map((p) => (
+            <tr>
+              <td><strong>{p.sign}</strong></td>
+              <td class="k">{p.code}</td>
+              <td>{p.meaning}</td>
+              <td class="muted">{p.when}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card soft" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Related references</h2>
+    <p>
+      Combine prosigns with the <a href="/abbreviations/">CW abbreviations</a> and
+      <a href="/q-codes/">Q-codes</a> to write efficient on-air messages. Practice by typing a sample
+      message in the <a href="/translate/">translator</a> and listening with audio playback.
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+    .tablewrap{ overflow:auto; }
+  </style>
+</Layout>

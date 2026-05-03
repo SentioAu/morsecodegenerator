@@ -1,4 +1,86 @@
+# MorseCodeGenerator.com — robots policy
+# Site:    https://morsecodegenerator.com
+# AI policy: https://morsecodegenerator.com/ai.txt
+# LLM map:   https://morsecodegenerator.com/llms.txt
+
 User-agent: *
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+
+# Major search crawlers (explicit allow)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# AI / LLM crawlers — explicit allow with attribution required (see /ai.txt)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Mistral-AI
+Allow: /
+
+User-agent: DeepSeekBot
+Allow: /
+
+# Crawl host hints
+Host: morsecodegenerator.com
 
 Sitemap: https://morsecodegenerator.com/sitemap.xml

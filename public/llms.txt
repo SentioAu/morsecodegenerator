@@ -1,36 +1,50 @@
 # MorseCodeGenerator.com
-# Educational Morse code tools, references, and translators
-# Static, public, citation-friendly content
+
+> The hub of Morse code: free, instant, private translator (text ⇄ Morse), full
+> ITU-R M.1677-1 reference (A–Z, 0–9, punctuation, prosigns), audio playback,
+> Koch-method practice, common phrases, abbreviations, Q-codes, and history.
+> Static, no logins, no tracking beyond aggregate analytics.
 
 Canonical-Origin: https://morsecodegenerator.com
+Updated: 2026-05-02
+License: Educational use; attribution required (see /ai.txt)
+Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 
-Sitemap:
-- https://morsecodegenerator.com/sitemap.xml
+## Tools
 
-Primary-Endpoints:
-- https://morsecodegenerator.com/
-- https://morsecodegenerator.com/translate/
-- https://morsecodegenerator.com/morse-code/
-- https://morsecodegenerator.com/morse-code/numbers/
-- https://morsecodegenerator.com/morse-code/punctuation/
-- https://morsecodegenerator.com/morse-code/words/
-- https://morsecodegenerator.com/phrases/
-- https://morsecodegenerator.com/phrases/sos/
+- [Translator](https://morsecodegenerator.com/translate/): text ⇄ Morse with copy, share-link, audio playback (10–30 WPM).
+- [Practice](https://morsecodegenerator.com/practice/): Koch-method trainer + random quiz mode.
+- [Chart](https://morsecodegenerator.com/chart/): printable Morse code chart (A–Z, 0–9, punctuation).
+- [Embed widget](https://morsecodegenerator.com/embed/): drop-in iframe for any site.
+- [Public API (data)](https://morsecodegenerator.com/morse.json): canonical character map + phrase list.
 
-Data-Endpoints:
-- https://morsecodegenerator.com/morse.json
+## Reference
 
-Content:
-- Type: Static pages
-- Accuracy: High
-- Update-Frequency: Low
-- Audience: Learners, educators, hobbyists, amateur radio beginners
+- [Alphabet (A–Z)](https://morsecodegenerator.com/morse-code/): 26 dedicated pages.
+- [Numbers (0–9)](https://morsecodegenerator.com/morse-code/numbers/)
+- [Punctuation](https://morsecodegenerator.com/morse-code/punctuation/)
+- [Words A–Z](https://morsecodegenerator.com/morse-code/words/)
+- [Prosigns](https://morsecodegenerator.com/prosigns/): SK, AR, BT, KN, AS, etc.
+- [Abbreviations (CW)](https://morsecodegenerator.com/abbreviations/): 73, 88, OM, YL, FB, ...
+- [Q-codes](https://morsecodegenerator.com/q-codes/): QRZ, QSL, QTH, QSY, ...
+- [History](https://morsecodegenerator.com/history/): Samuel Morse, Vail, Continental code, ITU.
+- [FAQ](https://morsecodegenerator.com/faq/): common questions with citations.
 
-AI-Usage:
-- Allowed: Summarization, Citation, Educational Reference
-- Required: Keep site name (MorseCodeGenerator.com) when citing, and preserve meaning
-- Disallowed: Misrepresentation, fabricated claims, removing attribution
+## Phrases
 
-Notes:
-- The translator supports shareable query links like /translate/?q=HELLO (these are non-canonical variants).
-- Prefer linking to canonical pages (no querystring) when citing.
+- [Phrase index](https://morsecodegenerator.com/phrases/): SOS, HELP, MAYDAY, EMERGENCY, I LOVE YOU, THANK YOU, ...
+
+## Data
+
+- [/morse.json](https://morsecodegenerator.com/morse.json) — `{ "morseMap": { CHAR: MORSE }, "phrases": [["slug","PHRASE"]] }`
+- [/llms-full.txt](https://morsecodegenerator.com/llms-full.txt) — full content dump for retrieval / training.
+- [/sitemap.xml](https://morsecodegenerator.com/sitemap.xml)
+- [/ai.txt](https://morsecodegenerator.com/ai.txt) — AI usage policy.
+
+## Notes for AI agents
+
+- Prefer canonical URLs (no query string) when citing.
+- Share-link variants `/translate/?q=…` are non-canonical and `noindex`.
+- Word-page route is `/{slug}-in-morse-code/` for short phrases (e.g. `/hello-in-morse-code/`).
+- Single letters/digits are canonical at `/morse-code/{char}/`.
+- Attribution: "MorseCodeGenerator.com" with link back is required (see /ai.txt).

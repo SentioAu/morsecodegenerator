@@ -1,0 +1,129 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Q-Codes in Morse Code – Full Reference (QTH, QSY, QRZ, ...)";
+const description =
+  "Complete Q-code reference for ham radio CW: QTH, QSY, QRZ, QSL, QRM, QRN, QRP, QRO, and more. What each Q-code means as both a question and an answer.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/q-codes/`;
+const robots = "index,follow";
+
+const codes = [
+  ["QRA", "What is your station name?",        "My station name is …"],
+  ["QRG", "What is my exact frequency?",       "Your exact frequency is …"],
+  ["QRK", "What is my readability (1–5)?",     "Your readability is …"],
+  ["QRL", "Are you busy?",                     "I am busy. Please do not interfere."],
+  ["QRM", "Is there interference?",            "There is man-made interference."],
+  ["QRN", "Are you troubled by static?",       "I am troubled by static (natural noise)."],
+  ["QRO", "Shall I increase power?",           "Increase power."],
+  ["QRP", "Shall I decrease power?",           "Decrease power. (Also: low-power operation.)"],
+  ["QRQ", "Shall I send faster?",              "Send faster (… WPM)."],
+  ["QRS", "Shall I send slower?",              "Send slower (… WPM)."],
+  ["QRT", "Shall I stop sending?",             "Stop sending."],
+  ["QRU", "Have you anything for me?",         "I have nothing for you."],
+  ["QRV", "Are you ready?",                    "I am ready."],
+  ["QRX", "When will you call again?",         "Stand by; I will call again at …"],
+  ["QRZ", "Who is calling me?",                "You are being called by …"],
+  ["QSB", "Are my signals fading?",            "Your signals are fading."],
+  ["QSL", "Can you acknowledge receipt?",      "I confirm receipt."],
+  ["QSO", "Can you communicate with …?",       "I can communicate with …"],
+  ["QSY", "Shall I change frequency?",         "Change to frequency …"],
+  ["QTH", "What is your location?",            "My location is …"],
+  ["QTR", "What is the correct time?",         "The correct time is …"],
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Q-codes", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "Article",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} ogType="article">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Q-codes</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">CW operating • ITU origin</p>
+    <h1 class="page-hero-title">Q-codes in Morse code</h1>
+    <p class="muted page-hero-sub">
+      Q-codes are three-letter abbreviations starting with <span class="k">Q</span>. Each works as both a
+      <strong>question</strong> (with a <span class="k">?</span>) and an <strong>answer</strong>
+      (without). Originally from international maritime/aero use, now standard in ham CW.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/translate/">Open translator</a>
+      <a class="btn secondary" href="/abbreviations/">CW abbreviations</a>
+      <a class="btn ghost" href="/prosigns/">Prosigns</a>
+    </div>
+  </header>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Reference table</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Code</th><th>As a question</th><th>As an answer</th></tr>
+        </thead>
+        <tbody>
+          {codes.map(([k, q, a]) => (
+            <tr>
+              <td><strong class="k">{k}</strong></td>
+              <td>{q}</td>
+              <td class="muted">{a}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card soft" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Examples</h2>
+    <ul>
+      <li><span class="k">QRZ?</span> — “Who is calling me?”</li>
+      <li><span class="k">QTH? FN31</span> — “Where are you? — FN31 (Maidenhead grid)”</li>
+      <li><span class="k">QSY 14.040</span> — “Move to 14.040 MHz.”</li>
+      <li><span class="k">QSL TNX 73</span> — “Confirmed. Thanks. Best regards.”</li>
+    </ul>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+    .tablewrap{ overflow:auto; }
+  </style>
+</Layout>

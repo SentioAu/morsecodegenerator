@@ -1,0 +1,124 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Embed a Morse Code Translator – Free iframe Widget";
+const description =
+  "Drop a free Morse code translator on any site with one line of HTML. Light/dark, responsive, no tracking. Built-in attribution.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/embed/`;
+const robots = "index,follow";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Embed", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "TechArticle",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} ogType="article">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Embed</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Free • Responsive • No tracking</p>
+    <h1 class="page-hero-title">Embed our translator</h1>
+    <p class="muted page-hero-sub">
+      Add a working Morse code translator to your blog, classroom site, or wiki with a single iframe.
+      Theme follows the parent page automatically.
+    </p>
+  </header>
+
+  <section class="card glow" style="margin-top:14px;">
+    <h2 style="margin-top:0;">One-line embed</h2>
+    <pre class="codeblock"><code>{`<iframe
+  src="https://morsecodegenerator.com/embed.html"
+  title="Morse code translator"
+  style="width:100%;height:520px;border:0;border-radius:14px;"
+  loading="lazy"
+  referrerpolicy="strict-origin-when-cross-origin"
+></iframe>`}</code></pre>
+
+    <h3>Options (URL parameters)</h3>
+    <ul>
+      <li><span class="k">?theme=dark</span> or <span class="k">?theme=light</span></li>
+      <li><span class="k">?q=HELLO</span> — preload an initial input</li>
+      <li><span class="k">?compact=1</span> — smaller layout</li>
+    </ul>
+  </section>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Live preview</h2>
+    <iframe
+      src="/embed.html?q=SOS"
+      title="Live preview of Morse code embed widget"
+      class="preview"
+      loading="lazy"
+    ></iframe>
+  </section>
+
+  <section class="card soft" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Attribution</h2>
+    <p class="muted">
+      The widget includes a small "Powered by MorseCodeGenerator.com" link. If you remove the iframe
+      branding, please credit us elsewhere on the page.
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+
+    .codeblock{
+      background: rgba(0,0,0,0.45);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      overflow:auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13.5px;
+      line-height: 1.55;
+      white-space: pre;
+    }
+
+    .preview{
+      width: 100%;
+      height: 520px;
+      border: 0;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+    }
+  </style>
+</Layout>

@@ -1,0 +1,168 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Morse Code FAQ – Common Questions Answered";
+const description =
+  "Plain-English answers to the most-asked Morse code questions: how to learn fast, the best WPM, what SOS really means, prosigns, Q-codes, and more.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/faq/`;
+const robots = "index,follow";
+
+const faq = [
+  {
+    q: "What is Morse code?",
+    a: "Morse code is a system that encodes text characters as standardized sequences of two signal durations: short (a dot or “dit”) and long (a dash or “dah”). The modern reference is the International Morse Code defined in ITU-R M.1677-1.",
+  },
+  {
+    q: "What does SOS stand for in Morse code?",
+    a: "SOS doesn’t stand for any words. It was chosen in 1906 because its Morse pattern (… ——— …) is short, unmistakable, and easy to send and recognize even under poor signal. People later back-formed phrases like “Save Our Souls,” but those are mnemonics, not the original meaning.",
+  },
+  {
+    q: "How are letters and words separated in Morse code?",
+    a: "Inside a letter, elements are separated by a 1-unit gap. Letters are separated by a 3-unit gap, written here as a single space. Words are separated by a 7-unit gap, conventionally written as “/” when typed.",
+  },
+  {
+    q: "What is a good speed (WPM) to start with?",
+    a: "Most learners do best starting at 15–20 WPM character speed using Farnsworth timing (extra space between characters). This trains your ear to recognize rhythms instead of counting dots and dashes.",
+  },
+  {
+    q: "What is the Koch method?",
+    a: "The Koch method teaches Morse at full target speed using only two characters at first, then adds one new character each session as accuracy reaches 90%. It’s widely considered the fastest path to fluent copy.",
+  },
+  {
+    q: "Is Morse code still used today?",
+    a: "Yes. It’s used in amateur (ham) radio, aviation navaid identifiers (VOR/NDB beacons), and emergency signalling. The maritime distress role was retired in 1999 with the GMDSS system, but Morse remains a resilient low-bandwidth mode.",
+  },
+  {
+    q: "What are prosigns?",
+    a: "Prosigns are procedural signals sent as a single Morse character without the inter-letter gap — for example BT (-…-) for a paragraph break, AR (.-.-.) for end of message, and SK (…-.-) for end of contact.",
+  },
+  {
+    q: "What are Q-codes?",
+    a: "Q-codes are three-letter abbreviations starting with Q used as both a question and an answer. Examples: QTH = location, QSY = change frequency, QRZ = who is calling me?",
+  },
+  {
+    q: "Can I use Morse code on this site without installing anything?",
+    a: "Yes. The translator, audio playback, and practice tools all run in your browser. No accounts and no install — open a page and start.",
+  },
+  {
+    q: "Does the translator decode Morse back to text?",
+    a: "Yes. Paste Morse with spaces between letters and “/” between words. The tool also auto-detects whether your input is text or Morse.",
+  },
+  {
+    q: "Is the data on this site free for AI training and citation?",
+    a: "Yes, with attribution. See /ai.txt for the full policy. We also publish /llms.txt and /llms-full.txt as machine-readable summaries.",
+  },
+  {
+    q: "How do I share a translation?",
+    a: "Use the translator’s “Copy share link” button — it encodes your text in the URL (e.g. /translate/?q=HELLO). These share URLs are intentionally non-canonical to keep search results clean.",
+  },
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "FAQ", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      url: canonical,
+      mainEntity: faq.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">FAQ</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Answers • Citations • No fluff</p>
+    <h1 class="page-hero-title">Morse Code FAQ</h1>
+    <p class="muted page-hero-sub">
+      The questions people actually ask, answered in plain English with links to deeper references.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/translate/">Try the translator</a>
+      <a class="btn secondary" href="/practice/">Start practice</a>
+      <a class="btn ghost" href="/morse-code/">Learn the alphabet</a>
+    </div>
+  </header>
+
+  <section class="faq-list">
+    {faq.map((f, i) => (
+      <details class="faq-item" open={i < 3}>
+        <summary>{f.q}</summary>
+        <p class="muted">{f.a}</p>
+      </details>
+    ))}
+  </section>
+
+  <section class="card soft" style="margin-top:24px;">
+    <h2 style="margin-top:0;">Still have a question?</h2>
+    <p class="muted">
+      Browse the <a href="/morse-code/">learning hub</a>, the <a href="/history/">history</a>,
+      or <a href="/contact/">contact us</a>.
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+
+    .faq-list{ display:grid; gap:10px; margin-top: 14px; }
+    .faq-item{
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.025);
+      padding: 14px 16px;
+    }
+    .faq-item[open]{
+      border-color: rgba(138,180,255,0.32);
+      background: rgba(138,180,255,0.06);
+    }
+    .faq-item summary{
+      cursor: pointer;
+      font-weight: 800;
+      font-family: var(--font-display);
+      font-size: 17px;
+      list-style: none;
+    }
+    .faq-item summary::-webkit-details-marker{ display:none; }
+    .faq-item summary::after{
+      content: "+";
+      float: right;
+      font-weight: 600;
+      opacity: .7;
+    }
+    .faq-item[open] summary::after{ content: "−"; }
+    .faq-item p{ margin: 8px 0 0; }
+  </style>
+</Layout>

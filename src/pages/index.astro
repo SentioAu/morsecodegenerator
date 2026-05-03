@@ -1,9 +1,9 @@
 ---
 import Layout from "../components/Layout.astro";
 
-const title = "Morse Code Generator – Fast, Free Morse Translator";
+const title = "Morse Code Generator – The Hub of Morse Code";
 const description =
-  "Translate text to Morse code, decode Morse back to plain text, and practice letters, words, and phrases with instant copy tools.";
+  "Free Morse code translator, audio practice (Koch + Farnsworth), printable chart, full reference (alphabet, numbers, punctuation, prosigns, Q-codes), and a developer API. The hub of Morse.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -32,6 +32,19 @@ const jsonLd = {
       url: canonical,
       isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
     },
+    {
+      "@type": "HowTo",
+      name: "How to translate text to Morse code",
+      description: "Convert any text into International Morse code in seconds.",
+      totalTime: "PT30S",
+      tool: [{ "@type": "HowToTool", name: "MorseCodeGenerator.com translator" }],
+      step: [
+        { "@type": "HowToStep", name: "Open the translator", url: `${site}/translate/` },
+        { "@type": "HowToStep", name: "Type or paste your text into the input box." },
+        { "@type": "HowToStep", name: "Tap “Text → Morse” (or wait — auto-detect runs as you type)." },
+        { "@type": "HowToStep", name: "Tap Copy or Play to listen at adjustable WPM." },
+      ],
+    },
   ],
 };
 ---
@@ -40,13 +53,14 @@ const jsonLd = {
   <header class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="kicker">Free • Fast • Private</p>
+        <p class="kicker">The hub of Morse code · Free · Private</p>
 
-        <h1 class="hero-title">Translate & Learn Morse Code in Seconds</h1>
+        <h1 class="hero-title">Translate, Hear & Learn Morse — All in One Place</h1>
 
         <p class="muted hero-sub">
-          Convert text to Morse, decode Morse back to plain text, and drill letters, words, and phrases.
-          Everything runs in your browser with instant copy tools and zero sign-up.
+          A complete Morse code platform: translator with audio playback, Koch-method practice,
+          printable chart, full ITU reference (alphabet, numbers, punctuation, prosigns, Q-codes),
+          a developer API, and an embeddable widget. Everything runs in your browser.
         </p>
 
         <div class="hero-actions">
@@ -54,7 +68,8 @@ const jsonLd = {
             Start translating
             <span aria-hidden="true">→</span>
           </a>
-          <a class="btn secondary" href="/morse-code/">Explore the learning hub</a>
+          <a class="btn secondary" href="/practice/">Practice with audio</a>
+          <a class="btn ghost" href="/chart/">Printable chart</a>
         </div>
 
         <div class="hero-stats" role="list">
@@ -180,6 +195,63 @@ const jsonLd = {
         <h3>Practice workflows</h3>
         <p class="muted">Use phrases, word lists, and the translator to drill patterns fast.</p>
       </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="kicker">What's in the hub</p>
+        <h2 class="section-title">A complete Morse toolkit</h2>
+      </div>
+      <p class="muted section-sub">Everything an operator, learner, or builder needs.</p>
+    </div>
+    <div class="grid toolkit-grid">
+      <a class="toolkit" href="/translate/">
+        <div class="toolkit-icon" aria-hidden="true">⇄</div>
+        <h3>Translator</h3>
+        <p class="muted">Text ⇄ Morse with audio playback (10–30 WPM) and shareable links.</p>
+      </a>
+      <a class="toolkit" href="/practice/">
+        <div class="toolkit-icon" aria-hidden="true">🎧</div>
+        <h3>Practice</h3>
+        <p class="muted">Koch trainer + single-character quiz with Farnsworth timing.</p>
+      </a>
+      <a class="toolkit" href="/chart/">
+        <div class="toolkit-icon" aria-hidden="true">📄</div>
+        <h3>Printable chart</h3>
+        <p class="muted">Full ITU reference on one page — print or save as PDF.</p>
+      </a>
+      <a class="toolkit" href="/prosigns/">
+        <div class="toolkit-icon" aria-hidden="true">⌁</div>
+        <h3>Prosigns</h3>
+        <p class="muted">Procedural signals (SK, AR, BT, KN…) for real CW operating.</p>
+      </a>
+      <a class="toolkit" href="/q-codes/">
+        <div class="toolkit-icon" aria-hidden="true">Q</div>
+        <h3>Q-codes</h3>
+        <p class="muted">QTH, QSY, QRZ — the operator’s shorthand toolkit.</p>
+      </a>
+      <a class="toolkit" href="/abbreviations/">
+        <div class="toolkit-icon" aria-hidden="true">73</div>
+        <h3>CW abbreviations</h3>
+        <p class="muted">73, 88, OM, FB, TNX — and what they mean.</p>
+      </a>
+      <a class="toolkit" href="/history/">
+        <div class="toolkit-icon" aria-hidden="true">⌛</div>
+        <h3>History</h3>
+        <p class="muted">From Morse and Vail (1844) to modern CW.</p>
+      </a>
+      <a class="toolkit" href="/api/">
+        <div class="toolkit-icon" aria-hidden="true">{"{ }"}</div>
+        <h3>Developer API</h3>
+        <p class="muted">Free static JSON endpoint, CORS open, no key required.</p>
+      </a>
+      <a class="toolkit" href="/embed/">
+        <div class="toolkit-icon" aria-hidden="true">⧉</div>
+        <h3>Embed widget</h3>
+        <p class="muted">Drop the translator on any site with one iframe line.</p>
+      </a>
     </div>
   </section>
 
@@ -483,6 +555,42 @@ const jsonLd = {
       gap: 10px;
       flex-wrap: wrap;
     }
+
+    .toolkit-grid{
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .toolkit{
+      display: block;
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      color: inherit;
+      text-decoration: none;
+      transition: border-color .15s ease, transform .15s ease, background .15s ease;
+    }
+    .toolkit:hover{
+      border-color: rgba(138,180,255,0.32);
+      background: rgba(138,180,255,0.06);
+      transform: translateY(-1px);
+    }
+    .toolkit h3{ margin: 8px 0 4px; font-size: 16px; }
+    .toolkit p{ margin: 0; font-size: 14px; }
+    .toolkit-icon{
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(138,180,255,0.18);
+      border: 1px solid rgba(138,180,255,0.30);
+      font-weight: 800;
+      font-family: var(--font-display);
+      font-size: 14px;
+    }
+    @media (min-width: 720px){ .toolkit-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
 
     .feature-grid{
       grid-template-columns: 1fr;
