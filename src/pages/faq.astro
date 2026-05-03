@@ -82,6 +82,10 @@ const jsonLd = {
     {
       "@type": "FAQPage",
       url: canonical,
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: [".page-hero-title", ".faq-item summary", ".faq-item p"],
+      },
       mainEntity: faq.map((f) => ({
         "@type": "Question",
         name: f.q,

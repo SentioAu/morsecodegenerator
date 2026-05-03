@@ -76,7 +76,7 @@ const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
 const canonical = `${site}/translate/`;
-const robots = "noindex,follow";
+const robots = "index,follow";
 ---
 
 <Layout title={title} description={description} canonical={canonical} robots={robots}>
@@ -142,15 +142,37 @@ const robots = "noindex,follow";
         <div class="actions audio-actions">
           <button id="mcg-play" type="button" class="ghost">{t.play}</button>
           <button id="mcg-stop" type="button" class="ghost">{t.stop}</button>
+          <button id="mcg-flash" type="button" class="ghost" aria-label="Flash light Morse">Flash</button>
+          <button id="mcg-buzz" type="button" class="ghost" aria-label="Vibrate Morse (mobile)">Vibrate</button>
+        </div>
+
+        <div class="grid two-col" style="margin-top:10px;">
           <label class="speed">
             <span class="muted">{t.speed}</span>
             <input id="mcg-speed" type="range" min="10" max="30" value="18" step="1" />
             <span id="mcg-speed-value" class="muted">18 WPM</span>
           </label>
+          <label class="speed">
+            <span class="muted">Volume</span>
+            <input id="mcg-volume" type="range" min="0" max="100" value="40" step="1" />
+            <span id="mcg-volume-value" class="muted">40%</span>
+          </label>
         </div>
+
+        <label class="nato-toggle" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:14px;">
+          <input id="mcg-nato" type="checkbox" style="width:18px;height:18px;" />
+          <span class="muted">Show NATO phonetic alphabet (Alpha, Bravo, Charlie…)</span>
+        </label>
+        <pre id="mcg-nato-out" class="mono nato-out" hidden></pre>
       </div>
     </div>
   </section>
+
+  {/* Full-viewport flasher overlay */}
+  <div id="mcg-flash-screen" class="flash-screen" hidden role="dialog" aria-label="Morse light flasher" aria-modal="true">
+    <button type="button" id="mcg-flash-close" class="flash-close" aria-label="Close flasher">✕</button>
+    <div class="flash-hint">Tap anywhere to stop</div>
+  </div>
 
   <section class="section card soft">
     <div class="section-head">
@@ -212,10 +234,11 @@ const robots = "noindex,follow";
         return audioCtx;
       }
 
-      async function playMorse(sequence, wpm) {
+      async function playMorse(sequence, wpm, volume) {
         if (!sequence) return;
         const ctx = getAudioContext();
         const unit = 1200 / wpm;
+        const peak = Math.max(0, Math.min(1, (volume == null ? 0.4 : volume)));
         const now = ctx.currentTime;
         let t = now;
 
@@ -241,7 +264,7 @@ const robots = "noindex,follow";
             osc.type = "sine";
             osc.frequency.value = 600;
             gain.gain.setValueAtTime(0.001, t);
-            gain.gain.exponentialRampToValueAtTime(0.2, t + 0.01);
+            gain.gain.exponentialRampToValueAtTime(Math.max(0.001, peak), t + 0.01);
             gain.gain.exponentialRampToValueAtTime(0.001, t + duration / 1000);
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -254,6 +277,86 @@ const robots = "noindex,follow";
         }
       }
 
+      // ---- Flasher (light) ----
+      let flashTimers = [];
+      function clearFlash() {
+        flashTimers.forEach((id) => clearTimeout(id));
+        flashTimers = [];
+      }
+      function flashMorse(sequence, wpm, screen) {
+        clearFlash();
+        if (!sequence || !screen) return;
+        const unit = 1200 / wpm;
+        const cleaned = sequence.split("\n")[0].replace(/[^.\-\/\s]/g, "").trim();
+        if (!cleaned) return;
+        const parts = cleaned.split(/\s+/);
+        let offset = 0;
+        const on = () => screen.classList.add("on");
+        const off = () => screen.classList.remove("on");
+
+        for (const part of parts) {
+          if (part === "/") {
+            offset += unit * 7;
+            continue;
+          }
+          for (const sym of part) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            flashTimers.push(setTimeout(on, offset));
+            flashTimers.push(setTimeout(off, offset + dur));
+            offset += dur + unit; // intra-element gap
+          }
+          offset += unit * 2; // letter gap (3-1=2 added)
+        }
+        flashTimers.push(setTimeout(() => screen.removeAttribute("data-running"), offset + 30));
+      }
+
+      // ---- Vibration ----
+      function vibrateMorse(sequence, wpm) {
+        if (!("vibrate" in navigator)) return false;
+        const unit = Math.round(1200 / wpm);
+        const cleaned = sequence.split("\n")[0].replace(/[^.\-\/\s]/g, "").trim();
+        if (!cleaned) return false;
+        const parts = cleaned.split(/\s+/);
+        const pattern = [];
+        let pendingPause = 0;
+        for (const part of parts) {
+          if (part === "/") { pendingPause += unit * 7; continue; }
+          for (const sym of part) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            // wait: intra-element gap (1u) plus any accumulated pause
+            pattern.push(pendingPause || unit);
+            pattern.push(dur);
+            pendingPause = unit; // intra-element default
+          }
+          pendingPause = unit * 3; // letter gap
+        }
+        // Strip first wait if it's exactly the default unit
+        if (pattern.length && pattern[0] === unit) pattern[0] = 0;
+        navigator.vibrate(pattern);
+        return true;
+      }
+
+      // ---- NATO phonetic ----
+      const NATO = {
+        A: "Alpha", B: "Bravo", C: "Charlie", D: "Delta", E: "Echo",
+        F: "Foxtrot", G: "Golf", H: "Hotel", I: "India", J: "Juliett",
+        K: "Kilo", L: "Lima", M: "Mike", N: "November", O: "Oscar",
+        P: "Papa", Q: "Quebec", R: "Romeo", S: "Sierra", T: "Tango",
+        U: "Uniform", V: "Victor", W: "Whiskey", X: "X-ray", Y: "Yankee",
+        Z: "Zulu",
+        0: "Zero", 1: "One", 2: "Two", 3: "Three", 4: "Four",
+        5: "Five", 6: "Six", 7: "Seven", 8: "Eight", 9: "Niner",
+      };
+      function toNato(text) {
+        const s = (text || "").toUpperCase();
+        const out = [];
+        for (const ch of s) {
+          if (ch === " ") { out.push("/"); continue; }
+          if (NATO[ch]) out.push(NATO[ch]);
+        }
+        return out.join(" ");
+      }
+
       ready(function () {
         const input = document.getElementById("mcg-input");
         const copyLinkBtn = document.getElementById("mcg-copy-link");
@@ -262,7 +365,25 @@ const robots = "noindex,follow";
         const output = document.getElementById("mcg-output");
         const speed = document.getElementById("mcg-speed");
         const speedValue = document.getElementById("mcg-speed-value");
+        const vol = document.getElementById("mcg-volume");
+        const volVal = document.getElementById("mcg-volume-value");
+        const flashBtn = document.getElementById("mcg-flash");
+        const buzzBtn = document.getElementById("mcg-buzz");
+        const flashScreen = document.getElementById("mcg-flash-screen");
+        const flashClose = document.getElementById("mcg-flash-close");
+        const natoToggle = document.getElementById("mcg-nato");
+        const natoOut = document.getElementById("mcg-nato-out");
         if (!input || !copyLinkBtn) return;
+
+        // Restore persisted prefs
+        try {
+          const savedSpeed = localStorage.getItem("mcg.speed");
+          const savedVol = localStorage.getItem("mcg.volume");
+          const savedNato = localStorage.getItem("mcg.nato");
+          if (savedSpeed && speed) { speed.value = savedSpeed; if (speedValue) speedValue.textContent = `${savedSpeed} WPM`; }
+          if (savedVol && vol) { vol.value = savedVol; if (volVal) volVal.textContent = `${savedVol}%`; }
+          if (savedNato === "1" && natoToggle) natoToggle.checked = true;
+        } catch {}
 
         copyLinkBtn.addEventListener("click", async () => {
           const value = (input.value || "").trim();
@@ -282,22 +403,77 @@ const robots = "noindex,follow";
         speed?.addEventListener("input", () => {
           if (!speedValue || !speed) return;
           speedValue.textContent = `${speed.value} WPM`;
+          try { localStorage.setItem("mcg.speed", speed.value); } catch {}
+        });
+        vol?.addEventListener("input", () => {
+          if (!volVal || !vol) return;
+          volVal.textContent = `${vol.value}%`;
+          try { localStorage.setItem("mcg.volume", vol.value); } catch {}
         });
 
         playBtn?.addEventListener("click", async () => {
           if (!output) return;
           stopFlag = false;
           const wpm = Number(speed?.value || 18);
-          await playMorse(output.value || "", wpm);
+          const v = Number(vol?.value || 40) / 100;
+          await playMorse(output.value || "", wpm, v);
         });
 
         stopBtn?.addEventListener("click", () => {
           stopFlag = true;
+          clearFlash();
+          flashScreen?.removeAttribute("data-running");
+          flashScreen?.classList.remove("on");
+          flashScreen?.setAttribute("hidden", "");
+          if ("vibrate" in navigator) navigator.vibrate(0);
           if (audioCtx) {
             audioCtx.close();
             audioCtx = undefined;
           }
         });
+
+        flashBtn?.addEventListener("click", () => {
+          if (!flashScreen) return;
+          flashScreen.removeAttribute("hidden");
+          flashScreen.setAttribute("data-running", "1");
+          const wpm = Number(speed?.value || 18);
+          flashMorse(output?.value || "", wpm, flashScreen);
+        });
+        const closeFlash = () => {
+          clearFlash();
+          flashScreen?.classList.remove("on");
+          flashScreen?.setAttribute("hidden", "");
+          flashScreen?.removeAttribute("data-running");
+        };
+        flashClose?.addEventListener("click", closeFlash);
+        flashScreen?.addEventListener("click", (e) => { if (e.target === flashScreen) closeFlash(); });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && flashScreen && !flashScreen.hasAttribute("hidden")) closeFlash();
+        });
+
+        buzzBtn?.addEventListener("click", () => {
+          const wpm = Number(speed?.value || 18);
+          const ok = vibrateMorse(output?.value || "", wpm);
+          if (!ok) {
+            const old = buzzBtn.textContent;
+            buzzBtn.textContent = "Not supported";
+            setTimeout(() => (buzzBtn.textContent = old), 1200);
+          }
+        });
+
+        function refreshNato() {
+          if (!natoToggle || !natoOut) return;
+          if (natoToggle.checked) {
+            natoOut.hidden = false;
+            natoOut.textContent = toNato(input.value || "");
+          } else {
+            natoOut.hidden = true;
+          }
+          try { localStorage.setItem("mcg.nato", natoToggle.checked ? "1" : "0"); } catch {}
+        }
+        natoToggle?.addEventListener("change", refreshNato);
+        input?.addEventListener("input", refreshNato);
+        refreshNato();
       });
     })();
   </script>
@@ -361,9 +537,62 @@ const robots = "noindex,follow";
       gap: 10px;
       flex-wrap: wrap;
     }
-    .speed input{
-      width: 160px;
+    .speed input{ flex: 1; min-width: 120px; }
+
+    .two-col{ display:grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 600px){ .two-col{ grid-template-columns: 1fr 1fr; } }
+
+    .nato-out{
+      margin-top: 8px;
+      padding: 10px 12px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 14px;
+      max-height: 180px;
+      overflow: auto;
     }
+
+    .flash-screen{
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      transition: background-color 30ms linear;
+    }
+    .flash-screen.on{ background: #fff; }
+    .flash-close{
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      mix-blend-mode: difference;
+    }
+    .flash-hint{
+      margin-bottom: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      mix-blend-mode: difference;
+    }
+
     @media (min-width:860px){ .tool-grid{ grid-template-columns:1fr 1fr; } }
+    @media (prefers-reduced-motion: reduce){
+      .flash-screen{ transition: none; }
+    }
   </style>
 </Layout>

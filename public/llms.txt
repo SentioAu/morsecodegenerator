@@ -27,6 +27,7 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 - [Prosigns](https://morsecodegenerator.com/prosigns/): SK, AR, BT, KN, AS, etc.
 - [Abbreviations (CW)](https://morsecodegenerator.com/abbreviations/): 73, 88, OM, YL, FB, ...
 - [Q-codes](https://morsecodegenerator.com/q-codes/): QRZ, QSL, QTH, QSY, ...
+- [NATO phonetic](https://morsecodegenerator.com/nato/): Alpha–Zulu with Morse + pronunciation.
 - [History](https://morsecodegenerator.com/history/): Samuel Morse, Vail, Continental code, ITU.
 - [FAQ](https://morsecodegenerator.com/faq/): common questions with citations.
 
