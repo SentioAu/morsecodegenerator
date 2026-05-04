@@ -162,34 +162,48 @@ const jsonLd = {
   </script>
 
   <style>
-    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
-    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
-    .sep{ opacity:.65; }
-    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
-
     .chart-doc{
-      margin-top: 18px;
-      padding: 22px;
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      background: var(--surface-2);
+      margin-top: var(--s-5);
+      padding: var(--s-6);
+      border-radius: var(--r-xl);
+      border: 1px solid var(--line);
+      background: var(--surface);
     }
 
-    .chart-head{ text-align:center; margin-bottom: 14px; }
-    .chart-title{ margin: 0; font-family: var(--font-display); font-size: 26px; }
-    .chart-sub{ margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+    .chart-head{
+      text-align: center;
+      margin-bottom: var(--s-5);
+      padding-bottom: var(--s-4);
+      border-bottom: 1px solid var(--line);
+    }
+    .chart-title{
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--fs-xl);
+      letter-spacing: -0.02em;
+    }
+    .chart-sub{
+      margin: var(--s-1) 0 0;
+      font-size: var(--fs-xs);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      letter-spacing: 0.04em;
+    }
 
-    .chart-cols{ display:grid; gap: 18px; }
+    .chart-cols{ display: grid; gap: var(--s-5); }
     .chart-cols h3{
       font-family: var(--font-display);
-      letter-spacing: .02em;
-      margin: 6px 0 10px;
+      font-size: var(--fs-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      margin: 0 0 var(--s-3);
+      font-weight: 600;
     }
 
-    .grid-26{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .grid-10{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .grid-punct{ display:grid; grid-template-columns: 1fr; gap: 6px; }
-
+    .grid-26, .grid-10, .grid-punct{ display: grid; gap: var(--s-1); }
+    .grid-26, .grid-10{ grid-template-columns: repeat(2, 1fr); }
+    .grid-punct{ grid-template-columns: 1fr; }
     @media (min-width: 720px){
       .grid-26{ grid-template-columns: repeat(4, 1fr); }
       .grid-10{ grid-template-columns: repeat(5, 1fr); }
@@ -197,43 +211,43 @@ const jsonLd = {
     }
 
     .cell{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
       background: var(--surface-2);
+      padding: var(--s-2) var(--s-3);
+      border-radius: var(--r-sm);
+      border: 1px solid var(--line);
+      font-size: var(--fs-sm);
     }
-    .cell .ch{ font-weight: 850; min-width: 2ch; }
-    .cell .code{ font-weight: 600; opacity: .92; }
-    .cell.wide .ch{
-      display:flex;
-      gap: 8px;
-      align-items: baseline;
+    .cell .ch{ font-weight: 700; min-width: 2ch; color: var(--text); }
+    .cell .code{ font-family: var(--font-mono); color: var(--text-muted); font-size: var(--fs-sm); }
+    .cell.wide .ch{ display: flex; gap: var(--s-2); align-items: baseline; }
+    .ch-sym{ font-weight: 700; color: var(--text); }
+    .ch-lab{ font-size: var(--fs-xs); color: var(--text-subtle); font-weight: 400; }
+
+    .legend ul{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: var(--s-2);
+      font-size: var(--fs-sm);
+      color: var(--text-muted);
     }
-    .ch-sym{ font-weight: 900; }
-    .ch-lab{ font-size: 12px; color: var(--muted); font-weight: 500; }
+    .chart-foot{
+      text-align: center;
+      margin-top: var(--s-5);
+      padding-top: var(--s-4);
+      border-top: 1px solid var(--line);
+      color: var(--text-subtle);
+      font-size: var(--fs-xs);
+    }
 
-    .legend ul{ list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
-    .chart-foot{ text-align:center; margin-top: 16px; color: var(--muted); }
-
-    /* ------------------------------------------------------------ */
-    /* Print stylesheet                                              */
-    /* ------------------------------------------------------------ */
+    /* Print stylesheet */
     @media print {
       :root, body{
         background: #fff !important;
         color: #000 !important;
       }
-      .no-print, .site-header, .site-footer, .skip{ display: none !important; }
-      .panel{
-        box-shadow: none !important;
-        border: none !important;
-        background: #fff !important;
-        padding: 0 !important;
-      }
+      .no-print, .site-header, .site-footer, .skip, .crumbs{ display: none !important; }
       .chart-doc{
         background: #fff !important;
         border: 1px solid #ccc !important;
@@ -245,7 +259,8 @@ const jsonLd = {
         border: 1px solid #999 !important;
         color: #000 !important;
       }
-      .ch-lab, .chart-sub, .chart-foot, .legend{ color: #444 !important; }
+      .cell .ch, .cell .code, .ch-sym{ color: #000 !important; }
+      .ch-lab, .chart-sub, .chart-foot, .legend, .chart-cols h3{ color: #444 !important; }
       a{ color: #000 !important; text-decoration: none !important; }
     }
   </style>
