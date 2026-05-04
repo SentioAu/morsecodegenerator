@@ -51,24 +51,30 @@ const jsonLd = {
 ---
 
 <Layout title={title} description={description}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">About</span>
+  </nav>
+
   <header class="page-hero">
-    <p class="page-hero-kicker">Learn • Practice • Translate</p>
+    <p class="page-hero-kicker">Learn · Practice · Translate</p>
     <h1 class="page-hero-title">About MorseCodeGenerator.com</h1>
     <p class="muted page-hero-sub">
-      MorseCodeGenerator.com is a fast, privacy-friendly Morse code translator and learning hub.
-      Translate text to Morse, decode Morse back to text, and practice common patterns — all in your browser.
+      A fast, privacy-friendly Morse code translator and learning hub. Translate text to Morse, decode
+      Morse back to text, and practice common patterns — all in your browser, no account required.
     </p>
 
     <div class="page-hero-actions">
-      <a class="btn primary" href="/translate/">Open Translator</a>
-      <a class="btn secondary" href="/morse-code/a/">Learn Alphabet</a>
-      <a class="btn ghost" href="/phrases/">Practice Phrases</a>
+      <a class="btn primary" href="/translate/">Open translator</a>
+      <a class="btn secondary" href="/morse-code/">Learn alphabet</a>
+      <a class="btn ghost" href="/phrases/">Practice phrases</a>
     </div>
 
     <div class="page-hero-chips" aria-label="Formatting rules">
-      <span class="chip">Letters: spaces</span>
-      <span class="chip">Words: “/”</span>
-      <span class="chip muted">Example: <span class="k">SOS</span> → <span class="k">... --- ...</span></span>
+      <span class="chip">Letters separated by spaces</span>
+      <span class="chip">Words separated by <span class="k">/</span></span>
+      <span class="chip">Example: <span class="k">SOS → ... --- ...</span></span>
     </div>
   </header>
 
