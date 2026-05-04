@@ -58,12 +58,18 @@ const jsonLd = {
     <h1 class="page-hero-title">Morse code practice</h1>
     <p class="muted page-hero-sub">
       Two modes: a <strong>Koch trainer</strong> that plays random groups at your target speed, and a
-      <strong>quiz</strong> that asks you to type the character you hear. Everything runs in your browser.
+      <strong>quiz</strong> that asks you to type the character you hear. Settings save automatically.
     </p>
     <div class="page-hero-actions">
       <a class="btn primary" href="#trainer">Start Koch trainer</a>
       <a class="btn secondary" href="#quiz">Start quiz</a>
       <a class="btn ghost" href="/translate/">Use translator</a>
+    </div>
+
+    <div class="streak-row" aria-live="polite">
+      <span class="chip" id="streakChip">Streak: 0 days</span>
+      <span class="chip" id="bestChip">Best quiz: —</span>
+      <span class="chip" id="kochProgressChip">Koch set: KM</span>
     </div>
   </header>
 
@@ -167,6 +173,47 @@ const jsonLd = {
 
   <script is:inline>
     (function () {
+      // ---------------------------------------------------------- Storage helpers
+      const KEY = "mcg.practice.v1";
+      function loadPrefs() {
+        try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch { return {}; }
+      }
+      function savePrefs(patch) {
+        const cur = loadPrefs();
+        const next = Object.assign({}, cur, patch);
+        try { localStorage.setItem(KEY, JSON.stringify(next)); } catch {}
+      }
+
+      // ---------------------------------------------------------- Streak (UTC day)
+      function todayKey() {
+        const d = new Date();
+        return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
+      }
+      function bumpStreak() {
+        const p = loadPrefs();
+        const today = todayKey();
+        if (p.lastDay === today) return p.streak || 1;
+        let streak = 1;
+        if (p.lastDay) {
+          const prev = new Date(p.lastDay + "T00:00:00Z").getTime();
+          const cur = new Date(today + "T00:00:00Z").getTime();
+          const diff = Math.round((cur - prev) / 86400000);
+          streak = diff === 1 ? (p.streak || 0) + 1 : 1;
+        }
+        savePrefs({ lastDay: today, streak });
+        return streak;
+      }
+      function renderStreakChips() {
+        const p = loadPrefs();
+        const streakEl = document.getElementById("streakChip");
+        const bestEl = document.getElementById("bestChip");
+        const kochEl = document.getElementById("kochProgressChip");
+        if (streakEl) streakEl.textContent = `Streak: ${p.streak || 0} day${(p.streak || 0) === 1 ? "" : "s"}`;
+        if (bestEl) bestEl.textContent = p.quizBest != null ? `Best quiz: ${p.quizBest}%` : "Best quiz: —";
+        if (kochEl) kochEl.textContent = `Koch set: ${p.kochSet || "KM"}`;
+      }
+      renderStreakChips();
+
       // ---------------------------------------------------------- Audio
       let ctx;
       function ac() {
@@ -270,14 +317,31 @@ const jsonLd = {
       const scoreEl = document.getElementById("kochScore");
 
       const sync = (el, val) => el && val && (val.textContent = el.value);
+
+      // Restore Koch prefs
+      const initPrefs = loadPrefs();
+      if (setEl && initPrefs.kochSet) setEl.value = initPrefs.kochSet;
+      if (wpmEl && initPrefs.kochWpm) wpmEl.value = String(initPrefs.kochWpm);
+      if (effEl && initPrefs.kochEff) effEl.value = String(initPrefs.kochEff);
+      if (freqEl && initPrefs.kochFreq) freqEl.value = String(initPrefs.kochFreq);
+      if (groupsEl && initPrefs.kochGroups) groupsEl.value = String(initPrefs.kochGroups);
+
       [
-        [wpmEl, wpmVal],
-        [effEl, effVal],
-        [freqEl, freqVal],
-      ].forEach(([a, b]) => {
-        a?.addEventListener("input", () => sync(a, b));
+        [wpmEl, wpmVal, "kochWpm"],
+        [effEl, effVal, "kochEff"],
+        [freqEl, freqVal, "kochFreq"],
+      ].forEach(([a, b, k]) => {
+        a?.addEventListener("input", () => {
+          sync(a, b);
+          savePrefs({ [k]: a.value });
+        });
         sync(a, b);
       });
+      setEl?.addEventListener("change", () => {
+        savePrefs({ kochSet: (setEl.value || "").toUpperCase() });
+        renderStreakChips();
+      });
+      groupsEl?.addEventListener("change", () => savePrefs({ kochGroups: groupsEl.value }));
 
       let kochSession;
       function genKoch() {
@@ -307,6 +371,8 @@ const jsonLd = {
           effWpm: parseInt(effEl?.value || "12", 10),
           freq: parseInt(freqEl?.value || "650", 10),
         });
+        bumpStreak();
+        renderStreakChips();
       });
 
       stopBtn?.addEventListener("click", () => kochSession?.stop());
@@ -337,7 +403,18 @@ const jsonLd = {
       const qStatus = document.getElementById("quizStatus");
       const qScore = document.getElementById("quizScore");
 
-      qWpmEl?.addEventListener("input", () => sync(qWpmEl, qWpmVal));
+      // Restore quiz prefs
+      if (poolEl && initPrefs.quizPool) {
+        const opts = Array.from(poolEl.options || []).map(o => o.value);
+        if (opts.includes(initPrefs.quizPool)) poolEl.value = initPrefs.quizPool;
+      }
+      if (qWpmEl && initPrefs.quizWpm) qWpmEl.value = String(initPrefs.quizWpm);
+
+      qWpmEl?.addEventListener("input", () => {
+        sync(qWpmEl, qWpmVal);
+        savePrefs({ quizWpm: qWpmEl.value });
+      });
+      poolEl?.addEventListener("change", () => savePrefs({ quizPool: poolEl.value }));
       sync(qWpmEl, qWpmVal);
 
       let quizSession;
@@ -372,6 +449,8 @@ const jsonLd = {
         quizTotal = 0;
         quizCorrect = 0;
         if (qScore) qScore.textContent = "";
+        bumpStreak();
+        renderStreakChips();
         quizRound();
       });
 
@@ -396,6 +475,15 @@ const jsonLd = {
         if (qScore) {
           const pct = quizTotal ? Math.round((quizCorrect / quizTotal) * 100) : 0;
           qScore.textContent = `${quizCorrect}/${quizTotal} (${pct}%)`;
+
+          // Persist best score after at least 10 attempts
+          if (quizTotal >= 10) {
+            const prev = loadPrefs().quizBest || 0;
+            if (pct > prev) {
+              savePrefs({ quizBest: pct });
+              renderStreakChips();
+            }
+          }
         }
         clearTimeout(quizTimer);
         quizTimer = setTimeout(quizRound, 700);
@@ -420,5 +508,17 @@ const jsonLd = {
     .row{ display:flex; gap:8px; flex-wrap:wrap; }
     .micro{ font-size: 12px; margin: 2px 0 12px; }
     label.muted{ display:block; margin-top: 8px; font-size: 13px; }
+
+    .streak-row{
+      margin-top: 14px;
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .streak-row .chip{
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
+      font-weight: 700;
+    }
   </style>
 </Layout>

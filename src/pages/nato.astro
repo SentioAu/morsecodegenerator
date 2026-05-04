@@ -1,0 +1,181 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "NATO Phonetic Alphabet – Full Chart with Morse Code";
+const description =
+  "The complete NATO phonetic alphabet (Alpha, Bravo, Charlie…) side-by-side with Morse code, plus pronunciation, history, and practice links.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/nato/`;
+const robots = "index,follow";
+
+const rows = [
+  ["A", "Alpha",    "AL fah",       ".-"],
+  ["B", "Bravo",    "BRAH voh",     "-..."],
+  ["C", "Charlie",  "CHAR lee",     "-.-."],
+  ["D", "Delta",    "DELL tah",     "-.."],
+  ["E", "Echo",     "ECK oh",       "."],
+  ["F", "Foxtrot",  "FOKS trot",    "..-."],
+  ["G", "Golf",     "GOLF",         "--."],
+  ["H", "Hotel",    "hoh TELL",     "...."],
+  ["I", "India",    "IN dee ah",    ".."],
+  ["J", "Juliett",  "JEW lee ETT",  ".---"],
+  ["K", "Kilo",     "KEY loh",      "-.-"],
+  ["L", "Lima",     "LEE mah",      ".-.."],
+  ["M", "Mike",     "MIKE",         "--"],
+  ["N", "November", "no VEM ber",   "-."],
+  ["O", "Oscar",    "OSS car",      "---"],
+  ["P", "Papa",     "pah PAH",      ".--."],
+  ["Q", "Quebec",   "keh BECK",     "--.-"],
+  ["R", "Romeo",    "ROW me oh",    ".-."],
+  ["S", "Sierra",   "see AIR ah",   "..."],
+  ["T", "Tango",    "TANG go",      "-"],
+  ["U", "Uniform",  "YOU nee form", "..-"],
+  ["V", "Victor",   "VIK tah",      "...-"],
+  ["W", "Whiskey",  "WISS key",     ".--"],
+  ["X", "X-ray",    "ECKS ray",     "-..-"],
+  ["Y", "Yankee",   "YANG key",     "-.--"],
+  ["Z", "Zulu",     "ZOO loo",      "--.."],
+];
+
+const digits = [
+  ["0", "Zero",   "ZEE roh",   "-----"],
+  ["1", "One",    "WUN",       ".----"],
+  ["2", "Two",    "TOO",       "..---"],
+  ["3", "Three",  "TREE",      "...--"],
+  ["4", "Four",   "FOW er",    "....-"],
+  ["5", "Five",   "FIFE",      "....."],
+  ["6", "Six",    "SIX",       "-...."],
+  ["7", "Seven",  "SEV en",    "--..."],
+  ["8", "Eight",  "AIT",       "---.."],
+  ["9", "Niner",  "NIN er",    "----."],
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "NATO phonetic", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "Article",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} ogType="article">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">NATO phonetic</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Reference • Aviation • Maritime • Ham radio</p>
+    <h1 class="page-hero-title">NATO phonetic alphabet</h1>
+    <p class="muted page-hero-sub">
+      The official ICAO/NATO spelling alphabet — Alpha through Zulu — with pronunciation guide and the
+      Morse code for each letter on one page.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/translate/">Open translator</a>
+      <a class="btn secondary" href="/chart/">Printable chart</a>
+      <a class="btn ghost" href="/morse-code/">Learn Morse</a>
+    </div>
+  </header>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Letters (A–Z)</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Letter</th><th>NATO word</th><th>Pronunciation</th><th>Morse</th></tr>
+        </thead>
+        <tbody>
+          {rows.map(([l, w, p, m]) => (
+            <tr>
+              <td><strong>{l}</strong></td>
+              <td>{w}</td>
+              <td class="muted">{p}</td>
+              <td class="k">{m}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Numbers (0–9)</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Digit</th><th>Spoken</th><th>Pronunciation</th><th>Morse</th></tr>
+        </thead>
+        <tbody>
+          {digits.map(([d, w, p, m]) => (
+            <tr>
+              <td><strong>{d}</strong></td>
+              <td>{w}</td>
+              <td class="muted">{p}</td>
+              <td class="k">{m}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card soft" style="margin-top:14px;">
+    <h2 style="margin-top:0;">How it’s used</h2>
+    <ul>
+      <li><strong>Aviation:</strong> ICAO standard since 1956. Pilots spell call signs and clearances over noisy radio.</li>
+      <li><strong>Military / NATO:</strong> Identical alphabet used by NATO forces (hence the common name).</li>
+      <li><strong>Ham radio:</strong> Operators use it to spell call signs on SSB voice modes.</li>
+      <li><strong>Customer service:</strong> Adopted ad-hoc in call centers to spell names and codes.</li>
+    </ul>
+  </section>
+
+  <section class="card soft" style="margin-top:14px;">
+    <h2 style="margin-top:0;">Useful tips</h2>
+    <ul>
+      <li>Three is pronounced <em>“TREE”</em> and nine is <em>“NIN-er”</em> to distinguish from German <em>nein</em>.</li>
+      <li>Stress the <strong>capitalized</strong> syllable in the pronunciation column.</li>
+      <li>For long alphanumeric strings, group every 3–4 characters with a beat.</li>
+    </ul>
+    <p class="muted">
+      Want to send the same letters in Morse? The translator has a <strong>NATO phonetic toggle</strong>
+      that shows the spelling alongside Morse output — great for learning both at once.
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
+    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
+    .sep{ opacity:.65; }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
+    .tablewrap{ overflow:auto; }
+  </style>
+</Layout>

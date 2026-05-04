@@ -59,7 +59,7 @@ const quickLinks = [
   </head>
 
   <header class="hero">
-    <p class="muted kicker">404</p>
+    <p class="muted kicker">404 · <span class="k" aria-hidden="true">....- ----- ....-</span></p>
     <h1 class="title">Page not found</h1>
     <p class="muted sub">
       That URL doesn’t exist (or it moved). Use the quick tools below to recover fast.
@@ -155,15 +155,15 @@ const quickLinks = [
       padding: 10px 14px;
       border-radius: 999px;
       text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
       font-weight: 800;
       line-height: 1;
     }
     .btn.ghost{
-      border-color: rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.03);
+      border-color: var(--line);
+      background: var(--surface-2);
       font-weight: 750;
     }
 

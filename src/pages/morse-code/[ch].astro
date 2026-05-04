@@ -421,11 +421,11 @@ const practiceLinks = [
     }
     .crumb{
       text-decoration:none;
-      border:1px solid rgba(255,255,255,0.12);
-      background:rgba(255,255,255,0.02);
+      border:1px solid var(--line);
+      background:var(--surface-2);
       padding:6px 10px;
       border-radius:999px;
-      color:rgba(255,255,255,0.92);
+      color:var(--text);
     }
     .sep{ opacity:.65; }
     .crumb-current{
@@ -433,9 +433,9 @@ const practiceLinks = [
       align-items:center;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(255,255,255,0.015);
-      color:rgba(255,255,255,0.78);
+      border:1px solid var(--line);
+      background:var(--surface-2);
+      color:var(--text-muted);
     }
 
     .hero{ margin-top:10px; }
@@ -460,9 +460,9 @@ const practiceLinks = [
       justify-content:center;
       padding:8px 12px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,0.14);
-      background:rgba(255,255,255,0.02);
-      color:rgba(255,255,255,0.92);
+      border:1px solid var(--line);
+      background:var(--surface-2);
+      color:var(--text);
       font-weight:800;
     }
     .badge-code{ font-weight:700; letter-spacing:.4px; }
@@ -502,18 +502,18 @@ const practiceLinks = [
 
     .ex{
       text-decoration:none;
-      border:1px solid rgba(255,255,255,0.11);
-      background:rgba(255,255,255,0.02);
+      border:1px solid var(--line);
+      background:var(--surface-2);
       border-radius:16px;
       padding:12px;
       display:flex;
       flex-direction:column;
       gap:8px;
-      color:rgba(255,255,255,0.92);
+      color:var(--text);
     }
     .ex:hover{
-      border-color:rgba(255,255,255,0.18);
-      background:rgba(255,255,255,0.04);
+      border-color:var(--line-strong);
+      background:var(--surface-2);
     }
     .ex-text{ font-weight:850; }
     .ex-morse{ opacity:.92; font-size:14px; }
@@ -528,10 +528,10 @@ const practiceLinks = [
       pointer-events: none;
       padding: 10px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(0,0,0,0.72);
-      color: rgba(255,255,255,0.92);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.45);
+      border: 1px solid var(--line);
+      background: var(--bg-elev);
+      color: var(--text);
+      box-shadow: var(--shadow-md);
       transition: opacity .16s ease, transform .16s ease;
       z-index: 999;
       max-width: calc(100vw - 28px);
@@ -544,8 +544,8 @@ const practiceLinks = [
 
     /* stop state */
     button.danger{
-      border-color: rgba(255,255,255,0.24) !important;
-      background: rgba(255,255,255,0.06) !important;
+      border-color: var(--line-strong) !important;
+      background: var(--surface-hi) !important;
     }
 
     @media (max-width: 600px){

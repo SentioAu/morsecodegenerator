@@ -82,6 +82,10 @@ const jsonLd = {
     {
       "@type": "FAQPage",
       url: canonical,
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: [".page-hero-title", ".faq-item summary", ".faq-item p"],
+      },
       mainEntity: faq.map((f) => ({
         "@type": "Question",
         name: f.q,
@@ -141,12 +145,12 @@ const jsonLd = {
     .faq-item{
       border: 1px solid var(--border);
       border-radius: 16px;
-      background: rgba(255,255,255,0.025);
+      background: var(--surface-2);
       padding: 14px 16px;
     }
     .faq-item[open]{
-      border-color: rgba(138,180,255,0.32);
-      background: rgba(138,180,255,0.06);
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
     }
     .faq-item summary{
       cursor: pointer;
