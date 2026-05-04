@@ -259,9 +259,9 @@ const jsonLd = {
 
   <style>
     .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
-    .crumb{ text-decoration:none; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.02); padding:6px 10px; border-radius:999px; color:rgba(255,255,255,0.92); }
+    .crumb{ text-decoration:none; border:1px solid var(--line); background:var(--surface-2); padding:6px 10px; border-radius:999px; color:var(--text); }
     .sep{ opacity:.65; }
-    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.10); background:rgba(255,255,255,0.015); color:rgba(255,255,255,0.78); }
+    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:var(--surface-2); color:var(--text-muted); }
 
     .hero { margin: 6px 0 14px; }
     .kicker{
@@ -306,9 +306,9 @@ const jsonLd = {
       text-decoration:none;
       padding: 7px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.90);
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
       font-weight: 800;
     }
     .az-link:hover{ opacity:.95; }
@@ -327,18 +327,18 @@ const jsonLd = {
 
     .item{
       text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.11);
-      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      background: var(--surface-2);
       border-radius: 16px;
       padding: 12px;
       display:flex;
       flex-direction:column;
       gap: 6px;
-      color: rgba(255,255,255,0.92);
+      color: var(--text);
     }
     .item:hover{
-      border-color: rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.04);
+      border-color: var(--line-strong);
+      background: var(--surface-2);
     }
     .item-name{ font-weight: 900; }
     .item-slug{ font-size: 13px; }

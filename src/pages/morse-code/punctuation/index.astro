@@ -230,11 +230,11 @@ const jsonLd = {
     }
     .crumb{
       text-decoration:none;
-      border:1px solid rgba(255,255,255,0.12);
-      background:rgba(255,255,255,0.02);
+      border:1px solid var(--line);
+      background:var(--surface-2);
       padding:6px 10px;
       border-radius:999px;
-      color:rgba(255,255,255,0.92);
+      color:var(--text);
     }
     .sep{ opacity:.65; }
     .crumb-current{
@@ -242,9 +242,9 @@ const jsonLd = {
       align-items:center;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(255,255,255,0.015);
-      color:rgba(255,255,255,0.78);
+      border:1px solid var(--line);
+      background:var(--surface-2);
+      color:var(--text-muted);
     }
 
     .hero{ margin-top:10px; }
@@ -278,10 +278,10 @@ const jsonLd = {
       display:grid;
       grid-template-columns: 72px 1fr auto;
       gap: 10px;
-      border: 1px solid rgba(255,255,255,0.10);
+      border: 1px solid var(--line);
       border-radius: 16px;
       padding: 12px 14px;
-      background: rgba(255,255,255,0.02);
+      background: var(--surface-2);
       align-items:center;
       min-height: 72px;
     }
@@ -293,9 +293,9 @@ const jsonLd = {
       width: 58px;
       height: 46px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
       font-weight: 900;
       font-size: 22px;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -319,8 +319,8 @@ const jsonLd = {
       padding: 10px 14px;
       border-radius: 999px;
       border: 1px solid rgba(138,180,255,0.35);
-      background: rgba(138,180,255,0.14);
-      color: rgba(255,255,255,0.92);
+      background: var(--accent-soft);
+      color: var(--text);
       cursor:pointer;
       font-weight: 850;
     }
@@ -343,9 +343,9 @@ const jsonLd = {
       padding: 10px 12px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: rgba(0,0,0,0.78);
+      background: var(--bg-elev);
       backdrop-filter: blur(10px);
-      color: rgba(255,255,255,0.92);
+      color: var(--text);
       box-shadow: var(--shadow);
       opacity: 0;
       pointer-events: none;
