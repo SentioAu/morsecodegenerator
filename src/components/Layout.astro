@@ -865,6 +865,119 @@ const jsonLd = {
       }
 
       /* =========================================================
+         Breadcrumbs (used by most pages)
+         ========================================================= */
+      .crumbs{
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--s-2);
+        margin-bottom: var(--s-4);
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+      }
+      .crumb{
+        text-decoration: none;
+        color: var(--text-muted);
+        transition: color .12s ease;
+      }
+      .crumb:hover{ color: var(--text); text-decoration: none; }
+      .crumb-current{
+        color: var(--text);
+        font-weight: 500;
+      }
+      .crumbs .sep{
+        color: var(--text-subtle);
+        font-size: var(--fs-xs);
+        user-select: none;
+      }
+
+      /* =========================================================
+         Code block (shared by /api/, /embed/)
+         ========================================================= */
+      .codeblock{
+        background: var(--bg-elev);
+        border: 1px solid var(--line);
+        border-radius: var(--r-md);
+        padding: var(--s-4);
+        overflow: auto;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--text);
+        margin: 0;
+      }
+      .codeblock code{
+        font-family: inherit;
+        background: transparent;
+        padding: 0;
+        color: inherit;
+      }
+
+      /* =========================================================
+         FAQ-style accordion
+         ========================================================= */
+      .faq-item{
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r-md);
+        padding: var(--s-3) var(--s-4);
+        transition: border-color .12s ease, background .12s ease;
+      }
+      .faq-item + .faq-item{ margin-top: var(--s-2); }
+      .faq-item[open]{
+        border-color: var(--accent-line);
+        background: var(--surface-2);
+      }
+      .faq-item summary{
+        cursor: pointer;
+        font-weight: 600;
+        font-family: var(--font-display);
+        font-size: var(--fs-md);
+        color: var(--text);
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--s-3);
+      }
+      .faq-item summary::-webkit-details-marker{ display: none; }
+      .faq-item summary::after{
+        content: "+";
+        color: var(--text-subtle);
+        font-weight: 400;
+        font-size: var(--fs-lg);
+        line-height: 1;
+        transition: transform .15s ease, color .12s ease;
+      }
+      .faq-item[open] summary::after{
+        content: "−";
+        color: var(--accent);
+      }
+      .faq-item p{
+        margin: var(--s-3) 0 0;
+        color: var(--text-muted);
+        font-size: var(--fs-sm);
+      }
+
+      /* =========================================================
+         Reference cells (chart-style key/value)
+         ========================================================= */
+      .cell{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--s-2);
+        padding: var(--s-2) var(--s-3);
+        border-radius: var(--r-sm);
+        border: 1px solid var(--line);
+        background: var(--surface);
+        font-size: var(--fs-sm);
+      }
+      .cell .ch{ font-weight: 700; min-width: 2ch; }
+      .cell .code{ font-weight: 500; color: var(--text-muted); font-family: var(--font-mono); }
+
+      /* =========================================================
          Chips / pills
          ========================================================= */
       .chip{

@@ -136,37 +136,6 @@ const jsonLd = {
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
-    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; opacity:.92; margin-top:2px; }
-    .crumb{ text-decoration:none; border:1px solid var(--border); background: var(--panel2); padding:6px 10px; border-radius:999px; color: var(--text); }
-    .sep{ opacity:.65; }
-    .crumb-current{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background: var(--panel2); color: var(--muted); }
-
-    .faq-list{ display:grid; gap:10px; margin-top: 14px; }
-    .faq-item{
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: var(--surface-2);
-      padding: 14px 16px;
-    }
-    .faq-item[open]{
-      border-color: var(--accent-line);
-      background: var(--accent-soft);
-    }
-    .faq-item summary{
-      cursor: pointer;
-      font-weight: 800;
-      font-family: var(--font-display);
-      font-size: 17px;
-      list-style: none;
-    }
-    .faq-item summary::-webkit-details-marker{ display:none; }
-    .faq-item summary::after{
-      content: "+";
-      float: right;
-      font-weight: 600;
-      opacity: .7;
-    }
-    .faq-item[open] summary::after{ content: "−"; }
-    .faq-item p{ margin: 8px 0 0; }
+    .faq-list{ display:grid; gap: var(--s-2); margin-top: var(--s-4); }
   </style>
 </Layout>

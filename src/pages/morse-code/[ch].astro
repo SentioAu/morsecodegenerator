@@ -410,146 +410,144 @@ const practiceLinks = [
   </script>
 
   <style>
-    .crumbs{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-      font-size:13px;
-      opacity:.92;
-      margin-top:2px;
-    }
-    .crumb{
-      text-decoration:none;
-      border:1px solid var(--line);
-      background:var(--surface-2);
-      padding:6px 10px;
-      border-radius:999px;
-      color:var(--text);
-    }
-    .sep{ opacity:.65; }
-    .crumb-current{
-      display:inline-flex;
-      align-items:center;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:var(--surface-2);
-      color:var(--text-muted);
-    }
-
-    .hero{ margin-top:10px; }
+    .hero{ margin: var(--s-3) 0 var(--s-5); }
     .kicker{
-      margin:0 0 10px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      font-size:12px;
+      margin: 0 0 var(--s-3);
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
     }
-    .title{ margin:0 0 10px; }
+    .title{
+      margin: 0 0 var(--s-4);
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: -0.025em;
+    }
 
+    /* Big card showing the character + its Morse code */
     .code-row{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-top:10px;
+      display: grid;
+      grid-template-columns: auto auto;
+      align-items: center;
+      gap: var(--s-4);
+      padding: var(--s-5);
+      margin: var(--s-4) 0 var(--s-3);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      width: fit-content;
+      max-width: 100%;
     }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:var(--surface-2);
-      color:var(--text);
-      font-weight:800;
+    .code-row .badge{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      height: 64px;
+      padding: 0 var(--s-3);
+      border-radius: var(--r-md);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
-    .badge-code{ font-weight:700; letter-spacing:.4px; }
+    .code-row .badge-code{
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      min-width: 0;
+      padding: 0;
+      height: auto;
+    }
+    .code-row .muted{ color: var(--text-subtle); font-size: var(--fs-lg); }
 
     .chips{
-      margin-top:12px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
+      margin-top: var(--s-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2);
+      align-items: center;
     }
 
     .actions{
-      margin-top:14px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
+      margin-top: var(--s-4);
+      display: flex;
+      gap: var(--s-2);
+      flex-wrap: wrap;
+      align-items: center;
     }
+    .actions button[disabled]{ opacity: 0.5; cursor: not-allowed; }
 
     .section-head{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px 14px;
-      align-items:baseline;
-      justify-content:space-between;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2) var(--s-4);
+      align-items: baseline;
+      justify-content: space-between;
     }
 
+    /* Practice examples grid */
     .ex-grid{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--s-2);
     }
-    @media (min-width: 900px){
-      .ex-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); }
-    }
+    @media (min-width: 600px){ .ex-grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 900px){ .ex-grid{ grid-template-columns: repeat(3, 1fr); } }
 
     .ex{
-      text-decoration:none;
-      border:1px solid var(--line);
-      background:var(--surface-2);
-      border-radius:16px;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      color:var(--text);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: var(--r-md);
+      padding: var(--s-3) var(--s-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-1);
+      color: var(--text);
+      transition: background .12s ease, border-color .12s ease;
     }
     .ex:hover{
-      border-color:var(--line-strong);
-      background:var(--surface-2);
+      border-color: var(--accent-line);
+      background: var(--surface-2);
+      text-decoration: none;
     }
-    .ex-text{ font-weight:850; }
-    .ex-morse{ opacity:.92; font-size:14px; }
+    .ex-text{ font-weight: 600; font-size: var(--fs-sm); }
+    .ex-morse{ font-family: var(--font-mono); color: var(--text-muted); font-size: var(--fs-sm); letter-spacing: 0.04em; }
 
-    /* toast */
+    /* Toast */
     .toast{
       position: fixed;
       left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%) translateY(10px);
+      bottom: var(--s-5);
+      transform: translateX(-50%) translateY(8px);
       opacity: 0;
       pointer-events: none;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--bg-elev);
-      color: var(--text);
+      padding: var(--s-2) var(--s-4);
+      border-radius: var(--r-pill);
+      background: var(--text);
+      color: var(--bg);
+      font-size: var(--fs-sm);
+      font-weight: 600;
       box-shadow: var(--shadow-md);
-      transition: opacity .16s ease, transform .16s ease;
-      z-index: 999;
-      max-width: calc(100vw - 28px);
-      text-align: center;
+      transition: opacity .15s ease, transform .15s ease;
+      z-index: 60;
     }
-    .toast.show{
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    .toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* stop state */
     button.danger{
-      border-color: var(--line-strong) !important;
-      background: var(--surface-hi) !important;
+      border-color: var(--bad) !important;
+      color: var(--bad) !important;
     }
 
     @media (max-width: 600px){
-      .actions > *{ width:100%; justify-content:center; }
+      .actions > *{ flex: 1; }
     }
   </style>
 </Layout>
