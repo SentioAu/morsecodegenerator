@@ -12,11 +12,20 @@ const EFFECTIVE_DATE = "2026-01-28";
 ---
 
 <Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Terms</span>
+  </nav>
+
   <article class="prose">
-    <h1>Terms of Service</h1>
-    <p class="muted">
-      Effective date: <span class="mono">{EFFECTIVE_DATE}</span>
-    </p>
+    <header class="page-hero">
+      <p class="page-hero-kicker">Effective {EFFECTIVE_DATE}</p>
+      <h1 class="page-hero-title">Terms of service</h1>
+      <p class="muted page-hero-sub">
+        Rules for using the site, disclaimers, and limitations of liability.
+      </p>
+    </header>
 
     <p>
       These Terms of Service (“Terms”) govern your use of <strong>MorseCodeGenerator.com</strong> (the “Service”).

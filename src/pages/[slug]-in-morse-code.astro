@@ -239,7 +239,7 @@ const jsonLd = {
 ---
 
 <Layout title={pageTitle} description={description} robots={robots} canonical={canonicalRef}>
-  <nav class="crumbs" aria-label="Breadcrumb" style="margin-top:2px;">
+  <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
 
@@ -258,69 +258,247 @@ const jsonLd = {
     )}
   </nav>
 
-  <h1 style="margin-top:10px;">{pageTitle}</h1>
-
   {(isSingleLetter || isNumber) ? (
     <>
-      <p class="muted">
-        This URL is not canonical for letters/numbers.
-        Use the reference page instead:
-        {" "}
-        <a href={`/morse-code/${slug}/`}>{`/morse-code/${slug}/`}</a>.
-      </p>
-
-      <div class="card" style="margin-top:12px;">
-        <p style="margin:0;">
-          Go to:
-          {" "}
-          <a href={`/morse-code/${slug}/`}>canonical page</a>
-          {" "}•{" "}
-          <a href={`/translate/?q=${encodeURIComponent(term.value)}`}>open in translator</a>
+      <header class="page-hero">
+        <p class="page-hero-kicker">Letter / Digit · Reference</p>
+        <h1 class="page-hero-title">{pageTitle}</h1>
+        <p class="muted page-hero-sub">
+          This URL is not canonical for single letters or digits. The canonical reference page lives below.
         </p>
-      </div>
+        <div class="page-hero-actions">
+          <a class="btn primary" href={`/morse-code/${slug}/`}>Go to canonical page →</a>
+          <a class="btn ghost" href={`/translate/?q=${encodeURIComponent(term.value)}`}>Open in translator</a>
+        </div>
+      </header>
     </>
   ) : valid ? (
     <>
-      <p class="muted">
-        Copy the Morse code for <strong>{term.display}</strong>, or open the translator to convert any text.
-      </p>
-
-      <div class="card">
-        <h2 style="margin-top:0;">Morse Code</h2>
-
-        {morse ? (
-          <p class="k" style="font-size:18px;word-break:break-word;margin-top:10px;">{morse}</p>
-        ) : (
-          <p class="muted">No Morse output available for this term.</p>
-        )}
-
-        <p style="margin-top:12px;">
-          <a href={`/translate/?q=${encodeURIComponent(term.value)}`}>Open Translator</a>
-          {" "}•{" "}
-          <a href="/morse-code/words/">Browse Words</a>
-          {" "}•{" "}
-          <a href="/morse-code/a/">Learn the Alphabet</a>
+      <header class="page-hero">
+        <p class="page-hero-kicker">Word · Copy · Practice</p>
+        <h1 class="page-hero-title">{pageTitle}</h1>
+        <p class="muted page-hero-sub">
+          Copy the Morse code for <strong>{term.display}</strong>, hear it played back, or open it in the
+          translator to edit it.
         </p>
-      </div>
+      </header>
 
-      <h2>How to read it</h2>
-      <ul>
-        <li>Dot: <span class="k">.</span></li>
-        <li>Dash: <span class="k">-</span></li>
-        <li>Letters are separated by spaces</li>
-        <li>Words are separated by <span class="k">/</span></li>
-      </ul>
+      {morse ? (
+        <section class="word-show">
+          <div class="word-show-row">
+            <span class="word-show-text">{term.display}</span>
+            <svg class="word-show-arrow" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </div>
+          <div class="word-show-morse mono">{morse}</div>
+
+          <div class="word-show-actions">
+            <button id="copy" type="button" class="primary-action">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy Morse
+            </button>
+            <button id="play" type="button" class="ghost">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M5 3v18l14-9L5 3z"/></svg>
+              Play
+            </button>
+            <a class="btn ghost" href={`/translate/?q=${encodeURIComponent(term.value)}`}>Open in translator →</a>
+          </div>
+        </section>
+      ) : (
+        <section class="card">
+          <p class="muted">No Morse output available for this term.</p>
+        </section>
+      )}
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <p class="page-hero-kicker">How to read it</p>
+            <h2 class="section-title">The format in one line</h2>
+          </div>
+        </div>
+        <dl class="reading-key">
+          <div>
+            <dt>Dot</dt>
+            <dd><span class="k">.</span> &nbsp; one short signal (1 unit)</dd>
+          </div>
+          <div>
+            <dt>Dash</dt>
+            <dd><span class="k">-</span> &nbsp; one long signal (3 units)</dd>
+          </div>
+          <div>
+            <dt>Letter gap</dt>
+            <dd>a single space between letters (3 units)</dd>
+          </div>
+          <div>
+            <dt>Word gap</dt>
+            <dd><span class="k">/</span> &nbsp; with surrounding spaces (7 units)</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <p class="page-hero-kicker">Keep going</p>
+            <h2 class="section-title">More Morse references</h2>
+          </div>
+        </div>
+        <div class="pill-grid">
+          <a href="/morse-code/words/">Browse words A–Z</a>
+          <a href="/morse-code/">Learn the alphabet</a>
+          <a href="/phrases/">Common phrases</a>
+          <a href="/translate/">Open translator</a>
+        </div>
+      </section>
     </>
   ) : (
     <>
-      <p class="muted">
-        This page is not available. Use the <a href="/translate/">translator</a> to convert any text to Morse code.
-      </p>
-      <p class="muted">
-        You can also learn using <a href="/morse-code/a/">Alphabet</a>, <a href="/morse-code/words/">Words</a>, and <a href="/phrases/">Phrases</a>.
-      </p>
+      <header class="page-hero">
+        <p class="page-hero-kicker">Page not available</p>
+        <h1 class="page-hero-title">Morse code</h1>
+        <p class="muted page-hero-sub">
+          This page isn't available. Use the translator below to convert any text to Morse code, or jump
+          straight into a reference.
+        </p>
+        <div class="page-hero-actions">
+          <a class="btn primary" href="/translate/">Open translator</a>
+          <a class="btn secondary" href="/morse-code/">Learn the alphabet</a>
+          <a class="btn ghost" href="/phrases/">Common phrases</a>
+        </div>
+      </header>
     </>
   )}
 
+  {valid && morse && (
+    <script is:inline define:vars={{ morse }}>
+      const copyBtn = document.getElementById("copy");
+      const playBtn = document.getElementById("play");
+
+      async function copyText(text) {
+        try { await navigator.clipboard.writeText(text); return true; }
+        catch {
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = text; ta.style.position = "fixed"; ta.style.left = "-9999px";
+            document.body.appendChild(ta); ta.select();
+            const ok = document.execCommand("copy");
+            document.body.removeChild(ta);
+            return ok;
+          } catch { return false; }
+        }
+      }
+
+      copyBtn?.addEventListener("click", async () => {
+        const ok = await copyText(morse || "");
+        if (!ok) return;
+        const old = copyBtn.innerHTML;
+        copyBtn.textContent = "Copied ✓";
+        setTimeout(() => (copyBtn.innerHTML = old), 1200);
+      });
+
+      let audioCtx;
+      async function playMorse(sequence, wpm) {
+        if (!sequence) return;
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = audioCtx;
+        const unit = 1200 / wpm;
+        let t = ctx.currentTime + 0.05;
+        const cleaned = sequence.replace(/[^.\-\/\s]/g, "").trim();
+        if (!cleaned) return;
+        const parts = cleaned.split(/\s+/);
+        for (const part of parts) {
+          if (part === "/") { t += (unit * 7) / 1000; continue; }
+          for (const sym of part) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.value = 600;
+            gain.gain.setValueAtTime(0.001, t);
+            gain.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + dur / 1000);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(t);
+            osc.stop(t + dur / 1000);
+            t += dur / 1000;
+            t += unit / 1000;
+          }
+          t += (unit * 2) / 1000;
+        }
+      }
+
+      playBtn?.addEventListener("click", async () => {
+        const old = playBtn.innerHTML;
+        playBtn.textContent = "Playing…";
+        await playMorse(morse || "", 18);
+        setTimeout(() => (playBtn.innerHTML = old), 600);
+      });
+    </script>
+  )}
+
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .word-show{
+      margin-top: var(--s-3);
+      padding: var(--s-6);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl);
+    }
+    .word-show-row{ display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+    .word-show-text{
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .word-show-arrow{ color: var(--text-subtle); }
+    .word-show-morse{
+      margin-top: var(--s-4);
+      padding: var(--s-4);
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      color: var(--accent);
+      font-size: clamp(16px, 2.4vw, 22px);
+      letter-spacing: 0.08em;
+      word-break: break-all;
+    }
+    .word-show-actions{
+      margin-top: var(--s-5);
+      display: flex;
+      gap: var(--s-2);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .reading-key{
+      display: grid;
+      gap: 0;
+      margin: 0;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+    }
+    .reading-key > div{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4px;
+      padding: var(--s-3) var(--s-4);
+      border-bottom: 1px solid var(--line);
+    }
+    @media (min-width: 720px){
+      .reading-key > div{ grid-template-columns: 160px 1fr; gap: var(--s-5); align-items: baseline; }
+    }
+    .reading-key > div:last-child{ border-bottom: 0; }
+    .reading-key dt{ font-weight: 600; color: var(--text); font-size: var(--fs-sm); margin: 0; }
+    .reading-key dd{ margin: 0; color: var(--text-muted); font-size: var(--fs-sm); }
+  </style>
 </Layout>
