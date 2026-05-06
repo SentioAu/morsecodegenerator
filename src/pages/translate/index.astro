@@ -395,6 +395,7 @@ const robots = "index,follow";
 
       ready(function () {
         const input = document.getElementById("mcg-input");
+        const copyBtn = document.getElementById("mcg-copy");
         const copyLinkBtn = document.getElementById("mcg-copy-link");
         const playBtn = document.getElementById("mcg-play");
         const stopBtn = document.getElementById("mcg-stop");
@@ -410,6 +411,18 @@ const robots = "index,follow";
         const natoToggle = document.getElementById("mcg-nato");
         const natoOut = document.getElementById("mcg-nato-out");
         if (!input || !copyLinkBtn) return;
+
+        // Copy Morse output
+        copyBtn?.addEventListener("click", async () => {
+          const value = (output?.value || "").trim();
+          if (!value) return;
+          const ok = await copyText(value);
+          if (!ok) return;
+          const old = copyBtn.innerHTML;
+          copyBtn.innerHTML = "<span style='font-size:13px;font-weight:600;'>✓</span>";
+          copyBtn.style.color = "var(--good)";
+          setTimeout(() => { copyBtn.innerHTML = old; copyBtn.style.color = ""; }, 1100);
+        });
 
         // Restore persisted prefs
         try {
