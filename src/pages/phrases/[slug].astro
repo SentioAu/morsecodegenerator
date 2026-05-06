@@ -137,7 +137,7 @@ const translatorHref = phrase
 const phraseList = normalizePhraseList(data?.phrases ?? []);
 const related = phraseList.filter((p) => p.slug !== slug).slice(0, 10);
 
-// Practice words block
+// Practice phrases block — every entry must exist in morse.json's phrases list
 const practiceWords = [
   ["hello", "Hello"],
   ["help", "Help"],
@@ -149,8 +149,8 @@ const practiceWords = [
   ["good-morning", "Good morning"],
   ["good-night", "Good night"],
   ["i-love-you", "I love you"],
-  ["im-safe", "I’m safe"],
-  ["need-help", "Need help"],
+  ["im-safe", "I'm safe"],
+  ["i-need-help", "I need help"],
 ];
 
 const crumbs = [
@@ -249,7 +249,7 @@ const jsonLd = {
     </div>
     <div class="pill-grid">
       {practiceWords.map(([s, label]) => (
-        <a href={`/${s}-in-morse-code/`}>{label}</a>
+        <a href={`/phrases/${s}/`}>{label}</a>
       ))}
     </div>
     <p class="muted explore-row" style="margin-top: var(--s-4);">
