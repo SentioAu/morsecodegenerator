@@ -87,7 +87,8 @@ export function getStaticPaths() {
     if (parts.length === 0) return false;
     if (parts.length > 4) return false;
     if (s.length > 28) return false;
-    if (!parts.every((p) => /^[a-z0-9]{2,15}$/.test(p))) return false;
+    // Allow 1-char parts so slugs like "i-love-you" and "i-need-help" build.
+    if (!parts.every((p) => /^[a-z0-9]{1,15}$/.test(p))) return false;
     return true;
   }
 
@@ -114,6 +115,13 @@ function titleCaseWords(s) {
     .join(" ");
 }
 
+// Canonical-phrase index for display: when a slug matches a known phrase
+// (e.g. "sos", "i-love-you"), prefer the curated UPPERCASE display from
+// morse.json instead of mechanical title-casing ("Sos", "I Love You").
+const phraseIndex = Object.fromEntries(
+  (morsePayload?.phrases ?? []).map(([sl, ph]) => [String(sl), String(ph)])
+);
+
 function termFromSlug(s) {
   // named punctuation slugs -> symbol term
   if (slugToSymbol[s]) {
@@ -129,7 +137,12 @@ function termFromSlug(s) {
     return { display: s, value: s };
   }
 
-  // phrase
+  // Canonical phrase from morse.json wins ("SOS", "I LOVE YOU", "MAYDAY", ...)
+  if (phraseIndex[s]) {
+    return { display: phraseIndex[s], value: phraseIndex[s] };
+  }
+
+  // Generic phrase fallback: lowercase slug -> title case
   const phrase = s.replace(/-/g, " ");
   return { display: titleCaseWords(phrase), value: phrase };
 }
@@ -176,7 +189,7 @@ function pageSlugValidForThisRoute(s) {
     parts.length > 0 &&
     parts.length <= 4 &&
     s.length <= 28 &&
-    parts.every((p) => /^[a-z0-9]{2,15}$/.test(p));
+    parts.every((p) => /^[a-z0-9]{1,15}$/.test(p));
 
   // ✅ Only allow named punctuation + phrases here (not letters/numbers)
   return (isNamed || isShortPhrase) && !isSingleLetter && !isNumber;
