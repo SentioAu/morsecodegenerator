@@ -148,48 +148,59 @@ const practiceLinks = [
     <span class="crumb-current">{CH}</span>
   </nav>
 
-  <header class="hero">
-    <p class="muted kicker">{isLetter ? "Alphabet" : isNumber ? "Numbers" : "Reference"}</p>
-    <h1 class="title">{CH} in Morse code</h1>
-
-    <p class="muted" style="margin-top:0; max-width:72ch;">
+  <header class="page-hero">
+    <p class="page-hero-kicker">{isLetter ? "Alphabet · A–Z" : isNumber ? "Numbers · 0–9" : "Reference"}</p>
+    <h1 class="page-hero-title">{CH} in Morse code</h1>
+    <p class="muted page-hero-sub">
       {code ? (
-        <>Below is the standard Morse code for <strong>{CH}</strong>. Copy it, listen to it, and practice with real examples.</>
+        <>Standard Morse code for <strong>{CH}</strong>. Copy it, hear it, or practice with real examples.</>
       ) : (
-        <>This character isn’t available in the current Morse map.</>
+        <>This character isn't available in the current Morse map.</>
       )}
     </p>
+  </header>
 
-    <div class="code-row">
-      <span class="badge">{CH}</span>
-      <span class="muted">→</span>
-      <span class="badge badge-code k">{code || "—"}</span>
-    </div>
+  {code && (
+    <section class="char-show">
+      <div class="char-show-row">
+        <span class="char-show-letter">{CH}</span>
+        <svg class="char-show-arrow" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+      </div>
+      <div class="char-show-morse mono">{code}</div>
 
-    {code ? (
-      <div class="chips" aria-label="Quick tips">
+      <div class="char-show-meta">
         {tips.map((t) => (
           <span class="chip">{t}</span>
         ))}
       </div>
-    ) : null}
 
-    <div class="actions">
-      <button id="copy" type="button" disabled={!code}>Copy</button>
-      <button id="listen" type="button" class="ghost" disabled={!code}>Listen</button>
-      <a class="btn" href={translatorHref}>Practice in translator</a>
-      <a class="btn ghost" href="/morse-code/">Back to Learn hub</a>
-    </div>
+      <div class="char-show-actions">
+        <button id="copy" type="button" class="primary-action" disabled={!code}>
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        </button>
+        <button id="listen" type="button" class="ghost" disabled={!code}>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M5 3v18l14-9L5 3z"/></svg>
+          Listen
+        </button>
+        <a class="btn ghost" href={translatorHref}>Practice in translator →</a>
+      </div>
+    </section>
+  )}
 
-    <div class="pill-grid" style="margin-top:12px;" role="list" aria-label="Quick navigation">
-      {practiceLinks.map((x) => (
-        <a role="listitem" href={x.href}>{x.label}</a>
-      ))}
-    </div>
+  {!code && (
+    <section class="card">
+      <p class="muted">No Morse code available for this character.</p>
+      <div class="page-hero-actions" style="margin-top: var(--s-3);">
+        <a class="btn primary" href="/morse-code/">Back to Learn hub</a>
+      </div>
+    </section>
+  )}
 
-    <!-- Accessible toast (used by Copy/Listen) -->
-    <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
-  </header>
+  {/* Accessible toast (used by Copy/Listen) */}
+  <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
   <section class="card" style="margin-top:16px;">
     <div class="section-head">
@@ -410,79 +421,63 @@ const practiceLinks = [
   </script>
 
   <style>
-    .hero{ margin: var(--s-3) 0 var(--s-5); }
-    .kicker{
-      margin: 0 0 var(--s-3);
-      font-family: var(--font-mono);
-      font-size: var(--fs-xs);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-    .title{
-      margin: 0 0 var(--s-4);
-      font-size: clamp(28px, 4vw, 44px);
-      letter-spacing: -0.025em;
-    }
-
-    /* Big card showing the character + its Morse code */
-    .code-row{
-      display: grid;
-      grid-template-columns: auto auto;
-      align-items: center;
-      gap: var(--s-4);
-      padding: var(--s-5);
-      margin: var(--s-4) 0 var(--s-3);
+    /* Big "letter → morse" showcase, matches phrase-show / word-show */
+    .char-show{
+      margin-top: var(--s-3);
+      padding: var(--s-6);
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: var(--r-lg);
-      width: fit-content;
-      max-width: 100%;
+      border-radius: var(--r-xl);
     }
-    .code-row .badge{
+    .char-show-row{
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+    }
+    .char-show-letter{
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 64px;
-      height: 64px;
+      min-width: 88px;
+      height: 88px;
       padding: 0 var(--s-3);
-      border-radius: var(--r-md);
+      border-radius: var(--r-lg);
       background: var(--accent-soft);
       color: var(--accent);
       font-family: var(--font-display);
-      font-size: 28px;
+      font-size: 56px;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+      line-height: 1;
     }
-    .code-row .badge-code{
-      background: transparent;
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 22px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      min-width: 0;
-      padding: 0;
-      height: auto;
+    .char-show-arrow{ color: var(--text-subtle); flex-shrink: 0; }
+    .char-show-morse{
+      margin-top: var(--s-4);
+      padding: var(--s-4);
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      color: var(--accent);
+      font-size: clamp(22px, 3vw, 32px);
+      letter-spacing: 0.12em;
+      text-align: center;
+      word-break: break-all;
     }
-    .code-row .muted{ color: var(--text-subtle); font-size: var(--fs-lg); }
-
-    .chips{
-      margin-top: var(--s-3);
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--s-2);
-      align-items: center;
-    }
-
-    .actions{
+    .char-show-meta{
       margin-top: var(--s-4);
       display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2);
+    }
+    .char-show-actions{
+      margin-top: var(--s-5);
+      display: flex;
       gap: var(--s-2);
       flex-wrap: wrap;
       align-items: center;
     }
-    .actions button[disabled]{ opacity: 0.5; cursor: not-allowed; }
+    .char-show-actions button[disabled]{ opacity: 0.5; cursor: not-allowed; }
 
     .section-head{
       display: flex;
@@ -490,6 +485,7 @@ const practiceLinks = [
       gap: var(--s-2) var(--s-4);
       align-items: baseline;
       justify-content: space-between;
+      margin-bottom: var(--s-4);
     }
 
     /* Practice examples grid */
@@ -518,8 +514,13 @@ const practiceLinks = [
       background: var(--surface-2);
       text-decoration: none;
     }
-    .ex-text{ font-weight: 600; font-size: var(--fs-sm); }
-    .ex-morse{ font-family: var(--font-mono); color: var(--text-muted); font-size: var(--fs-sm); letter-spacing: 0.04em; }
+    .ex-text{ font-weight: 600; font-size: var(--fs-sm); color: var(--text); }
+    .ex-morse{
+      font-family: var(--font-mono);
+      color: var(--accent);
+      font-size: var(--fs-sm);
+      letter-spacing: 0.06em;
+    }
 
     /* Toast */
     .toast{
@@ -547,7 +548,7 @@ const practiceLinks = [
     }
 
     @media (max-width: 600px){
-      .actions > *{ flex: 1; }
+      .char-show-actions > *{ flex: 1; }
     }
   </style>
 </Layout>

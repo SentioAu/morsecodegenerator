@@ -137,7 +137,7 @@ const translatorHref = phrase
 const phraseList = normalizePhraseList(data?.phrases ?? []);
 const related = phraseList.filter((p) => p.slug !== slug).slice(0, 10);
 
-// Practice words block
+// Practice phrases block — every entry must exist in morse.json's phrases list
 const practiceWords = [
   ["hello", "Hello"],
   ["help", "Help"],
@@ -149,8 +149,8 @@ const practiceWords = [
   ["good-morning", "Good morning"],
   ["good-night", "Good night"],
   ["i-love-you", "I love you"],
-  ["im-safe", "I’m safe"],
-  ["need-help", "Need help"],
+  ["im-safe", "I'm safe"],
+  ["i-need-help", "I need help"],
 ];
 
 const crumbs = [
@@ -195,82 +195,92 @@ const jsonLd = {
     )}
   </nav>
 
-  <header class="hero">
-    <p class="muted kicker">Copy • Practice • Learn</p>
-
-    <h1 class="hero-title">{title}</h1>
-
-    <p class="muted hero-sub">
-      Copy the Morse translation, then practice it in the translator.
-      {!phrase ? " (This phrase wasn’t found.)" : ""}
+  <header class="page-hero">
+    <p class="page-hero-kicker">Phrase · Copy · Practice</p>
+    <h1 class="page-hero-title">{title}</h1>
+    <p class="muted page-hero-sub">
+      Copy the Morse translation, hear it played back, or open it in the translator.
+      {!phrase ? " (This phrase wasn't found.)" : ""}
     </p>
-
-    <div class="hero-actions">
-      <a class="btn primary" href={translatorHref}>Open in translator</a>
-      <a class="btn" href="/phrases/">Browse all phrases</a>
-      <a class="btn" href="/morse-code/">Learn hub</a>
-      <a class="btn" href="/morse-code/words/">Practice words</a>
-    </div>
   </header>
 
-  <section class="card" style="margin-top:16px;">
-    <div class="phrase-row">
-      <span class="chip">{phrase || "(Unknown phrase)"}</span>
-      <span class="muted">→</span>
-      <span class="chip chip-morse">{morse || "(not available)"}</span>
-    </div>
+  {/* Big phrase → Morse showcase */}
+  {phrase && morse ? (
+    <section class="phrase-show">
+      <div class="phrase-show-row">
+        <span class="phrase-show-text">{phrase}</span>
+        <svg class="phrase-show-arrow" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+      </div>
+      <div class="phrase-show-morse mono" id="morseText">{morse}</div>
 
-    {hasUnknown ? (
-      <p class="muted" style="margin-top:10px;">
-        Note: this output includes <span class="k">?</span> for unsupported characters.
-      </p>
-    ) : null}
+      {hasUnknown && (
+        <p class="phrase-show-warn">
+          Note: this output includes <span class="k">?</span> for unsupported characters.
+        </p>
+      )}
 
-    <div class="actions" style="margin-top:12px;">
-      <button id="copy" type="button" disabled={!morse || hasUnknown}>Copy Morse</button>
-      <a class="btn" href={translatorHref}>Practice</a>
-      <a class="btn ghost" href="/translate/?q=SOS">Try SOS</a>
-    </div>
+      <div class="phrase-show-actions">
+        <button id="copy" type="button" class="primary-action" disabled={!morse || hasUnknown}>
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Morse
+        </button>
+        <button id="play" type="button" class="ghost" disabled={!morse}>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M5 3v18l14-9L5 3z"/></svg>
+          Play
+        </button>
+        <a class="btn ghost" href={translatorHref}>Open in translator →</a>
+      </div>
+    </section>
+  ) : (
+    <section class="card">
+      <p class="muted">This phrase isn't available. Try the <a href="/phrases/">phrase list</a> or the <a href="/translate/">translator</a>.</p>
+    </section>
+  )}
 
-    <p class="muted" style="margin-top:12px;">
-      Format: spaces between letters • “/” between words.
-    </p>
-  </section>
-
-  <section class="card" style="margin-top:16px;">
+  <section class="section">
     <div class="section-head">
-      <h2 style="margin:0;">Practice words</h2>
-      <p class="muted" style="margin:0;">Open a dedicated word page, or practice in the translator.</p>
+      <div>
+        <p class="page-hero-kicker">Practice words</p>
+        <h2 class="section-title">Open any word as its own page</h2>
+      </div>
+      <p class="section-sub muted">Each word has its own Morse reference page.</p>
     </div>
-
-    <div class="pill-grid" style="margin-top:12px;" role="list">
+    <div class="pill-grid">
       {practiceWords.map(([s, label]) => (
-        <a role="listitem" href={`/${s}-in-morse-code/`}>{label}</a>
+        <a href={`/phrases/${s}/`}>{label}</a>
       ))}
     </div>
-
-    <p class="muted" style="margin-top:10px;">
+    <p class="muted explore-row" style="margin-top: var(--s-4);">
       Browse more on <a href="/morse-code/words/">the words hub</a>.
     </p>
   </section>
 
   {related.length > 0 && (
-    <section class="card" style="margin-top:16px;">
+    <section class="section">
       <div class="section-head">
-        <h2 style="margin:0;">Related phrases</h2>
-        <p class="muted" style="margin:0;">Keep practicing with these next.</p>
+        <div>
+          <p class="page-hero-kicker">Related phrases</p>
+          <h2 class="section-title">Keep practicing</h2>
+        </div>
       </div>
-
-      <div class="pill-grid" style="margin-top:12px;">
+      <div class="phrase-grid">
         {related.map((p) => (
-          <a href={`/phrases/${p.slug}/`}>{p.phrase}</a>
+          <a class="phrase-card" href={`/phrases/${p.slug}/`}>
+            <span class="phrase-name">{p.phrase}</span>
+            <svg class="phrase-arrow" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </a>
         ))}
       </div>
     </section>
   )}
 
   <script is:inline define:vars={{ morse, hasUnknown }}>
-    const btn = document.getElementById("copy");
+    const copyBtn = document.getElementById("copy");
+    const playBtn = document.getElementById("play");
 
     async function copyText(text) {
       try { await navigator.clipboard.writeText(text); return true; }
@@ -286,35 +296,144 @@ const jsonLd = {
       }
     }
 
-    btn?.addEventListener("click", async () => {
+    copyBtn?.addEventListener("click", async () => {
       if (hasUnknown) return;
       const value = (morse || "").toString();
       if (!value) return;
       const ok = await copyText(value);
       if (!ok) return;
-      const old = btn.textContent;
-      btn.textContent = "Copied ✓";
-      setTimeout(() => (btn.textContent = old), 1200);
+      const old = copyBtn.innerHTML;
+      copyBtn.textContent = "Copied ✓";
+      setTimeout(() => (copyBtn.innerHTML = old), 1200);
+    });
+
+    // Inline audio playback (shares timing with the translator)
+    let audioCtx;
+    let stopFlag = false;
+    async function playMorse(sequence, wpm) {
+      if (!sequence) return;
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = audioCtx;
+      const unit = 1200 / wpm;
+      let t = ctx.currentTime + 0.05;
+      const cleaned = sequence.replace(/[^.\-\/\s]/g, "").trim();
+      if (!cleaned) return;
+      const parts = cleaned.split(/\s+/);
+      for (const part of parts) {
+        if (stopFlag) return;
+        if (part === "/") { t += (unit * 7) / 1000; continue; }
+        for (const sym of part) {
+          if (stopFlag) return;
+          const dur = sym === "-" ? unit * 3 : unit;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = 600;
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + dur / 1000);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + dur / 1000);
+          t += dur / 1000;
+          t += unit / 1000;
+        }
+        t += (unit * 2) / 1000;
+      }
+    }
+
+    playBtn?.addEventListener("click", async () => {
+      stopFlag = false;
+      const value = (morse || "").toString();
+      if (!value) return;
+      const old = playBtn.innerHTML;
+      playBtn.textContent = "Playing…";
+      await playMorse(value, 18);
+      setTimeout(() => (playBtn.innerHTML = old), 600);
     });
   </script>
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
-    .hero { margin-top: 10px; }
-    .kicker{ margin: 0 0 10px; letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; }
-    .hero-title { margin-bottom: 8px; }
-    .hero-sub { margin-top: 0; max-width: 72ch; }
-    .hero-actions{ margin-top: 12px; display:flex; gap: 10px; flex-wrap:wrap; }
+    /* Phrase showcase */
+    .phrase-show{
+      margin-top: var(--s-3);
+      padding: var(--s-6);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl);
+    }
+    .phrase-show-row{
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+    }
+    .phrase-show-text{
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .phrase-show-arrow{ color: var(--text-subtle); }
+    .phrase-show-morse{
+      margin-top: var(--s-4);
+      padding: var(--s-4);
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      color: var(--accent);
+      font-size: clamp(16px, 2.4vw, 22px);
+      letter-spacing: 0.08em;
+      word-break: break-all;
+    }
+    .phrase-show-warn{
+      margin-top: var(--s-3);
+      font-size: var(--fs-sm);
+      color: var(--warn);
+    }
+    .phrase-show-actions{
+      margin-top: var(--s-5);
+      display: flex;
+      gap: var(--s-2);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .phrase-show-actions button[disabled]{ opacity: 0.5; cursor: not-allowed; }
 
-    .crumbs{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size: 13px; opacity: .92; margin-top: 2px; }
-    .sep { opacity: .65; }
-
-    .phrase-row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-    .chip{ display:inline-flex; align-items:center; justify-content:center; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--text); font-weight: 650; }
-    .chip-morse{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .4px; }
-
-    .actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .section-head{ display:flex; flex-wrap:wrap; gap: 6px 14px; align-items: baseline; justify-content: space-between; }
+    /* Related phrase grid (matches the hub) */
+    .phrase-grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--s-2);
+    }
+    .phrase-card{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s-2);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      color: var(--text);
+      text-decoration: none;
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      transition: background .12s ease, border-color .12s ease, color .12s ease;
+    }
+    .phrase-card:hover{
+      background: var(--surface-2);
+      border-color: var(--accent-line);
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .phrase-arrow{ flex-shrink: 0; color: var(--text-subtle); transition: color .12s ease, transform .12s ease; }
+    .phrase-card:hover .phrase-arrow{ color: var(--accent); transform: translateX(2px); }
+    .phrase-name{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   </style>
 </Layout>

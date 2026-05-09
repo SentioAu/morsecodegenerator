@@ -1,26 +1,61 @@
-<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MorseCodeGenerator.com — the hub of Morse code">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0B0B0B" />
-      <stop offset="100%" stop-color="#141B2E" />
-    </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(880 120) rotate(128) scale(420 320)">
-      <stop stop-color="#8AB4FF" stop-opacity="0.35" />
-      <stop offset="1" stop-color="#8AB4FF" stop-opacity="0" />
+    <!-- Solid bg with a single faint accent gradient in the lower-right -->
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(1050 580) rotate(216) scale(640 520)">
+      <stop offset="0" stop-color="#3b82f6" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#3b82f6" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#bg)" />
-  <rect width="1200" height="630" fill="url(#glow)" />
-  <g opacity="0.18">
-    <circle cx="180" cy="130" r="90" stroke="#8AB4FF" stroke-width="2" />
-    <circle cx="980" cy="520" r="120" stroke="#8AB4FF" stroke-width="2" />
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0a0c"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- 1px hairline frame matching the site's --line token -->
+  <rect x="20" y="20" width="1160" height="590" rx="32" fill="none" stroke="#26262d" stroke-width="1.5"/>
+
+  <!-- Brand row: glyph + wordmark, top-left -->
+  <g transform="translate(72 72)">
+    <!-- Brand glyph squircle -->
+    <rect width="56" height="56" rx="14" fill="#3b82f6"/>
+    <g fill="#ffffff">
+      <circle cx="17" cy="28" r="5"/>
+      <rect x="25" y="24" width="20" height="8" rx="3"/>
+    </g>
+    <!-- Wordmark -->
+    <text x="76" y="38" fill="#ededee" font-family="'Space Grotesk', 'Inter', system-ui, sans-serif"
+          font-size="22" font-weight="700" letter-spacing="-0.01em">MorseCodeGenerator.com</text>
   </g>
-  <g font-family="Space Grotesk, Inter, Arial, sans-serif" fill="#F5F7FF">
-    <text x="100" y="220" font-size="56" font-weight="700">Morse Code Generator</text>
-    <text x="100" y="285" font-size="26" opacity="0.85">Translate, learn, and practice Morse code instantly.</text>
-  </g>
-  <g font-family="Space Grotesk, Inter, Arial, sans-serif" fill="#C9D9FF" opacity="0.9">
-    <text x="100" y="380" font-size="26">·– ··· ·–––</text>
-    <text x="100" y="430" font-size="20" opacity="0.75">Fast • Free • Private</text>
+
+  <!-- Eyebrow / kicker, mono -->
+  <text x="72" y="280" fill="#3b82f6"
+        font-family="ui-monospace, 'SF Mono', Menlo, monospace"
+        font-size="20" font-weight="600" letter-spacing="2.4">·– &#160; THE HUB OF MORSE CODE</text>
+
+  <!-- Headline -->
+  <text x="72" y="362" fill="#ededee"
+        font-family="'Space Grotesk', 'Inter', system-ui, sans-serif"
+        font-size="80" font-weight="700" letter-spacing="-2.4">Translate, hear &amp; learn</text>
+  <text x="72" y="450" fill="#ededee"
+        font-family="'Space Grotesk', 'Inter', system-ui, sans-serif"
+        font-size="80" font-weight="700" letter-spacing="-2.4">Morse code — fast.</text>
+
+  <!-- Sub line -->
+  <text x="72" y="510" fill="#a1a1aa"
+        font-family="'Inter', system-ui, sans-serif" font-size="24" font-weight="400">
+    Translator · audio · Koch trainer · printable chart · API · embed
+  </text>
+
+  <!-- SOS pattern (·-· -·- ·-·) bottom-left, in mono accent — visual signature -->
+  <text x="72" y="580" fill="#3b82f6"
+        font-family="ui-monospace, 'SF Mono', Menlo, monospace"
+        font-size="34" font-weight="500" letter-spacing="6">. . .   - - -   . . .</text>
+
+  <!-- Domain pill in the bottom-right -->
+  <g transform="translate(1128 568)" text-anchor="end">
+    <text fill="#71717a"
+          font-family="ui-monospace, 'SF Mono', Menlo, monospace"
+          font-size="18" letter-spacing="1.4">morsecodegenerator.com/</text>
   </g>
 </svg>

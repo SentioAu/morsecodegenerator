@@ -148,6 +148,7 @@ const robots = "index,follow";
           placeholder="Result appears here…"
           spellcheck="false"
         ></textarea>
+        <div id="mcg-rhythm" class="rhythm" aria-hidden="true"></div>
         <div class="t-side-foot">
           <button id="mcg-morse-to-text" type="button" class="ghost">{t.morseToText}</button>
         </div>
@@ -313,6 +314,58 @@ const robots = "index,follow";
         }
       }
 
+      // ---- Rhythm bar (visualizes the audio playback) ----
+      let rhythmTimers = [];
+      function clearRhythm() {
+        rhythmTimers.forEach((id) => clearTimeout(id));
+        rhythmTimers = [];
+      }
+      function renderRhythm(sequence, wpm, container) {
+        clearRhythm();
+        if (!container) return;
+        container.innerHTML = "";
+        container.classList.remove("playing");
+        if (!sequence) return;
+        const unit = 1200 / wpm;
+        const cleaned = sequence.split("\n")[0].replace(/[^.\-\/\s]/g, "").trim();
+        if (!cleaned) return;
+        const parts = cleaned.split(/\s+/);
+        const segs = [];
+        let offset = 0;
+        for (const part of parts) {
+          if (part === "/") {
+            // Word gap: 7 units. Already counted prior letter gap (3) so add 4 more visual gap.
+            offset += unit * 4;
+            segs.push({ start: offset, dur: 0, gap: true, wordGap: true });
+            offset += unit * 0; // gap is rendered with a marker
+            continue;
+          }
+          for (const sym of part) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            segs.push({ start: offset, dur, sym });
+            offset += dur + unit; // segment + intra-element gap
+          }
+          offset += unit * 2; // letter gap
+        }
+
+        const total = Math.max(offset, 1);
+        for (const s of segs) {
+          if (s.wordGap) continue;
+          const el = document.createElement("span");
+          el.className = "rhythm-seg" + (s.sym === "-" ? " dash" : " dot");
+          el.style.left = `${(s.start / total) * 100}%`;
+          el.style.width = `${(s.dur / total) * 100}%`;
+          container.appendChild(el);
+
+          // Schedule active-state on the segment to follow audio
+          rhythmTimers.push(setTimeout(() => el.classList.add("on"), s.start));
+          rhythmTimers.push(setTimeout(() => el.classList.remove("on"), s.start + s.dur));
+        }
+
+        container.classList.add("playing");
+        rhythmTimers.push(setTimeout(() => container.classList.remove("playing"), total + 80));
+      }
+
       // ---- Flasher (light) ----
       let flashTimers = [];
       function clearFlash() {
@@ -395,6 +448,7 @@ const robots = "index,follow";
 
       ready(function () {
         const input = document.getElementById("mcg-input");
+        const copyBtn = document.getElementById("mcg-copy");
         const copyLinkBtn = document.getElementById("mcg-copy-link");
         const playBtn = document.getElementById("mcg-play");
         const stopBtn = document.getElementById("mcg-stop");
@@ -410,6 +464,18 @@ const robots = "index,follow";
         const natoToggle = document.getElementById("mcg-nato");
         const natoOut = document.getElementById("mcg-nato-out");
         if (!input || !copyLinkBtn) return;
+
+        // Copy Morse output
+        copyBtn?.addEventListener("click", async () => {
+          const value = (output?.value || "").trim();
+          if (!value) return;
+          const ok = await copyText(value);
+          if (!ok) return;
+          const old = copyBtn.innerHTML;
+          copyBtn.innerHTML = "<span style='font-size:13px;font-weight:600;'>✓</span>";
+          copyBtn.style.color = "var(--good)";
+          setTimeout(() => { copyBtn.innerHTML = old; copyBtn.style.color = ""; }, 1100);
+        });
 
         // Restore persisted prefs
         try {
@@ -447,17 +513,23 @@ const robots = "index,follow";
           try { localStorage.setItem("mcg.volume", vol.value); } catch {}
         });
 
+        const rhythm = document.getElementById("mcg-rhythm");
+
         playBtn?.addEventListener("click", async () => {
           if (!output) return;
           stopFlag = false;
           const wpm = Number(speed?.value || 18);
           const v = Number(vol?.value || 40) / 100;
+          renderRhythm(output.value || "", wpm, rhythm);
           await playMorse(output.value || "", wpm, v);
         });
 
         stopBtn?.addEventListener("click", () => {
           stopFlag = true;
           clearFlash();
+          clearRhythm();
+          rhythm?.classList.remove("playing");
+          if (rhythm) rhythm.innerHTML = "";
           flashScreen?.removeAttribute("data-running");
           flashScreen?.classList.remove("on");
           flashScreen?.setAttribute("hidden", "");
@@ -663,6 +735,38 @@ const robots = "index,follow";
     }
     .t-area.mono{ font-size: var(--fs-base); letter-spacing: 0.04em; }
 
+    /* Rhythm bar — sits between the Morse textarea and the action button */
+    .rhythm{
+      position: relative;
+      margin-top: var(--s-3);
+      height: 8px;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+      opacity: 0.6;
+      transition: opacity .2s ease;
+    }
+    .rhythm:empty{ opacity: 0.35; }
+    .rhythm.playing{ opacity: 1; }
+    .rhythm-seg{
+      position: absolute;
+      top: 1px;
+      bottom: 1px;
+      border-radius: var(--r-pill);
+      background: var(--text-subtle);
+      transition: background .08s ease, box-shadow .08s ease, transform .08s ease;
+    }
+    .rhythm-seg.on{
+      background: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 0 12px var(--accent-soft);
+      transform: scaleY(1.15);
+    }
+    @media (prefers-reduced-motion: reduce){
+      .rhythm-seg{ transition: none; }
+      .rhythm-seg.on{ transform: none; }
+    }
+
     .t-side-foot{
       margin-top: var(--s-3);
       display: flex;
@@ -760,7 +864,7 @@ const robots = "index,follow";
       border: 2px solid var(--surface);
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      box-shadow: var(--shadow-sm);
     }
     .slider input[type="range"]::-moz-range-thumb{
       width: 16px; height: 16px;
