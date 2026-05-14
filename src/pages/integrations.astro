@@ -1,0 +1,215 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Integrations & Platform Setup – MorseCodeGenerator.com";
+const description =
+  "How MorseCodeGenerator.com plugs into Google Search Console, Bing Webmaster, Yandex, Pinterest, IndexNow, Google AdSense, and analytics. Reference for maintainers.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/integrations/`;
+// Internal-maintainer doc — keep out of the public index.
+const robots = "noindex,follow";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Integrations", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "TechArticle",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} ogType="article">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Integrations</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Maintainer reference · Not indexed</p>
+    <h1 class="page-hero-title">Platform integrations</h1>
+    <p class="muted page-hero-sub">
+      How MorseCodeGenerator.com plugs into search engines, ads, analytics, and AI discoverability.
+      Each integration is built so a maintainer can flip it on by setting one env var in
+      Cloudflare Pages → Settings → Environment variables.
+    </p>
+  </header>
+
+  <article class="prose">
+    <h2>Search engines</h2>
+
+    <h3>Google Search Console</h3>
+    <ol>
+      <li>Sign in at <a href="https://search.google.com/search-console">search.google.com/search-console</a>.</li>
+      <li>Add property → URL prefix → <code>https://morsecodegenerator.com</code>.</li>
+      <li>Choose "HTML tag" verification.</li>
+      <li>Copy the <code>content</code> value (a long base-64 string).</li>
+      <li>In Cloudflare Pages, add an environment variable:
+        <span class="k">GOOGLE_SITE_VERIFICATION</span> = <em>the content value</em>.</li>
+      <li>Re-deploy. Verify in Search Console.</li>
+      <li>Submit sitemap: <span class="k">https://morsecodegenerator.com/sitemap.xml</span>.</li>
+    </ol>
+
+    <h3>Bing Webmaster Tools</h3>
+    <ol>
+      <li>Sign in at <a href="https://www.bing.com/webmasters">bing.com/webmasters</a>.</li>
+      <li>Add site → verify with meta tag.</li>
+      <li>Set env var <span class="k">BING_SITE_VERIFICATION</span> = the meta content.</li>
+      <li>Re-deploy → Verify.</li>
+    </ol>
+    <p class="muted">Bing also receives <em>IndexNow</em> submissions automatically — see below.</p>
+
+    <h3>Yandex Webmaster</h3>
+    <ol>
+      <li>Sign in at <a href="https://webmaster.yandex.com/">webmaster.yandex.com</a>.</li>
+      <li>Verify via meta tag.</li>
+      <li>Set env var <span class="k">YANDEX_VERIFICATION</span>.</li>
+    </ol>
+
+    <h3>Pinterest (visual / branded card pickup)</h3>
+    <ol>
+      <li>Sign in at <a href="https://www.pinterest.com/business/claim/">pinterest.com/business/claim</a>.</li>
+      <li>Verify with meta tag.</li>
+      <li>Set env var <span class="k">PINTEREST_VERIFICATION</span>.</li>
+    </ol>
+
+    <h3>Facebook domain verification</h3>
+    <ol>
+      <li>Meta Business Suite → Brand safety → Domains → Add → verify with meta tag.</li>
+      <li>Set env var <span class="k">FACEBOOK_DOMAIN_VERIFICATION</span>.</li>
+    </ol>
+
+    <hr />
+
+    <h2>IndexNow (auto-submit changed URLs)</h2>
+    <p>
+      IndexNow is a fast-recrawl protocol shared by <strong>Bing</strong>, <strong>Yandex</strong>,
+      <strong>Naver</strong>, <strong>Seznam</strong>, and <strong>Yep</strong>. We submit every sitemap
+      URL after each successful build automatically.
+    </p>
+
+    <h3>How it works in this repo</h3>
+    <ul>
+      <li><span class="k">public/&lt;hex&gt;.txt</span> — the IndexNow key file (the file name is the key,
+        the content is the same key). Served at the site root per spec.</li>
+      <li><span class="k">scripts/indexnow-ping.mjs</span> — discovers the key, reads
+        <span class="k">dist/sitemap.xml</span>, POSTs every URL to <span class="k">api.indexnow.org</span>.</li>
+      <li>Runs as the final step of <span class="k">npm run build</span>.</li>
+    </ul>
+
+    <h3>When the ping fires</h3>
+    <p>
+      <strong>Default-deny.</strong> The script only submits when it sees an explicit production
+      signal. Acceptable signals:
+    </p>
+    <ul>
+      <li>Cloudflare Pages production deploy: <span class="k">CF_PAGES=1</span> and
+        <span class="k">CF_PAGES_BRANCH=main</span>. Cloudflare sets both automatically on the
+        main-branch build, so production deploys ping without any extra config.</li>
+      <li>Maintainer manual opt-in: <span class="k">INDEXNOW_FORCE=1</span> on a one-off
+        <span class="k">npm run indexnow</span> from your machine.</li>
+    </ul>
+    <p>
+      Everything else (local <span class="k">npm run build</span>, CI checks, Cloudflare preview
+      branches) <strong>skips the ping</strong> so dev environments don't spam IndexNow.
+      <span class="k">INDEXNOW_DISABLE=1</span> additionally vetoes the ping if you ever need to
+      stop it mid-incident. The ping never fails the build — IndexNow outages don't block deploys.
+    </p>
+
+    <h3>To rotate the IndexNow key</h3>
+    <ol>
+      <li>Generate a new random hex string:
+        <span class="k">node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"</span></li>
+      <li>Rename <span class="k">public/&lt;old&gt;.txt</span> → <span class="k">public/&lt;new&gt;.txt</span>
+        and update its content to match the new filename stem.</li>
+      <li>Commit, deploy. Bing/Yandex will pick up the new key from the next ping.</li>
+    </ol>
+
+    <hr />
+
+    <h2>Analytics &amp; ads</h2>
+
+    <h3>Google Analytics 4</h3>
+    <p>
+      Loaded after first idle so it never blocks first paint. Tracking ID is hard-coded in
+      <span class="k">src/components/Layout.astro</span> (look for <span class="k">G-1K9JZ9ZQ2L</span>).
+      IP anonymization is on. To move to a new GA property, replace the ID.
+    </p>
+
+    <h3>Google AdSense</h3>
+    <p>
+      The AdSense loader (<span class="k">ca-pub-7616383336440831</span>) is included in
+      <span class="k">Layout.astro</span> and fires after first idle. Slots are not yet placed; to
+      monetize, drop <span class="k">&lt;ins class="adsbygoogle"&gt;</span> markup at desired
+      positions (end of long-form content, between hub sections — never inside tools).
+    </p>
+
+    <hr />
+
+    <h2>AI discoverability</h2>
+    <ul>
+      <li><a href="/ai.txt">/ai.txt</a> — AI usage policy (allowed, attribution required).</li>
+      <li><a href="/llms.txt">/llms.txt</a> — structured map of tools / reference / data.</li>
+      <li><a href="/llms-full.txt">/llms-full.txt</a> — full machine-readable reference, RAG-ready.</li>
+      <li>Robots.txt explicitly allows every major AI bot (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot, OAI-SearchBot, DeepSeekBot, etc.).</li>
+      <li>Rich JSON-LD across every page: Organization, WebSite, SoftwareApplication, BreadcrumbList,
+        DefinedTerm (per Morse character), Dataset (<span class="k">/morse.json</span>), HowTo, FAQ,
+        Course, Article.</li>
+    </ul>
+
+    <hr />
+
+    <h2>PWA / offline</h2>
+    <ul>
+      <li><a href="/manifest.webmanifest">/manifest.webmanifest</a> — installable.</li>
+      <li><a href="/sw.js">/sw.js</a> — service worker with app-shell precache, stale-while-revalidate
+        for HTML, network-first for <span class="k">/morse.json</span>.</li>
+      <li><a href="/offline/">/offline/</a> — fallback page.</li>
+      <li>Cache version is bumped per release (<span class="k">VERSION</span> constant in sw.js) so
+        old caches are purged on activate.</li>
+    </ul>
+
+    <hr />
+
+    <h2>Submission checklist (one-time setup)</h2>
+    <ol>
+      <li>Set Cloudflare Pages env vars: <span class="k">GOOGLE_SITE_VERIFICATION</span>,
+        <span class="k">BING_SITE_VERIFICATION</span>, <span class="k">YANDEX_VERIFICATION</span>,
+        <span class="k">PINTEREST_VERIFICATION</span>, <span class="k">FACEBOOK_DOMAIN_VERIFICATION</span>
+        (only the ones you want).</li>
+      <li>Push a deploy. Verify in each console.</li>
+      <li>Submit <span class="k">https://morsecodegenerator.com/sitemap.xml</span> in Google Search
+        Console + Bing Webmaster + Yandex Webmaster.</li>
+      <li>(Optional) Add the site at <a href="https://search.marginalia.nu/">marginalia.nu</a>,
+        <a href="https://kagi.com/">kagi.com</a>, or other indie engines.</li>
+      <li>Confirm <a href="https://www.indexnow.org/searchEngines">IndexNow propagation</a> the next
+        day — Bing should show a "Last detected" date matching your last deploy.</li>
+    </ol>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+</Layout>

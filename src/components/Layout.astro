@@ -131,6 +131,28 @@ const jsonLd = {
     <meta name="author" content="MorseCodeGenerator.com" />
     <meta name="generator" content="Astro" />
 
+    {/*
+      Search-console / webmaster verification tags.
+      Each meta is emitted only when the corresponding env var is set on the
+      build host (e.g. Cloudflare Pages → Environment variables). They never
+      leak through git. See /integrations/ for setup instructions.
+    */}
+    {import.meta.env.GOOGLE_SITE_VERIFICATION && (
+      <meta name="google-site-verification" content={import.meta.env.GOOGLE_SITE_VERIFICATION} />
+    )}
+    {import.meta.env.BING_SITE_VERIFICATION && (
+      <meta name="msvalidate.01" content={import.meta.env.BING_SITE_VERIFICATION} />
+    )}
+    {import.meta.env.YANDEX_VERIFICATION && (
+      <meta name="yandex-verification" content={import.meta.env.YANDEX_VERIFICATION} />
+    )}
+    {import.meta.env.PINTEREST_VERIFICATION && (
+      <meta name="p:domain_verify" content={import.meta.env.PINTEREST_VERIFICATION} />
+    )}
+    {import.meta.env.FACEBOOK_DOMAIN_VERIFICATION && (
+      <meta name="facebook-domain-verification" content={import.meta.env.FACEBOOK_DOMAIN_VERIFICATION} />
+    )}
+
     {/* hreflang — only on pages that actually have a localized version */}
     {hasEsVersion && (
       <>
