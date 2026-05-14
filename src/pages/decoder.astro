@@ -137,6 +137,64 @@ const examples = [
     </div>
   </section>
 
+  {/* ============== Live mic decoder (experimental) ============== */}
+  <section class="mic" aria-label="Live microphone decoder">
+    <div class="mic-head">
+      <div class="mic-head-left">
+        <span class="mic-badge">Experimental</span>
+        <h2 class="mic-title">Listen with your microphone</h2>
+      </div>
+      <p class="mic-sub muted">
+        Tap <strong>Start listening</strong>, then play or send Morse near your mic. We detect tones,
+        time their length, and decode them in real time. Works best with a clean 500–800 Hz tone at
+        15–25 WPM.
+      </p>
+    </div>
+
+    <div class="mic-body">
+      <div class="mic-controls">
+        <button id="mic-start" type="button" class="primary-action">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <path d="M12 19v3"/>
+          </svg>
+          Start listening
+        </button>
+        <button id="mic-stop" type="button" class="ghost" disabled>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+          Stop
+        </button>
+        <button id="mic-clear" type="button" class="ghost">Clear</button>
+
+        <label class="mic-thresh">
+          <span class="mic-thresh-label">Sensitivity</span>
+          <input id="mic-thresh" type="range" min="20" max="80" value="40" step="1" />
+        </label>
+      </div>
+
+      <div class="mic-meter" aria-hidden="true">
+        <div id="mic-level" class="mic-meter-fill"></div>
+        <div id="mic-threshold-line" class="mic-meter-line"></div>
+      </div>
+
+      <div class="mic-grid">
+        <div class="mic-field">
+          <span class="field-label">Detected dots &amp; dashes</span>
+          <pre id="mic-morse" class="mic-out mono" aria-live="polite"></pre>
+        </div>
+        <div class="mic-field">
+          <span class="field-label">Decoded text</span>
+          <pre id="mic-text" class="mic-out" aria-live="polite"></pre>
+        </div>
+      </div>
+
+      <p id="mic-status" class="muted mic-status" aria-live="polite">
+        Microphone access is requested only when you press Start. Audio never leaves your device.
+      </p>
+    </div>
+  </section>
+
   <section class="section">
     <div class="section-head">
       <div>
@@ -336,6 +394,194 @@ const examples = [
           input.focus();
         });
       });
+
+      // ============================================================
+      // Mic-input decoder
+      // ============================================================
+      // Strategy:
+      //  1. getUserMedia({audio}) → AudioContext → AnalyserNode.
+      //  2. Read time-domain samples ~60Hz. Compute RMS to get a level
+      //     (0..1). Threshold against the user's sensitivity slider.
+      //  3. State machine: rising edge = key down (record press start),
+      //     falling edge = key up (record press length + gap that follows).
+      //  4. Estimate the dot-unit (in ms) by tracking the shortest recent
+      //     press; classify each press as dot (<= 2 units) or dash (> 2 units).
+      //  5. Classify each gap: ≤2u nothing, ~3u letter boundary, >5u word boundary.
+      //  6. As letters/words form, look them up in REV and append to text.
+
+      const micStart = document.getElementById("mic-start");
+      const micStop = document.getElementById("mic-stop");
+      const micClear = document.getElementById("mic-clear");
+      const micThresh = document.getElementById("mic-thresh");
+      const micLevel = document.getElementById("mic-level");
+      const micLine = document.getElementById("mic-threshold-line");
+      const micMorseEl = document.getElementById("mic-morse");
+      const micTextEl = document.getElementById("mic-text");
+      const micStatus = document.getElementById("mic-status");
+
+      let micCtx, micStream, micAnalyser, micRAF;
+      let pressStart = 0, lastUp = 0, isDown = false;
+      let unitMs = 120; // initial guess; adapts to shortest press
+      let currentLetter = "";
+      let morseBuffer = "";
+      let textBuffer = "";
+
+      function setThresholdLine() {
+        if (!micThresh || !micLine) return;
+        const pct = (Number(micThresh.value) || 40); // already 0..100 friendly
+        micLine.style.left = `${pct}%`;
+      }
+      micThresh?.addEventListener("input", setThresholdLine);
+      setThresholdLine();
+
+      function classifyPress(durMs) {
+        // Adapt unit to the shortest reasonable press observed (lower bound 40ms).
+        if (durMs >= 40 && durMs < unitMs * 1.5) {
+          unitMs = Math.min(unitMs, Math.max(50, Math.round(durMs)));
+        }
+        return durMs <= unitMs * 2 ? "." : "-";
+      }
+      function classifyGap(gapMs) {
+        if (gapMs >= unitMs * 5) return "word";
+        if (gapMs >= unitMs * 2.5) return "letter";
+        return null;
+      }
+      function commitLetter() {
+        if (!currentLetter) return;
+        const c = REV ? REV[currentLetter] : null;
+        if (c) textBuffer += c;
+        else textBuffer += `[${currentLetter}]`; // unknown code marker
+        morseBuffer += currentLetter + " ";
+        currentLetter = "";
+        renderMic();
+      }
+      function commitWord() {
+        commitLetter();
+        if (textBuffer && !textBuffer.endsWith(" ")) textBuffer += " ";
+        if (morseBuffer && !morseBuffer.endsWith("/ ")) morseBuffer += "/ ";
+        renderMic();
+      }
+      function renderMic() {
+        if (micMorseEl) micMorseEl.textContent = (morseBuffer + currentLetter).trim();
+        if (micTextEl) micTextEl.textContent = textBuffer.trim();
+      }
+
+      async function startMic() {
+        if (micCtx) return;
+        try {
+          micStatus.textContent = "Requesting microphone…";
+          micStream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+          });
+          micCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const src = micCtx.createMediaStreamSource(micStream);
+          micAnalyser = micCtx.createAnalyser();
+          micAnalyser.fftSize = 1024;
+          src.connect(micAnalyser);
+
+          const buf = new Float32Array(micAnalyser.fftSize);
+          pressStart = 0;
+          lastUp = performance.now();
+          isDown = false;
+          unitMs = 120;
+          currentLetter = "";
+          morseBuffer = "";
+          textBuffer = "";
+          renderMic();
+
+          micStart.disabled = true;
+          micStop.disabled = false;
+          micStatus.textContent = "Listening… play Morse near your mic.";
+
+          // Idle auto-commit flags: each silence period can commit a letter
+          // at most once and a word at most once, until the next key-down
+          // event resets both. (Previous implementation reset a setTimeout
+          // every animation frame so it never fired — Codex P1.)
+          let letterCommittedOnIdle = false;
+          let wordCommittedOnIdle = false;
+
+          function loop() {
+            micAnalyser.getFloatTimeDomainData(buf);
+            // RMS
+            let sum = 0;
+            for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
+            const rms = Math.sqrt(sum / buf.length);
+            // Map to 0..100 with a gentle curve
+            const lvl = Math.min(100, Math.round(Math.sqrt(rms) * 220));
+            if (micLevel) micLevel.style.width = `${lvl}%`;
+
+            const threshold = Number(micThresh?.value || 40);
+            const now = performance.now();
+            const above = lvl >= threshold;
+
+            if (above && !isDown) {
+              // Rising edge — key down. The gap that just ended is from lastUp to now.
+              const gapMs = now - lastUp;
+              const gapKind = classifyGap(gapMs);
+              if (gapKind === "word") commitWord();
+              else if (gapKind === "letter") commitLetter();
+              isDown = true;
+              pressStart = now;
+              letterCommittedOnIdle = false;
+              wordCommittedOnIdle = false;
+            } else if (!above && isDown) {
+              // Falling edge — key up.
+              const dur = now - pressStart;
+              isDown = false;
+              lastUp = now;
+              if (dur >= 30) { // ignore micro-bursts
+                currentLetter += classifyPress(dur);
+                renderMic();
+              }
+            } else if (!isDown) {
+              // Idle: while no key is pressed, commit on long-enough silences.
+              // Each transition only fires once per silence period.
+              const elapsed = now - lastUp;
+              if (!letterCommittedOnIdle && currentLetter && elapsed > unitMs * 3) {
+                commitLetter();
+                letterCommittedOnIdle = true;
+              }
+              if (!wordCommittedOnIdle && elapsed > unitMs * 7 &&
+                  textBuffer && !textBuffer.endsWith(" ")) {
+                commitWord();
+                wordCommittedOnIdle = true;
+              }
+            }
+            micRAF = requestAnimationFrame(loop);
+          }
+          loop();
+        } catch (e) {
+          micStatus.textContent = `Microphone error: ${e?.message || e}`;
+          stopMic();
+        }
+      }
+
+      function stopMic() {
+        try { cancelAnimationFrame(micRAF); } catch {}
+        micRAF = null;
+        try { micStream?.getTracks().forEach(t => t.stop()); } catch {}
+        micStream = null;
+        try { micCtx?.close(); } catch {}
+        micCtx = null; micAnalyser = null;
+        if (micStart) micStart.disabled = false;
+        if (micStop) micStop.disabled = true;
+        if (micLevel) micLevel.style.width = "0%";
+        if (currentLetter) commitLetter();
+        if (micStatus) micStatus.textContent = "Stopped. Press Start listening to resume.";
+      }
+
+      micStart?.addEventListener("click", startMic);
+      micStop?.addEventListener("click", stopMic);
+      micClear?.addEventListener("click", () => {
+        currentLetter = ""; morseBuffer = ""; textBuffer = "";
+        renderMic();
+        if (micStatus) micStatus.textContent = "Cleared.";
+      });
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        micStart && (micStart.disabled = true);
+        if (micStatus) micStatus.textContent = "Microphone API not available in this browser.";
+      }
     })();
   </script>
 
@@ -409,6 +655,167 @@ const examples = [
     .ex-morse{ font-size: var(--fs-sm); color: var(--accent); letter-spacing: 0.06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .ex-arrow{ color: var(--text-subtle); }
     .ex-plain{ font-weight: 600; font-size: var(--fs-sm); }
+
+    /* ============== Live mic decoder ============== */
+    .mic{
+      margin-top: var(--s-7);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+    }
+    .mic-head{
+      display: grid;
+      gap: var(--s-2);
+      padding: var(--s-5);
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-2);
+    }
+    .mic-head-left{
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+    }
+    .mic-badge{
+      display: inline-flex;
+      align-items: center;
+      padding: 2px var(--s-2);
+      border-radius: var(--r-pill);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-line);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .mic-title{
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--fs-lg);
+      letter-spacing: -0.02em;
+    }
+    .mic-sub{
+      margin: 0;
+      font-size: var(--fs-sm);
+      max-width: 64ch;
+    }
+
+    .mic-body{
+      padding: var(--s-5);
+      display: grid;
+      gap: var(--s-3);
+    }
+    .mic-controls{
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2);
+      align-items: center;
+    }
+    .mic-controls button{
+      height: 38px;
+      padding: 0 var(--s-4);
+      font-size: var(--fs-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mic-controls button[disabled]{ opacity: 0.5; cursor: not-allowed; }
+
+    .mic-thresh{
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      margin-left: auto;
+    }
+    .mic-thresh-label{
+      font-family: var(--font-display);
+      font-size: var(--fs-xs);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      font-weight: 600;
+    }
+    .mic-thresh input{ width: 140px; height: 4px; padding: 0; border: 0; background: var(--line); border-radius: 999px; }
+    .mic-thresh input::-webkit-slider-thumb{
+      -webkit-appearance: none; appearance: none;
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border: 2px solid var(--surface);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .mic-thresh input::-moz-range-thumb{
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border: 2px solid var(--surface);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Level meter with a threshold marker */
+    .mic-meter{
+      position: relative;
+      height: 12px;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+    }
+    .mic-meter-fill{
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 0%;
+      background: linear-gradient(90deg, var(--good), var(--accent));
+      transition: width 30ms linear;
+    }
+    .mic-meter-line{
+      position: absolute;
+      top: -2px; bottom: -2px;
+      width: 2px;
+      background: var(--warn);
+      transform: translateX(-1px);
+    }
+
+    .mic-grid{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--s-3);
+    }
+    @media (min-width: 720px){ .mic-grid{ grid-template-columns: 1fr 1fr; } }
+
+    .mic-field{ display: grid; gap: var(--s-2); }
+    .mic-out{
+      margin: 0;
+      padding: var(--s-3) var(--s-4);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background: var(--bg);
+      min-height: 80px;
+      max-height: 200px;
+      overflow: auto;
+      font-size: var(--fs-base);
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--text);
+    }
+    .mic-out.mono{
+      font-family: var(--font-mono);
+      letter-spacing: 0.06em;
+      color: var(--accent);
+    }
+    .mic-status{
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      min-height: 18px;
+    }
+
+    @media (max-width: 600px){
+      .mic-thresh{ margin-left: 0; width: 100%; }
+      .mic-thresh input{ flex: 1; }
+    }
 
     /* Reading-key reused from word-slug page */
     .reading-key{
