@@ -121,14 +121,24 @@ const jsonLd = {
       <li>Runs as the final step of <span class="k">npm run build</span>.</li>
     </ul>
 
-    <h3>Disable / override</h3>
+    <h3>When the ping fires</h3>
+    <p>
+      <strong>Default-deny.</strong> The script only submits when it sees an explicit production
+      signal. Acceptable signals:
+    </p>
     <ul>
-      <li>Set <span class="k">INDEXNOW_DISABLE=1</span> in env to skip the ping (useful on preview branches).</li>
-      <li>The ping is automatically skipped when <span class="k">SITE_URL</span> is anything other than
-        <span class="k">https://morsecodegenerator.com</span> — so Cloudflare preview deploys never
-        accidentally point Bing at a preview hash.</li>
-      <li>The ping never fails the build — IndexNow outages don't block deploys.</li>
+      <li>Cloudflare Pages production deploy: <span class="k">CF_PAGES=1</span> and
+        <span class="k">CF_PAGES_BRANCH=main</span>. Cloudflare sets both automatically on the
+        main-branch build, so production deploys ping without any extra config.</li>
+      <li>Maintainer manual opt-in: <span class="k">INDEXNOW_FORCE=1</span> on a one-off
+        <span class="k">npm run indexnow</span> from your machine.</li>
     </ul>
+    <p>
+      Everything else (local <span class="k">npm run build</span>, CI checks, Cloudflare preview
+      branches) <strong>skips the ping</strong> so dev environments don't spam IndexNow.
+      <span class="k">INDEXNOW_DISABLE=1</span> additionally vetoes the ping if you ever need to
+      stop it mid-incident. The ping never fails the build — IndexNow outages don't block deploys.
+    </p>
 
     <h3>To rotate the IndexNow key</h3>
     <ol>

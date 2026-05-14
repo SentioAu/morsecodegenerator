@@ -90,19 +90,37 @@ async function main() {
     return;
   }
 
-  const host = new URL(SITE).host;
-  if (host !== PROD_HOST) {
-    log(`SITE_URL host (${host}) is not the canonical production host (${PROD_HOST}); skipping ping.`);
+  // Default-deny: only ping when we have an explicit production signal.
+  // Acceptable signals are:
+  //   1) Cloudflare Pages production deploy:
+  //        CF_PAGES === "1" && CF_PAGES_BRANCH === "main"
+  //   2) Manual maintainer opt-in:
+  //        INDEXNOW_FORCE === "1"
+  // Any local `npm run build` (no env vars set) will therefore *not*
+  // ping IndexNow, which is the safe default — avoids developer or CI
+  // builds spamming IndexNow with submissions of the prod URL.
+  const isProdCloudflareDeploy =
+    process.env.CF_PAGES === "1" && process.env.CF_PAGES_BRANCH === "main";
+  const isManualOptIn = process.env.INDEXNOW_FORCE === "1";
+
+  if (!isProdCloudflareDeploy && !isManualOptIn) {
+    if (process.env.CF_PAGES === "1") {
+      log(
+        `Cloudflare Pages preview build (branch=${process.env.CF_PAGES_BRANCH}); skipping ping.`
+      );
+    } else {
+      log(
+        "Non-production environment (no CF_PAGES=1+main, no INDEXNOW_FORCE=1); skipping ping. " +
+          "Set INDEXNOW_FORCE=1 to submit from a maintainer machine."
+      );
+    }
     return;
   }
 
-  // Cloudflare Pages exposes CF_PAGES=1 and CF_PAGES_BRANCH=<branch>. Only
-  // ping when we're building from the production branch (main). Preview
-  // branches share the same SITE_URL default, so without this guard every
-  // PR preview would tell Bing the site moved.
-  if (process.env.CF_PAGES === "1" && process.env.CF_PAGES_BRANCH !== "main") {
+  const host = new URL(SITE).host;
+  if (host !== PROD_HOST) {
     log(
-      `Cloudflare Pages preview build (branch=${process.env.CF_PAGES_BRANCH}); skipping ping.`
+      `SITE_URL host (${host}) is not the canonical production host (${PROD_HOST}); skipping ping.`
     );
     return;
   }
