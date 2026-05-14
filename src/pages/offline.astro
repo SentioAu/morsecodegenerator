@@ -1,0 +1,64 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "You're offline – MorseCodeGenerator.com";
+const description =
+  "The page you requested isn't cached and you don't have a connection. Open the translator or any pre-cached page below to keep working offline.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/offline/`;
+// Don't index the offline fallback — it's only meant for SW edge cases.
+const robots = "noindex,follow";
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Offline</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">No connection · Service worker fallback</p>
+    <h1 class="page-hero-title">You're offline</h1>
+    <p class="muted page-hero-sub">
+      The page you wanted isn't in your offline cache. These pages are pre-cached and work without
+      a network connection — open any of them to keep going.
+    </p>
+  </header>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Cached and ready</p>
+        <h2 class="section-title">Use these offline</h2>
+      </div>
+      <p class="muted section-sub">Pre-fetched on your first visit; refreshed in the background when you come back online.</p>
+    </div>
+    <div class="pill-grid">
+      <a href="/">Home</a>
+      <a href="/translate/">Translator</a>
+      <a href="/decoder/">Decoder</a>
+      <a href="/practice/">Practice</a>
+      <a href="/chart/">Printable chart</a>
+      <a href="/morse-code/">Learn the alphabet</a>
+      <a href="/phrases/">Common phrases</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">When you're back online</p>
+        <h2 class="section-title">Everything will update automatically</h2>
+      </div>
+    </div>
+    <p class="muted">
+      MorseCodeGenerator.com uses a service worker that re-checks for fresh content in the background
+      whenever you load a cached page. Just reconnect and refresh — no manual cache clearing needed.
+    </p>
+  </section>
+</Layout>
