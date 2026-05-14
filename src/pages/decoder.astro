@@ -1,0 +1,437 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Morse Code Decoder – Decode Dots and Dashes to Text";
+const description =
+  "Free Morse code decoder. Paste dots and dashes and instantly get plain text. Auto-detect, audio playback, copy and share — runs in your browser.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/decoder/`;
+const robots = "index,follow";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Decoder", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+    },
+    {
+      "@type": "HowTo",
+      name: "How to decode Morse code to text",
+      description: "Convert dots and dashes to plain English in seconds.",
+      totalTime: "PT30S",
+      tool: [{ "@type": "HowToTool", name: "MorseCodeGenerator.com decoder" }],
+      step: [
+        { "@type": "HowToStep", name: "Open the decoder (this page)" },
+        { "@type": "HowToStep", name: "Paste your Morse code into the input box (e.g. '... --- ...')." },
+        { "@type": "HowToStep", name: "The tool auto-detects Morse and shows the decoded text." },
+        { "@type": "HowToStep", name: "Copy the result or play it back as audio." },
+      ],
+    },
+  ],
+};
+
+const examples = [
+  ["... --- ...", "SOS"],
+  [".... . .-.. .-.. ---", "HELLO"],
+  [".... . .-.. .-.. --- / .-- --- .-. .-.. -..", "HELLO WORLD"],
+  ["-- .- -.-- -.. .- -.--", "MAYDAY"],
+  [".. / .-.. --- ...- . / -.-- --- ..-", "I LOVE YOU"],
+  ["- .... .- -. -.- / -.-- --- ..-", "THANK YOU"],
+];
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Decoder</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Decode · Auto-detect · Audio</p>
+    <h1 class="page-hero-title">Morse code decoder</h1>
+    <p class="muted page-hero-sub">
+      Paste dots, dashes, and slashes — get plain text instantly. Runs in your browser, no upload, no
+      account. Need to encode the other direction? Use the <a href="/translate/">translator</a>.
+    </p>
+  </header>
+
+  <section class="decoder" aria-label="Morse code decoder">
+    <div class="decoder-head">
+      <span class="dot-on" aria-hidden="true"></span>
+      <span class="d-meta">Spaces between letters · <span class="k">/</span> between words</span>
+    </div>
+
+    <div class="decoder-body">
+      <label class="field">
+        <span class="field-label">Morse code</span>
+        <textarea
+          id="dec-input"
+          class="t-area mono"
+          rows="6"
+          placeholder="... --- ..."
+          spellcheck="false"
+          autocorrect="off"
+          autocapitalize="off"
+          maxlength="5000"
+        >... --- ...</textarea>
+      </label>
+
+      <div class="decoder-actions">
+        <button id="dec-clear" type="button" class="ghost">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          Clear
+        </button>
+        <button id="dec-paste" type="button" class="ghost">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Paste
+        </button>
+      </div>
+
+      <label class="field">
+        <span class="field-label">Decoded text</span>
+        <textarea
+          id="dec-output"
+          class="t-area"
+          rows="3"
+          readonly
+          placeholder="Decoded text appears here…"
+          spellcheck="false"
+        ></textarea>
+      </label>
+
+      <div class="decoder-actions">
+        <button id="dec-copy" type="button" class="primary-action">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy text
+        </button>
+        <button id="dec-play" type="button" class="ghost">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M5 3v18l14-9L5 3z"/></svg>
+          Play
+        </button>
+        <a class="btn ghost" href="/translate/">Switch to encoder →</a>
+      </div>
+
+      <p id="dec-status" class="muted decoder-status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Examples</p>
+        <h2 class="section-title">Common patterns</h2>
+      </div>
+      <p class="section-sub muted">Click any row to decode it instantly.</p>
+    </div>
+    <div class="ex-list">
+      {examples.map(([code, plain]) => (
+        <button class="ex" type="button" data-morse={code}>
+          <span class="ex-morse mono">{code}</span>
+          <span class="ex-arrow" aria-hidden="true">→</span>
+          <span class="ex-plain">{plain}</span>
+        </button>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">How decoding works</p>
+        <h2 class="section-title">The format in one line</h2>
+      </div>
+    </div>
+    <dl class="reading-key">
+      <div>
+        <dt>Dot</dt>
+        <dd><span class="k">.</span> &nbsp; short signal (1 unit)</dd>
+      </div>
+      <div>
+        <dt>Dash</dt>
+        <dd><span class="k">-</span> &nbsp; long signal (3 units)</dd>
+      </div>
+      <div>
+        <dt>Letter gap</dt>
+        <dd>a single space between letters (3 units)</dd>
+      </div>
+      <div>
+        <dt>Word gap</dt>
+        <dd><span class="k">/</span> &nbsp; with surrounding spaces (7 units)</dd>
+      </div>
+    </dl>
+    <p class="muted" style="margin-top: var(--s-4);">
+      The decoder also accepts middle-dot (<span class="k">·</span>), bullet (<span class="k">•</span>),
+      en-dash (<span class="k">–</span>), em-dash (<span class="k">—</span>), and pipe (<span class="k">|</span>) as separators.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Related</p>
+        <h2 class="section-title">Keep going</h2>
+      </div>
+    </div>
+    <div class="pill-grid">
+      <a href="/translate/">Text → Morse</a>
+      <a href="/practice/">Practice / Koch trainer</a>
+      <a href="/chart/">Printable chart</a>
+      <a href="/morse-code/">Alphabet A–Z</a>
+      <a href="/phrases/">Common phrases</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <script is:inline>
+    (function () {
+      const input = document.getElementById("dec-input");
+      const output = document.getElementById("dec-output");
+      const clearBtn = document.getElementById("dec-clear");
+      const pasteBtn = document.getElementById("dec-paste");
+      const copyBtn = document.getElementById("dec-copy");
+      const playBtn = document.getElementById("dec-play");
+      const statusEl = document.getElementById("dec-status");
+
+      let MAP = null, REV = null;
+
+      function buildRev(map) {
+        const r = {};
+        for (const k in map) if (Object.hasOwn(map, k) && !r[map[k]]) r[map[k]] = k;
+        return r;
+      }
+      function normalize(s) {
+        return (s || "")
+          .replaceAll("·", ".").replaceAll("•", ".")
+          .replaceAll("–", "-").replaceAll("—", "-")
+          .replace(/\s*\|\s*/g, " / ")
+          .replace(/\s*\/+\s*/g, " / ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+      function decode(raw) {
+        if (!REV) return "";
+        const s = normalize(raw);
+        if (!s) return "";
+        const unsupported = new Set();
+        const text = s.split(/\s*\/\s*/).filter(Boolean).map(word =>
+          word.trim().split(/\s+/).filter(Boolean).map(code => {
+            const c = REV[code];
+            if (!c) unsupported.add(code);
+            return c || "";
+          }).join("")
+        ).join(" ");
+        if (statusEl) {
+          if (unsupported.size) {
+            statusEl.textContent = `Unsupported codes: ${[...unsupported].slice(0, 8).join(", ")}`;
+          } else if (text) {
+            statusEl.textContent = `✓ ${text.length} character${text.length === 1 ? "" : "s"} decoded`;
+          } else {
+            statusEl.textContent = "";
+          }
+        }
+        return text;
+      }
+
+      let t;
+      function autoRun() {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          if (!input || !output) return;
+          output.value = decode(input.value || "");
+        }, 120);
+      }
+
+      // Load morse map
+      fetch("/morse.json").then(r => r.json()).then(j => {
+        const raw = j?.morseMap || j || {};
+        MAP = {};
+        for (const k in raw) if (Object.hasOwn(raw, k) && k !== " ") MAP[k.toUpperCase()] = raw[k];
+        REV = buildRev(MAP);
+        autoRun();
+      }).catch(() => {
+        if (statusEl) statusEl.textContent = "Failed to load Morse data. Refresh the page.";
+      });
+
+      input?.addEventListener("input", autoRun);
+      clearBtn?.addEventListener("click", () => { input.value = ""; output.value = ""; statusEl.textContent = ""; input.focus(); });
+      pasteBtn?.addEventListener("click", async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          if (text) { input.value = text; autoRun(); }
+        } catch {
+          input?.focus();
+        }
+      });
+      copyBtn?.addEventListener("click", async () => {
+        const v = (output?.value || "").trim();
+        if (!v) return;
+        try {
+          await navigator.clipboard.writeText(v);
+          const old = copyBtn.innerHTML;
+          copyBtn.innerHTML = "<span style='font-weight:600;'>Copied ✓</span>";
+          setTimeout(() => (copyBtn.innerHTML = old), 1100);
+        } catch {}
+      });
+
+      // Simple audio playback of the Morse input
+      let audioCtx;
+      playBtn?.addEventListener("click", async () => {
+        const seq = (input?.value || "").trim();
+        if (!seq) return;
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = audioCtx;
+        const unit = 1200 / 18; // 18 WPM
+        let tt = ctx.currentTime + 0.05;
+        const cleaned = seq.replace(/[^.\-\/\s]/g, "").trim();
+        if (!cleaned) return;
+        const parts = cleaned.split(/\s+/);
+        for (const part of parts) {
+          if (part === "/") { tt += (unit * 7) / 1000; continue; }
+          for (const sym of part) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = "sine"; osc.frequency.value = 600;
+            g.gain.setValueAtTime(0.001, tt);
+            g.gain.exponentialRampToValueAtTime(0.18, tt + 0.01);
+            g.gain.exponentialRampToValueAtTime(0.001, tt + dur / 1000);
+            osc.connect(g); g.connect(ctx.destination);
+            osc.start(tt); osc.stop(tt + dur / 1000);
+            tt += dur / 1000 + unit / 1000;
+          }
+          tt += (unit * 2) / 1000;
+        }
+      });
+
+      // Example rows fill the input
+      document.querySelectorAll(".ex[data-morse]").forEach(b => {
+        b.addEventListener("click", () => {
+          input.value = b.getAttribute("data-morse") || "";
+          autoRun();
+          input.scrollIntoView({ behavior: "smooth", block: "center" });
+          input.focus();
+        });
+      });
+    })();
+  </script>
+
+  <style>
+    .decoder{
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .decoder-head{
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      padding: var(--s-3) var(--s-5);
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--line);
+      font-size: var(--fs-xs);
+      color: var(--text-muted);
+    }
+    .dot-on{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--good);
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.16);
+    }
+    .d-meta{ font-family: var(--font-mono); font-size: 11px; }
+
+    .decoder-body{ padding: var(--s-5); display: grid; gap: var(--s-3); }
+    .field{ display: grid; gap: var(--s-2); }
+    .field-label{
+      font-family: var(--font-display);
+      font-size: var(--fs-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      font-weight: 600;
+    }
+    .decoder-body .t-area{
+      min-height: 120px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background: var(--bg);
+      padding: var(--s-3) var(--s-4);
+      font-size: var(--fs-base);
+    }
+    .decoder-body .t-area.mono{ letter-spacing: 0.06em; font-size: var(--fs-md); }
+    .decoder-actions{ display: flex; gap: var(--s-2); flex-wrap: wrap; }
+    .decoder-actions button{ height: 38px; padding: 0 var(--s-3); font-size: var(--fs-sm); }
+    .decoder-status{ margin: 0; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); min-height: 18px; }
+
+    /* Example list */
+    .ex-list{ display: grid; gap: var(--s-2); }
+    @media (min-width: 720px){ .ex-list{ grid-template-columns: repeat(2, 1fr); } }
+    .ex{
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: var(--s-3);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      color: var(--text);
+      transition: background .12s ease, border-color .12s ease;
+    }
+    .ex:hover{ background: var(--surface-2); border-color: var(--accent-line); }
+    .ex-morse{ font-size: var(--fs-sm); color: var(--accent); letter-spacing: 0.06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ex-arrow{ color: var(--text-subtle); }
+    .ex-plain{ font-weight: 600; font-size: var(--fs-sm); }
+
+    /* Reading-key reused from word-slug page */
+    .reading-key{
+      display: grid;
+      gap: 0;
+      margin: 0;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+    }
+    .reading-key > div{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4px;
+      padding: var(--s-3) var(--s-4);
+      border-bottom: 1px solid var(--line);
+    }
+    @media (min-width: 720px){
+      .reading-key > div{ grid-template-columns: 160px 1fr; gap: var(--s-5); align-items: baseline; }
+    }
+    .reading-key > div:last-child{ border-bottom: 0; }
+    .reading-key dt{ font-weight: 600; color: var(--text); font-size: var(--fs-sm); margin: 0; }
+    .reading-key dd{ margin: 0; color: var(--text-muted); font-size: var(--fs-sm); }
+  </style>
+</Layout>

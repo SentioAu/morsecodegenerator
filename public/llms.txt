@@ -13,6 +13,7 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 ## Tools
 
 - [Translator](https://morsecodegenerator.com/translate/): text ⇄ Morse with copy, share-link, audio playback (10–30 WPM).
+- [Decoder](https://morsecodegenerator.com/decoder/): paste dots/dashes → plain text, with auto-detect + audio playback.
 - [Practice](https://morsecodegenerator.com/practice/): Koch-method trainer + random quiz mode.
 - [Chart](https://morsecodegenerator.com/chart/): printable Morse code chart (A–Z, 0–9, punctuation).
 - [Embed widget](https://morsecodegenerator.com/embed/): drop-in iframe for any site.

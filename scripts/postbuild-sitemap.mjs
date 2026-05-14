@@ -128,7 +128,12 @@ function buildSitemapXml(entries) {
   const lines = [];
   lines.push(`<?xml version="1.0" encoding="UTF-8"?>`);
   lines.push(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"`);
-  lines.push(`        xmlns:xhtml="http://www.w3.org/1999/xhtml">`);
+  lines.push(`        xmlns:xhtml="http://www.w3.org/1999/xhtml"`);
+  lines.push(`        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`);
+
+  // Single canonical OG image per page (we ship the same one site-wide).
+  const ogImageUrl = `${SITE}/og-image.svg`;
+  const ogImageCaption = "MorseCodeGenerator.com — the hub of Morse code";
 
   for (const e of entries) {
     const loc = escapeXml(e.loc);
@@ -140,6 +145,11 @@ function buildSitemapXml(entries) {
     if (lastmod) lines.push(`    <lastmod>${lastmod}</lastmod>`);
     lines.push(`    <changefreq>${changefreq}</changefreq>`);
     lines.push(`    <priority>${priority}</priority>`);
+    // Image entry helps Google Image search index the OG card per URL.
+    lines.push(`    <image:image>`);
+    lines.push(`      <image:loc>${escapeXml(ogImageUrl)}</image:loc>`);
+    lines.push(`      <image:caption>${escapeXml(ogImageCaption)}</image:caption>`);
+    lines.push(`    </image:image>`);
     lines.push(`  </url>`);
   }
 
