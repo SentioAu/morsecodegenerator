@@ -17,7 +17,7 @@
  *  - The cache version is bumped on every release so old caches are
  *    purged automatically on activate.
  */
-const VERSION = "mcg-v1";
+const VERSION = "mcg-v2";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 
@@ -91,10 +91,6 @@ self.addEventListener("fetch", (event) => {
   // Only handle same-origin
   if (url.origin !== self.location.origin) return;
 
-  // Bypass: query-string variants of the translator (share links) and
-  // anything looking like an admin/diagnostic route.
-  if (url.search) return;
-
   // Astro's hashed asset bundle is immutable — cache-first forever.
   if (url.pathname.startsWith("/_astro/") || url.pathname.startsWith("/assets/")) {
     event.respondWith(cacheFirst(request));
@@ -108,11 +104,19 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // HTML navigation: stale-while-revalidate with /offline/ fallback.
+  // HTML navigations: stale-while-revalidate with /offline/ fallback.
+  // We *always* route HTML through here, including queryful URLs
+  // (PWA start_url is /?utm_source=pwa, share links are /translate/?q=...).
+  // The cache match is path-only so all variants share one shell entry.
   if (isHtmlRequest(request)) {
     event.respondWith(staleWhileRevalidate(request, "/offline/"));
     return;
   }
+
+  // Non-HTML same-origin GETs with query strings: bypass to avoid the
+  // cache filling up with one entry per query permutation (analytics
+  // pixels, etc.).
+  if (url.search) return;
 
   // Other GETs (svg, json data files, etc.) — stale-while-revalidate.
   event.respondWith(staleWhileRevalidate(request, null));
@@ -152,10 +156,30 @@ async function networkFirst(request) {
 async function staleWhileRevalidate(request, offlineFallback) {
   const cache = await caches.open(RUNTIME_CACHE);
   const shell = await caches.open(SHELL_CACHE);
-  const cached = (await cache.match(request)) || (await shell.match(request));
+
+  // For HTML navigations we want all query-string variants (PWA start_url,
+  // share links) to share a single cached app shell entry. Match by path
+  // (ignoreSearch) and, on refresh, normalize the cache key to the bare
+  // URL so the cache doesn't fill up with permutations.
+  const isHtml =
+    request.mode === "navigate" ||
+    (request.headers.get("accept") || "").includes("text/html");
+
+  const matchOpts = isHtml ? { ignoreSearch: true } : undefined;
+  const cached =
+    (await cache.match(request, matchOpts)) ||
+    (await shell.match(request, matchOpts));
+
   const refresh = fetch(request)
     .then((res) => {
-      if (res.ok) cache.put(request, res.clone()).catch(() => {});
+      if (res.ok) {
+        let key = request;
+        if (isHtml) {
+          const u = new URL(request.url);
+          key = u.origin + u.pathname; // strip search + hash for the cache key
+        }
+        cache.put(key, res.clone()).catch(() => {});
+      }
       return res;
     })
     .catch(() => null);
