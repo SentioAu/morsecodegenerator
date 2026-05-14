@@ -8,6 +8,8 @@ const {
   keywords,
   publishedTime,
   modifiedTime,
+  prevUrl,
+  nextUrl,
 } = Astro.props;
 
 const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
@@ -121,6 +123,8 @@ const jsonLd = {
     <meta name="description" content={description} />
     {keywords && <meta name="keywords" content={keywords} />}
     <link rel="canonical" href={canonical} />
+    {prevUrl && <link rel="prev" href={prevUrl} />}
+    {nextUrl && <link rel="next" href={nextUrl} />}
     <meta name="robots" content={robots} />
     <meta name="googlebot" content={robots} />
     <meta name="bingbot" content={robots} />
@@ -321,6 +325,7 @@ const jsonLd = {
             <h4 class="foot-h">Tools</h4>
             <ul>
               <li><a href="/translate/">Translator</a></li>
+              <li><a href="/decoder/">Decoder</a></li>
               <li><a href="/practice/">Practice / Koch trainer</a></li>
               <li><a href="/chart/">Printable chart</a></li>
               <li><a href="/embed/">Embed widget</a></li>
