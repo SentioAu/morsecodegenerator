@@ -126,7 +126,32 @@ const jsonLd = {
       description,
       url: canonical,
       isPartOf: { "@type": "WebSite", name: "Morse Code Generator", url: site },
+      ...(code ? { mainEntity: { "@id": `${canonical}#term` } } : {}),
     },
+    // DefinedTerm: a citable semantic entity for AI agents and search.
+    // Each letter/digit is a term in the master "International Morse Code"
+    // DefinedTermSet (ITU-R M.1677-1). With this in place, AI tools and
+    // Knowledge Graphs can resolve "K in Morse code" to a precise entity.
+    ...(code
+      ? [
+          {
+            "@type": "DefinedTerm",
+            "@id": `${canonical}#term`,
+            name: CH,
+            termCode: code,
+            alternateName: [`${CH} in Morse`, `Morse code for ${CH}`],
+            description: `International Morse code representation of the character "${CH}" — ${code}.`,
+            inDefinedTermSet: {
+              "@type": "DefinedTermSet",
+              "@id": `${site}/morse-code/#set`,
+              name: "International Morse Code (ITU-R M.1677-1)",
+              url: `${site}/morse-code/`,
+            },
+            inLanguage: "en",
+            url: canonical,
+          },
+        ]
+      : []),
   ],
 };
 

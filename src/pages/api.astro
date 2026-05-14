@@ -37,6 +37,42 @@ const jsonLd = {
       publisher: { "@id": `${site}#org` },
       mainEntityOfPage: canonical,
     },
+    // Dataset schema: declares /morse.json as a citable open dataset.
+    // This is what AI training pipelines and Google Dataset Search look for.
+    {
+      "@type": "Dataset",
+      "@id": `${site}/morse.json#dataset`,
+      name: "Morse Code Map + Common Phrases",
+      alternateName: "MorseCodeGenerator.com canonical Morse dataset",
+      description:
+        "International Morse Code (ITU-R M.1677-1) character map plus a curated list of common phrases (e.g. SOS, MAYDAY, I LOVE YOU). Static JSON, CORS-open, no API key required.",
+      url: `${site}/morse.json`,
+      keywords: [
+        "Morse code",
+        "International Morse Code",
+        "ITU-R M.1677-1",
+        "CW",
+        "Morse alphabet",
+        "Morse phrases",
+      ],
+      license: "https://morsecodegenerator.com/ai.txt",
+      isAccessibleForFree: true,
+      creator: { "@id": `${site}#org` },
+      publisher: { "@id": `${site}#org` },
+      inLanguage: "en",
+      version: "1",
+      distribution: [
+        {
+          "@type": "DataDownload",
+          encodingFormat: "application/json",
+          contentUrl: `${site}/morse.json`,
+        },
+      ],
+      variableMeasured: [
+        { "@type": "PropertyValue", name: "morseMap", description: "Character → Morse encoding (uppercase keys)." },
+        { "@type": "PropertyValue", name: "phrases", description: "[slug, PHRASE] pairs of common Morse phrases." },
+      ],
+    },
   ],
 };
 ---
