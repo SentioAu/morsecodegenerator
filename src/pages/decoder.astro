@@ -493,20 +493,12 @@ const examples = [
           micStop.disabled = false;
           micStatus.textContent = "Listening… play Morse near your mic.";
 
-          // Auto-commit a letter after enough silence even if user doesn't keep keying.
-          let silenceTimer;
-          function scheduleCommit() {
-            clearTimeout(silenceTimer);
-            silenceTimer = setTimeout(() => {
-              const elapsed = performance.now() - lastUp;
-              if (!isDown && currentLetter && elapsed > unitMs * 3) {
-                commitLetter();
-              }
-              if (!isDown && elapsed > unitMs * 7) {
-                commitWord();
-              }
-            }, 50);
-          }
+          // Idle auto-commit flags: each silence period can commit a letter
+          // at most once and a word at most once, until the next key-down
+          // event resets both. (Previous implementation reset a setTimeout
+          // every animation frame so it never fired — Codex P1.)
+          let letterCommittedOnIdle = false;
+          let wordCommittedOnIdle = false;
 
           function loop() {
             micAnalyser.getFloatTimeDomainData(buf);
@@ -530,6 +522,8 @@ const examples = [
               else if (gapKind === "letter") commitLetter();
               isDown = true;
               pressStart = now;
+              letterCommittedOnIdle = false;
+              wordCommittedOnIdle = false;
             } else if (!above && isDown) {
               // Falling edge — key up.
               const dur = now - pressStart;
@@ -539,8 +533,20 @@ const examples = [
                 currentLetter += classifyPress(dur);
                 renderMic();
               }
+            } else if (!isDown) {
+              // Idle: while no key is pressed, commit on long-enough silences.
+              // Each transition only fires once per silence period.
+              const elapsed = now - lastUp;
+              if (!letterCommittedOnIdle && currentLetter && elapsed > unitMs * 3) {
+                commitLetter();
+                letterCommittedOnIdle = true;
+              }
+              if (!wordCommittedOnIdle && elapsed > unitMs * 7 &&
+                  textBuffer && !textBuffer.endsWith(" ")) {
+                commitWord();
+                wordCommittedOnIdle = true;
+              }
             }
-            scheduleCommit();
             micRAF = requestAnimationFrame(loop);
           }
           loop();
