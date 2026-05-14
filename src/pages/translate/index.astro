@@ -334,10 +334,10 @@ const robots = "index,follow";
         let offset = 0;
         for (const part of parts) {
           if (part === "/") {
-            // Word gap: 7 units. Already counted prior letter gap (3) so add 4 more visual gap.
-            offset += unit * 4;
-            segs.push({ start: offset, dur: 0, gap: true, wordGap: true });
-            offset += unit * 0; // gap is rendered with a marker
+            // Word gap matches playMorse exactly: +7 units on top of the
+            // letter-gap (3) already counted by the previous iteration,
+            // for 10 units total between word boundaries.
+            offset += unit * 7;
             continue;
           }
           for (const sym of part) {
@@ -345,7 +345,7 @@ const robots = "index,follow";
             segs.push({ start: offset, dur, sym });
             offset += dur + unit; // segment + intra-element gap
           }
-          offset += unit * 2; // letter gap
+          offset += unit * 2; // letter gap (3-1 already added)
         }
 
         const total = Math.max(offset, 1);

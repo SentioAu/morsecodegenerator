@@ -169,6 +169,7 @@ const practiceLinks = [
         </svg>
       </div>
       <div class="char-show-morse mono">{code}</div>
+      <div id="rhythm" class="rhythm" aria-hidden="true"></div>
 
       <div class="char-show-meta">
         {tips.map((t) => (
@@ -311,6 +312,42 @@ const practiceLinks = [
 
       function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
+      // --- Rhythm bar ---
+      const rhythmEl = document.getElementById("rhythm");
+      let rhythmTimers = [];
+      function clearRhythm() {
+        rhythmTimers.forEach((id) => clearTimeout(id));
+        rhythmTimers = [];
+        if (rhythmEl) {
+          rhythmEl.innerHTML = "";
+          rhythmEl.classList.remove("playing");
+        }
+      }
+      function renderRhythm(seq, unitMs) {
+        clearRhythm();
+        if (!rhythmEl || !seq) return;
+        const segs = [];
+        let offset = 0;
+        for (const sym of seq) {
+          if (sym !== "." && sym !== "-") continue;
+          const dur = sym === "-" ? unitMs * 3 : unitMs;
+          segs.push({ start: offset, dur, sym });
+          offset += dur + unitMs; // intra-element gap
+        }
+        const total = Math.max(offset, 1);
+        for (const s of segs) {
+          const el = document.createElement("span");
+          el.className = "rhythm-seg" + (s.sym === "-" ? " dash" : " dot");
+          el.style.left = `${(s.start / total) * 100}%`;
+          el.style.width = `${(s.dur / total) * 100}%`;
+          rhythmEl.appendChild(el);
+          rhythmTimers.push(setTimeout(() => el.classList.add("on"), s.start));
+          rhythmTimers.push(setTimeout(() => el.classList.remove("on"), s.start + s.dur));
+        }
+        rhythmEl.classList.add("playing");
+        rhythmTimers.push(setTimeout(() => rhythmEl.classList.remove("playing"), total + 80));
+      }
+
       // --- Audio playback (dot/dash) ---
       let playing = false;
       let stopFlag = false;
@@ -322,6 +359,7 @@ const practiceLinks = [
         // Toggle stop if already playing
         if (playing) {
           stopFlag = true;
+          clearRhythm();
           toast("Stopping…");
           return;
         }
@@ -381,6 +419,7 @@ const practiceLinks = [
 
         async function play() {
           toast("Playing…");
+          renderRhythm(value, unit);
           for (const s of value) {
             if (stopFlag) break;
 
@@ -464,6 +503,37 @@ const practiceLinks = [
       text-align: center;
       word-break: break-all;
     }
+    /* Rhythm bar (active during Listen playback) */
+    .rhythm{
+      position: relative;
+      margin-top: var(--s-3);
+      height: 8px;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+      opacity: 0.35;
+      transition: opacity .2s ease;
+    }
+    .rhythm.playing{ opacity: 1; }
+    .rhythm-seg{
+      position: absolute;
+      top: 1px;
+      bottom: 1px;
+      border-radius: var(--r-pill);
+      background: var(--text-subtle);
+      transition: background .08s ease, box-shadow .08s ease, transform .08s ease;
+    }
+    .rhythm-seg.on{
+      background: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 0 12px var(--accent-soft);
+      transform: scaleY(1.15);
+    }
+    @media (prefers-reduced-motion: reduce){
+      .rhythm-seg{ transition: none; }
+      .rhythm-seg.on{ transform: none; }
+    }
+
     .char-show-meta{
       margin-top: var(--s-4);
       display: flex;
