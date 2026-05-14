@@ -305,6 +305,7 @@ const jsonLd = {
             </svg>
           </div>
           <div class="word-show-morse mono">{morse}</div>
+          <div id="rhythm" class="rhythm" aria-hidden="true"></div>
 
           <div class="word-show-actions">
             <button id="copy" type="button" class="primary-action">
@@ -411,6 +412,46 @@ const jsonLd = {
         setTimeout(() => (copyBtn.innerHTML = old), 1200);
       });
 
+      // --- Rhythm bar visualization ---
+      const rhythmEl = document.getElementById("rhythm");
+      let rhythmTimers = [];
+      function clearRhythm() {
+        rhythmTimers.forEach((id) => clearTimeout(id));
+        rhythmTimers = [];
+        if (rhythmEl) { rhythmEl.innerHTML = ""; rhythmEl.classList.remove("playing"); }
+      }
+      function renderRhythm(seq, wpm) {
+        clearRhythm();
+        if (!rhythmEl || !seq) return;
+        const unit = 1200 / wpm;
+        const cleaned = seq.replace(/[^.\-\/\s]/g, "").trim();
+        if (!cleaned) return;
+        const parts = cleaned.split(/\s+/);
+        const segs = [];
+        let offset = 0;
+        for (const part of parts) {
+          if (part === "/") { offset += unit * 7; continue; }
+          for (const sym of part) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            segs.push({ start: offset, dur, sym });
+            offset += dur + unit;
+          }
+          offset += unit * 2;
+        }
+        const total = Math.max(offset, 1);
+        for (const s of segs) {
+          const el = document.createElement("span");
+          el.className = "rhythm-seg" + (s.sym === "-" ? " dash" : " dot");
+          el.style.left = `${(s.start / total) * 100}%`;
+          el.style.width = `${(s.dur / total) * 100}%`;
+          rhythmEl.appendChild(el);
+          rhythmTimers.push(setTimeout(() => el.classList.add("on"), s.start));
+          rhythmTimers.push(setTimeout(() => el.classList.remove("on"), s.start + s.dur));
+        }
+        rhythmEl.classList.add("playing");
+        rhythmTimers.push(setTimeout(() => rhythmEl.classList.remove("playing"), total + 80));
+      }
+
       let audioCtx;
       async function playMorse(sequence, wpm) {
         if (!sequence) return;
@@ -446,6 +487,7 @@ const jsonLd = {
       playBtn?.addEventListener("click", async () => {
         const old = playBtn.innerHTML;
         playBtn.textContent = "Playing…";
+        renderRhythm(morse || "", 18);
         await playMorse(morse || "", 18);
         setTimeout(() => (playBtn.innerHTML = old), 600);
       });
@@ -489,6 +531,37 @@ const jsonLd = {
       gap: var(--s-2);
       flex-wrap: wrap;
       align-items: center;
+    }
+
+    /* Rhythm bar */
+    .rhythm{
+      position: relative;
+      margin-top: var(--s-3);
+      height: 8px;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+      opacity: 0.35;
+      transition: opacity .2s ease;
+    }
+    .rhythm.playing{ opacity: 1; }
+    .rhythm-seg{
+      position: absolute;
+      top: 1px;
+      bottom: 1px;
+      border-radius: var(--r-pill);
+      background: var(--text-subtle);
+      transition: background .08s ease, box-shadow .08s ease, transform .08s ease;
+    }
+    .rhythm-seg.on{
+      background: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 0 12px var(--accent-soft);
+      transform: scaleY(1.15);
+    }
+    @media (prefers-reduced-motion: reduce){
+      .rhythm-seg{ transition: none; }
+      .rhythm-seg.on{ transform: none; }
     }
 
     .reading-key{
