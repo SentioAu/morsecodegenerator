@@ -1,5 +1,7 @@
 ---
 import Layout from "../components/Layout.astro";
+import AdSlot from "../components/AdSlot.astro";
+import Newsletter from "../components/Newsletter.astro";
 
 const title = "Morse code glossary — terms, abbreviations & jargon";
 const description =
@@ -109,6 +111,10 @@ const jsonLd = {
       </div>
     ))}
   </dl>
+
+  <AdSlot zone="glossary" />
+
+  <Newsletter compact={true} />
 
   <section class="section">
     <div class="section-head">

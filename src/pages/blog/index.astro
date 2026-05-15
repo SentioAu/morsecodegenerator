@@ -1,5 +1,6 @@
 ---
 import Layout from "../../components/Layout.astro";
+import Newsletter from "../../components/Newsletter.astro";
 import { posts } from "../../data/blog-posts.js";
 
 const title = "Morse code articles & guides — MorseCodeGenerator.com Blog";
@@ -101,6 +102,8 @@ const jsonLd = {
       </a>
     ))}
   </section>
+
+  <Newsletter />
 
   <section class="section">
     <div class="section-head">

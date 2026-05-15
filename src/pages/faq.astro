@@ -1,5 +1,7 @@
 ---
 import Layout from "../components/Layout.astro";
+import AdSlot from "../components/AdSlot.astro";
+import Newsletter from "../components/Newsletter.astro";
 
 const title = "Morse Code FAQ – Common Questions Answered";
 const description =
@@ -124,6 +126,10 @@ const jsonLd = {
       </details>
     ))}
   </section>
+
+  <AdSlot zone="faq" />
+
+  <Newsletter compact={true} />
 
   <section class="card soft" style="margin-top:24px;">
     <h2 style="margin-top:0;">Still have a question?</h2>

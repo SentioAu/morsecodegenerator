@@ -17,7 +17,7 @@
  *  - The cache version is bumped on every release so old caches are
  *    purged automatically on activate.
  */
-const VERSION = "mcg-v2";
+const VERSION = "mcg-v3";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 
@@ -30,6 +30,7 @@ const SHELL_URLS = [
   "/morse-code/",
   "/phrases/",
   "/faq/",
+  "/disclosure/",
   "/offline/",
   "/morse.json",
   "/mcg-tool.js",
