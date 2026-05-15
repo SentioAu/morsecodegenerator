@@ -1,0 +1,247 @@
+---
+import Layout from "../../components/Layout.astro";
+import { abbrs } from "../../data/cw-abbreviations.js";
+import data from "../../data/morse.json";
+import { textToMorse } from "../../utils/morse";
+
+export function getStaticPaths() {
+  return abbrs.map((a, i) => ({
+    params: { slug: a.slug },
+    props: {
+      a,
+      prev: i > 0 ? abbrs[i - 1] : null,
+      next: i < abbrs.length - 1 ? abbrs[i + 1] : null,
+    },
+  }));
+}
+
+const { a, prev, next } = Astro.props;
+
+const site = String(
+  Astro.site ?? import.meta.env.SITE ?? "https://morsecodegenerator.com"
+).replace(/\/$/, "");
+
+const canonical = `${site}/abbreviations/${a.slug}/`;
+const robots = "index,follow";
+
+// Render the abbreviation in Morse so the page can show the rhythm
+// pattern. Strip trailing "?" before encoding — it's an interrogative
+// marker, not part of the abbreviation's Morse identity.
+const rawMap = data?.morseMap ?? {};
+const morseMap = Object.fromEntries(
+  Object.entries(rawMap)
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+);
+const codeForMorse = a.code.replace(/[?\s]/g, "");
+const morse = textToMorse(codeForMorse, morseMap, " ");
+
+const title = `${a.code} in Morse code – ${a.meaning}`;
+const description = `${a.code}: ${a.summary} Plain-English CW abbreviation reference.`;
+const keywords = `${a.code}, ${a.slug} cw abbreviation, ${a.meaning.toLowerCase()}, ham radio ${a.code}, morse code ${a.code}`;
+
+const related = abbrs
+  .filter((r) => r.slug !== a.slug && r.tags?.some((t) => a.tags?.includes(t)))
+  .slice(0, 4);
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Abbreviations", url: `${site}/abbreviations/` },
+  { name: a.code, url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": canonical + "#term",
+      name: a.code,
+      description: a.summary,
+      url: canonical,
+      inDefinedTermSet: `${site}/abbreviations/#index`,
+      inLanguage: "en",
+    },
+    {
+      "@type": "Article",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+      keywords,
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: `What does ${a.code} mean in CW Morse code?`,
+          acceptedAnswer: { "@type": "Answer", text: a.summary },
+        },
+        {
+          "@type": "Question",
+          name: `When is ${a.code} used on the air?`,
+          acceptedAnswer: { "@type": "Answer", text: a.context },
+        },
+      ],
+    },
+  ],
+};
+
+const prevUrl = prev ? `${site}/abbreviations/${prev.slug}/` : undefined;
+const nextUrl = next ? `${site}/abbreviations/${next.slug}/` : undefined;
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  robots={robots}
+  keywords={keywords}
+  ogType="article"
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/abbreviations/">Abbreviations</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">{a.code}</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">CW abbreviation · {a.group}</p>
+    <h1 class="page-hero-title">{a.code} in Morse code</h1>
+    <p class="muted page-hero-sub">{a.summary}</p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={`/translate/?q=${encodeURIComponent(codeForMorse)}`}>Play {a.code} in the translator</a>
+      <a class="btn secondary" href="/abbreviations/">All abbreviations</a>
+    </div>
+  </header>
+
+  <section class="card ab-card">
+    <h2 class="ab-h">Morse rendering</h2>
+    <p class="ab-morse" aria-label={`Morse rendering of ${a.code}`}>{morse}</p>
+    <p class="muted micro">Sent letter-by-letter with standard inter-letter gaps.</p>
+  </section>
+
+  <section class="card ab-card">
+    <h2 class="ab-h">Meaning</h2>
+    <p class="ab-line"><strong class="k">{a.code}</strong> — {a.meaning}</p>
+  </section>
+
+  <section class="card soft ab-card">
+    <h2 class="ab-h">When this is used</h2>
+    <p>{a.context}</p>
+  </section>
+
+  <section class="card ab-card">
+    <h2 class="ab-h">Examples</h2>
+    <table class="ab-table">
+      <thead>
+        <tr><th>On the air</th><th>Plain English</th></tr>
+      </thead>
+      <tbody>
+        {a.examples.map(([usage, plain]) => (
+          <tr>
+            <td><strong class="k">{usage}</strong></td>
+            <td class="muted">{plain}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="page-hero-kicker">Keep reading</p>
+          <h2 class="section-title">Related abbreviations</h2>
+        </div>
+      </div>
+      <div class="pill-grid">
+        {related.map((r) => (
+          <a href={`/abbreviations/${r.slug}/`}>{r.code} — {r.meaning}</a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <nav class="ab-nav" aria-label="Adjacent abbreviations">
+    {prev ? (
+      <a class="ab-nav-link prev" href={`/abbreviations/${prev.slug}/`} rel="prev">
+        <span class="ab-nav-dir">← Previous</span>
+        <span class="ab-nav-label">{prev.code}</span>
+      </a>
+    ) : <span></span>}
+    {next ? (
+      <a class="ab-nav-link next" href={`/abbreviations/${next.slug}/`} rel="next">
+        <span class="ab-nav-dir">Next →</span>
+        <span class="ab-nav-label">{next.code}</span>
+      </a>
+    ) : <span></span>}
+  </nav>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .ab-card{ margin-top: var(--s-4); }
+    .ab-h{ margin-top: 0; }
+    .ab-morse{
+      font-family: var(--font-mono);
+      font-size: var(--fs-2xl);
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin: var(--s-3) 0 var(--s-2);
+      word-break: break-all;
+    }
+    .ab-line{ font-size: var(--fs-md); margin: 0; }
+    .ab-line .k{ color: var(--accent); margin-right: var(--s-2); }
+    .ab-table{ margin-top: var(--s-3); }
+
+    .ab-nav{
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: var(--s-3);
+      margin-top: var(--s-6);
+    }
+    .ab-nav-link{
+      flex: 0 1 240px;
+      display: grid;
+      gap: var(--s-1);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .ab-nav-link.next{ text-align: right; }
+    .ab-nav-link:hover{ background: var(--surface-2); border-color: var(--accent-line); }
+    .ab-nav-dir{
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
+      letter-spacing: 0.05em;
+    }
+    .ab-nav-label{
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text);
+    }
+  </style>
+</Layout>
