@@ -59,6 +59,20 @@ const jsonLd = {
       mainEntityOfPage: canonical,
       timeRequired: `PT${post.minutes}M`,
       keywords: post.tags.join(", "),
+      // HowTo rich results require a `step` array. We attach it only
+      // when (a) the post is a how-to and (b) the data file actually
+      // supplies steps — Article entries never get this field.
+      ...(articleType === "HowTo" && Array.isArray(post.steps) && post.steps.length > 0
+        ? {
+            step: post.steps.map((s, i) => ({
+              "@type": "HowToStep",
+              position: i + 1,
+              name: s.name,
+              text: s.text,
+              url: `${canonical}#step-${i + 1}`,
+            })),
+          }
+        : {}),
     },
   ],
 };
