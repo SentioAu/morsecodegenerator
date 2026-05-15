@@ -73,8 +73,8 @@ const jsonLd = {
     </div>
   </header>
 
-  <section id="trainer" class="card glow" style="margin-top:18px;">
-    <h2 style="margin-top:0;">Koch trainer</h2>
+  <section id="trainer" class="card glow trainer-section">
+    <h2 class="trainer-h">Koch trainer</h2>
     <p class="muted">
       Plays random 5-character groups using only the letters in your active set. Start with K, M and add
       one character at a time once you copy comfortably.
@@ -101,7 +101,7 @@ const jsonLd = {
         <label class="muted">Number of groups</label>
         <input id="kochGroups" type="number" min="1" max="50" value="10" />
 
-        <div class="row" style="margin-top:10px;">
+        <div class="row row-actions">
           <button id="kochStart" type="button">Play</button>
           <button id="kochStop" type="button" class="ghost">Stop</button>
           <button id="kochReveal" type="button" class="ghost">Reveal</button>
@@ -112,7 +112,7 @@ const jsonLd = {
         <label class="muted">Type what you hear</label>
         <textarea id="kochAnswer" rows="6" placeholder="Type as you copy..." autocapitalize="characters" spellcheck="false"></textarea>
 
-        <label class="muted" style="margin-top:12px;display:block;">Answer key (revealed)</label>
+        <label class="muted answer-key-label">Answer key (revealed)</label>
         <textarea id="kochKey" rows="3" readonly placeholder="Press Reveal to compare."></textarea>
 
         <p class="muted micro" id="kochScore"></p>
@@ -120,8 +120,8 @@ const jsonLd = {
     </div>
   </section>
 
-  <section id="quiz" class="card" style="margin-top:18px;">
-    <h2 style="margin-top:0;">Single-character quiz</h2>
+  <section id="quiz" class="card trainer-section">
+    <h2 class="trainer-h">Single-character quiz</h2>
     <p class="muted">
       We play one Morse character. Type it. The next one starts automatically — see how fast you can
       get with full ITU spec timing.
@@ -142,7 +142,7 @@ const jsonLd = {
         <input id="quizWpm" type="range" min="10" max="30" step="1" value="18" />
         <p class="muted micro"><span id="quizWpmVal">18</span> WPM</p>
 
-        <div class="row" style="margin-top:10px;">
+        <div class="row row-actions">
           <button id="quizStart" type="button">Start</button>
           <button id="quizStop" type="button" class="ghost">Stop</button>
         </div>
@@ -152,14 +152,14 @@ const jsonLd = {
         <label class="muted">Your answer (type 1 character)</label>
         <input id="quizAnswer" type="text" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" />
 
-        <p class="muted micro" id="quizStatus" style="margin-top:8px;">Press Start.</p>
+        <p class="muted micro quiz-status" id="quizStatus">Press Start.</p>
         <p class="muted micro" id="quizScore"></p>
       </div>
     </div>
   </section>
 
-  <section class="card soft" style="margin-top:18px;">
-    <h2 style="margin-top:0;">How to learn fast</h2>
+  <section class="card soft trainer-section">
+    <h2 class="trainer-h">How to learn fast</h2>
     <ol>
       <li>Practice <strong>5 minutes a day</strong>, every day. Short sessions beat long ones.</li>
       <li>Stay at full character speed (≥ 18 WPM). Use Farnsworth to slow only the gaps.</li>
@@ -501,8 +501,16 @@ const jsonLd = {
       .grid.two{ grid-template-columns: 1fr 1fr; gap: var(--s-6); }
     }
 
+    /* Cards stack under the hero with a consistent rhythm. */
+    .trainer-section{ margin-top: var(--s-5); }
+    .trainer-h{ margin-top: 0; }
+    .answer-key-label{ display: block; margin-top: var(--s-3); }
+    .quiz-status{ margin-top: var(--s-2); }
+
     .row{ display: flex; gap: var(--s-2); flex-wrap: wrap; }
-    .row button{ height: 38px; padding: 0 var(--s-4); font-size: var(--fs-sm); font-weight: 600; }
+    .row-actions{ margin-top: var(--s-3); }
+    /* Buttons in action rows match the global .btn standard (40px). */
+    .row button{ height: 40px; padding: 0 var(--s-4); font-size: var(--fs-sm); font-weight: 600; }
 
     .micro{
       font-size: var(--fs-xs);
