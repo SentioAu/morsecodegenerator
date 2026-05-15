@@ -14,6 +14,13 @@ const {
 
 const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
 
+// Donation / sponsor link — env-driven so we can swap providers (Ko-fi,
+// Buy Me a Coffee, GitHub Sponsors) without code changes. When unset the
+// footer link points to the affiliate-disclosure page's "Support" anchor,
+// which itself explains how to help if no donation channel is open.
+const DONATE_URL =
+  import.meta.env.DONATE_URL || "/disclosure/#support";
+
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
@@ -220,9 +227,29 @@ const jsonLd = {
       set:html={JSON.stringify(jsonLd)}
     ></script>
 
-    {/* Analytics + AdSense — loaded after first idle to keep LCP fast */}
+    {/*
+      Analytics + AdSense — gated behind cookie consent.
+
+      Behaviour:
+       - On first visit `localStorage["mcg-consent"]` is missing → banner
+         renders, NO third-party scripts load.
+       - If the visitor clicks "Accept all", consent flips to "all", the
+         loader fires, GA4 + AdSense are injected, and any rendered
+         <ins class="adsbygoogle"> elements get `(adsbygoogle = ...).push({})`
+         so they fill.
+       - If they click "Essential only", consent flips to "essential" and
+         loaders are skipped on every subsequent visit.
+
+      The banner script (further down in <body>) dispatches a
+      `mcg:consent` CustomEvent({detail:"all"|"essential"}) when the
+      visitor decides. We listen for that event AND check
+      localStorage on boot so cross-tab decisions are respected too.
+    */}
     <script is:inline>
       (function () {
+        function consent() {
+          try { return localStorage.getItem("mcg-consent"); } catch (e) { return null; }
+        }
         function load() {
           if (window.__mcgLoadedAds) return;
           window.__mcgLoadedAds = true;
@@ -238,18 +265,39 @@ const jsonLd = {
           ga.src = "https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L";
           document.head.appendChild(ga);
 
-          // AdSense loader (no slots = no requests, just sets up adsbygoogle)
+          // AdSense loader.
           var ad = document.createElement("script");
           ad.async = true;
           ad.crossOrigin = "anonymous";
           ad.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7616383336440831";
+          ad.onload = function () {
+            // Fill any <ins class="adsbygoogle"> already on the page.
+            try {
+              document.querySelectorAll("ins.adsbygoogle:not([data-adsbygoogle-status])").forEach(function () {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+              });
+            } catch (e) { /* AdSense will retry */ }
+          };
           document.head.appendChild(ad);
         }
-        if ("requestIdleCallback" in window) {
-          requestIdleCallback(load, { timeout: 2500 });
-        } else {
-          window.addEventListener("load", function () { setTimeout(load, 800); });
+        function maybeLoad() {
+          if (consent() !== "all") return;
+          if ("requestIdleCallback" in window) {
+            requestIdleCallback(load, { timeout: 2500 });
+          } else {
+            window.addEventListener("load", function () { setTimeout(load, 800); });
+          }
         }
+        // Boot path: load if already accepted on a prior visit.
+        maybeLoad();
+        // Same-tab path: banner dispatches this event.
+        window.addEventListener("mcg:consent", function (e) {
+          if (e && e.detail === "all") maybeLoad();
+        });
+        // Cross-tab path: another tab may flip the value.
+        window.addEventListener("storage", function (e) {
+          if (e.key === "mcg-consent" && e.newValue === "all") maybeLoad();
+        });
       })();
     </script>
 
@@ -404,6 +452,9 @@ const jsonLd = {
               <li><a href="/contact/">Contact</a></li>
               <li><a href="/privacy/">Privacy</a></li>
               <li><a href="/terms/">Terms</a></li>
+              <li><a href="/disclosure/">Disclosure</a></li>
+              <li><a href={DONATE_URL} rel="noopener">Support the site</a></li>
+              <li><a href="#" data-open-consent>Cookie preferences</a></li>
               <li><a href="/sitemap.xml">Sitemap</a></li>
             </ul>
           </div>
@@ -1184,6 +1235,55 @@ const jsonLd = {
       .mono{ font-family: var(--font-mono); letter-spacing: 0.01em; }
 
       /* =========================================================
+         Cookie consent banner
+         ========================================================= */
+      .consent{
+        position: fixed;
+        left: var(--s-4);
+        right: var(--s-4);
+        bottom: var(--s-4);
+        z-index: 60;
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: var(--r-lg);
+        box-shadow: var(--shadow-lg);
+        padding: var(--s-4);
+      }
+      .consent[hidden]{ display: none; }
+      .consent-inner{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--s-4);
+        max-width: var(--container);
+        margin: 0 auto;
+      }
+      .consent-copy{ flex: 1 1 320px; min-width: 0; }
+      .consent-h{
+        display: block;
+        font-family: var(--font-display);
+        font-size: var(--fs-md);
+        margin-bottom: var(--s-1);
+        color: var(--text);
+      }
+      .consent-p{
+        margin: 0;
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+      .consent-actions{
+        display: flex;
+        gap: var(--s-2);
+        flex-wrap: wrap;
+      }
+      @media (max-width: 600px){
+        .consent{ left: var(--s-3); right: var(--s-3); bottom: var(--s-3); }
+        .consent-actions{ width: 100%; }
+        .consent-actions .btn{ flex: 1; }
+      }
+
+      /* =========================================================
          Footer
          ========================================================= */
       .site-footer{
@@ -1295,6 +1395,72 @@ const jsonLd = {
         *, *::before, *::after{ transition-duration: .01ms !important; animation-duration: .01ms !important; }
       }
     </style>
+
+    {/*
+      Cookie consent banner.
+      Rendered hidden by default; the boot script below decides whether
+      to show it. We render the markup server-side (no JS framework
+      rehydration needed) so it works even if the consent script fails.
+    */}
+    <div
+      class="consent"
+      id="consentBanner"
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="consent-h"
+      aria-describedby="consent-p"
+      hidden
+    >
+      <div class="consent-inner">
+        <div class="consent-copy">
+          <strong id="consent-h" class="consent-h">We use cookies</strong>
+          <p id="consent-p" class="consent-p">
+            We use cookies for analytics and to show ads that keep this
+            site free. You can accept all, or choose essentials only.
+            See our <a href="/privacy/">Privacy Policy</a>.
+          </p>
+        </div>
+        <div class="consent-actions">
+          <button type="button" class="btn ghost" id="consentEssential">Essential only</button>
+          <button type="button" class="btn primary" id="consentAccept">Accept all</button>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      (function () {
+        var KEY = "mcg-consent";
+        var banner = document.getElementById("consentBanner");
+        if (!banner) return;
+
+        function get() {
+          try { return localStorage.getItem(KEY); } catch (e) { return null; }
+        }
+        function set(v) {
+          try { localStorage.setItem(KEY, v); } catch (e) {}
+          window.dispatchEvent(new CustomEvent("mcg:consent", { detail: v }));
+        }
+        function show() { banner.hidden = false; }
+        function hide() { banner.hidden = true; }
+
+        if (!get()) show();
+
+        document.getElementById("consentAccept")?.addEventListener("click", function () {
+          set("all"); hide();
+        });
+        document.getElementById("consentEssential")?.addEventListener("click", function () {
+          set("essential"); hide();
+        });
+
+        // "Cookie preferences" footer link reopens the banner.
+        document.querySelectorAll("[data-open-consent]").forEach(function (el) {
+          el.addEventListener("click", function (e) {
+            e.preventDefault();
+            show();
+          });
+        });
+      })();
+    </script>
 
     <script is:inline>
       (function () {

@@ -1,0 +1,133 @@
+---
+/*
+ * Newsletter — lightweight email capture form.
+ *
+ * Provider-agnostic: the form `action` is read from env at build time so
+ * the same component works with Buttondown, Mailchimp, ConvertKit, or a
+ * self-hosted endpoint. If no endpoint is configured the component
+ * gracefully degrades to a `mailto:` link — never a broken form.
+ *
+ * Env vars
+ * --------
+ *   NEWSLETTER_ACTION   - POST URL (e.g. https://buttondown.com/api/emails/embed-subscribe/<user>)
+ *   NEWSLETTER_FIELD    - name attr for the email input (default: "email")
+ *
+ * Honeypot
+ * --------
+ * A hidden `website` field traps bots. Real users don't fill hidden inputs;
+ * most ESPs ignore or discard submissions where the trap is non-empty.
+ */
+const {
+  heading = "Get one Morse tip per week",
+  body = "A short email every Sunday: one technique, one piece of history, one practice drill. No spam, unsubscribe in one click.",
+  compact = false,
+} = Astro.props;
+
+const action = import.meta.env.NEWSLETTER_ACTION || "";
+const field = import.meta.env.NEWSLETTER_FIELD || "email";
+const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
+---
+
+<aside class:list={["newsletter", compact && "newsletter-compact"]} aria-labelledby="nl-heading">
+  <div class="newsletter-copy">
+    <h3 id="nl-heading" class="newsletter-h">{heading}</h3>
+    <p class="newsletter-p">{body}</p>
+  </div>
+
+  {action ? (
+    <form
+      class="newsletter-form"
+      action={action}
+      method="post"
+      target="_blank"
+      data-nl-form
+    >
+      <label class="sr-only" for="nl-email">Email address</label>
+      <input
+        id="nl-email"
+        type="email"
+        name={field}
+        placeholder="you@example.com"
+        required
+        autocomplete="email"
+        inputmode="email"
+      />
+      {/* Honeypot — hidden from humans, irresistible to dumb bots */}
+      <input
+        class="nl-trap"
+        type="text"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+      />
+      <button type="submit" class="btn primary">Subscribe</button>
+    </form>
+  ) : (
+    <a
+      class="btn primary newsletter-mailto"
+      href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Add me to the MorseGen newsletter")}&body=${encodeURIComponent("Hi — please add me to your weekly Morse tip email. Thanks!")}`}
+    >
+      Email to subscribe
+    </a>
+  )}
+
+  <p class="newsletter-fine">
+    By subscribing you agree to our <a href="/privacy/">Privacy Policy</a>.
+    Powered by a transactional email service — your address isn't sold or
+    shared.
+  </p>
+</aside>
+
+<style>
+  .newsletter{
+    margin: var(--s-7) 0;
+    padding: var(--s-5);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    max-width: var(--content);
+  }
+  .newsletter-compact{ padding: var(--s-4); margin: var(--s-5) 0; }
+  .newsletter-h{
+    margin: 0 0 var(--s-2);
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    color: var(--text);
+  }
+  .newsletter-p{
+    margin: 0 0 var(--s-4);
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    line-height: 1.55;
+  }
+  .newsletter-form{
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    align-items: stretch;
+  }
+  .newsletter-form input[type="email"]{
+    flex: 1 1 220px;
+    min-width: 0;
+    margin: 0;
+    height: 40px;
+  }
+  .newsletter-form .btn{ height: 40px; }
+  .nl-trap{
+    position: absolute !important;
+    left: -10000px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  .newsletter-mailto{ align-self: flex-start; }
+  .newsletter-fine{
+    margin: var(--s-3) 0 0;
+    font-size: var(--fs-xs);
+    color: var(--text-subtle);
+    line-height: 1.5;
+  }
+</style>

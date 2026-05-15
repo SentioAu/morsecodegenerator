@@ -8,7 +8,7 @@ const canonical = "https://morsecodegenerator.com/privacy/";
 const robots = "index,follow";
 
 const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
-const EFFECTIVE_DATE = "2026-01-28";
+const EFFECTIVE_DATE = "2026-05-15";
 ---
 
 <Layout title={title} description={description} canonical={canonical} robots={robots}>
@@ -86,6 +86,32 @@ const EFFECTIVE_DATE = "2026-01-28";
     <p>
       Cookies are small files stored by your browser. Analytics and advertising providers may use cookies, local storage, or similar
       identifiers for measurement, fraud prevention, and ad delivery.
+    </p>
+
+    <h3>Cookie consent banner</h3>
+    <p>
+      On your first visit you'll see a banner asking you to choose between
+      <strong>Accept all</strong> (analytics + ads enabled) and
+      <strong>Essential only</strong> (no analytics, no ads loaded). Your
+      choice is stored locally as <code>mcg-consent</code> in your
+      browser's <code>localStorage</code> — not in a server-side cookie —
+      and is honoured on every subsequent page load.
+    </p>
+    <p>
+      You can change your decision at any time by clicking
+      <a href="#" data-open-consent>Cookie preferences</a> in the site
+      footer. Switching from "Accept all" back to "Essential only" stops
+      analytics and ad scripts from being loaded on the next pageview;
+      already-loaded scripts may persist in the current tab until you
+      reload. Clearing your browser's site data will also clear your
+      preference (the banner will reappear).
+    </p>
+
+    <h3>Funding & disclosure</h3>
+    <p>
+      For a plain-English breakdown of how this site is funded — ads,
+      affiliate links, reader support — see the
+      <a href="/disclosure/">affiliate disclosure</a>.
     </p>
 
     <h2>Your choices</h2>

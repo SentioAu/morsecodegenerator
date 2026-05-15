@@ -1,5 +1,7 @@
 ---
 import Layout from "../../components/Layout.astro";
+import AdSlot from "../../components/AdSlot.astro";
+import Newsletter from "../../components/Newsletter.astro";
 import { posts } from "../../data/blog-posts.js";
 import { bodies } from "../../data/blog-bodies.js";
 
@@ -91,6 +93,10 @@ const jsonLd = {
     </header>
 
     <div class="post-body" set:html={body}></div>
+
+    <AdSlot zone="article" />
+
+    <Newsletter />
 
     <hr />
     <p class="muted">

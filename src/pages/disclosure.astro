@@ -1,0 +1,150 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Affiliate disclosure & how MorseCodeGenerator.com is funded";
+const description =
+  "How this site makes money: ads, affiliate links for radio gear and books, and reader support. Plain-English disclosure of every revenue source.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/disclosure/`;
+const robots = "index,follow";
+const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
+const EFFECTIVE_DATE = "2026-05-15";
+
+const DONATE_URL =
+  import.meta.env.DONATE_URL || "";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Disclosure", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      "@id": canonical,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "en",
+      isPartOf: { "@id": `${site}#website` },
+      dateModified: EFFECTIVE_DATE,
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Disclosure</span>
+  </nav>
+
+  <article class="prose">
+    <header class="page-hero">
+      <p class="page-hero-kicker">Effective {EFFECTIVE_DATE}</p>
+      <h1 class="page-hero-title">Affiliate disclosure & funding</h1>
+      <p class="muted page-hero-sub">
+        How this site stays free, what's a paid placement, and what isn't.
+      </p>
+    </header>
+
+    <p>
+      MorseCodeGenerator.com is run by an independent operator (no agency,
+      no VC). The tools and reference content are free for anyone to use
+      forever. To pay for hosting, bandwidth, and the time it takes to
+      maintain accurate Morse references, the site earns money in three
+      ways, listed in plain English below.
+    </p>
+
+    <hr />
+
+    <h2>1) Display advertising</h2>
+    <p>
+      We show ads via <strong>Google AdSense</strong> on long-form
+      reference pages — articles, glossary, FAQ. Ads are <strong>never
+      placed inside an interactive tool</strong> (translator, decoder, or
+      practice trainer) because they would disrupt the workflow. Every ad
+      block is labelled "Advertisement" so it's never mistaken for editorial
+      content.
+    </p>
+    <p>
+      Ads only load after you accept the cookie banner. If you choose
+      "Essential only," no ad scripts are requested at all.
+    </p>
+
+    <h2>2) Affiliate links</h2>
+    <p>
+      Some outbound links to <strong>radio gear, Morse keys, books, and
+      learning courses</strong> are affiliate links. If you buy through
+      one, the retailer pays this site a small commission at no extra
+      cost to you. We only link to products we'd recommend to a friend.
+      No vendor has paid for placement, and no recommendation has been
+      altered to favour a higher commission.
+    </p>
+    <p>
+      As an Amazon Associate, we earn from qualifying purchases.
+      Affiliate links may be marked with <span class="k">↗</span> or
+      labelled "affiliate" inline; assume every outbound product link
+      could be one.
+    </p>
+
+    <h2>3) Reader support</h2>
+    <p id="support">
+      If you find the site useful, the most valuable things you can do are
+      <strong>free</strong>:
+    </p>
+    <ul>
+      <li>Share a link with a friend learning Morse or studying for a ham licence.</li>
+      <li>Link to a useful page from your blog, classroom site, or club page.</li>
+      <li>Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> with corrections, gaps, or feature requests — we read every one.</li>
+    </ul>
+
+    {DONATE_URL ? (
+      <p>
+        If you'd rather contribute directly,
+        <a href={DONATE_URL} rel="noopener" target="_blank"> you can support the project here</a>.
+        Contributions go toward hosting, domain renewal, and the time to keep references accurate.
+      </p>
+    ) : (
+      <p class="muted">
+        We don't currently accept direct donations. If a sponsorship channel
+        opens up, it will be linked here.
+      </p>
+    )}
+
+    <hr />
+
+    <h2>What we don't do</h2>
+    <ul>
+      <li><strong>No paid placements in editorial content.</strong> Articles, glossary entries, and FAQ answers are written without input from advertisers.</li>
+      <li><strong>No sponsored "best of" lists</strong> ranked by who paid the most.</li>
+      <li><strong>No selling visitor data.</strong> See <a href="/privacy/">Privacy Policy</a> for what analytics and ad providers collect.</li>
+      <li><strong>No accounts, no tracking pixels on the translator.</strong> The tool runs in your browser, not on our server.</li>
+    </ul>
+
+    <h2>Questions or concerns</h2>
+    <p>
+      If you ever see a placement that looks misleading, or want to confirm
+      whether a link is an affiliate link, email
+      <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we'll
+      answer directly.
+    </p>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+</Layout>

@@ -1,0 +1,85 @@
+---
+/*
+ * AdSlot — renders a Google AdSense `<ins>` tag for a named placement.
+ *
+ * Why this exists
+ * ----------------
+ * AdSense slot IDs are environment-specific (per publisher + zone). We
+ * don't want them hard-coded in the repo, and we don't want broken empty
+ * `<ins>` tags rendered when a slot hasn't been configured yet.
+ *
+ * Slot resolution
+ * ---------------
+ *   <AdSlot zone="article" />
+ * looks for `import.meta.env.ADSENSE_SLOT_ARTICLE` at build time. If the
+ * env var is missing, the component renders **nothing** — no
+ * unconfigured ad markup leaks to production.
+ *
+ * Consent gate
+ * ------------
+ * The actual `(adsbygoogle = window.adsbygoogle || []).push({})` call is
+ * triggered globally by the consent banner logic in `Layout.astro` once
+ * the visitor has accepted the "ads" consent category. Before that, the
+ * `<ins>` element sits inert and AdSense never loads it. This satisfies
+ * GDPR/ePrivacy requirements (no ad tech before opt-in).
+ *
+ * Placement policy
+ * ----------------
+ *  - Long-form content only (blog posts, glossary, FAQ).
+ *  - Never inside an interactive tool surface (translator, decoder,
+ *    practice trainer).
+ *  - Always labelled "Advertisement" for accessibility + AdSense policy
+ *    compliance (clear separation from content).
+ */
+const { zone, format = "auto", layout, fullWidthResponsive = true, label = "Advertisement" } = Astro.props;
+
+const client = import.meta.env.ADSENSE_CLIENT || "ca-pub-7616383336440831";
+
+// Slot ID lookup. Vite statically replaces `import.meta.env.X` at build
+// time, so a computed key (`import.meta.env[envKey]`) silently resolves
+// to undefined and every slot would render empty. List the known zones
+// explicitly so each one is a discoverable build-time substitution.
+const SLOTS = {
+  article:   import.meta.env.ADSENSE_SLOT_ARTICLE,
+  glossary:  import.meta.env.ADSENSE_SLOT_GLOSSARY,
+  faq:       import.meta.env.ADSENSE_SLOT_FAQ,
+};
+
+const slot = SLOTS[zone];
+---
+
+{slot && (
+  <aside class="adslot" role="complementary" aria-label={label} data-zone={zone}>
+    <span class="adslot-label">{label}</span>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client={client}
+      data-ad-slot={slot}
+      data-ad-format={format}
+      data-full-width-responsive={fullWidthResponsive ? "true" : "false"}
+      data-ad-layout={layout}
+    ></ins>
+  </aside>
+)}
+
+<style>
+  .adslot{
+    display: block;
+    margin: var(--s-6) 0;
+    padding: 0;
+    max-width: var(--content);
+  }
+  .adslot-label{
+    display: block;
+    margin-bottom: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+  .adslot ins{
+    min-height: 100px; /* reserve space so CLS stays clean before fill */
+  }
+</style>
