@@ -1,0 +1,276 @@
+---
+import Layout from "../components/Layout.astro";
+import { posts } from "../data/blog-posts.js";
+import morsePayload from "../../public/morse.json";
+
+const title = "Sitemap — every page on MorseCodeGenerator.com";
+const description =
+  "A human-readable directory of every page on the site: tools, learning hub, reference, articles, and per-character pages. The machine sitemap is at /sitemap.xml.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/sitemap/`;
+const robots = "index,follow";
+
+// ---------------------------------------------------------------------
+// Top-level hubs grouped by section. Mirrors the footer mega-nav so the
+// two stay in sync as new hubs ship.
+// ---------------------------------------------------------------------
+const sections = [
+  {
+    h: "Tools",
+    items: [
+      ["Translator", "/translate/"],
+      ["Decoder", "/decoder/"],
+      ["Practice / Koch trainer", "/practice/"],
+      ["Printable chart", "/chart/"],
+      ["Embed widget", "/embed/"],
+      ["Developer API", "/api/"],
+    ],
+  },
+  {
+    h: "Learn",
+    items: [
+      ["Alphabet (A–Z)", "/morse-code/"],
+      ["Numbers (0–9)", "/morse-code/numbers/"],
+      ["Punctuation", "/morse-code/punctuation/"],
+      ["Words A–Z", "/morse-code/words/"],
+      ["Prosigns", "/prosigns/"],
+      ["CW abbreviations", "/abbreviations/"],
+      ["Q-codes", "/q-codes/"],
+      ["NATO phonetic", "/nato/"],
+    ],
+  },
+  {
+    h: "Reference",
+    items: [
+      ["Common phrases", "/phrases/"],
+      ["History of Morse", "/history/"],
+      ["Articles / Blog", "/blog/"],
+      ["Glossary", "/glossary/"],
+      ["FAQ", "/faq/"],
+      ["Integrations", "/integrations/"],
+      ["RSS feed", "/rss.xml"],
+      ["llms.txt", "/llms.txt"],
+      ["llms-full.txt", "/llms-full.txt"],
+      ["ai.txt", "/ai.txt"],
+      ["morse.json data", "/morse.json"],
+    ],
+  },
+  {
+    h: "Site",
+    items: [
+      ["About", "/about/"],
+      ["Contact", "/contact/"],
+      ["Privacy", "/privacy/"],
+      ["Terms", "/terms/"],
+      ["Affiliate disclosure", "/disclosure/"],
+      ["XML sitemap (crawler)", "/sitemap.xml"],
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------
+// Per-character page lists. Keys come from morse.json so the listing
+// can never drift from the canonical alphabet.
+// ---------------------------------------------------------------------
+const morseKeys = Object.keys(morsePayload.morseMap || {});
+const letters = morseKeys.filter((k) => /^[A-Z]$/.test(k));
+const digits = morseKeys.filter((k) => /^[0-9]$/.test(k));
+const phrases = Array.isArray(morsePayload.phrases) ? morsePayload.phrases : [];
+
+const articles = [...posts].sort((a, b) =>
+  String(b.published).localeCompare(String(a.published))
+);
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Sitemap", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      "@id": canonical,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "en",
+      isPartOf: { "@id": `${site}#website` },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Sitemap</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Human-readable directory</p>
+    <h1 class="page-hero-title">Sitemap</h1>
+    <p class="muted page-hero-sub">
+      Every page on the site, grouped. The machine-readable version is at
+      <a href="/sitemap.xml">/sitemap.xml</a>.
+    </p>
+  </header>
+
+  <section class="sm-grid">
+    {sections.map((sec) => (
+      <div class="sm-section">
+        <h2 class="sm-h">{sec.h}</h2>
+        <ul class="sm-list">
+          {sec.items.map(([label, href]) => (
+            <li><a href={href}>{label}</a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">{articles.length} long-form posts</p>
+        <h2 class="section-title">Articles</h2>
+      </div>
+    </div>
+    <ul class="sm-list sm-list-wide">
+      {articles.map((p) => (
+        <li>
+          <a href={`/blog/${p.slug}/`}>{p.title}</a>
+          <span class="sm-meta"> — {p.minutes} min · <time datetime={p.published}>{p.published}</time></span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Per-letter pages</p>
+        <h2 class="section-title">Alphabet (A–Z)</h2>
+      </div>
+    </div>
+    <ul class="sm-chips">
+      {letters.map((c) => (
+        <li><a href={`/morse-code/${c.toLowerCase()}/`}>{c}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Per-digit pages</p>
+        <h2 class="section-title">Numbers (0–9)</h2>
+      </div>
+    </div>
+    <ul class="sm-chips">
+      {digits.map((c) => (
+        <li><a href={`/morse-code/${c}/`}>{c}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">{phrases.length} curated phrases</p>
+        <h2 class="section-title">Common phrases</h2>
+      </div>
+    </div>
+    <ul class="sm-list sm-list-wide">
+      {phrases.map(([slug, label]) => (
+        <li><a href={`/phrases/${slug}/`}>{label}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .sm-grid{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--s-5);
+      margin-top: var(--s-3);
+    }
+    @media (min-width: 720px){
+      .sm-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (min-width: 1000px){
+      .sm-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+    }
+    .sm-section{
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: var(--s-4) var(--s-5);
+    }
+    .sm-h{
+      margin: 0 0 var(--s-3);
+      font-size: var(--fs-md);
+      font-family: var(--font-display);
+      color: var(--text);
+    }
+    .sm-list{
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: var(--s-2);
+    }
+    .sm-list li{ margin: 0; font-size: var(--fs-sm); }
+    .sm-list a{ color: var(--text); text-decoration: none; }
+    .sm-list a:hover{ color: var(--accent); text-decoration: underline; }
+    .sm-list-wide{ grid-template-columns: 1fr; }
+    @media (min-width: 720px){
+      .sm-list-wide{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (min-width: 1000px){
+      .sm-list-wide{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    .sm-meta{ color: var(--text-subtle); font-size: var(--fs-xs); }
+    .sm-chips{
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2);
+    }
+    .sm-chips li{ margin: 0; }
+    .sm-chips a{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
+      padding: 0 var(--s-3);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .sm-chips a:hover{ background: var(--surface-2); border-color: var(--accent-line); color: var(--accent); }
+  </style>
+</Layout>
