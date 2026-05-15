@@ -1,9 +1,10 @@
 ---
 import Layout from "../components/Layout.astro";
+import { abbrs } from "../data/cw-abbreviations.js";
 
 const title = "CW Abbreviations in Morse Code (73, 88, OM, FB, ...)";
 const description =
-  "Common amateur-radio CW abbreviations used in Morse code: 73, 88, OM, YL, FB, TNX, DE, CQ, DX, RST, and more — with meaning and example use.";
+  "Common amateur-radio CW abbreviations used in Morse code: 73, 88, OM, YL, FB, TNX, DE, CQ, DX, RST, and more — each links to a full page with usage examples and context.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -11,55 +12,17 @@ const site =
 const canonical = `${site}/abbreviations/`;
 const robots = "index,follow";
 
-const groups = [
-  {
-    name: "Greetings & sign-off",
-    items: [
-      ["73",   "Best regards"],
-      ["88",   "Love and kisses"],
-      ["GM",   "Good morning"],
-      ["GA",   "Good afternoon"],
-      ["GE",   "Good evening"],
-      ["GN",   "Good night"],
-      ["TNX",  "Thanks"],
-      ["TU",   "Thank you"],
-      ["CUL",  "See you later"],
-    ],
-  },
-  {
-    name: "People",
-    items: [
-      ["OM",   "Old man (any male op)"],
-      ["YL",   "Young lady (female op)"],
-      ["XYL",  "Wife (ex-young lady)"],
-      ["DE",   "From / this is"],
-      ["UR",   "Your / you’re"],
-    ],
-  },
-  {
-    name: "Operating",
-    items: [
-      ["CQ",   "Calling any station"],
-      ["DX",   "Long distance"],
-      ["RST",  "Signal report (Readability/Strength/Tone)"],
-      ["FB",   "Fine business (excellent)"],
-      ["AGN",  "Again"],
-      ["PSE",  "Please"],
-      ["HW?",  "How copy?"],
-      ["WX",   "Weather"],
-      ["RIG",  "Radio equipment"],
-      ["ANT",  "Antenna"],
-      ["PWR",  "Power"],
-      ["QRP",  "Low power"],
-      ["QRO",  "High power"],
-      ["ES",   "And"],
-      ["NR",   "Number"],
-      ["ABT",  "About"],
-      ["BTW",  "By the way"],
-      ["WL",   "Well / will"],
-    ],
-  },
-];
+// Group entries by their `group` field while preserving the source order.
+const groupOrder = [];
+const groupMap = new Map();
+for (const a of abbrs) {
+  if (!groupMap.has(a.group)) {
+    groupOrder.push(a.group);
+    groupMap.set(a.group, []);
+  }
+  groupMap.get(a.group).push(a);
+}
+const groups = groupOrder.map((name) => ({ name, items: groupMap.get(name) }));
 
 const crumbs = [
   { name: "Home", url: `${site}/` },
@@ -87,6 +50,18 @@ const jsonLd = {
       publisher: { "@id": `${site}#org` },
       mainEntityOfPage: canonical,
     },
+    {
+      "@type": "ItemList",
+      "@id": `${canonical}#index`,
+      name: "CW abbreviations index",
+      url: canonical,
+      itemListElement: abbrs.map((a, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${site}/abbreviations/${a.slug}/`,
+        name: a.code,
+      })),
+    },
   ],
 };
 ---
@@ -103,7 +78,8 @@ const jsonLd = {
     <h1 class="page-hero-title">CW abbreviations in Morse code</h1>
     <p class="muted page-hero-sub">
       Hams shorten everything on CW. Learn the standard abbreviations once and your QSOs become fast,
-      friendly, and surprisingly readable.
+      friendly, and surprisingly readable. Tap any abbreviation below for its full page with examples
+      and context.
     </p>
     <div class="page-hero-actions">
       <a class="btn primary" href="/translate/">Open translator</a>
@@ -113,22 +89,22 @@ const jsonLd = {
   </header>
 
   {groups.map((g) => (
-    <section class="card" style="margin-top:14px;">
-      <h2 style="margin-top:0;">{g.name}</h2>
+    <section class="card abbr-section">
+      <h2 class="abbr-h">{g.name}</h2>
       <div class="abbr-grid">
-        {g.items.map(([k, v]) => (
-          <div class="abbr">
-            <div class="abbr-key k">{k}</div>
-            <div class="abbr-val">{v}</div>
-            <a class="abbr-go" href={`/translate/?q=${encodeURIComponent(k)}`}>Send →</a>
-          </div>
+        {g.items.map((a) => (
+          <a class="abbr abbr-link" href={`/abbreviations/${a.slug}/`}>
+            <div class="abbr-key k">{a.code}</div>
+            <div class="abbr-val">{a.meaning}</div>
+            <span class="abbr-go">Detail →</span>
+          </a>
         ))}
       </div>
     </section>
   ))}
 
-  <section class="card soft" style="margin-top:14px;">
-    <h2 style="margin-top:0;">Tip</h2>
+  <section class="card soft abbr-section">
+    <h2 class="abbr-h">Tip</h2>
     <p class="muted">
       A typical CQ goes: <span class="k">CQ CQ CQ DE [your call] [your call] K</span>. Replies often
       include <span class="k">RST</span>, <span class="k">QTH</span>, name, and rig.
@@ -138,30 +114,37 @@ const jsonLd = {
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
-
+    .abbr-section{ margin-top: var(--s-4); }
+    .abbr-h{ margin-top: 0; }
     .abbr-grid{
-      display:grid;
+      display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 10px;
+      gap: var(--s-3);
     }
     .abbr{
-      border: 1px solid var(--border);
-      background: var(--panel2);
-      border-radius: 14px;
-      padding: 12px 14px;
-      display:flex;
+      display: flex;
       flex-direction: column;
-      gap: 4px;
-    }
-    .abbr-key{ font-weight: 900; letter-spacing: .04em; font-size: 16px; }
-    .abbr-val{ color: var(--muted); font-size: 14px; }
-    .abbr-go{
-      margin-top: 6px;
-      align-self: flex-start;
-      font-size: 13px;
+      gap: var(--s-1);
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: var(--r-md);
+      padding: var(--s-3) var(--s-4);
       text-decoration: none;
+      color: var(--text);
+      transition: background .12s ease, border-color .12s ease;
+    }
+    .abbr-link:hover{
+      background: var(--surface-hi);
+      border-color: var(--accent-line);
+      text-decoration: none;
+    }
+    .abbr-key{ font-weight: 700; letter-spacing: 0.04em; font-size: var(--fs-md); color: var(--text); }
+    .abbr-val{ color: var(--text-muted); font-size: var(--fs-sm); }
+    .abbr-go{
+      margin-top: var(--s-1);
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
       color: var(--accent);
     }
-    .abbr-go:hover{ text-decoration: underline; }
   </style>
 </Layout>
