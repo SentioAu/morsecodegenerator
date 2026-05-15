@@ -106,12 +106,16 @@ const jsonLd = {
         "Koch-method practice",
         "Shareable links",
       ],
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "4.9",
-        ratingCount: "412",
-        bestRating: "5",
-      },
+      /*
+        We intentionally do NOT emit aggregateRating here. Google's
+        structured-data guidelines require ratings to be backed by
+        publicly-visible reviews on the page (Trustpilot, App Store,
+        a real <Review> list, etc.). Emitting a hard-coded
+        ratingValue/ratingCount without that backing risks a manual
+        action that would strip rich results across the whole site.
+        Re-introduce only once we render real reviews on /translate/
+        and reference them via @id here.
+      */
     },
   ],
 };
@@ -1511,12 +1515,27 @@ const jsonLd = {
             navToggle.setAttribute("aria-expanded", "true");
             navToggle.setAttribute("aria-label", "Close menu");
           };
-          navToggle.addEventListener("click", () => {
+          navToggle.addEventListener("click", (e) => {
+            e.stopPropagation(); // don't immediately bubble to the outside-click handler
             primaryNav.classList.contains("open") ? close() : open();
           });
           // Auto-close on nav-link click (mobile)
           primaryNav.querySelectorAll("a.nav-link").forEach((a) => {
             a.addEventListener("click", close);
+          });
+          // Close when the user taps outside the open menu (mobile UX).
+          document.addEventListener("click", (e) => {
+            if (!primaryNav.classList.contains("open")) return;
+            const t = e.target;
+            if (primaryNav.contains(t) || navToggle.contains(t)) return;
+            close();
+          });
+          // Close on Escape so keyboard users can dismiss the menu.
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && primaryNav.classList.contains("open")) {
+              close();
+              navToggle.focus();
+            }
           });
           // Auto-close when leaving mobile breakpoint
           const mq = window.matchMedia("(min-width: 821px)");
