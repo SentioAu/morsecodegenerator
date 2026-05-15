@@ -1,0 +1,158 @@
+---
+import Layout from "../../components/Layout.astro";
+import { posts } from "../../data/blog-posts.js";
+import { bodies } from "../../data/blog-bodies.js";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+export function getStaticPaths() {
+  // imports inside is fine; Astro hoists.
+  return posts.map((p) => ({ params: { slug: p.slug }, props: { post: p } }));
+}
+
+const { post } = Astro.props;
+const canonical = `${site}/blog/${post.slug}/`;
+const robots = "index,follow";
+
+// Body lookup, falling back to a single empty paragraph if a registry
+// entry is added without content (defensive — keeps the page valid).
+const body = bodies[post.slug] || "<p>This post is being written.</p>";
+
+// Related-post candidates: same tag, not self, capped at 3.
+const related = posts
+  .filter((p) => p.slug !== post.slug && p.tags.some((t) => post.tags.includes(t)))
+  .slice(0, 3);
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Blog", url: `${site}/blog/` },
+  { name: post.title, url: canonical },
+];
+
+// Pick the right Schema.org @type for this post's kind.
+const articleType = post.kind === "how-to" ? "HowTo" : "Article";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": articleType,
+      headline: post.title,
+      description: post.excerpt,
+      url: canonical,
+      datePublished: post.published,
+      dateModified: post.published,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+      timeRequired: `PT${post.minutes}M`,
+      keywords: post.tags.join(", "),
+    },
+  ],
+};
+---
+
+<Layout
+  title={`${post.title} — MorseCodeGenerator.com`}
+  description={post.excerpt}
+  canonical={canonical}
+  robots={robots}
+  ogType="article"
+  publishedTime={post.published}
+  modifiedTime={post.published}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/blog/">Blog</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">{post.title}</span>
+  </nav>
+
+  <article class="prose blog-post">
+    <header class="page-hero">
+      <p class="page-hero-kicker">
+        {post.kind === "how-to" ? "How-to" : post.kind === "compare" ? "Comparison" : "Article"}
+        &middot; {post.minutes} min read &middot;
+        <time datetime={post.published}>{post.published}</time>
+      </p>
+      <h1 class="page-hero-title">{post.title}</h1>
+      <p class="muted page-hero-sub">{post.excerpt}</p>
+    </header>
+
+    <div class="post-body" set:html={body}></div>
+
+    <hr />
+    <p class="muted">
+      Tags: {post.tags.map((t) => (<span class="chip">{t}</span>))}
+    </p>
+  </article>
+
+  {related.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="page-hero-kicker">Keep reading</p>
+          <h2 class="section-title">Related posts</h2>
+        </div>
+      </div>
+      <div class="related-grid">
+        {related.map((r) => (
+          <a class="related-card" href={`/blog/${r.slug}/`}>
+            <span class="related-meta">{r.minutes} min · {r.kind}</span>
+            <span class="related-title">{r.title}</span>
+            <span class="related-excerpt">{r.excerpt}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .blog-post .page-hero{ margin-bottom: var(--s-5); }
+    .post-body{ max-width: var(--content); }
+    .post-body :global(h2){ margin-top: var(--s-6); font-size: var(--fs-xl); }
+    .post-body :global(h3){ margin-top: var(--s-5); font-size: var(--fs-lg); }
+    .post-body :global(p){ font-size: var(--fs-md); line-height: 1.7; }
+    .post-body :global(ol), .post-body :global(ul){ font-size: var(--fs-md); line-height: 1.7; }
+    .post-body :global(table){ font-size: var(--fs-sm); }
+    .post-body :global(.k){ color: var(--accent); font-family: var(--font-mono); }
+
+    .chip + .chip{ margin-left: var(--s-1); }
+
+    .related-grid{
+      display: grid;
+      gap: var(--s-3);
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 760px){ .related-grid{ grid-template-columns: repeat(3, 1fr); } }
+    .related-card{
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+      padding: var(--s-4);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      color: var(--text);
+      text-decoration: none;
+      transition: background .12s ease, border-color .12s ease;
+    }
+    .related-card:hover{ background: var(--surface-2); border-color: var(--accent-line); }
+    .related-meta{ font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-subtle); letter-spacing: 0.05em; text-transform: uppercase; }
+    .related-title{ font-family: var(--font-display); font-weight: 600; font-size: var(--fs-md); color: var(--text); line-height: 1.3; }
+    .related-excerpt{ font-size: var(--fs-sm); color: var(--text-muted); line-height: 1.55; }
+  </style>
+</Layout>

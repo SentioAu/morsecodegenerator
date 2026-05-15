@@ -1,0 +1,174 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Morse code glossary — terms, abbreviations & jargon";
+const description =
+  "Plain-English definitions for every Morse code, CW, and ham radio term used on this site. From dit/dah to QRP to Farnsworth timing.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/glossary/`;
+const robots = "index,follow";
+
+// Each entry: term, definition (may contain inline HTML).
+// Ordered alphabetically.
+const terms = [
+  ["AR (prosign)", "End-of-message procedural signal, sent without inter-letter gap. Same code as the plus sign (<span class='k'>.-.-.</span>)."],
+  ["BT (prosign)", "Paragraph break / pause. Same code as the equals sign (<span class='k'>-...-</span>)."],
+  ["Backronym", "A meaning invented after a name exists, like 'Save Our Souls' for SOS. SOS was chosen for its rhythm, not its letters."],
+  ["Bandwidth", "How much of the radio spectrum a signal occupies. CW at 20 WPM needs ~100 Hz; SSB voice needs 2,400+ Hz."],
+  ["CQ", "'Calling any station.' The first call when an operator opens for a conversation. <span class='k'>-.-. --.-</span>"],
+  ["CW", "Continuous wave. The technical name for the Morse mode used in amateur radio: an unmodulated tone keyed on and off."],
+  ["Dah", "The long signal in Morse. Three times the length of a dit. Written as a dash (<span class='k'>-</span>)."],
+  ["Dit", "The short signal in Morse. The reference length unit. Written as a dot (<span class='k'>.</span>)."],
+  ["DX", "Long-distance contact, especially over oceans or to a rare country."],
+  ["Element", "A single dit or dah — the smallest unit of Morse."],
+  ["Farnsworth timing", "Character speed at full WPM but with stretched inter-letter and inter-word gaps. Used to learn at target speed without overload."],
+  ["GMDSS", "Global Maritime Distress and Safety System. Replaced Morse for ocean distress on February 1, 1999."],
+  ["Head copy", "Decoding Morse mentally without writing — the fluent-listener mode for real on-air QSOs."],
+  ["IARU", "International Amateur Radio Union. Coordinates amateur radio rules and band plans worldwide."],
+  ["IndexNow", "Open protocol for instantly notifying search engines (Bing, Yandex, Naver, Seznam) about URL changes. This site auto-pings on every deploy."],
+  ["ITU-R M.1677-1", "The current ITU recommendation defining the International Morse Code (2009). The standard this site uses."],
+  ["Koch method", "Learn Morse at full target speed using only 2 characters at first, then add one new character per session as accuracy hits 90%. Implemented at <a href='/practice/'>/practice/</a>."],
+  ["KN (prosign)", "'Go ahead, named station only.' Same code as open paren (<span class='k'>-.--.</span>)."],
+  ["MAYDAY", "Voice distress signal (from French <em>m'aidez</em>, 'help me'). In Morse, SOS is preferred."],
+  ["NDB", "Non-Directional Beacon. Older aviation navaid; broadcasts its identifier in Morse."],
+  ["Prosign", "Procedural signal — two characters sent as one shape with no inter-letter gap. Examples: SK, AR, BT, KN."],
+  ["QRP", "'Reduce power' / 'I am operating at reduced power' (≤ 5 W). A Q-code; also the name of the low-power CW operating style."],
+  ["QRO", "'Increase power' / high-power operation."],
+  ["QSO", "A radio contact / conversation between two stations."],
+  ["QTH", "'What is your location?' / 'My location is …'"],
+  ["Q-codes", "Three-letter abbreviations starting with Q, used in CW operating to ask or answer common questions. See <a href='/q-codes/'>full reference</a>."],
+  ["RST", "Signal report: Readability (1–5), Strength (1–9), Tone (1–9). Sent during the contact, e.g. 'RST 599'."],
+  ["Service worker", "Browser background script that caches assets. The one in <a href='/sw.js'>/sw.js</a> makes this site work offline."],
+  ["SK (prosign)", "End of contact. Sent at the close of a QSO. <span class='k'>...-.-</span>"],
+  ["SOS", "Universal distress signal. Three dots, three dashes, three dots (<span class='k'>... --- ...</span>) — chosen in 1906 for rhythmic clarity. See <a href='/blog/the-story-behind-sos/'>full story</a>."],
+  ["Unit", "The base time length in Morse timing. A dit = 1 unit, dah = 3, intra-element gap = 1, inter-letter gap = 3, inter-word gap = 7."],
+  ["VOR", "Very-high-frequency Omnidirectional Range. Aviation navaid that transmits its ID in Morse. See <a href='/blog/morse-code-in-aviation/'>more</a>."],
+  ["WPM", "Words per minute. The standard PARIS-word benchmark for Morse speed. 1 unit ms = 1200 / WPM."],
+  ["73", "'Best regards' — standard CW sign-off."],
+  ["88", "'Love and kisses' — informal CW sign-off, usually between op + spouse."],
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Glossary", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "DefinedTermSet",
+      "@id": `${canonical}#set`,
+      name: "Morse Code Glossary",
+      description,
+      url: canonical,
+      hasDefinedTerm: terms.map(([term, def]) => ({
+        "@type": "DefinedTerm",
+        name: term,
+        description: def.replace(/<[^>]+>/g, ""), // strip HTML for the schema
+        inDefinedTermSet: `${canonical}#set`,
+        inLanguage: "en",
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} ogType="article">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Glossary</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">{terms.length} terms · plain-English definitions</p>
+    <h1 class="page-hero-title">Morse code glossary</h1>
+    <p class="muted page-hero-sub">
+      Every Morse, CW, and ham-radio term used on this site, defined in plain English. Bookmark-able.
+    </p>
+  </header>
+
+  <dl class="glossary">
+    {terms.map(([term, def]) => (
+      <div class="glossary-row" id={term.toLowerCase().replace(/[^a-z0-9]+/g, "-")}>
+        <dt>{term}</dt>
+        <dd set:html={def} />
+      </div>
+    ))}
+  </dl>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Go deeper</p>
+        <h2 class="section-title">Related references</h2>
+      </div>
+    </div>
+    <div class="pill-grid">
+      <a href="/abbreviations/">CW abbreviations</a>
+      <a href="/q-codes/">Q-codes</a>
+      <a href="/prosigns/">Prosigns</a>
+      <a href="/nato/">NATO phonetic</a>
+      <a href="/morse-code/">Alphabet</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/blog/">Articles</a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .glossary{
+      display: grid;
+      gap: 0;
+      margin: var(--s-3) 0 0;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+    }
+    .glossary-row{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--s-1);
+      padding: var(--s-4);
+      border-bottom: 1px solid var(--line);
+    }
+    @media (min-width: 760px){
+      .glossary-row{
+        grid-template-columns: 240px 1fr;
+        gap: var(--s-5);
+        align-items: baseline;
+      }
+    }
+    .glossary-row:last-child{ border-bottom: 0; }
+    .glossary-row dt{
+      font-weight: 600;
+      color: var(--text);
+      font-size: var(--fs-sm);
+      font-family: var(--font-display);
+      margin: 0;
+    }
+    .glossary-row dd{
+      margin: 0;
+      font-size: var(--fs-sm);
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .glossary-row dd .k{ color: var(--accent); font-family: var(--font-mono); }
+    .glossary-row:target{ background: var(--accent-soft); }
+  </style>
+</Layout>

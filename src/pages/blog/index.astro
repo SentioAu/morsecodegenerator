@@ -1,0 +1,186 @@
+---
+import Layout from "../../components/Layout.astro";
+import { posts } from "../../data/blog-posts.js";
+
+const title = "Morse code articles & guides — MorseCodeGenerator.com Blog";
+const description =
+  "Long-form articles about Morse code: 30-day learning plan, why it's still used today, SOS history, emergency cheat sheet, aviation, and more.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/blog/`;
+const robots = "index,follow";
+
+const sorted = [...posts].sort((a, b) =>
+  String(b.published).localeCompare(String(a.published))
+);
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Blog", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "Blog",
+      "@id": `${canonical}#blog`,
+      name: "MorseCodeGenerator.com Blog",
+      description,
+      url: canonical,
+      publisher: { "@id": `${site}#org` },
+      blogPost: sorted.map((p) => ({
+        "@type": "BlogPosting",
+        headline: p.title,
+        description: p.excerpt,
+        url: `${site}/blog/${p.slug}/`,
+        datePublished: p.published,
+        author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Blog</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">{sorted.length} articles · evergreen reference</p>
+    <h1 class="page-hero-title">Morse code articles</h1>
+    <p class="muted page-hero-sub">
+      Long-form, evergreen pieces about learning, history, comparisons, and use-cases.
+      Updated periodically; never sponsored.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/blog/how-to-learn-morse-code-in-30-days/">Start with the 30-day plan</a>
+      <a class="btn secondary" href="/practice/">Open the trainer</a>
+      <a class="btn ghost" href="/rss.xml">RSS feed</a>
+    </div>
+  </header>
+
+  <section class="post-list">
+    {sorted.map((p) => (
+      <a class="post-row" href={`/blog/${p.slug}/`}>
+        <div class="post-row-main">
+          <p class="post-row-meta">
+            <span class="post-row-kind">{
+              p.kind === "how-to" ? "How-to" :
+              p.kind === "compare" ? "Comparison" :
+              "Article"
+            }</span>
+            <span>&middot;</span>
+            <span>{p.minutes} min read</span>
+            <span>&middot;</span>
+            <time datetime={p.published}>{p.published}</time>
+          </p>
+          <h2 class="post-row-title">{p.title}</h2>
+          <p class="post-row-excerpt">{p.excerpt}</p>
+          <div class="post-row-tags">
+            {p.tags.slice(0, 4).map((t) => <span class="chip">{t}</span>)}
+          </div>
+        </div>
+        <svg class="post-row-arrow" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+      </a>
+    ))}
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Reference</p>
+        <h2 class="section-title">Or jump straight into a tool</h2>
+      </div>
+    </div>
+    <div class="pill-grid">
+      <a href="/translate/">Translator</a>
+      <a href="/decoder/">Decoder</a>
+      <a href="/practice/">Practice</a>
+      <a href="/chart/">Printable chart</a>
+      <a href="/morse-code/">Alphabet</a>
+      <a href="/phrases/">Phrases</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/glossary/">Glossary</a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .post-list{
+      display: grid;
+      gap: var(--s-3);
+      margin-top: var(--s-3);
+    }
+    .post-row{
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--s-4);
+      padding: var(--s-5);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      text-decoration: none;
+      color: var(--text);
+      transition: background .12s ease, border-color .12s ease, transform .04s ease;
+    }
+    .post-row:hover{
+      background: var(--surface-2);
+      border-color: var(--accent-line);
+      text-decoration: none;
+    }
+    .post-row:hover .post-row-arrow{ color: var(--accent); transform: translateX(3px); }
+    .post-row-main{ display: grid; gap: var(--s-2); min-width: 0; }
+    .post-row-meta{
+      margin: 0;
+      display: flex;
+      gap: var(--s-2);
+      flex-wrap: wrap;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
+    }
+    .post-row-kind{
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .post-row-title{
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--fs-lg);
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+    .post-row-excerpt{
+      margin: 0;
+      color: var(--text-muted);
+      font-size: var(--fs-sm);
+      line-height: 1.55;
+    }
+    .post-row-tags{ display: flex; gap: var(--s-1); flex-wrap: wrap; margin-top: var(--s-1); }
+    .post-row-arrow{ color: var(--text-subtle); transition: color .12s ease, transform .12s ease; }
+  </style>
+</Layout>
