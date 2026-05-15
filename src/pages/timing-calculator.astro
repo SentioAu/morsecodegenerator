@@ -1,0 +1,465 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Morse Code Timing Calculator – WPM, dit/dah, Farnsworth";
+const description =
+  "Free Morse code timing calculator. Convert words-per-minute to dit/dah milliseconds, compute Farnsworth spacing, and see exactly how long any message takes at a given speed.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/timing-calculator/`;
+const robots = "index,follow";
+const keywords =
+  "morse code timing calculator, wpm to ms, morse code speed, paris standard, farnsworth timing, dit dah duration";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Timing calculator", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebApplication",
+      "@id": `${canonical}#tool`,
+      name: "Morse Code Timing Calculator",
+      url: canonical,
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Any (web browser)",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      featureList: [
+        "WPM ↔ unit millisecond conversion (PARIS standard)",
+        "Dit, dah, and inter-element gap durations",
+        "Farnsworth effective speed calculation",
+        "Total message duration estimator",
+      ],
+      publisher: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "How is Morse code speed measured?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Morse code speed is measured in words per minute (WPM) using the PARIS standard: the word 'PARIS' plus one inter-word gap is exactly 50 dit-units long, so unit_ms = 1200 / WPM.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What is the formula to convert WPM to milliseconds?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "One Morse 'unit' in milliseconds equals 1200 divided by the WPM. A dit is 1 unit, a dah is 3 units, the intra-character gap is 1 unit, the inter-letter gap is 3 units, and the inter-word gap is 7 units.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What is Farnsworth timing?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Farnsworth timing sends each character at a fast WPM (so the rhythm sounds right) but stretches the inter-letter and inter-word gaps to a slower 'effective' WPM. Learners use this to copy at full speed without overload.",
+          },
+        },
+      ],
+    },
+  ],
+};
+
+// Preset speed buttons reflect the speeds learners actually target.
+const presets = [
+  { label: "Beginner (12 WPM)", wpm: 12 },
+  { label: "Koch start (15 WPM)", wpm: 15 },
+  { label: "Standard (20 WPM)", wpm: 20 },
+  { label: "Contest (30 WPM)", wpm: 30 },
+  { label: "Expert (40 WPM)", wpm: 40 },
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  robots={robots}
+  keywords={keywords}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Timing calculator</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Free tool · runs in your browser</p>
+    <h1 class="page-hero-title">Morse code timing calculator</h1>
+    <p class="muted page-hero-sub">
+      Punch in a WPM and see every Morse timing the PARIS standard
+      defines: dit, dah, inter-element, inter-letter, inter-word. Adds a
+      Farnsworth mode for learners who want fast characters with slow
+      spacing.
+    </p>
+  </header>
+
+  <section class="card calc" aria-label="Calculator">
+    <div class="calc-grid">
+      <div class="calc-input">
+        <label class="calc-label" for="wpm">Character speed (WPM)</label>
+        <input
+          id="wpm"
+          type="number"
+          min="1"
+          max="120"
+          step="1"
+          value="20"
+          inputmode="numeric"
+          autocomplete="off"
+        />
+        <input id="wpmRange" type="range" min="5" max="60" step="1" value="20" aria-label="Adjust WPM" />
+
+        <fieldset class="presets">
+          <legend class="sr-only">Speed presets</legend>
+          {presets.map((p) => (
+            <button type="button" class="preset" data-wpm={p.wpm}>{p.label}</button>
+          ))}
+        </fieldset>
+
+        <label class="calc-label" for="farnsworth">
+          Effective speed (Farnsworth, WPM)
+          <span class="muted micro"> — set equal to WPM to disable</span>
+        </label>
+        <input
+          id="farnsworth"
+          type="number"
+          min="1"
+          max="120"
+          step="1"
+          value="12"
+          inputmode="numeric"
+          autocomplete="off"
+        />
+      </div>
+
+      <output class="calc-output" id="calcOut" aria-live="polite">
+        <div class="row-line">
+          <span class="row-k">Unit (1 dit)</span>
+          <span class="row-v"><span id="unitMs">60</span> ms</span>
+        </div>
+        <div class="row-line">
+          <span class="row-k">Dit (·)</span>
+          <span class="row-v"><span id="ditMs">60</span> ms</span>
+        </div>
+        <div class="row-line">
+          <span class="row-k">Dah (−)</span>
+          <span class="row-v"><span id="dahMs">180</span> ms</span>
+        </div>
+        <div class="row-line">
+          <span class="row-k">Intra-character gap</span>
+          <span class="row-v"><span id="gapElem">60</span> ms</span>
+        </div>
+        <div class="row-line">
+          <span class="row-k">Inter-letter gap</span>
+          <span class="row-v"><span id="gapLetter">180</span> ms</span>
+        </div>
+        <div class="row-line">
+          <span class="row-k">Inter-word gap</span>
+          <span class="row-v"><span id="gapWord">420</span> ms</span>
+        </div>
+        <hr />
+        <div class="row-line strong">
+          <span class="row-k">"SOS" duration</span>
+          <span class="row-v"><span id="sosMs">—</span> ms</span>
+        </div>
+        <div class="row-line strong">
+          <span class="row-k">"HELLO WORLD" duration</span>
+          <span class="row-v"><span id="hwMs">—</span> s</span>
+        </div>
+        <div class="row-line">
+          <span class="row-k">Farnsworth gap multiplier</span>
+          <span class="row-v"><span id="farnMul">1.00</span>×</span>
+        </div>
+      </output>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Reference</p>
+        <h2 class="section-title">How Morse timing works</h2>
+      </div>
+    </div>
+    <div class="prose">
+      <p>
+        Morse code is defined by a single time unit — call it <span class="k">u</span>. Every
+        element of the system is a multiple of <span class="k">u</span>, so changing the speed
+        means changing one number and the rest scales:
+      </p>
+      <ul>
+        <li><strong>Dit (·)</strong> — 1 <span class="k">u</span></li>
+        <li><strong>Dah (−)</strong> — 3 <span class="k">u</span></li>
+        <li><strong>Intra-character gap</strong> (between dits/dahs in one letter) — 1 <span class="k">u</span></li>
+        <li><strong>Inter-letter gap</strong> — 3 <span class="k">u</span></li>
+        <li><strong>Inter-word gap</strong> — 7 <span class="k">u</span></li>
+      </ul>
+      <p>
+        The PARIS standard fixes the WPM ↔ unit conversion: the word
+        <em>PARIS</em> plus a trailing inter-word gap is exactly 50 units.
+        So at <span class="k">W</span> words per minute:
+      </p>
+      <pre class="codeblock"><code>unit_ms = 60_000 ms / minute
+        ÷ (W words/minute × 50 units/word)
+       = 1200 / W</code></pre>
+      <p>
+        At 20 WPM that's 60 ms per unit. A dit is 60 ms, a dah is 180 ms,
+        the gap between "DO" and "G" is 180 ms, and the gap between "DOG"
+        and "CAT" is 420 ms.
+      </p>
+
+      <h3>Farnsworth timing</h3>
+      <p>
+        Beginners often plateau when they try to learn at 5 WPM because the
+        slow rhythm encourages dot-counting. Farnsworth timing keeps each
+        <em>character</em> at the target speed (so the rhythm sounds right
+        from day one) but stretches the inter-letter and inter-word gaps so
+        the overall <em>effective</em> WPM is slower.
+      </p>
+      <p>
+        At 20 WPM character speed with 12 WPM effective speed, characters
+        still play at 60 ms per unit, but the gaps between letters and
+        words are widened by a multiplier of roughly{" "}
+        <span class="k">(c − f) / f</span> where <span class="k">c</span> is
+        character WPM and <span class="k">f</span> is effective WPM. The
+        calculator above shows you the exact multiplier.
+      </p>
+
+      <h3>Common speed targets</h3>
+      <ul>
+        <li><strong>5 WPM</strong> — old FCC entry licence; almost no one targets this anymore.</li>
+        <li><strong>12–15 WPM</strong> — comfortable copying speed for amateur QSOs.</li>
+        <li><strong>18–20 WPM</strong> — the modern "fluent" benchmark; most contesters live here.</li>
+        <li><strong>25–30 WPM</strong> — fast contest CW.</li>
+        <li><strong>40+ WPM</strong> — head-copy territory; rare outside high-speed contests.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Keep going</p>
+        <h2 class="section-title">Related</h2>
+      </div>
+    </div>
+    <div class="pill-grid">
+      <a href="/practice/">Koch trainer</a>
+      <a href="/translate/">Translator</a>
+      <a href="/decoder/">Decoder</a>
+      <a href="/chart/">Printable chart</a>
+      <a href="/blog/how-to-learn-morse-code-in-30-days/">30-day plan</a>
+      <a href="/glossary/">Glossary</a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <script is:inline>
+    (function () {
+      // Morse alphabet lengths in units, used for duration estimates.
+      // Pre-baked so the script stays dependency-free.
+      const LEN = {
+        A: 5, B: 9, C: 11, D: 7, E: 1, F: 9, G: 9, H: 7, I: 3, J: 13,
+        K: 9, L: 9, M: 7, N: 5, O: 11, P: 11, Q: 13, R: 7, S: 5, T: 3,
+        U: 7, V: 9, W: 9, X: 11, Y: 13, Z: 11,
+        0: 19, 1: 17, 2: 15, 3: 13, 4: 11, 5: 9, 6: 11, 7: 13, 8: 15, 9: 17,
+      };
+      // Inter-letter gap (3u) and inter-word gap (7u) are added between
+      // letters/words below. Each character "length" above already includes
+      // the 1u intra-character gaps but NOT the trailing inter-letter gap.
+
+      function unitsFor(word) {
+        const chars = word.toUpperCase().split("");
+        let total = 0;
+        chars.forEach((c, i) => {
+          if (!(c in LEN)) return;
+          total += LEN[c];
+          if (i < chars.length - 1) total += 3; // inter-letter gap
+        });
+        return total;
+      }
+
+      function unitsForPhrase(phrase, charUnit, effectiveScale) {
+        // charUnit is ms per unit at character speed.
+        // effectiveScale stretches inter-letter (3u) and inter-word (7u) gaps.
+        const words = phrase.toUpperCase().trim().split(/\s+/);
+        let ms = 0;
+        words.forEach((w, wi) => {
+          const chars = w.split("");
+          chars.forEach((c, ci) => {
+            if (!(c in LEN)) return;
+            ms += LEN[c] * charUnit;
+            if (ci < chars.length - 1) ms += 3 * charUnit * effectiveScale;
+          });
+          if (wi < words.length - 1) ms += 7 * charUnit * effectiveScale;
+        });
+        return ms;
+      }
+
+      const wpm = document.getElementById("wpm");
+      const wpmRange = document.getElementById("wpmRange");
+      const far = document.getElementById("farnsworth");
+
+      function clampWpm(v) {
+        const n = Number(v);
+        if (!Number.isFinite(n) || n < 1) return 1;
+        if (n > 120) return 120;
+        return Math.round(n);
+      }
+
+      function recalc() {
+        const c = clampWpm(wpm.value);          // character WPM
+        const fRaw = clampWpm(far.value);       // effective WPM
+        const f = Math.min(fRaw, c);            // never faster than chars
+        if (f !== fRaw) far.value = f;          // clamp UI
+
+        const charUnit = 1200 / c;
+        // The "spacing only" Farnsworth model (PARIS-spacing form):
+        // if effective < char, gaps get a multiplier so the whole
+        // message reaches the slower effective WPM. The multiplier is:
+        //   m = (c/f - 1) × (50/19) + 1   — derived from PARIS units
+        // where 50u/word total and 19u/word in characters at char speed.
+        const m = f < c ? ((c / f - 1) * (50 / 19)) + 1 : 1;
+
+        const dit = charUnit;
+        const dah = 3 * charUnit;
+        const gapElem = charUnit;
+        const gapLetter = 3 * charUnit * m;
+        const gapWord = 7 * charUnit * m;
+
+        document.getElementById("unitMs").textContent = Math.round(charUnit);
+        document.getElementById("ditMs").textContent = Math.round(dit);
+        document.getElementById("dahMs").textContent = Math.round(dah);
+        document.getElementById("gapElem").textContent = Math.round(gapElem);
+        document.getElementById("gapLetter").textContent = Math.round(gapLetter);
+        document.getElementById("gapWord").textContent = Math.round(gapWord);
+        document.getElementById("farnMul").textContent = m.toFixed(2);
+
+        // SOS is sent as one shape (prosign) — no inter-letter gaps.
+        // ... --- ... = 3 dits + 3 dahs + 3 dits + 5 intra-gaps = 17 units.
+        const sosMs = 17 * charUnit;
+        document.getElementById("sosMs").textContent = Math.round(sosMs);
+
+        const hwMs = unitsForPhrase("HELLO WORLD", charUnit, m);
+        document.getElementById("hwMs").textContent = (hwMs / 1000).toFixed(2);
+
+        // Keep range and number input in sync (within range bounds).
+        if (c <= 60 && Number(wpmRange.value) !== c) wpmRange.value = c;
+      }
+
+      wpm?.addEventListener("input", recalc);
+      far?.addEventListener("input", recalc);
+      wpmRange?.addEventListener("input", () => {
+        wpm.value = wpmRange.value;
+        recalc();
+      });
+
+      document.querySelectorAll(".preset").forEach((b) => {
+        b.addEventListener("click", () => {
+          const v = Number(b.getAttribute("data-wpm"));
+          wpm.value = v;
+          // Keep Farnsworth proportional unless user has decoupled it.
+          if (Number(far.value) > v) far.value = v;
+          recalc();
+        });
+      });
+
+      recalc();
+    })();
+  </script>
+
+  <style>
+    .calc{ margin-top: var(--s-5); }
+    .calc-grid{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--s-5);
+    }
+    @media (min-width: 760px){
+      .calc-grid{ grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: var(--s-6); }
+    }
+
+    .calc-input{ display: grid; gap: var(--s-3); }
+    .calc-label{
+      font-family: var(--font-display);
+      font-size: var(--fs-xs);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      font-weight: 600;
+    }
+    .calc-input input[type="number"]{
+      font-size: var(--fs-2xl);
+      font-family: var(--font-mono);
+      letter-spacing: 0.02em;
+    }
+    .calc-input input[type="range"]{ accent-color: var(--accent); }
+
+    .presets{
+      border: 0;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2);
+    }
+    .preset{
+      height: 36px;
+      padding: 0 var(--s-3);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .preset:hover{ background: var(--surface-hi); border-color: var(--line-strong); }
+
+    .calc-output{
+      display: block;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: var(--s-4) var(--s-5);
+      font-size: var(--fs-sm);
+    }
+    .row-line{
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--s-3);
+      padding: var(--s-2) 0;
+      border-bottom: 1px dashed var(--line);
+    }
+    .row-line:last-of-type{ border-bottom: 0; }
+    .row-line.strong{ font-weight: 600; color: var(--text); }
+    .row-k{ color: var(--text-muted); }
+    .row-v{ font-family: var(--font-mono); color: var(--text); }
+    .calc-output hr{ margin: var(--s-3) 0; }
+
+    .codeblock{ margin: var(--s-3) 0; }
+    .prose h3{ margin-top: var(--s-5); }
+  </style>
+</Layout>
