@@ -45,6 +45,70 @@ const jsonLd = {
         { "@type": "HowToStep", name: "Tap Copy or Play to listen at adjustable WPM." },
       ],
     },
+    /*
+      DataCatalog + Datasets — declares the machine-readable resources
+      this site publishes so LLM crawlers, HuggingFace, Kaggle, and any
+      research-data discovery tool can surface them. Each dataset
+      points at a stable URL (no auth, no rate limit, CC-BY style
+      attribution per /ai.txt).
+    */
+    {
+      "@type": "DataCatalog",
+      "@id": `${site}#catalog`,
+      name: "MorseCodeGenerator.com open data",
+      description:
+        "Machine-readable Morse code reference data and content maps published by MorseCodeGenerator.com.",
+      url: `${site}/`,
+      publisher: { "@id": `${site}#org` },
+      license: `${site}/ai.txt`,
+      inLanguage: "en",
+      dataset: [
+        {
+          "@type": "Dataset",
+          "@id": `${site}/morse.json#dataset`,
+          name: "International Morse Code reference (morse.json)",
+          description:
+            "ITU-R M.1677-1 International Morse code mapping for the Latin alphabet, digits, punctuation, prosigns, and common phrases in a single JSON payload.",
+          url: `${site}/morse.json`,
+          encodingFormat: "application/json",
+          isAccessibleForFree: true,
+          license: `${site}/ai.txt`,
+          creator: { "@id": `${site}#org` },
+          keywords: "morse code, ITU-R M.1677-1, alphabet, prosigns, Q-codes, dataset",
+          distribution: [
+            {
+              "@type": "DataDownload",
+              encodingFormat: "application/json",
+              contentUrl: `${site}/morse.json`,
+            },
+          ],
+        },
+        {
+          "@type": "Dataset",
+          "@id": `${site}/llms.txt#dataset`,
+          name: "Site map for LLMs (llms.txt)",
+          description:
+            "Human-readable index of MorseCodeGenerator.com structured for large-language-model agents, per the llms.txt convention.",
+          url: `${site}/llms.txt`,
+          encodingFormat: "text/plain",
+          isAccessibleForFree: true,
+          license: `${site}/ai.txt`,
+          creator: { "@id": `${site}#org` },
+        },
+        {
+          "@type": "Dataset",
+          "@id": `${site}/llms-full.txt#dataset`,
+          name: "Full reference dump for LLMs (llms-full.txt)",
+          description:
+            "Concatenated plain-text reference of Morse alphabet, prosigns, Q-codes, and history — designed to fit in a single LLM context window.",
+          url: `${site}/llms-full.txt`,
+          encodingFormat: "text/plain",
+          isAccessibleForFree: true,
+          license: `${site}/ai.txt`,
+          creator: { "@id": `${site}#org` },
+        },
+      ],
+    },
   ],
 };
 
