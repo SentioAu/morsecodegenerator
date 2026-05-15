@@ -1,39 +1,16 @@
 ---
 import Layout from "../components/Layout.astro";
+import { qcodes } from "../data/q-codes.js";
 
 const title = "Q-Codes in Morse Code – Full Reference (QTH, QSY, QRZ, ...)";
 const description =
-  "Complete Q-code reference for ham radio CW: QTH, QSY, QRZ, QSL, QRM, QRN, QRP, QRO, and more. What each Q-code means as both a question and an answer.";
+  "Complete Q-code reference for ham radio CW: QTH, QSY, QRZ, QSL, QRM, QRN, QRP, QRO, and more. Each Q-code links to a full page with examples, context, and Morse rendering.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
 const canonical = `${site}/q-codes/`;
 const robots = "index,follow";
-
-const codes = [
-  ["QRA", "What is your station name?",        "My station name is …"],
-  ["QRG", "What is my exact frequency?",       "Your exact frequency is …"],
-  ["QRK", "What is my readability (1–5)?",     "Your readability is …"],
-  ["QRL", "Are you busy?",                     "I am busy. Please do not interfere."],
-  ["QRM", "Is there interference?",            "There is man-made interference."],
-  ["QRN", "Are you troubled by static?",       "I am troubled by static (natural noise)."],
-  ["QRO", "Shall I increase power?",           "Increase power."],
-  ["QRP", "Shall I decrease power?",           "Decrease power. (Also: low-power operation.)"],
-  ["QRQ", "Shall I send faster?",              "Send faster (… WPM)."],
-  ["QRS", "Shall I send slower?",              "Send slower (… WPM)."],
-  ["QRT", "Shall I stop sending?",             "Stop sending."],
-  ["QRU", "Have you anything for me?",         "I have nothing for you."],
-  ["QRV", "Are you ready?",                    "I am ready."],
-  ["QRX", "When will you call again?",         "Stand by; I will call again at …"],
-  ["QRZ", "Who is calling me?",                "You are being called by …"],
-  ["QSB", "Are my signals fading?",            "Your signals are fading."],
-  ["QSL", "Can you acknowledge receipt?",      "I confirm receipt."],
-  ["QSO", "Can you communicate with …?",       "I can communicate with …"],
-  ["QSY", "Shall I change frequency?",         "Change to frequency …"],
-  ["QTH", "What is your location?",            "My location is …"],
-  ["QTR", "What is the correct time?",         "The correct time is …"],
-];
 
 const crumbs = [
   { name: "Home", url: `${site}/` },
@@ -61,6 +38,18 @@ const jsonLd = {
       publisher: { "@id": `${site}#org` },
       mainEntityOfPage: canonical,
     },
+    {
+      "@type": "ItemList",
+      "@id": `${canonical}#index`,
+      name: "Q-codes index",
+      url: canonical,
+      itemListElement: qcodes.map((q, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${site}/q-codes/${q.code.toLowerCase()}/`,
+        name: q.code,
+      })),
+    },
   ],
 };
 ---
@@ -78,7 +67,8 @@ const jsonLd = {
     <p class="muted page-hero-sub">
       Q-codes are three-letter abbreviations starting with <span class="k">Q</span>. Each works as both a
       <strong>question</strong> (with a <span class="k">?</span>) and an <strong>answer</strong>
-      (without). Originally from international maritime/aero use, now standard in ham CW.
+      (without). Originally from international maritime/aero use, now standard in ham CW. Tap any code
+      for its full page with examples and Morse rendering.
     </p>
     <div class="page-hero-actions">
       <a class="btn primary" href="/translate/">Open translator</a>
@@ -87,19 +77,20 @@ const jsonLd = {
     </div>
   </header>
 
-  <section class="card" style="margin-top:14px;">
-    <h2 style="margin-top:0;">Reference table</h2>
+  <section class="card qcodes-card">
+    <h2 class="qcodes-h">Reference table</h2>
     <div class="tablewrap">
       <table>
         <thead>
-          <tr><th>Code</th><th>As a question</th><th>As an answer</th></tr>
+          <tr><th>Code</th><th>As a question</th><th>As an answer</th><th>More</th></tr>
         </thead>
         <tbody>
-          {codes.map(([k, q, a]) => (
+          {qcodes.map((q) => (
             <tr>
-              <td><strong class="k">{k}</strong></td>
-              <td>{q}</td>
-              <td class="muted">{a}</td>
+              <td><strong class="k">{q.code}</strong></td>
+              <td>{q.question}</td>
+              <td class="muted">{q.answer}</td>
+              <td><a class="qcodes-more" href={`/q-codes/${q.code.toLowerCase()}/`}>Detail →</a></td>
             </tr>
           ))}
         </tbody>
@@ -107,8 +98,8 @@ const jsonLd = {
     </div>
   </section>
 
-  <section class="card soft" style="margin-top:14px;">
-    <h2 style="margin-top:0;">Examples</h2>
+  <section class="card soft qcodes-card">
+    <h2 class="qcodes-h">Examples</h2>
     <ul>
       <li><span class="k">QRZ?</span> — “Who is calling me?”</li>
       <li><span class="k">QTH? FN31</span> — “Where are you? — FN31 (Maidenhead grid)”</li>
@@ -118,4 +109,16 @@ const jsonLd = {
   </section>
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .qcodes-card{ margin-top: var(--s-4); }
+    .qcodes-h{ margin-top: 0; }
+    .qcodes-more{
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .qcodes-more:hover{ color: var(--accent-hover); }
+  </style>
 </Layout>
