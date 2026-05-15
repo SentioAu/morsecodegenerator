@@ -942,6 +942,15 @@ const robots = "index,follow";
       justify-content: center;
       transition: background-color 30ms linear;
     }
+    /*
+      Critical: the bare `.flash-screen` rule above declares `display: flex`,
+      which overrides the HTML `hidden` attribute (the UA stylesheet's
+      `[hidden] { display: none }` has lower specificity than any author
+      display: declaration). Without this attribute-selector rule, the
+      overlay covers the whole page on initial load and blocks the
+      translator entirely. Reported live 2026-05-15.
+    */
+    .flash-screen[hidden]{ display: none !important; }
     .flash-screen.on{ background: #fff; }
     .flash-close{
       position: absolute;
