@@ -284,6 +284,14 @@ const jsonLd = {
           if (consent() !== "all") return;
           if ("requestIdleCallback" in window) {
             requestIdleCallback(load, { timeout: 2500 });
+            return;
+          }
+          // Fallback for browsers without rIC (e.g. older Safari). If the
+          // page is already loaded — which is the case when a first-time
+          // visitor clicks "Accept all" — `load` has fired and a new
+          // listener would never run. Schedule directly in that case.
+          if (document.readyState === "complete") {
+            setTimeout(load, 0);
           } else {
             window.addEventListener("load", function () { setTimeout(load, 800); });
           }
