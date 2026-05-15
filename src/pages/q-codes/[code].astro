@@ -1,0 +1,256 @@
+---
+import Layout from "../../components/Layout.astro";
+import { qcodes } from "../../data/q-codes.js";
+import data from "../../data/morse.json";
+import { textToMorse } from "../../utils/morse";
+
+export function getStaticPaths() {
+  // One page per Q-code. The hub at /q-codes/ remains the index.
+  return qcodes.map((q, i) => ({
+    params: { code: q.code.toLowerCase() },
+    props: {
+      q,
+      prev: i > 0 ? qcodes[i - 1] : null,
+      next: i < qcodes.length - 1 ? qcodes[i + 1] : null,
+    },
+  }));
+}
+
+const { q, prev, next } = Astro.props;
+
+const site = String(
+  Astro.site ?? import.meta.env.SITE ?? "https://morsecodegenerator.com"
+).replace(/\/$/, "");
+
+const canonical = `${site}/q-codes/${q.code.toLowerCase()}/`;
+const robots = "index,follow";
+
+// Render the Q-code itself in Morse so the page can show the rhythm
+// pattern (consistent with how /morse-code/<ch>/ does for letters).
+const rawMap = data?.morseMap ?? {};
+const morseMap = Object.fromEntries(
+  Object.entries(rawMap)
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+);
+const morse = textToMorse(q.code, morseMap, " ");
+
+const title = `${q.code} in Morse code – ${q.question.replace(/\?$/, "")}?`;
+const description = `${q.code}: ${q.summary} Full Q-code reference for ham radio CW operators.`;
+const keywords = `${q.code}, ${q.code.toLowerCase()} morse, ${q.code} q code, ham radio ${q.code}, CW abbreviations`;
+
+// Pick up to 4 sibling Q-codes that share at least one tag.
+const related = qcodes
+  .filter((r) => r.code !== q.code && r.tags?.some((t) => q.tags?.includes(t)))
+  .slice(0, 4);
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Q-codes", url: `${site}/q-codes/` },
+  { name: q.code, url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": canonical + "#term",
+      name: q.code,
+      description: q.summary,
+      url: canonical,
+      inDefinedTermSet: `${site}/q-codes/#index`,
+      inLanguage: "en",
+    },
+    {
+      "@type": "Article",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+      keywords,
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: `What does ${q.code} mean in Morse code?`,
+          acceptedAnswer: { "@type": "Answer", text: q.summary },
+        },
+        {
+          "@type": "Question",
+          name: `How is ${q.code} used as a question?`,
+          acceptedAnswer: { "@type": "Answer", text: q.question },
+        },
+        {
+          "@type": "Question",
+          name: `How is ${q.code} used as an answer?`,
+          acceptedAnswer: { "@type": "Answer", text: q.answer },
+        },
+      ],
+    },
+  ],
+};
+
+const prevUrl = prev ? `${site}/q-codes/${prev.code.toLowerCase()}/` : undefined;
+const nextUrl = next ? `${site}/q-codes/${next.code.toLowerCase()}/` : undefined;
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  robots={robots}
+  keywords={keywords}
+  ogType="article"
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/q-codes/">Q-codes</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">{q.code}</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Q-code · CW operating</p>
+    <h1 class="page-hero-title">{q.code} in Morse code</h1>
+    <p class="muted page-hero-sub">{q.summary}</p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={`/translate/?q=${encodeURIComponent(q.code)}`}>Play {q.code} in the translator</a>
+      <a class="btn secondary" href="/q-codes/">All Q-codes</a>
+    </div>
+  </header>
+
+  <section class="card qc-card">
+    <h2 class="qc-h">Morse rendering</h2>
+    <p class="qc-morse" aria-label={`Morse rendering of ${q.code}`}>{morse}</p>
+    <p class="muted micro">{q.code} sent as a normal three-letter group (inter-letter gaps included).</p>
+  </section>
+
+  <section class="card qc-card">
+    <h2 class="qc-h">As a question</h2>
+    <p class="qc-line"><strong class="k">{q.code}?</strong> — {q.question}</p>
+
+    <h2 class="qc-h qc-h-second">As an answer</h2>
+    <p class="qc-line"><strong class="k">{q.code}</strong> — {q.answer}</p>
+  </section>
+
+  <section class="card soft qc-card">
+    <h2 class="qc-h">When this is used</h2>
+    <p>{q.context}</p>
+  </section>
+
+  <section class="card qc-card">
+    <h2 class="qc-h">Examples</h2>
+    <table class="qc-table">
+      <thead>
+        <tr><th>On the air</th><th>Plain English</th></tr>
+      </thead>
+      <tbody>
+        {q.examples.map(([usage, plain]) => (
+          <tr>
+            <td><strong class="k">{usage}</strong></td>
+            <td class="muted">{plain}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="page-hero-kicker">Keep reading</p>
+          <h2 class="section-title">Related Q-codes</h2>
+        </div>
+      </div>
+      <div class="pill-grid">
+        {related.map((r) => (
+          <a href={`/q-codes/${r.code.toLowerCase()}/`}>{r.code} — {r.summary.split(".")[0]}.</a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <nav class="qc-nav" aria-label="Adjacent Q-codes">
+    {prev ? (
+      <a class="qc-nav-link prev" href={`/q-codes/${prev.code.toLowerCase()}/`} rel="prev">
+        <span class="qc-nav-dir">← Previous</span>
+        <span class="qc-nav-label">{prev.code}</span>
+      </a>
+    ) : <span></span>}
+    {next ? (
+      <a class="qc-nav-link next" href={`/q-codes/${next.code.toLowerCase()}/`} rel="next">
+        <span class="qc-nav-dir">Next →</span>
+        <span class="qc-nav-label">{next.code}</span>
+      </a>
+    ) : <span></span>}
+  </nav>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .qc-card{ margin-top: var(--s-4); }
+    .qc-h{ margin-top: 0; }
+    .qc-h-second{ margin-top: var(--s-5); }
+    .qc-morse{
+      font-family: var(--font-mono);
+      font-size: var(--fs-2xl);
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin: var(--s-3) 0 var(--s-2);
+      word-break: break-all;
+    }
+    .qc-line{ font-size: var(--fs-md); margin: 0; }
+    .qc-line .k{ color: var(--accent); margin-right: var(--s-2); }
+    .qc-table{ margin-top: var(--s-3); }
+
+    .qc-nav{
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: var(--s-3);
+      margin-top: var(--s-6);
+    }
+    .qc-nav-link{
+      flex: 0 1 240px;
+      display: grid;
+      gap: var(--s-1);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .qc-nav-link.next{ text-align: right; }
+    .qc-nav-link:hover{ background: var(--surface-2); border-color: var(--accent-line); }
+    .qc-nav-dir{
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
+      letter-spacing: 0.05em;
+    }
+    .qc-nav-label{
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text);
+    }
+  </style>
+</Layout>
