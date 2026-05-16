@@ -1,32 +1,16 @@
 ---
 import Layout from "../components/Layout.astro";
+import { prosigns } from "../data/prosigns.js";
 
 const title = "Morse Code Prosigns – Full Reference (SK, AR, BT, KN, ...)";
 const description =
-  "Complete list of Morse code prosigns: AR, AS, BT, CL, CT, KN, SK, SN, plus how to send them. Sound, meaning, and example use in CW.";
+  "Complete list of Morse code prosigns: AR, AS, BT, CL, CT, KN, SK, SN, plus how to send them. Each prosign links to a full page with examples, context, and notation.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
 const canonical = `${site}/prosigns/`;
 const robots = "index,follow";
-
-const prosigns = [
-  { sign: "AA", code: ".-.-",        meaning: "New line / line break",     when: "End of a line of plain text in a message." },
-  { sign: "AR", code: ".-.-.",        meaning: "End of message (+)",         when: "End of a complete message; same code as the plus sign." },
-  { sign: "AS", code: ".-...",        meaning: "Wait / standby",             when: "Stand by; I’ll be back shortly." },
-  { sign: "BK", code: "-...-.-",      meaning: "Break",                      when: "Invite the receiving station to transmit." },
-  { sign: "BT", code: "-...-",        meaning: "New paragraph (=)",          when: "Pause / new paragraph; same code as equals sign." },
-  { sign: "CL", code: "-.-..-..",     meaning: "Going off the air",          when: "Closing the station; clearing the frequency." },
-  { sign: "CT", code: "-.-.-",        meaning: "Start of transmission (KA)", when: "Attention — start of a new transmission." },
-  { sign: "HH", code: "........",     meaning: "Error",                      when: "Disregard the previous group; eight dots." },
-  { sign: "KN", code: "-.--.",        meaning: "Go ahead, named station",    when: "Only the named station should reply." },
-  { sign: "K",  code: "-.-",          meaning: "Go ahead (any station)",     when: "Invitation to transmit, any station." },
-  { sign: "R",  code: ".-.",          meaning: "Received / roger",           when: "Confirms receipt of the previous transmission." },
-  { sign: "SK", code: "...-.-",       meaning: "End of contact",             when: "Ending a QSO (radio contact)." },
-  { sign: "SN", code: "...-.",        meaning: "Understood (VE)",            when: "Confirms understanding of a transmission." },
-  { sign: "SOS",code: "...---...",    meaning: "International distress",     when: "Sent as a single signal — distress only." },
-];
 
 const crumbs = [
   { name: "Home", url: `${site}/` },
@@ -54,6 +38,18 @@ const jsonLd = {
       publisher: { "@id": `${site}#org` },
       mainEntityOfPage: canonical,
     },
+    {
+      "@type": "ItemList",
+      "@id": `${canonical}#index`,
+      name: "Prosigns index",
+      url: canonical,
+      itemListElement: prosigns.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${site}/prosigns/${p.slug}/`,
+        name: p.sign,
+      })),
+    },
   ],
 };
 ---
@@ -71,6 +67,7 @@ const jsonLd = {
     <p class="muted page-hero-sub">
       Prosigns (procedural signals) are <strong>two characters sent without the inter-letter gap</strong>,
       forming a single sound shape that means a control or punctuation event in CW operation.
+      Tap any row for the full page.
     </p>
     <div class="page-hero-actions">
       <a class="btn primary" href="/translate/">Open translator</a>
@@ -79,22 +76,22 @@ const jsonLd = {
     </div>
   </header>
 
-  <section class="card" style="margin-top:14px;">
-    <h2 style="margin-top:0;">How to send a prosign</h2>
+  <section class="card pro-card">
+    <h2 class="pro-h">How to send a prosign</h2>
     <p class="muted">
       A prosign is sent as one continuous string of dits and dahs. For example, <span class="k">SK</span> is
-      <span class="k">… - · -</span> sent as <strong>one shape</strong>, not as “S” then “K” with a gap.
+      <span class="k">… - · -</span> sent as <strong>one shape</strong>, not as "S" then "K" with a gap.
       In typed Morse it is conventionally written with an overbar (<span class="k">SK̅</span>) or simply as
       the joined letters.
     </p>
   </section>
 
-  <section class="card" style="margin-top:14px;">
-    <h2 style="margin-top:0;">Reference table</h2>
+  <section class="card pro-card">
+    <h2 class="pro-h">Reference table</h2>
     <div class="tablewrap">
       <table>
         <thead>
-          <tr><th>Prosign</th><th>Code</th><th>Meaning</th><th>When to use</th></tr>
+          <tr><th>Prosign</th><th>Code</th><th>Meaning</th><th>More</th></tr>
         </thead>
         <tbody>
           {prosigns.map((p) => (
@@ -102,7 +99,7 @@ const jsonLd = {
               <td><strong>{p.sign}</strong></td>
               <td class="k">{p.code}</td>
               <td>{p.meaning}</td>
-              <td class="muted">{p.when}</td>
+              <td><a class="pro-more" href={`/prosigns/${p.slug}/`}>Detail →</a></td>
             </tr>
           ))}
         </tbody>
@@ -110,8 +107,8 @@ const jsonLd = {
     </div>
   </section>
 
-  <section class="card soft" style="margin-top:14px;">
-    <h2 style="margin-top:0;">Related references</h2>
+  <section class="card soft pro-card">
+    <h2 class="pro-h">Related references</h2>
     <p>
       Combine prosigns with the <a href="/abbreviations/">CW abbreviations</a> and
       <a href="/q-codes/">Q-codes</a> to write efficient on-air messages. Practice by typing a sample
@@ -120,4 +117,16 @@ const jsonLd = {
   </section>
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .pro-card{ margin-top: var(--s-4); }
+    .pro-h{ margin-top: 0; }
+    .pro-more{
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .pro-more:hover{ color: var(--accent-hover); }
+  </style>
 </Layout>
