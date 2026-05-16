@@ -9,9 +9,22 @@
   }
 
   async function loadMorsePayload() {
-    const res = await fetch("/morse.json", { cache: "force-cache" });
-    if (!res.ok) throw new Error(`Failed to load /morse.json (${res.status})`);
-    return await res.json();
+    // 8-second timeout. The file is 4 KB and CDN-cached so the
+    // happy path is sub-100ms; anything beyond 8s is a network
+    // problem the user should see immediately rather than a frozen
+    // translator.
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 8000);
+    try {
+      const res = await fetch("/morse.json", {
+        cache: "force-cache",
+        signal: ctrl.signal,
+      });
+      if (!res.ok) throw new Error(`Failed to load /morse.json (${res.status})`);
+      return await res.json();
+    } finally {
+      clearTimeout(t);
+    }
   }
 
   function extractCharToMorse(payload) {
