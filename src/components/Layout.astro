@@ -943,6 +943,14 @@ const jsonLd = {
       :global(.card + .card){ margin-top: var(--s-4); }
       :global(.page-hero + .card),
       :global(.crumbs + .card){ margin-top: var(--s-4); }
+      /* Cancel the stack rule inside grid containers — the grid's own
+         `gap` already spaces siblings, and the global margin-top would
+         offset the second card in row one (visible misalignment on
+         desktop, double-gap on mobile). Covers .grid (Layout's 2-col)
+         and .cheat-two (cheat-sheet two-col). New grid-style wrappers
+         should add their selector to this list. */
+      :global(.grid > .card + .card),
+      :global(.cheat-two > .card + .card){ margin-top: 0; }
       /* The first heading inside a card never needs a leading gap —
          the card's own padding already provides the breathing room. */
       :global(.card > h2:first-child),
