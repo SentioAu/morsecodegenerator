@@ -113,6 +113,16 @@ export const posts = [
     ],
   },
   {
+    slug: "morse-code-in-pop-culture",
+    title: "Morse code in pop culture: movies, music, tattoos, and TikTok",
+    excerpt:
+      "Real Morse hidden in Rush songs, the SOS distress signal in nearly every disaster movie, jewelry that spells a partner's name in dits and dahs — where Morse code shows up in pop culture and what the patterns actually say.",
+    published: "2026-05-16",
+    kind: "explainer",
+    minutes: 8,
+    tags: ["culture", "movies", "music", "history"],
+  },
+  {
     slug: "international-vs-american-morse",
     title: "International Morse vs American Morse: what changed and why",
     excerpt:
