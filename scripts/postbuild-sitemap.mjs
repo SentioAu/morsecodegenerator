@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
+import { sourcesForUrl } from "./url-sources.mjs";
 
 const SITE = String(process.env.SITE_URL || "https://morsecodegenerator.com").replace(/\/$/, "");
 
@@ -131,79 +132,8 @@ function gitLastmod(files) {
 }
 
 // Map a public URL path to the source files that determine its content.
-// Returning [] means "fall back to mtime" — keeps the function safe
-// even when called with an unknown URL shape.
-function sourcesForUrl(urlPath) {
-  if (urlPath === "/") return ["src/pages/index.astro"];
-
-  // Blog: every post body lives in blog-bodies.js, every metadata
-  // record in blog-posts.js, and the template wraps both.
-  const blogMatch = urlPath.match(/^\/blog\/([^/]+)\/$/);
-  if (blogMatch) {
-    if (blogMatch[1] === "index") return ["src/pages/blog/index.astro", "src/data/blog-posts.js"];
-    return [
-      "src/data/blog-bodies.js",
-      "src/data/blog-posts.js",
-      "src/pages/blog/[slug].astro",
-    ];
-  }
-  if (urlPath === "/blog/") {
-    return ["src/pages/blog/index.astro", "src/data/blog-posts.js"];
-  }
-
-  // Q-codes detail pages.
-  if (/^\/q-codes\/[a-z0-9]+\/$/.test(urlPath)) {
-    return ["src/data/q-codes.js", "src/pages/q-codes/[code].astro"];
-  }
-  if (urlPath === "/q-codes/") return ["src/data/q-codes.js", "src/pages/q-codes.astro"];
-
-  // CW abbreviations detail pages.
-  if (/^\/abbreviations\/[a-z0-9-]+\/$/.test(urlPath)) {
-    return ["src/data/cw-abbreviations.js", "src/pages/abbreviations/[slug].astro"];
-  }
-  if (urlPath === "/abbreviations/") {
-    return ["src/data/cw-abbreviations.js", "src/pages/abbreviations.astro"];
-  }
-
-  // Prosigns detail pages.
-  if (/^\/prosigns\/[a-z0-9]+\/$/.test(urlPath)) {
-    return ["src/data/prosigns.js", "src/pages/prosigns/[slug].astro"];
-  }
-  if (urlPath === "/prosigns/") {
-    return ["src/data/prosigns.js", "src/pages/prosigns.astro"];
-  }
-
-  // Per-letter/digit/punctuation pages — driven by morse.json + template.
-  if (/^\/morse-code\/[a-z0-9]\/$/.test(urlPath)) {
-    return ["src/data/morse.json", "src/pages/morse-code/[ch].astro"];
-  }
-
-  // Per-phrase pages.
-  if (/^\/phrases\/[a-z0-9-]+\/$/.test(urlPath)) {
-    return ["src/data/morse.json", "src/pages/phrases/[slug].astro"];
-  }
-
-  // /<word>-in-morse-code/ pages.
-  if (/^\/[a-z0-9-]+-in-morse-code\/$/.test(urlPath)) {
-    return ["src/pages/[slug]-in-morse-code.astro", "src/data/seo-slugs.json", "src/data/morse.json"];
-  }
-
-  // Static one-pagers: each maps to its own .astro file in src/pages/.
-  const named = urlPath.replace(/^\/|\/$/g, "");
-  if (named && !named.includes("/")) {
-    return [`src/pages/${named}.astro`];
-  }
-
-  // Two-segment routes that hit a directory index (e.g. /morse-code/numbers/).
-  // Try the corresponding directory index .astro file.
-  const twoSegMatch = urlPath.match(/^\/([^/]+)\/([^/]+)\/$/);
-  if (twoSegMatch) {
-    const candidate = `src/pages/${twoSegMatch[1]}/${twoSegMatch[2]}.astro`;
-    return [candidate];
-  }
-
-  return [];
-}
+// URL -> source-file mapping lives in scripts/url-sources.mjs so both
+// the sitemap and IndexNow scripts share one source of truth.
 
 function resolveLastmod(urlPath, htmlFilePath) {
   const sources = sourcesForUrl(urlPath);
