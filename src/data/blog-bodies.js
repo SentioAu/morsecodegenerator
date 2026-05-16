@@ -329,4 +329,108 @@ export const bodies = {
 <h2>Print this</h2>
 <p>The <a href="/chart/">printable Morse chart</a> is designed to print on one page in either light or dark mode. Stash a copy in your camping kit, glovebox, or first-aid bag. The whole International Morse Code is 36 letters and 10 digits — pre-printed is faster than memorized when you're under stress.</p>
 `,
+
+  "how-to-send-morse-code": `
+<p>Most beginner Morse advice teaches you to <em>copy</em> — to decode what someone else is sending. That's the half that fits in an app. The other half — actually <strong>sending</strong> good Morse — is the half that determines whether anyone wants to talk to you on the air.</p>
+
+<p>This guide covers sending. By the end you'll have picked a key, learned the rhythm before the letters, and have a concrete path to your first on-air contact at a slow-speed net.</p>
+
+<h2>Pick a key that matches your stage</h2>
+
+<p>The single most common beginner mistake is buying a fast key — a paddle or a bug — before they can send a clean letter. Each key type has a reason to exist:</p>
+
+<table>
+  <thead><tr><th>Key type</th><th>How it works</th><th>Best for</th></tr></thead>
+  <tbody>
+    <tr><td>Straight key</td><td>Press to send tone, release to stop. You make every dit and dah by hand.</td><td>Learners. Forces clean rhythm. Cheap (under $50 new).</td></tr>
+    <tr><td>Single paddle</td><td>Press left for dits, right for dahs. The keyer chip generates timed elements.</td><td>15–30 WPM operators. Smoother than straight; less arm strain.</td></tr>
+    <tr><td>Iambic paddle</td><td>Like single-paddle but squeezing both sends alternating dits and dahs.</td><td>20+ WPM. Steeper learning curve; faster ceiling.</td></tr>
+    <tr><td>Bug (semi-automatic)</td><td>Mechanical: dits are self-completing, dahs are by hand. Vintage hardware.</td><td>Style points and contests. Distinctive sound. Steep learning curve.</td></tr>
+    <tr><td>Sideswiper / cootie</td><td>Single-lever key swept left and right. All elements by hand.</td><td>SKCC and oddball-key enthusiasts.</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Our recommendation for month one:</strong> a straight key. It teaches you the rhythm that every other key type still depends on. Move to a paddle only when you can reliably send a clean call sign at 13 WPM on the straight key.</p>
+
+<h2>Set up the station so your wrist doesn't quit on you</h2>
+
+<p>Bad ergonomics will end your CW hobby faster than any technique problem. Get this right before sending a single letter:</p>
+
+<ul>
+  <li><strong>Anchor the key.</strong> Use a heavy non-slip surface or a key with a metal base. A key that slides forward every fifth letter wrecks rhythm.</li>
+  <li><strong>Wrist flat, fingers relaxed.</strong> The forearm — not the fingers, not the wrist — drives the key. If your fingers are doing the work, you'll cramp before reaching 15 WPM.</li>
+  <li><strong>Elbow resting on the desk.</strong> Holding the elbow up flexes the shoulder; the shoulder will betray you within five minutes. Forearm on the table from elbow to wrist.</li>
+  <li><strong>Spring tension and key gap.</strong> A new straight key is usually too stiff. Loosen the spring screw to where the key falls back on its own but doesn't bounce. Gap (key-up travel) about the thickness of a credit card.</li>
+</ul>
+
+<h2>Pick a target speed — but go slower than you think</h2>
+
+<p>The number-one rookie mistake on the sending side is sending faster than you can sustain accurately. Pick a target character speed of <strong>12–15 WPM</strong>. That's slow enough to make every element clean and fast enough that your rhythm sounds like Morse, not a slow telegraph.</p>
+
+<p>If you don't have a sense of what 12 WPM feels like, open the <a href="/timing-calculator/">timing calculator</a> and plug in 12. A dit is 100&nbsp;ms; a dah is 300&nbsp;ms; the inter-letter gap is 300&nbsp;ms; the inter-word gap is 700&nbsp;ms. Send to those tempos out loud — "di-di-di-DAH DAH DAH di-di-di" — until the rhythm feels natural before touching a key.</p>
+
+<h2>Drill rhythm before letters</h2>
+
+<p>This is the step most beginners skip and most experienced ops wish they'd done. Spend a week (or even a weekend) sending nothing but the <strong>PARIS rhythm</strong>: equal-weight letters, clean gaps, no panic acceleration.</p>
+
+<p>The drill: pick any letter — say <span class="k">E</span> (one dit) — and send it at exactly 12 WPM for two full minutes. Then switch to <span class="k">T</span> (one dah). Then <span class="k">A</span> (di-DAH). Then <span class="k">N</span> (DAH-di). Listen, not for which letter it is, but for whether the rhythm of each one matches your internal metronome.</p>
+
+<p>Bad rhythm at this stage will haunt you at every speed above 20 WPM. Good rhythm makes a 15-WPM operator more readable than a 30-WPM operator with sloppy timing — and it's the foundation that makes head copy possible later.</p>
+
+<h2>Build the alphabet in Koch order</h2>
+
+<p>Once the rhythm feels comfortable, add letters in the same order you learned to copy (the <a href="/practice/">Koch trainer</a> sequence): K, M, then one new letter per session as you hit ≥ 90% clean sends.</p>
+
+<p>For each new letter:</p>
+<ol>
+  <li>Send it 50 times solo, slowly, listening for clean elements.</li>
+  <li>Mix it with the previous letters — 5 random groups of 5 characters.</li>
+  <li>Record yourself and listen back the next day. You'll catch flaws you missed in real time.</li>
+</ol>
+
+<h2>Cross-check your sending with the decoder</h2>
+
+<p>The fastest way to find timing flaws is to send into a decoder that doesn't care about your feelings. Open the <a href="/decoder/">live mic Morse decoder</a>, point your phone or oscillator speaker at it, and send a known word like <span class="k">PARIS</span>. If the decoder reads <span class="k">PARIS</span>, your rhythm is in spec. If it reads <span class="k">PARIE</span> or <span class="k">PARJS</span>, an element is short or a gap is wrong.</p>
+
+<p>This is harsher than asking a human "how did that sound?" — which is exactly why it works. Use it once a week as a check-in.</p>
+
+<h2>Get on the air — start with slow-speed nets</h2>
+
+<p>Sending into a recorder forever is a trap. The fastest path from "competent at home" to "competent on the air" is to find a slow-speed net and check in.</p>
+
+<ul>
+  <li><strong>SKCC (Straight Key Century Club)</strong> runs slow-speed sked nights. Most operators are happy to slow down for a learner.</li>
+  <li><strong>FISTS CW Club</strong> publishes a list of slow-speed CW nets by region.</li>
+  <li><strong>ARRL CWops Slow Speed Net</strong> — North America's classic learner's net.</li>
+</ul>
+
+<p>What to send on your first contact:</p>
+
+<table>
+  <thead><tr><th>Step</th><th>What to send</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><span class="k">DE &lt;your call&gt; &lt;your call&gt; K</span> — answer the call.</td></tr>
+    <tr><td>2</td><td><span class="k">UR RST 599</span> (or your honest report).</td></tr>
+    <tr><td>3</td><td><span class="k">NAME &lt;name&gt; QTH &lt;city/state&gt;</span>.</td></tr>
+    <tr><td>4</td><td><span class="k">HW? BK</span> — over to them.</td></tr>
+    <tr><td>5</td><td>Listen for the reply, copy, respond.</td></tr>
+    <tr><td>6</td><td>End with <span class="k">73 SK &lt;your call&gt;</span>.</td></tr>
+  </tbody>
+</table>
+
+<p>You'll be terrible at first. Everyone is. The on-air operator on the other end has done this a thousand times and will help. Two real QSOs will move you further than a month of drilling alone.</p>
+
+<h2>What to skip until you've done 50 contacts</h2>
+
+<ul>
+  <li><strong>Speed contests.</strong> Get clean before you get fast. 13–15 WPM with clean rhythm beats 25 WPM with mush every single time.</li>
+  <li><strong>Iambic squeeze keying.</strong> Iambic keying is great at 25+ WPM. It's a distraction at 13.</li>
+  <li><strong>Buying a $500 paddle.</strong> A $50 straight key sends just as good Morse. Upgrade gear when your skill outgrows the current one.</li>
+  <li><strong>Trying to sound like a contester.</strong> Contesters sound clipped and abbreviated because they're optimizing for one specific game. Casual CW QSOs sound nothing like that.</li>
+</ul>
+
+<h2>The one-line summary</h2>
+
+<p>Buy a straight key, anchor it well, send at 12–15 WPM with clean rhythm, drill in Koch order, check yourself against the decoder, and check into a slow-speed net within a month. That's the whole sport.</p>
+`,
 };
