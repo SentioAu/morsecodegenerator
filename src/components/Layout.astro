@@ -395,7 +395,7 @@ const jsonLd = {
           )}
 
           <button class="nav-toggle" type="button" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
               <path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/>
             </svg>
           </button>
@@ -1254,18 +1254,20 @@ const jsonLd = {
       .k{ font-family: var(--font-mono); font-size: 0.95em; }
       .mono{ font-family: var(--font-mono); letter-spacing: 0.01em; }
 
-      /* Auto-injected glossary links carry .auto-link so we can style
-         them subtly — dotted underline distinguishes a contextual
-         "look this up" link from an editorial in-body link. */
+      /* Auto-injected glossary links carry .auto-link. The underline
+         uses the solid accent color so it's clearly visible in both
+         themes — the previous dotted-on-accent-line value rendered at
+         ~2.5:1 contrast in light mode, which failed WCAG. The dotted
+         style is kept but with the higher-contrast color. */
       a.auto-link{
         color: inherit;
-        text-decoration: underline dotted var(--accent-line);
+        text-decoration: underline dotted var(--accent);
         text-underline-offset: 3px;
         text-decoration-thickness: 1px;
       }
       a.auto-link:hover{
         color: var(--accent);
-        text-decoration-color: var(--accent);
+        text-decoration-style: solid;
       }
 
       /* =========================================================
@@ -1332,7 +1334,12 @@ const jsonLd = {
         gap: var(--s-6) var(--s-5);
         padding-bottom: var(--s-6);
       }
-      @media (min-width: 760px){
+      /* Aligned to the nav breakpoint (821px) so the site has one
+         canonical "mobile vs desktop" boundary. Previously the footer
+         flipped to 4 columns at 760px while the nav stayed in the
+         hamburger drawer until 821px — creating an awkward 760–820px
+         band where the two halves of the page felt disconnected. */
+      @media (min-width: 821px){
         .foot-mega{ grid-template-columns: repeat(4, minmax(0,1fr)); }
       }
       .foot-col h4{
