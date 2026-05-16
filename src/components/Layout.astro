@@ -1473,6 +1473,56 @@ const jsonLd = {
       @media (prefers-reduced-motion: reduce){
         *, *::before, *::after{ transition-duration: .01ms !important; animation-duration: .01ms !important; }
       }
+
+      /* Sitewide print stylesheet.
+         Every page benefits from a clean printable rendering — blog
+         articles end up taped to fridges, glossary/FAQ pages end up in
+         training packs, reference pages get screenshotted for class
+         handouts. We hide chrome and monetization surfaces, force
+         monochrome, and let the body content paginate naturally.
+
+         Pages that need extra print customization (chart, cheat-sheet)
+         already declare their own @media print rules; those still take
+         precedence because they sit in higher-specificity scoped CSS.
+
+         Wrapped in :global() so the rules escape Astro's per-component
+         CSS scoping and apply to slot-rendered page content too. */
+      @media print {
+        :global(:root),
+        :global(body){ background: #fff !important; color: #000 !important; }
+        :global(.site-header),
+        :global(.site-footer),
+        :global(.skip),
+        :global(.consent),
+        :global(.adslot),
+        :global(.newsletter),
+        :global(.no-print),
+        :global(.page-hero-actions),
+        :global(.crumbs),
+        :global(.related-grid),
+        :global(.qc-nav),
+        :global(.ab-nav),
+        :global(.pr-nav),
+        :global(.pill-grid),
+        :global(.section .pill-grid){ display: none !important; }
+        :global(a){ color: #000 !important; text-decoration: underline; }
+        :global(.card),
+        :global(.card.soft),
+        :global(.card.glow){
+          background: #fff !important;
+          border: 1px solid #ccc !important;
+          color: #000 !important;
+        }
+        :global(table){ background: #fff !important; border-color: #999 !important; }
+        :global(.k),
+        :global(.code){ color: #000 !important; }
+        :global(.muted),
+        :global(.subtle),
+        :global(.page-hero-kicker){ color: #444 !important; }
+        :global(.main-wrap){ padding-top: 0 !important; padding-bottom: 0 !important; }
+        :global(.tablewrap){ overflow: visible !important; }
+        @page { margin: 12mm; }
+      }
     </style>
 
     {/*
