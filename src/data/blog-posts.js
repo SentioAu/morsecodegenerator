@@ -112,4 +112,23 @@ export const posts = [
       { name: "What not to do", text: "Don't change the pattern. Don't combine SOS with random Morse. Rescuers listen for the rhythm; muddying it costs lives." },
     ],
   },
+  {
+    slug: "how-to-send-morse-code",
+    title: "How to send Morse code: a beginner's guide to keying",
+    excerpt:
+      "Choosing a key, finding the right speed, building rhythm before letters, and getting on the air. The companion to learning copy — finally a guide that teaches you to send.",
+    published: "2026-05-16",
+    kind: "how-to",
+    minutes: 9,
+    tags: ["sending", "keying", "practice", "beginner"],
+    steps: [
+      { name: "Pick a key that matches your stage", text: "Beginners do best on a straight key for the first month — it forces clean timing and rewards rhythm over speed. Move to a paddle or bug only after you can copy 15 WPM reliably." },
+      { name: "Set up the station for relaxed sending", text: "Anchor the key on a heavy non-slip surface, wrist resting flat, elbow on the desk. The forearm — not the fingers — drives the key. A flexed shoulder will betray you within five minutes." },
+      { name: "Pick a target character speed (12–15 WPM)", text: "Set your tone source (a code-practice oscillator, the /timing-calculator/, or just a head-copy of a metronome) to 12–15 WPM. Most learners overshoot the speed they can sustain accurately." },
+      { name: "Drill the rhythm before the alphabet", text: "Spend a week sending just the PARIS rhythm: each letter equal-weight, gaps clean. The shape comes before the meaning. Bad rhythm at this stage will haunt you at every speed above 20 WPM." },
+      { name: "Build the alphabet in Koch order", text: "Add letters in the same Koch order you learned to copy: K, M, then one new letter each session. Send the new letter 50 times solo, then mix it in. Record yourself and listen back the next day." },
+      { name: "Cross-check with the decoder", text: "Use the /decoder/ live microphone mode or simply key into a recorder. The decoder catches the timing flaws your ear glosses over." },
+      { name: "Get on the air with a slow-speed net", text: "Once you can send a clean call sign and RST at 13 WPM, find a SKCC (Straight Key Century Club) sked or a slow-speed net. Real on-air time accelerates fluency more than any drill." },
+    ],
+  },
 ];

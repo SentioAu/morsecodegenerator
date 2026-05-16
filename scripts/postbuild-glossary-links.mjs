@@ -102,7 +102,14 @@ function escapeRegExp(s) {
 }
 
 function wrapFirstOutside(text, term, anchor) {
-  const re = new RegExp(`\\b${escapeRegExp(term)}\\b`, "i");
+  // Match the term as a whole word. A trailing `s?` lets the regex pick
+  // up simple plurals — glossary entry "Prosign" matches the body word
+  // "Prosigns" too. Only enabled for terms that don't already end in
+  // "s" (avoids "GMDSS" → "GMDSSs"), are alphabetic at the end, and
+  // are at least 4 chars (already enforced upstream).
+  const wantsPluralSuffix = /[a-rt-zA-RT-Z]$/.test(term);
+  const tail = wantsPluralSuffix ? "s?" : "";
+  const re = new RegExp(`\\b${escapeRegExp(term)}${tail}\\b`, "i");
   const stack = [];
   const inSkip = () => stack.some((t) => SKIP_TAGS.has(t));
 
