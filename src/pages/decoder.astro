@@ -578,6 +578,16 @@ const examples = [
         if (micStatus) micStatus.textContent = "Cleared.";
       });
 
+      // Stop the mic loop and release the stream when the page becomes
+      // hidden or unloads. Without this, the requestAnimationFrame
+      // loop keeps running in the background tab and the getUserMedia
+      // stream keeps the microphone-indicator light on — both look
+      // like privacy bugs even though they're just resource leaks.
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden" && micRAF) stopMic();
+      });
+      window.addEventListener("pagehide", () => { if (micRAF) stopMic(); });
+
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         micStart && (micStart.disabled = true);
         if (micStatus) micStatus.textContent = "Microphone API not available in this browser.";

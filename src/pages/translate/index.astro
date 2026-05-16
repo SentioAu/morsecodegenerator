@@ -268,6 +268,12 @@ const robots = "index,follow";
         if (!audioCtx) {
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
+        // Browser autoplay policies leave AudioContexts suspended
+        // until a user gesture resumes them. Resume on every access
+        // so the next playMorse() actually plays.
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume().catch(() => { /* ignore — gesture not enough */ });
+        }
         return audioCtx;
       }
 
@@ -629,6 +635,22 @@ const robots = "index,follow";
           tryRun();
         }
       });
+
+      // Stop playback and release the AudioContext when the tab is
+      // hidden or the page is unloaded. Without this, ongoing audio
+      // continues playing in a backgrounded tab, and the AudioContext
+      // counts against the per-origin Web Audio limit.
+      function teardownAudio() {
+        stopFlag = true;
+        if (audioCtx) {
+          try { audioCtx.close(); } catch {}
+          audioCtx = undefined;
+        }
+      }
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") teardownAudio();
+      });
+      window.addEventListener("pagehide", teardownAudio);
     })();
   </script>
 
