@@ -330,6 +330,118 @@ export const bodies = {
 <p>The <a href="/chart/">printable Morse chart</a> is designed to print on one page in either light or dark mode. Stash a copy in your camping kit, glovebox, or first-aid bag. The whole International Morse Code is 36 letters and 10 digits — pre-printed is faster than memorized when you're under stress.</p>
 `,
 
+  "morse-code-in-pop-culture": `
+<p>Morse code is over 180 years old and was technically retired from maritime distress use in 1999. By any reasonable measure it should be forgotten. Instead, it keeps showing up — in songs, in movies, in tattoos people get for an anniversary, in TikTok trends about spelling out a crush's name in dits and dahs.</p>
+
+<p>Here's where Morse actually appears in pop culture, what the patterns mean, and which examples have real Morse versus pretend.</p>
+
+<h2>Movies</h2>
+
+<h3>Independence Day (1996)</h3>
+
+<p>In the climactic global counter-attack, allied air forces around the world communicate the plan over Morse — because the aliens have jammed every modern radio band. The choice of Morse is technically smart: a low-bandwidth keyed signal can punch through interference that wipes out broader-band voice.</p>
+
+<p>The film uses real <a href="/blog/the-story-behind-sos/">SOS</a> and signed call sign patterns. Some of the chatter is improvised dits and dahs that don't decode to anything coherent — but the central call-and-response moments use authentic Morse.</p>
+
+<h3>The Hunt for Red October (1990)</h3>
+
+<p>The submarine genre loves Morse because the alternative is being detectable. Several scenes use light-pulse Morse between subs — flashing signal lamps that visually key out the same SOS/MAYDAY/short-message patterns a key would.</p>
+
+<h3>Titanic (1997)</h3>
+
+<p>The CQD and SOS exchanges between the <em>Titanic</em> and nearby ships are real Morse — and the film helped popularise the lesser-known CQD distress signal that predated SOS. CQD was an attention-getter (<span class="k">CQ</span> = all stations, <span class="k">D</span> = distress); SOS replaced it in 1908 because it was shorter, more rhythmic, and survived weak signal better.</p>
+
+<h3>Inglourious Basterds (2009)</h3>
+
+<p>Quentin Tarantino's WWII film uses Morse for a tense radio scene; the sound design used the real ITU Morse code timings for added authenticity.</p>
+
+<h3>Other notable appearances</h3>
+
+<ul>
+  <li><strong>The Imitation Game (2014)</strong> — Bletchley Park staff copying intercepts off the air, all in real Morse.</li>
+  <li><strong>Lost (2004–2010)</strong> — The numbers station and various Dharma Initiative signals lean on real-Morse aesthetics.</li>
+  <li><strong>Stranger Things (S4, 2022)</strong> — Dustin's flashlight Morse to communicate with Eddie uses authentic SOS and short messages.</li>
+</ul>
+
+<h2>Music</h2>
+
+<p>Bands have hidden Morse in songs for decades — sometimes as a tribute, sometimes for the percussive quality, sometimes as an Easter egg for nerdy listeners.</p>
+
+<h3>Kraftwerk — "Radioactivity" (1975)</h3>
+
+<p>The track opens with the word "RADIOACTIVITY" tapped out in Morse. It's slow enough that beginning operators can copy it cleanly on first listen: <span class="k">·-· ·- -·· ·· --- ·- -·-· - ·· ···- ·· - -·--</span>.</p>
+
+<h3>Rush — "YYZ" (1981)</h3>
+
+<p>The instrumental's opening rhythm spells out "YYZ" — the airport identifier for Toronto Pearson. <span class="k">-·-- -·-- --··</span>. The members of Rush were on a flight into YYZ and heard the airport's Morse beacon; the song's title and rhythm are a tribute.</p>
+
+<h3>Aphex Twin — "On" (1993)</h3>
+
+<p>Hidden Morse in the percussion track has been decoded by fans as repeating "ON" — the song's title — keyed to the beat.</p>
+
+<h3>The Clash — "London Calling" (1979)</h3>
+
+<p>The bell-like tones at the end of the song are SOS in Morse. A subtle nod to BBC radio's wartime broadcasts.</p>
+
+<h3>Mike Oldfield — "Tubular Bells" (1973)</h3>
+
+<p>Contains a section where the instrumentation spells "Tubular Bells" in Morse via plucked strings — well hidden, but real.</p>
+
+<h2>Jewelry, tattoos, and gift culture</h2>
+
+<p>Morse code bracelets and necklaces — where dits and dahs are represented by small round and oblong beads — became a quiet trend in the late 2010s. Common designs spell:</p>
+
+<ul>
+  <li>A partner's name: <span class="k">·- -· -· ·- </span> for "ANNA"</li>
+  <li>A child's name or date of birth</li>
+  <li>"I LOVE YOU": <span class="k">·· / ·-·· --- ···- · / -·-- --- ··-</span></li>
+  <li>"BE STILL": <span class="k">-··· · / ··· - ·· ·-·· ·-··</span></li>
+  <li>"BREATHE", "FAMILY", "HOPE" — single-word affirmations</li>
+</ul>
+
+<p>Tattoos use the same logic, often on the inside of a forearm or behind an ear. Because Morse is visually compact and abstract, it works well as discreet body text — the wearer knows what it says without the message being obvious to passers-by.</p>
+
+<p>If you're commissioning either, the <a href="/translate/">translator</a> generates the exact code, and the <a href="/chart/">printable chart</a> is the canonical reference your jeweller or tattooist should be working from.</p>
+
+<h2>TikTok and the modern revival</h2>
+
+<p>Morse keeps trending on TikTok in waves:</p>
+
+<ul>
+  <li><strong>"My crush's name in Morse"</strong> — point-of-view videos that flash a name in dits and dahs on screen, daring viewers to decode it. The translator is built for exactly this.</li>
+  <li><strong>"Send me a secret Morse message"</strong> — DM-coded responses to original videos.</li>
+  <li><strong>Speed-typing challenges</strong> using on-screen Morse keyboards.</li>
+  <li><strong>SOS hand-signal videos</strong> — riffing on the <a href="/blog/emergency-morse-code-cheat-sheet/">universal SOS pattern</a>, often blended with the "signal for help" hand gesture popularised in 2020.</li>
+</ul>
+
+<p>Most of these videos use real Morse — the symbols are easy enough to look up that fakers get called out fast.</p>
+
+<h2>Video games</h2>
+
+<ul>
+  <li><strong>Resident Evil 4 (2005) and remake</strong> — Inventory items spell hidden hints in Morse.</li>
+  <li><strong>Hitman: World of Assassination</strong> — Mission objectives sometimes involve decoding a Morse signal from a radio.</li>
+  <li><strong>Watch Dogs 2</strong> — Hidden codes throughout the map decode to real messages.</li>
+  <li><strong>The Witness</strong> — Some of the audio puzzles in the late game involve Morse.</li>
+</ul>
+
+<h2>Why Morse keeps coming back</h2>
+
+<p>Morse has three qualities that no replacement medium has matched:</p>
+
+<ol>
+  <li><strong>Visual + audible + tactile.</strong> The same code works as flashing light, tapped sound, vibration, or written dits and dashes. No other communication system carries across that many channels.</li>
+  <li><strong>Low information density on purpose.</strong> A Morse message can survive interference that would scramble voice or text. That makes it perfect for "barely making it through" plot moments.</li>
+  <li><strong>It feels secret.</strong> Most viewers can't read it on sight, but the people in the know can. That gives directors, songwriters, and tattoo designers a layer of meaning that hides in plain sight.</li>
+</ol>
+
+<p>The technology that replaced Morse for mass communication — voice radio, then SMS, then everything — is bigger, faster, and more capable. But none of them feel like a secret handshake. That's why Morse is going to keep showing up in songs and tattoos and disaster movies for at least another 180 years.</p>
+
+<h2>Try it</h2>
+
+<p>If you saw a Morse moment in a movie or song and want to know what it actually says, paste the dits and dashes into the <a href="/translate/">translator</a> (use spaces between letters and <span class="k">/</span> between words). The <a href="/decoder/">live mic decoder</a> will pick it up straight from your speakers if you can play the audio.</p>
+`,
+
   "international-vs-american-morse": `
 <p>When most people say "Morse code" today, they mean <strong>International Morse</strong> — the system defined in ITU-R M.1677-1 and used everywhere from ham radio to aviation navaids. But that's the second version of the system. The original — <strong>American Morse</strong>, sometimes called "Railroad Morse" — predates it by 21 years and looks surprisingly different.</p>
 
