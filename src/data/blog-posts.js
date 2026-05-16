@@ -113,6 +113,26 @@ export const posts = [
     ],
   },
   {
+    slug: "best-morse-code-keys-buyers-guide",
+    title: "How to choose your first Morse code key (buyer's guide)",
+    excerpt:
+      "Straight keys, paddles, bugs, sideswipers — the four key families, how to pick one for your stage, what to look for in the hardware, and what to avoid. Vendor-neutral; no sponsored picks.",
+    published: "2026-05-16",
+    kind: "how-to",
+    minutes: 10,
+    tags: ["buyers-guide", "keys", "equipment", "beginner"],
+    steps: [
+      { name: "Decide what stage you're at", text: "Brand-new learner / can copy 12 WPM / can copy 18+ WPM. The right key type is different for each stage; pretending you're further along is the #1 reason new operators give up." },
+      { name: "Pick a key family for your stage", text: "Beginners: straight key. 12–18 WPM: single-lever paddle. 18+ WPM: iambic paddle. Style or historical interest: bug or sideswiper. Skip the family that doesn't match your stage even if you find a deal." },
+      { name: "Set a budget by tier", text: "Starter ($30–60): a competent straight key or basic paddle from MFJ, Bencher, or similar. Mid ($120–250): Vibroplex Iambic, Begali Simplex, Kent. Premium ($400+): Begali, Vibroplex Bug, custom builds. Don't skip a tier; the next tier up has diminishing returns until you actually need them." },
+      { name: "Inspect the build", text: "Heavy base (1+ kg), adjustable spring tension, adjustable contact gap, replaceable contact points, brass or stainless construction. Plastic bases slide on the desk and ruin rhythm." },
+      { name: "Confirm cable + connector compatibility", text: "Most modern keys ship with a 3.5mm or 1/4-inch plug. Check your radio's key input before ordering. Adapters exist but add failure points." },
+      { name: "Buy from a reputable source", text: "Manufacturer direct (Vibroplex, Begali, MFJ), an established ham retailer (DX Engineering, Ham Radio Outlet, GigaParts in the US; Waters & Stanton in the UK), or the curated used market on QRZ.com Swapmeet. Avoid generic marketplace listings with no model number." },
+      { name: "Test before you commit to a style", text: "Try a friend's key at a club meet, or visit a hamfest where vendors set up tables. A key that's perfect for one operator's hand is wrong for another." },
+      { name: "Upgrade only when your skill is plateaued by the gear", text: "A $300 key will not make you faster than a $50 key if your problem is rhythm. Buy the cheaper key, master it, then upgrade when you genuinely outgrow it." },
+    ],
+  },
+  {
     slug: "morse-code-in-pop-culture",
     title: "Morse code in pop culture: movies, music, tattoos, and TikTok",
     excerpt:

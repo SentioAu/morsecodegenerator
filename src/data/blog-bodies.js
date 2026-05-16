@@ -330,6 +330,137 @@ export const bodies = {
 <p>The <a href="/chart/">printable Morse chart</a> is designed to print on one page in either light or dark mode. Stash a copy in your camping kit, glovebox, or first-aid bag. The whole International Morse Code is 36 letters and 10 digits — pre-printed is faster than memorized when you're under stress.</p>
 `,
 
+  "best-morse-code-keys-buyers-guide": `
+<p>A Morse code key is a hand-held switch. That's it. So why do the prices range from £30 to £900? Because every key is also a <em>physical interface</em> you'll spend hundreds of hours holding, and a key that fits your hand and your stage makes the difference between fluency and frustration.</p>
+
+<p>This is a vendor-neutral first-time buyer's guide. No sponsored picks, no affiliate-padded "top 10" lists. Read the <a href="/disclosure/">funding disclosure</a> for how we earn money — affiliate links may appear here in the future, but the recommendations won't change when they do.</p>
+
+<h2>Step 1: Decide what stage you're at</h2>
+
+<p>Three honest categories:</p>
+
+<table>
+  <thead><tr><th>Stage</th><th>What you can do</th></tr></thead>
+  <tbody>
+    <tr><td>Brand-new learner</td><td>You haven't sent on a real key yet, or you've sent only at &lt; 10 WPM.</td></tr>
+    <tr><td>Intermediate (12–18 WPM)</td><td>You can copy a 12-WPM QSO and send a clean call sign.</td></tr>
+    <tr><td>Advanced (18+ WPM)</td><td>You operate contests, slow-speed nets, or fast rag-chews with confidence.</td></tr>
+  </tbody>
+</table>
+
+<p>The right key type is different for each stage. Pretending you're further along is the single most common reason new operators bounce off CW. Be honest.</p>
+
+<h2>Step 2: Pick a key family for your stage</h2>
+
+<h3>Straight key — beginner default</h3>
+
+<p>One lever, pressed down to send a tone, released to stop. Every dit and dah is timed entirely by your hand. The straight key teaches you the <em>rhythm</em> — clean dit/dah ratios, accurate inter-letter gaps — that every faster key family still depends on.</p>
+
+<p><strong>Best for:</strong> first 1–3 months. <strong>Skill ceiling:</strong> ~20 WPM comfortably; experienced ops push 25+.</p>
+
+<h3>Single-lever paddle — intermediate default</h3>
+
+<p>A paddle is two pressure-sensitive contacts; an electronic keyer chip in your radio (or an external keyer) generates timed dits when you press one contact, dahs when you press the other. A <em>single-lever</em> paddle moves left and right but you can only press one direction at a time.</p>
+
+<p><strong>Best for:</strong> 12–18 WPM operators who've mastered rhythm on a straight key. <strong>Skill ceiling:</strong> 25–30 WPM.</p>
+
+<h3>Iambic paddle — advanced default</h3>
+
+<p>Mechanically similar to single-lever but you can squeeze both contacts simultaneously; the keyer alternates dits and dahs automatically. Saves keystrokes on letters like C (-·-·) and Q (--·-). Two timing modes (A and B) differ in how the keyer finishes the squeeze.</p>
+
+<p><strong>Best for:</strong> 18+ WPM operators. <strong>Skill ceiling:</strong> 50+ WPM. <strong>Catch:</strong> mistiming a squeeze inserts extra elements, so iambic is a downgrade if you're not ready.</p>
+
+<h3>Bug (semi-automatic key)</h3>
+
+<p>A mechanical key invented around 1903 by Horace Martin. A weighted lever oscillates to make self-completing dits; dahs are by hand. The classic <a href="https://www.vibroplex.com/">Vibroplex</a> shape is iconic.</p>
+
+<p><strong>Best for:</strong> style, history, contest CW with a distinctive sound. <strong>Catch:</strong> steep learning curve; the dit speed is mechanically fixed by weight position.</p>
+
+<h3>Sideswiper / cootie</h3>
+
+<p>A single-lever key swept side-to-side rather than pressed down. Every element by hand. Niche community (SKCC has a dedicated sideswiper award).</p>
+
+<p><strong>Best for:</strong> personality. Not a beginner recommendation.</p>
+
+<h2>Step 3: Set a budget by tier</h2>
+
+<table>
+  <thead><tr><th>Tier</th><th>Price range</th><th>Examples in each family</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Starter</td>
+      <td>$30–60</td>
+      <td>MFJ-557 straight key, Bencher BY-2 paddle, MFJ-560 paddle. Plastic-and-metal builds. Competent, replaceable.</td>
+    </tr>
+    <tr>
+      <td>Mid</td>
+      <td>$120–250</td>
+      <td>Vibroplex Iambic Standard, Begali Simplex Basic, Kent straight key, K1EL Single-Lever. Solid brass bases, smoother feel.</td>
+    </tr>
+    <tr>
+      <td>Premium</td>
+      <td>$400+</td>
+      <td>Begali Sculpture, Vibroplex Original Bug, custom builds (Schurr, GHD). Lifetime hardware. Diminishing returns until you actually need them.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Don't skip a tier.</strong> A premium key won't make a beginner faster — the bottleneck is the operator's rhythm, not the hardware. Buy the cheaper key, master it, upgrade when the gear is genuinely the limit.</p>
+
+<h2>Step 4: Inspect the build</h2>
+
+<p>What separates a $50 key from a $200 key:</p>
+
+<ul>
+  <li><strong>Heavy base.</strong> 1 kg minimum, ideally 1.5 kg+. A light key slides forward on the desk every fifth letter and wrecks rhythm. Some keys include a felt or rubber non-slip pad.</li>
+  <li><strong>Adjustable spring tension.</strong> Spring stiffness changes how the key returns to the up position. Beginners want lighter, more responsive springs.</li>
+  <li><strong>Adjustable contact gap.</strong> Distance between the contacts in the up position. Wide = more travel = slower; narrow = faster but easier to chatter.</li>
+  <li><strong>Replaceable contact points.</strong> Even silver alloys wear out after 100k+ presses. A key with replaceable contacts will outlive you.</li>
+  <li><strong>Brass or stainless construction.</strong> Plastic bases warp under heat (e.g. in a shack with afternoon sun); brass and stainless don't.</li>
+</ul>
+
+<h2>Step 5: Confirm cable and connector</h2>
+
+<p>Modern keys ship with a 3.5mm or 1/4-inch (6.35mm) plug. Older transmitters often use binding posts or banana plugs. Check the back of your radio's "KEY" input before ordering — the wrong connector costs you a $5 adapter, an extra failure point, and a trip to the radio store.</p>
+
+<h2>Step 6: Buy from a reputable source</h2>
+
+<p>The three categories of trustworthy sellers:</p>
+
+<ul>
+  <li><strong>Manufacturer direct.</strong> Vibroplex, Begali, MFJ, Kent. You'll pay full MSRP but you get the warranty and the right shipping.</li>
+  <li><strong>Established ham retailers.</strong> DX Engineering, Ham Radio Outlet, GigaParts (US); Waters &amp; Stanton, ML&amp;S (UK); Funk24 (DE). They stock real inventory, take returns, and verify the keys you receive are what you ordered.</li>
+  <li><strong>Curated used market.</strong> QRZ.com Swapmeet, eHam.net Classifieds, ARRL eClassified Ads. Sellers are call-signed amateurs; the community polices bad listings.</li>
+</ul>
+
+<p><strong>Avoid:</strong> generic marketplace listings with no model number, no maker name, or stock photos that look like a different key. Counterfeit Vibroplex Bugs exist; counterfeit Begalis do too. The price is always too good to be true.</p>
+
+<h2>Step 7: Test before committing to a style</h2>
+
+<p>If at all possible: try a friend's key. Visit a hamfest where vendors set up demo tables. Attend a club meeting — most CW operators are delighted to let visitors try their station. A paddle that's perfect in one operator's hand may feel terrible in yours; spring tension, lever spacing, and contact travel are all personal.</p>
+
+<h2>Step 8: Upgrade only when your skill is plateaued by the gear</h2>
+
+<p>The honest test: <em>can the key send cleaner Morse than I can?</em> If your $50 starter key is sending faster than you can sustain accurately, you don't need a new key — you need more practice. The hardware bottleneck usually arrives between 20 and 25 WPM, when contact mass and spring quality genuinely start to matter.</p>
+
+<p>Most operators outgrow a starter key after 6–12 months. A mid-tier key serves the next 5 years comfortably. Premium keys are essentially endgame — buy one only once you know exactly what feel you prefer.</p>
+
+<h2>What to skip on a first key</h2>
+
+<ul>
+  <li><strong>"Adjustable everything" gimmicks.</strong> Three adjustments (spring, gap, contact height) are plenty. More just adds drift.</li>
+  <li><strong>Built-in keyers in beginner keys.</strong> Almost every modern radio has a built-in keyer; paying for a duplicate is wasted money.</li>
+  <li><strong>Wireless or USB keys for HF use.</strong> Latency on USB-CW interfaces can mess up timing for new operators. Save it for a future "PC contest logging" rabbit hole.</li>
+  <li><strong>Decorative keys (clear acrylic, "gaming RGB" novelties).</strong> Fun gifts, terrible primary keys.</li>
+</ul>
+
+<h2>The one-line summary</h2>
+
+<p>Brand-new learner: buy a straight key in the $30–60 tier from a real ham retailer. Use it for at least three months. Re-read this guide before upgrading.</p>
+
+<p>Once you're ready to send something, the <a href="/translate/">translator</a> will play back any text at your target speed for callibration, and the <a href="/decoder/">live decoder</a> grades your sending honestly.</p>
+`,
+
   "morse-code-in-pop-culture": `
 <p>Morse code is over 180 years old and was technically retired from maritime distress use in 1999. By any reasonable measure it should be forgotten. Instead, it keeps showing up — in songs, in movies, in tattoos people get for an anniversary, in TikTok trends about spelling out a crush's name in dits and dahs.</p>
 
