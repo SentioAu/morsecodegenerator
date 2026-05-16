@@ -795,7 +795,10 @@ const robots = "index,follow";
       display: flex;
       gap: var(--s-2);
     }
-    .t-side-foot button{ flex: 1; height: 38px; }
+    /* The site-wide button standard is 40px (matches .btn). All
+       in-tool action buttons align to it so a contest-mode translator
+       feels visually identical to a calculator preset row. */
+    .t-side-foot button{ flex: 1; height: 40px; }
 
     /* Swap divider */
     .t-swap{
@@ -836,7 +839,7 @@ const robots = "index,follow";
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      height: 36px;
+      height: 40px;
       padding: 0 var(--s-3);
       border: 1px solid var(--line);
       background: var(--surface);

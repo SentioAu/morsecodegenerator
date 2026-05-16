@@ -640,7 +640,8 @@ const examples = [
     }
     .decoder-body .t-area.mono{ letter-spacing: 0.06em; font-size: var(--fs-md); }
     .decoder-actions{ display: flex; gap: var(--s-2); flex-wrap: wrap; }
-    .decoder-actions button{ height: 38px; padding: 0 var(--s-3); font-size: var(--fs-sm); }
+    /* 40px is the site-wide button standard (matches .btn). */
+    .decoder-actions button{ height: 40px; padding: 0 var(--s-3); font-size: var(--fs-sm); }
     .decoder-status{ margin: 0; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); min-height: 18px; }
 
     /* Example list */
@@ -724,7 +725,7 @@ const examples = [
       align-items: center;
     }
     .mic-controls button{
-      height: 38px;
+      height: 40px;
       padding: 0 var(--s-4);
       font-size: var(--fs-sm);
       display: inline-flex;
