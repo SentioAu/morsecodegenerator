@@ -369,7 +369,7 @@ export const bodies = {
 
 <h3>Kraftwerk — "Radioactivity" (1975)</h3>
 
-<p>The track opens with the word "RADIOACTIVITY" tapped out in Morse. It's slow enough that beginning operators can copy it cleanly on first listen: <span class="k">·-· ·- -·· ··- ·- -·-· - ·· ···- ·· - -·--</span>.</p>
+<p>The track opens with the word "RADIOACTIVITY" tapped out in Morse. It's slow enough that beginning operators can copy it cleanly on first listen: <span class="k">·-· ·- -·· ·· --- ·- -·-· - ·· ···- ·· - -·--</span>.</p>
 
 <h3>Rush — "YYZ" (1981)</h3>
 
