@@ -127,6 +127,14 @@ function lastTouchedAt(root, files) {
 // "ping it" because the alternative is dropping URLs silently).
 function filterToChangedUrls(urls, since, root) {
   if (!since) return urls; // first commit or no history -> ping all
+
+  // Compare as epoch milliseconds, not raw `%cI` strings. Different
+  // commits often carry different timezone offsets ("+00:00" vs
+  // "+03:00") so lexicographic ordering of the ISO strings can flip
+  // the wrong way and drop URLs that genuinely changed in this deploy.
+  const sinceMs = Date.parse(since);
+  if (Number.isNaN(sinceMs)) return urls; // unparseable cutoff -> safe default
+
   return urls.filter((u) => {
     let pathOnly;
     try {
@@ -138,7 +146,9 @@ function filterToChangedUrls(urls, since, root) {
     if (sources.length === 0) return true; // unknown source -> safe default
     const lastTouched = lastTouchedAt(root, sources);
     if (!lastTouched) return true; // git lookup failed -> safe default
-    return lastTouched > since;
+    const lastTouchedMs = Date.parse(lastTouched);
+    if (Number.isNaN(lastTouchedMs)) return true; // unparseable -> safe default
+    return lastTouchedMs > sinceMs;
   });
 }
 
