@@ -218,6 +218,12 @@ const jsonLd = {
       let ctx;
       function ac() {
         if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        // Browser autoplay policies suspend AudioContexts created
+        // before a user gesture. Resume on every access so the next
+        // play() call actually produces sound.
+        if (ctx.state === "suspended") {
+          ctx.resume().catch(() => { /* ignore — gesture not enough */ });
+        }
         return ctx;
       }
 
@@ -488,6 +494,23 @@ const jsonLd = {
         clearTimeout(quizTimer);
         quizTimer = setTimeout(quizRound, 700);
       });
+
+      // Audio + timer cleanup on page-hide. Without these, the Koch
+      // tone generator and quiz scheduler keep running in the
+      // background tab — at best wasting CPU, at worst playing audio
+      // the user has tabbed away from. Suspending the AudioContext
+      // also pauses any scheduled oscillator notes.
+      function suspendAll() {
+        kochSession?.stop();
+        quizSession?.stop();
+        quizActive = false;
+        clearTimeout(quizTimer);
+        try { ctx?.suspend(); } catch {}
+      }
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") suspendAll();
+      });
+      window.addEventListener("pagehide", suspendAll);
     })();
   </script>
 
