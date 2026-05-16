@@ -1,0 +1,189 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Sponsor MorseCodeGenerator.com — partner rate sheet";
+const description =
+  "How to sponsor MorseCodeGenerator.com: site stats, available placements, rates, and what we will and won't accept. Plain-English contact-first model.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/sponsor/`;
+const robots = "index,follow";
+const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
+const EFFECTIVE_DATE = "2026-05-16";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Sponsor", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      "@id": canonical,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "en",
+      isPartOf: { "@id": `${site}#website` },
+      dateModified: EFFECTIVE_DATE,
+      publisher: { "@id": `${site}#org` },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Sponsor</span>
+  </nav>
+
+  <article class="prose">
+    <header class="page-hero">
+      <p class="page-hero-kicker">Updated {EFFECTIVE_DATE}</p>
+      <h1 class="page-hero-title">Sponsor MorseCodeGenerator.com</h1>
+      <p class="muted page-hero-sub">
+        How sponsorships work on this site: what's available, what's not,
+        and how to start the conversation.
+      </p>
+    </header>
+
+    <p>
+      MorseCodeGenerator.com is the largest dedicated Morse code reference
+      on the open web — a translator, decoder, practice trainer, timing
+      calculator, and 65+ programmatic SEO pages covering Q-codes, CW
+      abbreviations, and prosigns. It is independently run and not part
+      of any agency network.
+    </p>
+
+    <p>
+      If your product genuinely serves the Morse-curious — ham radio gear,
+      keys and paddles, training materials, Morse-themed merchandise,
+      learning courses — there's a place for you here. The constraints
+      below keep the site useful for visitors; reach out and we'll find
+      something that works for both of us.
+    </p>
+
+    <hr />
+
+    <h2>Who reads this site</h2>
+    <ul>
+      <li><strong>Hobbyist learners</strong> picking up Morse for the first time — high search-intent for keys, learning courses, beginner radios.</li>
+      <li><strong>Licensed amateur operators</strong> using the references during contests, nets, and rag-chews — buyers of upgrade gear and contest accessories.</li>
+      <li><strong>Pilots and maritime hobbyists</strong> who arrive via the aviation / emergency content.</li>
+      <li><strong>Educators and parents</strong> looking for printable charts and accessible explanations.</li>
+      <li><strong>Developers and LLM crawlers</strong> consuming <a href="/api/">/api/</a>, <a href="/morse.json">/morse.json</a>, <a href="/llms.txt">/llms.txt</a>.</li>
+    </ul>
+
+    <h2>What's available</h2>
+
+    <h3>1) Display ad placements</h3>
+    <p>
+      Standard AdSense slots already run on long-form reference pages
+      (blog, glossary, FAQ). Direct ad sales for those slots are not
+      currently offered. If you want a non-AdSense placement, see (2).
+    </p>
+
+    <h3>2) Sponsored callout on a reference page</h3>
+    <p>
+      A clearly-labelled <strong>"Sponsored callout"</strong> box near the
+      bottom of a topical reference page (e.g. your QRP-radio sponsorship
+      on <a href="/q-codes/qrp/">/q-codes/qrp/</a>, or a key vendor on
+      <a href="/blog/how-to-learn-morse-code-in-30-days/">the 30-day learning plan</a>).
+      The callout is <em>visually distinct</em> from editorial content,
+      always labelled "Sponsored", and links to your URL with
+      <code>rel="sponsored"</code>.
+    </p>
+
+    <h3>3) Affiliate-of-record on a buyer's guide</h3>
+    <p>
+      If we publish a buyer's guide that already maps to your product
+      category, you can become the affiliate of record for that category
+      — exclusive affiliate link in the comparison table. We retain
+      editorial control: the guide is honest, even when it costs us a
+      conversion.
+    </p>
+
+    <h3>4) Newsletter sponsorship</h3>
+    <p>
+      Once the newsletter has at least 200 subscribers, a single sponsor
+      slot per issue becomes available. Plain-text only, clearly labelled,
+      no tracking pixels.
+    </p>
+
+    <h3>5) API / data tier</h3>
+    <p>
+      If you operate a product that uses <a href="/morse.json">/morse.json</a>
+      or the data behind <a href="/api/">/api/</a> and want a higher SLA,
+      attribution, or commercial use rights beyond the
+      <a href="/ai.txt">ai.txt</a> default, we can negotiate a paid tier.
+    </p>
+
+    <hr />
+
+    <h2>What we won't accept</h2>
+    <ul>
+      <li><strong>Paid placements that read as editorial.</strong> Sponsored content is always labelled. No "guest posts" that pretend to be independent.</li>
+      <li><strong>Anything that breaks the tool experience.</strong> No ads, sponsor callouts, or interstitials inside the translator, decoder, practice trainer, or timing calculator.</li>
+      <li><strong>Off-topic placements.</strong> Crypto, gambling, generic SaaS — anything our visitors didn't come here for.</li>
+      <li><strong>Backlink-only deals</strong> with no genuine product relevance.</li>
+      <li><strong>Pre-written copy.</strong> If we agree to a sponsorship, we write the wording. You can review and request changes.</li>
+    </ul>
+
+    <hr />
+
+    <h2>Rates</h2>
+    <p>
+      Rates depend on placement, duration, and current traffic. Pricing is
+      bespoke per inquiry rather than published — published rate cards
+      either overprice for new partners or underprice for incumbent
+      brands. Email and tell us:
+    </p>
+    <ul>
+      <li>Your product or company, and the page(s) you'd want to appear on.</li>
+      <li>Duration (one quarter / six months / one year).</li>
+      <li>Any specific KPIs you care about (clicks, brand exposure, sign-ups).</li>
+      <li>Your budget range — even a rough number helps us shape a fair quote.</li>
+    </ul>
+
+    <h2>Process</h2>
+    <ol>
+      <li>You email <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Sponsorship inquiry")}`}>{CONTACT_EMAIL}</a> with the details above.</li>
+      <li>We reply within 5 business days with a yes/no plus a draft of what the placement would look like.</li>
+      <li>If we agree, you receive a one-page contract; sponsorships of 3 months or more are paid up front.</li>
+      <li>Placement goes live and is visible to everyone. We send a monthly impressions report.</li>
+    </ol>
+
+    <hr />
+
+    <h2>How sponsorships are disclosed</h2>
+    <p>
+      Every sponsored item on the site is labelled inline and listed on
+      the <a href="/disclosure/">affiliate disclosure page</a>. That page
+      also explains the broader funding model — display ads, affiliate
+      links, and reader support.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Email <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Sponsorship inquiry")}`}>{CONTACT_EMAIL}</a>.
+      One operator reads every message; expect a real reply, not a form letter.
+    </p>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+</Layout>
