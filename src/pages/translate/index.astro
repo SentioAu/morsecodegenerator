@@ -589,6 +589,23 @@ const robots = "index,follow";
         input?.addEventListener("input", refreshNato);
         refreshNato();
       });
+
+      // Stop playback and release the AudioContext when the tab is
+      // hidden or the page is unloaded. Without this, ongoing audio
+      // continues in a backgrounded tab and the AudioContext counts
+      // against the per-origin Web Audio limit. Must live inside this
+      // IIFE because `audioCtx` and `stopFlag` are scoped here.
+      function teardownAudio() {
+        stopFlag = true;
+        if (audioCtx) {
+          try { audioCtx.close(); } catch {}
+          audioCtx = undefined;
+        }
+      }
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") teardownAudio();
+      });
+      window.addEventListener("pagehide", teardownAudio);
     })();
   </script>
 
@@ -635,22 +652,6 @@ const robots = "index,follow";
           tryRun();
         }
       });
-
-      // Stop playback and release the AudioContext when the tab is
-      // hidden or the page is unloaded. Without this, ongoing audio
-      // continues playing in a backgrounded tab, and the AudioContext
-      // counts against the per-origin Web Audio limit.
-      function teardownAudio() {
-        stopFlag = true;
-        if (audioCtx) {
-          try { audioCtx.close(); } catch {}
-          audioCtx = undefined;
-        }
-      }
-      document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "hidden") teardownAudio();
-      });
-      window.addEventListener("pagehide", teardownAudio);
     })();
   </script>
 
