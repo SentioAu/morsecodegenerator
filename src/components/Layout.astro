@@ -929,6 +929,44 @@ const jsonLd = {
         background: var(--surface);
         border-color: var(--accent-line);
       }
+      /* Cards stack with a consistent rhythm so individual pages don't
+         need inline style="margin-top:Npx" attributes on every section.
+         The first card after a hero/breadcrumb gets the same spacing
+         as the gap between subsequent cards.
+
+         These rules apply across the whole site, so we wrap them in
+         :global() to opt out of Astro's per-component CSS scoping.
+         Without :global() the selectors compile to
+         `.card[data-astro-cid-…] + .card[data-astro-cid-…]` which only
+         matches Layout-owned cards — page-level `<section class="card">`
+         would silently lose its spacing. */
+      :global(.card + .card){ margin-top: var(--s-4); }
+      :global(.page-hero + .card),
+      :global(.crumbs + .card){ margin-top: var(--s-4); }
+      /* Cancel the stack rule inside grid containers — the grid's own
+         `gap` already spaces siblings, and the global margin-top would
+         offset the second card in row one (visible misalignment on
+         desktop, double-gap on mobile). Covers .grid (Layout's 2-col)
+         and .cheat-two (cheat-sheet two-col). New grid-style wrappers
+         should add their selector to this list. */
+      :global(.grid > .card + .card),
+      :global(.cheat-two > .card + .card){ margin-top: 0; }
+      /* The first heading inside a card never needs a leading gap —
+         the card's own padding already provides the breathing room. */
+      :global(.card > h2:first-child),
+      :global(.card > h3:first-child){ margin-top: 0; }
+      /* Items inside a .section-head sit on a single shared baseline,
+         so they zero their own margin. Anything that immediately
+         follows a .section-head needs a small breathing gap. */
+      :global(.section-head > h2),
+      :global(.section-head > h3),
+      :global(.section-head > p){ margin: 0; }
+      :global(.section-head + .pill-grid),
+      :global(.section-head + .chart),
+      :global(.section-head + .grid),
+      :global(.section-head + ul),
+      :global(.section-head + table),
+      :global(.section-head + .tablewrap){ margin-top: var(--s-3); }
 
       /* =========================================================
          Sections / hero

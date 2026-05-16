@@ -226,7 +226,7 @@ const practiceLinks = [
   {!code && (
     <section class="card">
       <p class="muted">No Morse code available for this character.</p>
-      <div class="page-hero-actions" style="margin-top: var(--s-3);">
+      <div class="page-hero-actions">
         <a class="btn primary" href="/morse-code/">Back to Learn hub</a>
       </div>
     </section>
@@ -235,13 +235,13 @@ const practiceLinks = [
   {/* Accessible toast (used by Copy/Listen) */}
   <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="card">
     <div class="section-head">
-      <h2 style="margin:0;">Practice examples</h2>
-      <p class="muted" style="margin:0;">Click any example to practice instantly.</p>
+      <h2>Practice examples</h2>
+      <p class="muted">Click any example to practice instantly.</p>
     </div>
 
-    <div class="ex-grid" style="margin-top:12px;">
+    <div class="ex-grid">
       {examplesMorse.map((ex) => (
         <a class="ex" href={ex.href}>
           <div class="ex-text">{ex.text}</div>
@@ -250,21 +250,21 @@ const practiceLinks = [
       ))}
     </div>
 
-    <p class="muted" style="margin-top:12px;">
+    <p class="muted">
       Tip: stop “counting” dots/dashes. With repetition, you recognize patterns as shapes/rhythm.
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Navigate</h2>
+  <section class="card">
+    <h2>Navigate</h2>
 
-    <p class="muted" style="margin-top:0;">
+    <p class="muted">
       {prev ? <>Previous: <a href={`/morse-code/${String(prev).toLowerCase()}/`}>{prev}</a></> : <>Previous: —</>}
       {" • "}
       {next ? <>Next: <a href={`/morse-code/${String(next).toLowerCase()}/`}>{next}</a></> : <>Next: —</>}
     </p>
 
-    <p class="muted" style="margin-top:10px;">
+    <p class="muted">
       Browse:
       <a href="/morse-code/a/"> alphabet</a> •
       <a href="/morse-code/numbers/"> numbers</a> •
@@ -274,17 +274,17 @@ const practiceLinks = [
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">FAQ</h2>
+  <section class="card faq-block">
+    <h2>FAQ</h2>
 
-    <h3 style="margin-bottom:6px;">How do I separate letters and words?</h3>
-    <p class="muted" style="margin-top:0;">
+    <h3>How do I separate letters and words?</h3>
+    <p class="muted">
       Letters are separated by spaces. Words are separated by <span class="k">/</span>.
       Example: <span class="k">HELLO</span> → <span class="k">.... . .-.. .-.. ---</span>.
     </p>
 
-    <h3 style="margin-bottom:6px;">Can I practice {CH} in the translator?</h3>
-    <p class="muted" style="margin-top:0;">
+    <h3>Can I practice {CH} in the translator?</h3>
+    <p class="muted">
       Yes — open <a href={translatorHref}>the translator</a> with {CH} prefilled.
     </p>
   </section>

@@ -92,13 +92,13 @@ const jsonLd = {
   <!-- Toast for copy feedback -->
   <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="card">
     <div class="section-head">
-      <h2 style="margin:0;">Chart</h2>
-      <p class="muted" style="margin:0;">Click a digit for its dedicated page, or copy instantly.</p>
+      <h2>Chart</h2>
+      <p class="muted">Click a digit for its dedicated page, or copy instantly.</p>
     </div>
 
-    <div class="chart" style="margin-top:12px;">
+    <div class="chart">
       {numbers.map((row) => (
         <div class="row">
           <a class="digit" href={row.href} aria-label={`Open ${row.ch} in Morse code`}>
@@ -130,13 +130,13 @@ const jsonLd = {
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="card">
     <div class="section-head">
-      <h2 style="margin:0;">Quick practice</h2>
-      <p class="muted" style="margin:0;">Try these in the translator:</p>
+      <h2>Quick practice</h2>
+      <p class="muted">Try these in the translator:</p>
     </div>
 
-    <div class="pill-grid" style="margin-top:12px;">
+    <div class="pill-grid">
       <a href="/translate/?q=2026">2026</a>
       <a href="/translate/?q=911">911</a>
       <a href="/translate/?q=12345">12345</a>

@@ -78,13 +78,13 @@ const popular = [
     </div>
   </header>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="card">
     <div class="section-head">
-      <h2 style="margin:0;">Reference pages</h2>
-      <p class="muted" style="margin:0;">Bookmark these — they’re built to be clean and fast.</p>
+      <h2>Reference pages</h2>
+      <p class="muted">Bookmark these — they’re built to be clean and fast.</p>
     </div>
 
-    <div class="pill-grid" style="margin-top:12px;">
+    <div class="pill-grid">
       <a href="/morse-code/a/">Alphabet (A–Z)</a>
       <a href="/morse-code/numbers/">Numbers (0–9)</a>
       <a href="/morse-code/punctuation/">Punctuation</a>
@@ -92,18 +92,18 @@ const popular = [
       <a href="/translate/">Translator</a>
     </div>
 
-    <p class="muted" style="margin-top:10px;">
+    <p class="muted">
       Want real-world practice? Try the <a href="/phrases/">phrases section</a> (SOS, HELP, MAYDAY, and more).
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Fast start (the 8 symbols to learn first)</h2>
-    <p class="muted" style="margin-top:0; max-width:72ch;">
+  <section class="card">
+    <h2>Fast start (the 8 symbols to learn first)</h2>
+    <p class="muted">
       Don’t memorize the whole alphabet at once. Start with the simplest patterns, then expand outward.
     </p>
 
-    <div class="starter" style="margin-top:12px;">
+    <div class="starter">
       {starter.map(([ch, code]) => (
         <div class="starter-item">
           <div class="starter-ch">{ch}</div>
@@ -119,7 +119,7 @@ const popular = [
       ))}
     </div>
 
-    <p class="muted" style="margin-top:12px;">
+    <p class="muted">
       Tip: practice these inside the translator:
       <a href="/translate/?q=E%20T%20A%20N">E T A N</a> •
       <a href="/translate/?q=SOS">SOS</a> •
@@ -127,26 +127,26 @@ const popular = [
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="card">
     <div class="section-head">
-      <h2 style="margin:0;">Popular pages</h2>
-      <p class="muted" style="margin:0;">Quick jumps people actually use.</p>
+      <h2>Popular pages</h2>
+      <p class="muted">Quick jumps people actually use.</p>
     </div>
 
-    <div class="pill-grid" style="margin-top:12px;">
+    <div class="pill-grid">
       {popular.map((x) => (
         <a href={x.href}>{x.label}</a>
       ))}
     </div>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">Next steps (what to learn after the starter set)</h2>
-    <p class="muted" style="margin-top:0; max-width:72ch;">
+  <section class="card">
+    <h2>Next steps (what to learn after the starter set)</h2>
+    <p class="muted">
       Once you know the starter set, expand into numbers, punctuation, and real words.
     </p>
 
-    <div class="pill-grid" style="margin-top:12px;">
+    <div class="pill-grid">
       <a href="/morse-code/a/">Continue the alphabet</a>
       <a href="/morse-code/numbers/">Learn numbers</a>
       <a href="/morse-code/punctuation/">Learn punctuation</a>
@@ -156,8 +156,8 @@ const popular = [
     </div>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">A simple practice plan (5 minutes)</h2>
+  <section class="card">
+    <h2>A simple practice plan (5 minutes)</h2>
     <ol>
       <li>Pick <strong>3–5 letters</strong> from the alphabet page.</li>
       <li>Type them as a word in the translator (example: <span class="k">E T A N</span>).</li>
@@ -166,21 +166,21 @@ const popular = [
     </ol>
   </section>
 
-  <section class="card" style="margin-top:16px;">
-    <h2 style="margin-top:0;">FAQ</h2>
+  <section class="card faq-block">
+    <h2>FAQ</h2>
 
-    <h3 style="margin-bottom:6px;">How are letters and words separated?</h3>
-    <p class="muted" style="margin-top:0;">
+    <h3>How are letters and words separated?</h3>
+    <p class="muted">
       Letters are separated by spaces. Words are separated with “/”.
     </p>
 
-    <h3 style="margin-bottom:6px;">Should I learn by sound or by sight?</h3>
-    <p class="muted" style="margin-top:0;">
+    <h3>Should I learn by sound or by sight?</h3>
+    <p class="muted">
       Both help, but rhythm (sound patterns) tends to stick faster than counting dots and dashes.
     </p>
 
-    <h3 style="margin-bottom:6px;">What should I learn first?</h3>
-    <p class="muted" style="margin-top:0;">
+    <h3>What should I learn first?</h3>
+    <p class="muted">
       Start with simple ones: <span class="k">E</span>, <span class="k">T</span>, then <span class="k">A</span>, <span class="k">N</span>, <span class="k">I</span>, <span class="k">M</span>.
       Then expand into <span class="k">S</span> and <span class="k">O</span>.
     </p>
