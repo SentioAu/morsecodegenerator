@@ -113,6 +113,16 @@ export const posts = [
     ],
   },
   {
+    slug: "common-cw-mistakes-and-how-to-fix-them",
+    title: "Common CW mistakes (and how to fix them)",
+    excerpt:
+      "Ten timing, technique, and operating mistakes that hold CW operators back — with the specific drill or habit change that fixes each one.",
+    published: "2026-05-16",
+    kind: "article",
+    minutes: 8,
+    tags: ["practice", "sending", "common-mistakes", "intermediate"],
+  },
+  {
     slug: "how-to-send-morse-code",
     title: "How to send Morse code: a beginner's guide to keying",
     excerpt:

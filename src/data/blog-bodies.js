@@ -330,6 +330,96 @@ export const bodies = {
 <p>The <a href="/chart/">printable Morse chart</a> is designed to print on one page in either light or dark mode. Stash a copy in your camping kit, glovebox, or first-aid bag. The whole International Morse Code is 36 letters and 10 digits — pre-printed is faster than memorized when you're under stress.</p>
 `,
 
+  "common-cw-mistakes-and-how-to-fix-them": `
+<p>If you've been sending or copying Morse for more than a few weeks, you've already developed habits. The good ones compound into fluency. The bad ones get harder to unlearn at every higher speed. Here are the ten most common mistakes — from beginner clunkers to intermediate plateaus — with the specific fix for each.</p>
+
+<h2>1. Counting dots and dashes instead of hearing letters</h2>
+
+<p><strong>Symptom:</strong> You stall at 8–10 WPM. Faster characters blur into "lots of dits" or "lots of dahs" and you lose count.</p>
+
+<p><strong>Why it's bad:</strong> The brain has to count, then translate, then write. That stack of operations doesn't scale — there's no human path from counting to 20 WPM.</p>
+
+<p><strong>Fix:</strong> Use the <a href="/practice/">Koch trainer</a> and start over at 18 WPM character speed with only two letters. The high character speed makes counting impossible; pattern recognition takes over within a week. Don't relapse to slow-character drills — that's the trap.</p>
+
+<h2>2. Writing dots and dashes on paper</h2>
+
+<p><strong>Symptom:</strong> You can decode by hand at 8 WPM but can't read a 15-WPM transmission without writing.</p>
+
+<p><strong>Why it's bad:</strong> Writing visual symbols locks you in a translation step that real on-air CW can't survive. Operators who write never reach head copy.</p>
+
+<p><strong>Fix:</strong> Type what you hear. Letters in the buffer, not dits in the buffer. If your fingers want to write dots, sit on your hands and listen to one minute of slow-speed CW with no notes at all. Repeat daily until it stops feeling impossible.</p>
+
+<h2>3. Sloppy inter-letter gaps</h2>
+
+<p><strong>Symptom:</strong> Other operators ask you to QRS even when your character speed is moderate. Decoders read "PARIE" instead of "PARIS".</p>
+
+<p><strong>Why it's bad:</strong> The inter-letter gap is the punctuation of Morse. Short gaps run two letters together; long gaps suggest a word break that isn't there. Both wreck readability.</p>
+
+<p><strong>Fix:</strong> Send the word <span class="k">PARIS</span> into the <a href="/decoder/">live mic decoder</a> ten times in a row. If it reads <span class="k">PARIS</span> every time, your gap is right. If it reads <span class="k">PARIE</span>, your gaps are short. Use the <a href="/timing-calculator/">timing calculator</a> to see the exact unit-ms target for your WPM, then count silently.</p>
+
+<h2>4. Inconsistent dah length</h2>
+
+<p><strong>Symptom:</strong> Operators say "I think you sent a B but it sounded like 6" — letters with multiple dahs feel ambiguous.</p>
+
+<p><strong>Why it's bad:</strong> A dah is exactly three dit-lengths. A stretched dah pushes the letter toward the next-longer one (B → 6, S → H, etc.). Once you have stretched dahs, every multi-dah letter is a coin toss.</p>
+
+<p><strong>Fix:</strong> Practice the alphabet drill from <a href="/blog/how-to-send-morse-code/">the sending guide</a>: send each letter 50 times, listen for whether every dah is the same length. Record yourself, play back at 0.5× speed, and look for outliers. The asymmetric dahs are easier to spot when slowed down.</p>
+
+<h2>5. Squeeze-keying iambic before you're ready</h2>
+
+<p><strong>Symptom:</strong> You bought a paddle, you're at 14 WPM, and your sending sounds worse than it did on a straight key.</p>
+
+<p><strong>Why it's bad:</strong> Iambic keying generates dits and dahs automatically when both paddles are squeezed. Mistiming the squeeze inserts extra elements you didn't intend.</p>
+
+<p><strong>Fix:</strong> Use the paddle in <em>mode A</em> (or single-lever style) until you can send a clean call sign at 20 WPM. Squeeze technique pays off above 25 WPM; below that it's a liability. If you're under 20 WPM, go back to a straight key for two weeks.</p>
+
+<h2>6. Calling at the wrong speed</h2>
+
+<p><strong>Symptom:</strong> You CQ at 22 WPM (because that's what everyone else does) and only get answered by people you can't copy.</p>
+
+<p><strong>Why it's bad:</strong> The unwritten rule on amateur CW is: <em>the answering station matches the calling station's speed</em>. If you call at 22 you'll get 22-WPM replies. If you call at 15 you'll get 15-WPM replies.</p>
+
+<p><strong>Fix:</strong> Call at the speed you can <strong>copy</strong>, not the speed you can <strong>send</strong>. Sending fast and copying slow is a frustrating mismatch every contact long.</p>
+
+<h2>7. Skipping the warm-up</h2>
+
+<p><strong>Symptom:</strong> Your first three letters of every session are sloppy.</p>
+
+<p><strong>Why it's bad:</strong> CW is a motor skill. Cold hands and an unprimed brain send worse Morse than the same operator does 60 seconds in. Going on the air cold leaks errors into your first QSO.</p>
+
+<p><strong>Fix:</strong> Spend two minutes warming up before each session. Send the alphabet at your target speed. Send <span class="k">PARIS</span> ten times. Listen to a recorded CW QSO. Then go on the air.</p>
+
+<h2>8. Treating prosigns as letters</h2>
+
+<p><strong>Symptom:</strong> You send <span class="k">S K</span> (with a gap) instead of the joined prosign <span class="k">SK</span> (no gap, one shape).</p>
+
+<p><strong>Why it's bad:</strong> A prosign is sent as one continuous element string. Inserting an inter-letter gap turns "end of contact" into "the letter S followed by the letter K", which means nothing. Same problem with AR, BT, KN.</p>
+
+<p><strong>Fix:</strong> Drill the seven core prosigns — AR, BT, SK, KN, K, R, SOS — as single shapes. Each one is a unit. See the <a href="/prosigns/">full prosign reference</a>; every entry has a "Morse pattern" section that shows the joined form.</p>
+
+<h2>9. Sending what you can't copy</h2>
+
+<p><strong>Symptom:</strong> You send abbreviations like <span class="k">HW CPY</span> or <span class="k">UR RST 599 = FB OM</span> because that's what you've seen others send — but you can't decode them when sent back.</p>
+
+<p><strong>Why it's bad:</strong> Mismatch between your sending vocabulary and copying vocabulary causes mid-QSO panic. The other op sends an abbreviation back, you freeze, you ask for AGN, and the conversation collapses.</p>
+
+<p><strong>Fix:</strong> Build your sending and copying vocabularies <em>together</em>. Read the <a href="/abbreviations/">CW abbreviations reference</a> and only send what you can also instantly recognize in return.</p>
+
+<h2>10. Not getting on the air</h2>
+
+<p><strong>Symptom:</strong> You've been "practising" for six months but never made a real contact.</p>
+
+<p><strong>Why it's bad:</strong> No amount of solo practice substitutes for real on-air time. Pressure, noise, real signals, real abbreviations — these only exist in a real QSO. Practising alone forever optimizes for a test that doesn't exist.</p>
+
+<p><strong>Fix:</strong> Find a slow-speed net this week. SKCC, FISTS, CWops Slow Speed Net — see the <a href="/blog/how-to-send-morse-code/">sending guide</a> for organisations. Check in once. Then check in again next week. Two real contacts move you further than a month of solo drilling.</p>
+
+<h2>The mindset behind all ten</h2>
+
+<p>The common thread: <strong>practise the way you'll actually use Morse</strong>. Practise at the speed you want to operate at. Practise the way you'll listen on the air — typed, not written. Practise with the same abbreviations you'll send. Practise sending into a decoder that doesn't grade on a curve.</p>
+
+<p>And go on the air. The point isn't to be perfect — the point is to have a conversation in dots and dashes with someone who's never met you. That's the whole hobby.</p>
+`,
+
   "how-to-send-morse-code": `
 <p>Most beginner Morse advice teaches you to <em>copy</em> — to decode what someone else is sending. That's the half that fits in an app. The other half — actually <strong>sending</strong> good Morse — is the half that determines whether anyone wants to talk to you on the air.</p>
 
