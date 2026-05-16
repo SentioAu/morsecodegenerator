@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 const SITE = String(process.env.SITE_URL || "https://morsecodegenerator.com").replace(/\/$/, "");
 
@@ -71,13 +72,146 @@ function escapeXml(s) {
     .replace(/'/g, "&apos;");
 }
 
-function toLastmod(filePath) {
+// File-mtime fallback. Used when git history isn't available (shallow
+// clone, no .git directory, etc.) or for files git doesn't know about.
+function mtimeLastmod(filePath) {
   try {
     const mtime = fs.statSync(filePath).mtime;
     return new Date(mtime).toISOString().slice(0, 10);
   } catch {
     return "";
   }
+}
+
+// -------------------------------------------------------------------
+// git-based lastmod
+//
+// For each URL we ask git for the most recent commit that touched any
+// of the page's *content* source files — never Layout.astro, because
+// a Layout change would otherwise invalidate every URL's lastmod and
+// trigger a full IndexNow resubmit of the whole site. Including only
+// the URL's own content files gives Google a freshness signal that
+// reflects when the URL's content actually changed, not when the build
+// happened to run.
+//
+// The mapping below is conservative: when a URL's source is genuinely
+// unknown (deep dynamic routes, generated pages) we fall back to the
+// file mtime of the built HTML.
+// -------------------------------------------------------------------
+
+// Resolve absolute repo root for `git -C` invocations. Falls back to
+// process.cwd() which is correct under `npm run build`.
+const REPO_ROOT = (() => {
+  try {
+    return execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      encoding: "utf8",
+    }).trim();
+  } catch {
+    return process.cwd();
+  }
+})();
+
+function gitLastmod(files) {
+  const existing = files
+    .map((f) => path.resolve(REPO_ROOT, f))
+    .filter((f) => fs.existsSync(f));
+  if (existing.length === 0) return "";
+  try {
+    // %cs is committer date in YYYY-MM-DD (strict ISO short form). -1
+    // returns only the newest commit across the listed paths.
+    const out = execFileSync(
+      "git",
+      ["-C", REPO_ROOT, "log", "-1", "--format=%cs", "--", ...existing],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+    ).trim();
+    return out || "";
+  } catch {
+    return "";
+  }
+}
+
+// Map a public URL path to the source files that determine its content.
+// Returning [] means "fall back to mtime" — keeps the function safe
+// even when called with an unknown URL shape.
+function sourcesForUrl(urlPath) {
+  if (urlPath === "/") return ["src/pages/index.astro"];
+
+  // Blog: every post body lives in blog-bodies.js, every metadata
+  // record in blog-posts.js, and the template wraps both.
+  const blogMatch = urlPath.match(/^\/blog\/([^/]+)\/$/);
+  if (blogMatch) {
+    if (blogMatch[1] === "index") return ["src/pages/blog/index.astro", "src/data/blog-posts.js"];
+    return [
+      "src/data/blog-bodies.js",
+      "src/data/blog-posts.js",
+      "src/pages/blog/[slug].astro",
+    ];
+  }
+  if (urlPath === "/blog/") {
+    return ["src/pages/blog/index.astro", "src/data/blog-posts.js"];
+  }
+
+  // Q-codes detail pages.
+  if (/^\/q-codes\/[a-z0-9]+\/$/.test(urlPath)) {
+    return ["src/data/q-codes.js", "src/pages/q-codes/[code].astro"];
+  }
+  if (urlPath === "/q-codes/") return ["src/data/q-codes.js", "src/pages/q-codes.astro"];
+
+  // CW abbreviations detail pages.
+  if (/^\/abbreviations\/[a-z0-9-]+\/$/.test(urlPath)) {
+    return ["src/data/cw-abbreviations.js", "src/pages/abbreviations/[slug].astro"];
+  }
+  if (urlPath === "/abbreviations/") {
+    return ["src/data/cw-abbreviations.js", "src/pages/abbreviations.astro"];
+  }
+
+  // Prosigns detail pages.
+  if (/^\/prosigns\/[a-z0-9]+\/$/.test(urlPath)) {
+    return ["src/data/prosigns.js", "src/pages/prosigns/[slug].astro"];
+  }
+  if (urlPath === "/prosigns/") {
+    return ["src/data/prosigns.js", "src/pages/prosigns.astro"];
+  }
+
+  // Per-letter/digit/punctuation pages — driven by morse.json + template.
+  if (/^\/morse-code\/[a-z0-9]\/$/.test(urlPath)) {
+    return ["src/data/morse.json", "src/pages/morse-code/[ch].astro"];
+  }
+
+  // Per-phrase pages.
+  if (/^\/phrases\/[a-z0-9-]+\/$/.test(urlPath)) {
+    return ["src/data/morse.json", "src/pages/phrases/[slug].astro"];
+  }
+
+  // /<word>-in-morse-code/ pages.
+  if (/^\/[a-z0-9-]+-in-morse-code\/$/.test(urlPath)) {
+    return ["src/pages/[slug]-in-morse-code.astro", "src/data/seo-slugs.json", "src/data/morse.json"];
+  }
+
+  // Static one-pagers: each maps to its own .astro file in src/pages/.
+  const named = urlPath.replace(/^\/|\/$/g, "");
+  if (named && !named.includes("/")) {
+    return [`src/pages/${named}.astro`];
+  }
+
+  // Two-segment routes that hit a directory index (e.g. /morse-code/numbers/).
+  // Try the corresponding directory index .astro file.
+  const twoSegMatch = urlPath.match(/^\/([^/]+)\/([^/]+)\/$/);
+  if (twoSegMatch) {
+    const candidate = `src/pages/${twoSegMatch[1]}/${twoSegMatch[2]}.astro`;
+    return [candidate];
+  }
+
+  return [];
+}
+
+function resolveLastmod(urlPath, htmlFilePath) {
+  const sources = sourcesForUrl(urlPath);
+  if (sources.length > 0) {
+    const git = gitLastmod(sources);
+    if (git) return git;
+  }
+  return mtimeLastmod(htmlFilePath);
 }
 
 // URL importance heuristics (priority + changefreq)
@@ -190,7 +324,7 @@ function main() {
     if (isNoindexHtml(html)) continue;
 
     const loc = `${SITE}${urlPath}`;
-    const lastmod = toLastmod(f);
+    const lastmod = resolveLastmod(urlPath, f);
     map.set(loc, { loc, lastmod, path: urlPath });
   }
 
