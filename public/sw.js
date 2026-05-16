@@ -28,6 +28,7 @@ const SHELL_URLS = [
   "/practice/",
   "/timing-calculator/",
   "/chart/",
+  "/cheat-sheet/",
   "/morse-code/",
   "/phrases/",
   "/faq/",
