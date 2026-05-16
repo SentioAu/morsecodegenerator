@@ -23,6 +23,8 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
+import { sourcesForUrl } from "./url-sources.mjs";
 
 const SITE = String(
   process.env.SITE_URL || "https://morsecodegenerator.com"
@@ -63,6 +65,91 @@ function extractUrlsFromSitemap() {
   if (!file) return [];
   const xml = fs.readFileSync(file, "utf8");
   return Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((m) => m[1].trim());
+}
+
+// --------------------------------------------------------------------
+// Granular ping selection
+//
+// IndexNow doesn't penalise re-submitting unchanged URLs but it consumes
+// the daily quota and feels noisy to log readers. We only ping URLs
+// whose underlying source files were touched by the HEAD commit — i.e.
+// the URLs that actually changed in this deploy.
+//
+// Behaviour:
+//   - If the previous commit (HEAD~1) can't be determined (first commit,
+//     shallow clone, no .git), we treat every URL as "fresh" and ping
+//     the whole sitemap. Safer than silently skipping submissions.
+//   - INDEXNOW_FULL=1 forces the legacy behaviour (ping everything)
+//     for manual full-resubmits.
+// --------------------------------------------------------------------
+
+function repoRoot() {
+  try {
+    return execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      encoding: "utf8",
+    }).trim();
+  } catch {
+    return process.cwd();
+  }
+}
+
+function previousCommitTime(root) {
+  try {
+    return execFileSync(
+      "git",
+      ["-C", root, "log", "-1", "--format=%cI", "HEAD~1"],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+    ).trim();
+  } catch {
+    return null;
+  }
+}
+
+function lastTouchedAt(root, files) {
+  const existing = files
+    .map((f) => path.resolve(root, f))
+    .filter((f) => fs.existsSync(f));
+  if (existing.length === 0) return null;
+  try {
+    const out = execFileSync(
+      "git",
+      ["-C", root, "log", "-1", "--format=%cI", "--", ...existing],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+    ).trim();
+    return out || null;
+  } catch {
+    return null;
+  }
+}
+
+// Returns the subset of `urls` whose sources were touched after `since`.
+// URLs with no known source mapping are passed through (we default to
+// "ping it" because the alternative is dropping URLs silently).
+function filterToChangedUrls(urls, since, root) {
+  if (!since) return urls; // first commit or no history -> ping all
+
+  // Compare as epoch milliseconds, not raw `%cI` strings. Different
+  // commits often carry different timezone offsets ("+00:00" vs
+  // "+03:00") so lexicographic ordering of the ISO strings can flip
+  // the wrong way and drop URLs that genuinely changed in this deploy.
+  const sinceMs = Date.parse(since);
+  if (Number.isNaN(sinceMs)) return urls; // unparseable cutoff -> safe default
+
+  return urls.filter((u) => {
+    let pathOnly;
+    try {
+      pathOnly = new URL(u).pathname;
+    } catch {
+      return true;
+    }
+    const sources = sourcesForUrl(pathOnly);
+    if (sources.length === 0) return true; // unknown source -> safe default
+    const lastTouched = lastTouchedAt(root, sources);
+    if (!lastTouched) return true; // git lookup failed -> safe default
+    const lastTouchedMs = Date.parse(lastTouched);
+    if (Number.isNaN(lastTouchedMs)) return true; // unparseable -> safe default
+    return lastTouchedMs > sinceMs;
+  });
 }
 
 async function ping(host, key, keyLocation, urlList) {
@@ -133,9 +220,32 @@ async function main() {
   const key = keyInfo.stem;
   const keyLocation = `${SITE}/${keyInfo.file}`;
 
-  const urls = extractUrlsFromSitemap();
-  if (!urls.length) {
+  const allUrls = extractUrlsFromSitemap();
+  if (!allUrls.length) {
     log("Sitemap has no URLs to submit. Skipping ping.");
+    return;
+  }
+
+  // Granular selection: ping only URLs whose source files were touched
+  // since the previous commit. INDEXNOW_FULL=1 forces a full resubmit.
+  let urls;
+  if (process.env.INDEXNOW_FULL === "1") {
+    log(`INDEXNOW_FULL=1 — submitting all ${allUrls.length} URLs.`);
+    urls = allUrls;
+  } else {
+    const root = repoRoot();
+    const since = previousCommitTime(root);
+    if (!since) {
+      log(`No HEAD~1 (first commit or shallow clone) — submitting all ${allUrls.length} URLs.`);
+      urls = allUrls;
+    } else {
+      urls = filterToChangedUrls(allUrls, since, root);
+      log(`Changed URLs since ${since}: ${urls.length} of ${allUrls.length}.`);
+    }
+  }
+
+  if (!urls.length) {
+    log("No URLs changed this deploy. Skipping ping.");
     return;
   }
 
