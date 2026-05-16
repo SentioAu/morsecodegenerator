@@ -192,7 +192,14 @@
         t = setTimeout(autoRun, 140);
       });
 
-      fetch("/morse.json").then(function(r){ return r.json(); }).then(function(j){
+      // 8-second timeout so the embed never hangs silently on a slow
+      // network — embedders see "Error loading data" instead of a
+      // permanently empty translator.
+      var fetchCtrl = new AbortController();
+      var fetchTo = setTimeout(function(){ fetchCtrl.abort(); }, 8000);
+      fetch("/morse.json", { signal: fetchCtrl.signal })
+        .then(function(r){ clearTimeout(fetchTo); return r.json(); })
+        .then(function(j){
         var raw = (j && j.morseMap) ? j.morseMap : j;
         MAP = {};
         for (var k in raw){
@@ -201,6 +208,7 @@
         REV = buildRev(MAP);
         autoRun();
       }).catch(function(){
+        clearTimeout(fetchTo);
         output.value = "Error loading data";
       });
     })();

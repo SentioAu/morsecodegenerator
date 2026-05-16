@@ -323,16 +323,27 @@ const examples = [
         }, 120);
       }
 
-      // Load morse map
-      fetch("/morse.json").then(r => r.json()).then(j => {
-        const raw = j?.morseMap || j || {};
-        MAP = {};
-        for (const k in raw) if (Object.hasOwn(raw, k) && k !== " ") MAP[k.toUpperCase()] = raw[k];
-        REV = buildRev(MAP);
-        autoRun();
-      }).catch(() => {
-        if (statusEl) statusEl.textContent = "Failed to load Morse data. Refresh the page.";
-      });
+      // Load morse map with an 8-second timeout. The file is 4 KB and
+      // CDN-cached so the happy path is sub-100ms; we'd rather surface
+      // an error after 8s than let the decoder hang indefinitely.
+      (function loadMorse(){
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 8000);
+        fetch("/morse.json", { signal: ctrl.signal }).then(r => r.json()).then(j => {
+          clearTimeout(t);
+          const raw = j?.morseMap || j || {};
+          MAP = {};
+          for (const k in raw) if (Object.hasOwn(raw, k) && k !== " ") MAP[k.toUpperCase()] = raw[k];
+          REV = buildRev(MAP);
+          autoRun();
+        }).catch((e) => {
+          clearTimeout(t);
+          const msg = e?.name === "AbortError"
+            ? "Network slow — Morse data didn't load in 8 s. Reload to retry."
+            : "Failed to load Morse data. Refresh the page.";
+          if (statusEl) statusEl.textContent = msg;
+        });
+      })();
 
       input?.addEventListener("input", autoRun);
       clearBtn?.addEventListener("click", () => { input.value = ""; output.value = ""; statusEl.textContent = ""; input.focus(); });
