@@ -148,7 +148,7 @@ const jsonLd = {
 
     <section class="cheat-section">
       <h3 class="cheat-h">Prosigns (sent as one shape, no inter-letter gap)</h3>
-      <table class="cheat-table">
+      <div class="tablewrap"><table class="cheat-table">
         <tbody>
           {topProsigns.map((s) => {
             const p = pIndex[s];
@@ -161,13 +161,13 @@ const jsonLd = {
             ) : null;
           })}
         </tbody>
-      </table>
+      </table></div>
     </section>
 
     <div class="cheat-two">
       <section class="cheat-section">
         <h3 class="cheat-h">Top Q-codes</h3>
-        <table class="cheat-table">
+        <div class="tablewrap"><table class="cheat-table">
           <tbody>
             {topQ.map((code) => {
               const q = qIndex[code];
@@ -176,13 +176,13 @@ const jsonLd = {
               ) : null;
             })}
           </tbody>
-        </table>
+        </table></div>
         <p class="muted micro no-print">Full set: <a href="/q-codes/">/q-codes/</a></p>
       </section>
 
       <section class="cheat-section">
         <h3 class="cheat-h">Top CW abbreviations</h3>
-        <table class="cheat-table">
+        <div class="tablewrap"><table class="cheat-table">
           <tbody>
             {topAbbr.map((code) => {
               const a = aIndex[code];
@@ -191,14 +191,14 @@ const jsonLd = {
               ) : null;
             })}
           </tbody>
-        </table>
+        </table></div>
         <p class="muted micro no-print">Full set: <a href="/abbreviations/">/abbreviations/</a></p>
       </section>
     </div>
 
     <section class="cheat-section">
       <h3 class="cheat-h">Timing (PARIS standard)</h3>
-      <table class="cheat-table">
+      <div class="tablewrap"><table class="cheat-table">
         <tbody>
           <tr><td>Unit length</td><td><strong>1200 / WPM</strong> milliseconds</td></tr>
           <tr><td>Dit (·)</td><td>1 unit</td></tr>
@@ -208,7 +208,7 @@ const jsonLd = {
           <tr><td>Inter-word gap</td><td>7 units</td></tr>
           <tr><td>Example — 20 WPM</td><td>1 unit = 60 ms · dit 60 ms · dah 180 ms</td></tr>
         </tbody>
-      </table>
+      </table></div>
       <p class="muted micro no-print">
         Interactive: <a href="/timing-calculator/">/timing-calculator/</a> · Farnsworth mode included.
       </p>
@@ -364,6 +364,10 @@ const jsonLd = {
       :root, body{ background: #fff !important; color: #000 !important; }
       .no-print, .site-header, .site-footer, .skip, .crumbs, .page-hero, .section{ display: none !important; }
       .main-wrap{ padding: 0 !important; }
+      /* Tables on the cheat sheet are now wrapped in .tablewrap for
+         mobile horizontal scrolling. In print, neutralize the overflow
+         so tables print at their natural width on the paper. */
+      .tablewrap{ overflow: visible !important; }
       .cheat{
         background: #fff !important;
         border: 0 !important;

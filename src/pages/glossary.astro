@@ -175,6 +175,13 @@ const jsonLd = {
       line-height: 1.6;
     }
     .glossary-row dd .k{ color: var(--accent); font-family: var(--font-mono); }
-    .glossary-row:target{ background: var(--accent-soft); }
+    /* :target gets a visible left accent stripe in addition to the
+       soft background tint, so the anchor jump is unambiguous even
+       in light mode where --accent-soft alone renders at ~1.1:1. */
+    .glossary-row:target{
+      background: var(--accent-soft);
+      box-shadow: inset 4px 0 0 var(--accent);
+      scroll-margin-top: var(--s-5);
+    }
   </style>
 </Layout>

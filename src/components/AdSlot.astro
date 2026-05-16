@@ -74,10 +74,13 @@ const slot = SLOTS[zone];
     display: block;
     margin-bottom: var(--s-2);
     font-family: var(--font-mono);
-    font-size: 10px;
+    /* Bumped from 10px → 11px and from --text-subtle → --text-muted
+       so the AdSense "Advertisement" label clears WCAG AA on light
+       theme. AdSense policy requires the label to be clearly visible. */
+    font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-subtle);
+    color: var(--text-muted);
   }
   .adslot ins{
     min-height: 100px; /* reserve space so CLS stays clean before fill */
