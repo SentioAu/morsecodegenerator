@@ -109,13 +109,13 @@ const jsonLd = {
   <!-- Toast for copy feedback -->
   <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="card">
     <div class="section-head">
-      <h2 style="margin:0;">Chart</h2>
-      <p class="muted" style="margin:0;">Copy a pattern or practice the symbol directly.</p>
+      <h2>Chart</h2>
+      <p class="muted">Copy a pattern or practice the symbol directly.</p>
     </div>
 
-    <div class="chart" style="margin-top:12px;">
+    <div class="chart">
       {items.map((row) => (
         <div class="row">
           <div class="symbol" aria-label={`Symbol ${row.ch}`}>{row.ch}</div>
@@ -156,20 +156,20 @@ const jsonLd = {
     </p>
   </section>
 
-  <section class="card" style="margin-top:16px;">
+  <section class="card">
     <div class="section-head">
-      <h2 style="margin:0;">Try these</h2>
-      <p class="muted" style="margin:0;">Practice full strings (symbols + letters):</p>
+      <h2>Try these</h2>
+      <p class="muted">Practice full strings (symbols + letters):</p>
     </div>
 
-    <div class="pill-grid" style="margin-top:12px;">
+    <div class="pill-grid">
       <a href="/translate/?q=HELLO!">HELLO!</a>
       <a href="/translate/?q=SOS!">SOS!</a>
       <a href="/translate/?q=WAIT%20/%20STOP">WAIT / STOP</a>
       <a href="/translate/?q=CALL%20ME%20@%209">CALL ME @ 9</a>
     </div>
 
-    <p class="muted" style="margin-top:10px;">
+    <p class="muted">
       Next: <a href="/morse-code/a/">alphabet</a> • <a href="/morse-code/numbers/">numbers</a> • <a href="/phrases/">phrases</a>
     </p>
   </section>
