@@ -1,0 +1,245 @@
+---
+import Layout from "../../components/Layout.astro";
+import { prosigns } from "../../data/prosigns.js";
+
+export function getStaticPaths() {
+  return prosigns.map((p, i) => ({
+    params: { slug: p.slug },
+    props: {
+      p,
+      prev: i > 0 ? prosigns[i - 1] : null,
+      next: i < prosigns.length - 1 ? prosigns[i + 1] : null,
+    },
+  }));
+}
+
+const { p, prev, next } = Astro.props;
+
+const site = String(
+  Astro.site ?? import.meta.env.SITE ?? "https://morsecodegenerator.com"
+).replace(/\/$/, "");
+
+const canonical = `${site}/prosigns/${p.slug}/`;
+const robots = "index,follow";
+
+const title = `${p.sign} prosign in Morse code – ${p.meaning}`;
+const description = `${p.sign}: ${p.summary} Full prosign reference for CW operators.`;
+const keywords = `${p.sign}, ${p.slug} prosign, ${p.meaning.toLowerCase()}, ham radio ${p.sign}, morse code prosign`;
+
+const related = prosigns
+  .filter((r) => r.slug !== p.slug && r.tags?.some((t) => p.tags?.includes(t)))
+  .slice(0, 4);
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Prosigns", url: `${site}/prosigns/` },
+  { name: p.sign, url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": canonical + "#term",
+      name: p.sign,
+      description: p.summary,
+      url: canonical,
+      inDefinedTermSet: `${site}/prosigns/#index`,
+      inLanguage: "en",
+    },
+    {
+      "@type": "Article",
+      headline: title,
+      description,
+      url: canonical,
+      author: { "@type": "Organization", name: "MorseCodeGenerator.com" },
+      publisher: { "@id": `${site}#org` },
+      mainEntityOfPage: canonical,
+      keywords,
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: `What does the ${p.sign} prosign mean in Morse code?`,
+          acceptedAnswer: { "@type": "Answer", text: p.summary },
+        },
+        {
+          "@type": "Question",
+          name: `How is the ${p.sign} prosign sent?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `${p.sign} is sent as the Morse pattern ${p.code} — one continuous shape with no inter-letter gap. ${p.notation}`,
+          },
+        },
+        {
+          "@type": "Question",
+          name: `When is ${p.sign} used on the air?`,
+          acceptedAnswer: { "@type": "Answer", text: p.context },
+        },
+      ],
+    },
+  ],
+};
+
+const prevUrl = prev ? `${site}/prosigns/${prev.slug}/` : undefined;
+const nextUrl = next ? `${site}/prosigns/${next.slug}/` : undefined;
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  robots={robots}
+  keywords={keywords}
+  ogType="article"
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/prosigns/">Prosigns</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">{p.sign}</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Prosign · CW procedural signal</p>
+    <h1 class="page-hero-title">{p.sign} prosign in Morse code</h1>
+    <p class="muted page-hero-sub">{p.summary}</p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/translate/">Open translator</a>
+      <a class="btn secondary" href="/prosigns/">All prosigns</a>
+    </div>
+  </header>
+
+  <section class="card pr-card">
+    <h2 class="pr-h">Morse pattern</h2>
+    <p class="pr-morse" aria-label={`Morse pattern for prosign ${p.sign}`}>{p.code}</p>
+    <p class="muted micro">Sent as one continuous shape — no inter-letter gap between the component letters.</p>
+  </section>
+
+  <section class="card pr-card">
+    <h2 class="pr-h">Meaning</h2>
+    <p class="pr-line"><strong class="k">{p.sign}</strong> — {p.meaning}</p>
+
+    <h2 class="pr-h pr-h-second">Notation</h2>
+    <p>{p.notation}</p>
+  </section>
+
+  <section class="card soft pr-card">
+    <h2 class="pr-h">When this is used</h2>
+    <p>{p.context}</p>
+  </section>
+
+  <section class="card pr-card">
+    <h2 class="pr-h">Examples</h2>
+    <table class="pr-table">
+      <thead>
+        <tr><th>On the air</th><th>Plain English</th></tr>
+      </thead>
+      <tbody>
+        {p.examples.map(([usage, plain]) => (
+          <tr>
+            <td><strong class="k">{usage}</strong></td>
+            <td class="muted">{plain}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="page-hero-kicker">Keep reading</p>
+          <h2 class="section-title">Related prosigns</h2>
+        </div>
+      </div>
+      <div class="pill-grid">
+        {related.map((r) => (
+          <a href={`/prosigns/${r.slug}/`}>{r.sign} — {r.meaning}</a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <nav class="pr-nav" aria-label="Adjacent prosigns">
+    {prev ? (
+      <a class="pr-nav-link prev" href={`/prosigns/${prev.slug}/`} rel="prev">
+        <span class="pr-nav-dir">← Previous</span>
+        <span class="pr-nav-label">{prev.sign}</span>
+      </a>
+    ) : <span></span>}
+    {next ? (
+      <a class="pr-nav-link next" href={`/prosigns/${next.slug}/`} rel="next">
+        <span class="pr-nav-dir">Next →</span>
+        <span class="pr-nav-label">{next.sign}</span>
+      </a>
+    ) : <span></span>}
+  </nav>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .pr-card{ margin-top: var(--s-4); }
+    .pr-h{ margin-top: 0; }
+    .pr-h-second{ margin-top: var(--s-5); }
+    .pr-morse{
+      font-family: var(--font-mono);
+      font-size: var(--fs-2xl);
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin: var(--s-3) 0 var(--s-2);
+      word-break: break-all;
+    }
+    .pr-line{ font-size: var(--fs-md); margin: 0; }
+    .pr-line .k{ color: var(--accent); margin-right: var(--s-2); }
+    .pr-table{ margin-top: var(--s-3); }
+
+    .pr-nav{
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: var(--s-3);
+      margin-top: var(--s-6);
+    }
+    .pr-nav-link{
+      flex: 0 1 240px;
+      display: grid;
+      gap: var(--s-1);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .pr-nav-link.next{ text-align: right; }
+    .pr-nav-link:hover{ background: var(--surface-2); border-color: var(--accent-line); }
+    .pr-nav-dir{
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
+      letter-spacing: 0.05em;
+    }
+    .pr-nav-label{
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text);
+    }
+  </style>
+</Layout>

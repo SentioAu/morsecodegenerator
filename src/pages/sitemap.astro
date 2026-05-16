@@ -3,6 +3,7 @@ import Layout from "../components/Layout.astro";
 import { posts } from "../data/blog-posts.js";
 import { qcodes } from "../data/q-codes.js";
 import { abbrs } from "../data/cw-abbreviations.js";
+import { prosigns } from "../data/prosigns.js";
 import morsePayload from "../../public/morse.json";
 
 const title = "Sitemap — every page on MorseCodeGenerator.com";
@@ -229,6 +230,20 @@ const jsonLd = {
     <ul class="sm-chips">
       {abbrs.map((a) => (
         <li><a href={`/abbreviations/${a.slug}/`}>{a.code}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">{prosigns.length} prosigns</p>
+        <h2 class="section-title">Prosign detail pages</h2>
+      </div>
+    </div>
+    <ul class="sm-chips">
+      {prosigns.map((p) => (
+        <li><a href={`/prosigns/${p.slug}/`}>{p.sign}</a></li>
       ))}
     </ul>
   </section>
