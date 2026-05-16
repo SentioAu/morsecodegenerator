@@ -1,0 +1,382 @@
+---
+import Layout from "../components/Layout.astro";
+import morsePayload from "../../public/morse.json";
+import { qcodes } from "../data/q-codes.js";
+import { abbrs } from "../data/cw-abbreviations.js";
+import { prosigns } from "../data/prosigns.js";
+
+const title = "Morse Code Cheat Sheet — One-Page Printable Reference";
+const description =
+  "The complete Morse code cheat sheet on one printable page: alphabet, numbers, punctuation, prosigns, top Q-codes and CW abbreviations, timing rules, and a quick history. Browser-print friendly.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/cheat-sheet/`;
+const robots = "index,follow";
+const keywords =
+  "morse code cheat sheet, morse code printable, morse code chart pdf, ham radio cheat sheet, cw quick reference";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Cheat sheet", url: canonical },
+];
+
+// Build the canonical reference rows from morse.json so this page can
+// never drift away from the rest of the site's data.
+const map = morsePayload.morseMap || {};
+const letters = Object.entries(map)
+  .filter(([k]) => /^[A-Z]$/.test(k))
+  .sort(([a], [b]) => a.localeCompare(b, "en"));
+const digits = Object.entries(map)
+  .filter(([k]) => /^\d$/.test(k))
+  .sort(([a], [b]) => a.localeCompare(b, "en"));
+
+// Punctuation: filter morseMap for any single-char non-alphanumeric
+// glyph. Keeps the table accurate as the data file grows.
+const punctuation = Object.entries(map)
+  .filter(([k]) => k.length === 1 && !/^[A-Z0-9 ]$/i.test(k))
+  .sort(([a], [b]) => a.localeCompare(b, "en"));
+
+// Top picks for the cheat sheet (length kept tight so everything fits
+// on a single printed page). Selected by what we'd actually want in a
+// pocket reference, not by alphabetical order.
+const topQ = [
+  "QTH", "QSY", "QRZ", "QSL", "QRM", "QRN", "QRP", "QRO", "QRS", "QRT",
+];
+const topAbbr = [
+  "73", "88", "CQ", "DE", "DX", "TNX", "TU", "FB", "RST", "PSE",
+];
+const topProsigns = ["AR", "BT", "SK", "KN", "K", "R", "SOS"];
+
+const qIndex = Object.fromEntries(qcodes.map((q) => [q.code, q]));
+const aIndex = Object.fromEntries(abbrs.map((a) => [a.code, a]));
+const pIndex = Object.fromEntries(prosigns.map((p) => [p.sign, p]));
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      "@id": canonical,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "en",
+      isPartOf: { "@id": `${site}#website` },
+      publisher: { "@id": `${site}#org` },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} keywords={keywords}>
+  <nav class="crumbs no-print" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Cheat sheet</span>
+  </nav>
+
+  <header class="page-hero no-print">
+    <p class="page-hero-kicker">One-page printable reference</p>
+    <h1 class="page-hero-title">Morse code cheat sheet</h1>
+    <p class="muted page-hero-sub">
+      Everything you need to copy or send Morse, on a single sheet. Designed to
+      print clean on A4 or US Letter. Use your browser's print → "Save as PDF"
+      to keep a copy offline.
+    </p>
+    <div class="page-hero-actions">
+      <button class="btn primary" type="button" id="printBtn">Print / save as PDF</button>
+      <a class="btn secondary" href="/chart/">Full A–Z chart</a>
+      <a class="btn ghost" href="/timing-calculator/">Timing calculator</a>
+    </div>
+  </header>
+
+  <article class="cheat" id="cheat">
+    <div class="cheat-head">
+      <div>
+        <h2 class="cheat-title">MorseCodeGenerator.com — cheat sheet</h2>
+        <p class="cheat-sub">International Morse Code per ITU-R M.1677-1. PARIS-standard timing.</p>
+      </div>
+      <p class="cheat-url">morsecodegenerator.com</p>
+    </div>
+
+    <section class="cheat-section">
+      <h3 class="cheat-h">Alphabet (A–Z)</h3>
+      <div class="cheat-grid cheat-grid-alpha">
+        {letters.map(([ch, code]) => (
+          <div class="cell">
+            <span class="ch">{ch}</span>
+            <span class="code">{code}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="cheat-section">
+      <h3 class="cheat-h">Numbers (0–9)</h3>
+      <div class="cheat-grid cheat-grid-digits">
+        {digits.map(([ch, code]) => (
+          <div class="cell">
+            <span class="ch">{ch}</span>
+            <span class="code">{code}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="cheat-section">
+      <h3 class="cheat-h">Punctuation</h3>
+      <div class="cheat-grid cheat-grid-punct">
+        {punctuation.map(([ch, code]) => (
+          <div class="cell">
+            <span class="ch">{ch}</span>
+            <span class="code">{code}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="cheat-section">
+      <h3 class="cheat-h">Prosigns (sent as one shape, no inter-letter gap)</h3>
+      <table class="cheat-table">
+        <tbody>
+          {topProsigns.map((s) => {
+            const p = pIndex[s];
+            return p ? (
+              <tr>
+                <td><strong>{p.sign}</strong></td>
+                <td class="code">{p.code}</td>
+                <td>{p.meaning}</td>
+              </tr>
+            ) : null;
+          })}
+        </tbody>
+      </table>
+    </section>
+
+    <div class="cheat-two">
+      <section class="cheat-section">
+        <h3 class="cheat-h">Top Q-codes</h3>
+        <table class="cheat-table">
+          <tbody>
+            {topQ.map((code) => {
+              const q = qIndex[code];
+              return q ? (
+                <tr><td><strong>{q.code}</strong></td><td>{q.meaning ?? q.summary.split(".")[0]}</td></tr>
+              ) : null;
+            })}
+          </tbody>
+        </table>
+        <p class="muted micro no-print">Full set: <a href="/q-codes/">/q-codes/</a></p>
+      </section>
+
+      <section class="cheat-section">
+        <h3 class="cheat-h">Top CW abbreviations</h3>
+        <table class="cheat-table">
+          <tbody>
+            {topAbbr.map((code) => {
+              const a = aIndex[code];
+              return a ? (
+                <tr><td><strong>{a.code}</strong></td><td>{a.meaning}</td></tr>
+              ) : null;
+            })}
+          </tbody>
+        </table>
+        <p class="muted micro no-print">Full set: <a href="/abbreviations/">/abbreviations/</a></p>
+      </section>
+    </div>
+
+    <section class="cheat-section">
+      <h3 class="cheat-h">Timing (PARIS standard)</h3>
+      <table class="cheat-table">
+        <tbody>
+          <tr><td>Unit length</td><td><strong>1200 / WPM</strong> milliseconds</td></tr>
+          <tr><td>Dit (·)</td><td>1 unit</td></tr>
+          <tr><td>Dah (−)</td><td>3 units</td></tr>
+          <tr><td>Intra-character gap</td><td>1 unit</td></tr>
+          <tr><td>Inter-letter gap</td><td>3 units</td></tr>
+          <tr><td>Inter-word gap</td><td>7 units</td></tr>
+          <tr><td>Example — 20 WPM</td><td>1 unit = 60 ms · dit 60 ms · dah 180 ms</td></tr>
+        </tbody>
+      </table>
+      <p class="muted micro no-print">
+        Interactive: <a href="/timing-calculator/">/timing-calculator/</a> · Farnsworth mode included.
+      </p>
+    </section>
+
+    <section class="cheat-section">
+      <h3 class="cheat-h">A 60-second history</h3>
+      <ul class="cheat-history">
+        <li><strong>1844</strong> — Samuel Morse sends "What hath God wrought" Washington → Baltimore.</li>
+        <li><strong>1865</strong> — International Morse adopted at the ITU's first conference.</li>
+        <li><strong>1906</strong> — SOS standardised at the Berlin International Wireless Convention.</li>
+        <li><strong>1999</strong> — Maritime distress retires Morse for the GMDSS system.</li>
+        <li><strong>Today</strong> — CW remains a required mode of amateur radio and aviation navaid IDs.</li>
+      </ul>
+    </section>
+
+    <section class="cheat-section">
+      <h3 class="cheat-h">Quick-start tips</h3>
+      <ol class="cheat-tips">
+        <li>Train at <strong>full character speed</strong> (≥ 18 WPM) using Farnsworth spacing. Slow-character is a trap.</li>
+        <li><strong>Type, don't write.</strong> Writing dots and dashes locks you in at &lt;10 WPM forever.</li>
+        <li>Do <strong>5 minutes a day</strong> with the Koch trainer — short and daily beats long and weekly.</li>
+        <li>Listen to <strong>real on-air CW</strong> as soon as you can copy 12 WPM. Slow-speed nets are designed for learners.</li>
+      </ol>
+    </section>
+
+    <footer class="cheat-foot">
+      <p class="muted">
+        © {new Date().getFullYear()} MorseCodeGenerator.com — free to print and share. Latest version
+        always at <strong>morsecodegenerator.com/cheat-sheet/</strong>.
+      </p>
+    </footer>
+  </article>
+
+  <section class="section no-print">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Use it</p>
+        <h2 class="section-title">Drill down</h2>
+      </div>
+    </div>
+    <div class="pill-grid">
+      <a href="/chart/">Full chart</a>
+      <a href="/morse-code/">Alphabet hub</a>
+      <a href="/q-codes/">All Q-codes</a>
+      <a href="/abbreviations/">All abbreviations</a>
+      <a href="/prosigns/">All prosigns</a>
+      <a href="/timing-calculator/">Timing calculator</a>
+      <a href="/practice/">Practice / Koch</a>
+      <a href="/translate/">Translator</a>
+      <a href="/blog/">Articles</a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <script is:inline>
+    document.getElementById("printBtn")?.addEventListener("click", () => window.print());
+  </script>
+
+  <style>
+    .cheat{
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: var(--s-5);
+      margin-top: var(--s-3);
+    }
+    .cheat-head{
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--s-3);
+      padding-bottom: var(--s-3);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: var(--s-4);
+    }
+    .cheat-title{ margin: 0; font-size: var(--fs-xl); }
+    .cheat-sub{ margin: var(--s-1) 0 0; font-size: var(--fs-sm); color: var(--text-muted); }
+    .cheat-url{ margin: 0; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-subtle); }
+
+    .cheat-section{ margin-bottom: var(--s-4); }
+    .cheat-h{
+      margin: 0 0 var(--s-2);
+      font-size: var(--fs-sm);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .cheat-grid{
+      display: grid;
+      gap: 6px;
+    }
+    .cheat-grid-alpha{ grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+    .cheat-grid-digits{ grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+    .cheat-grid-punct{ grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); }
+    .cheat-grid .cell{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      padding: 6px 8px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-size: var(--fs-xs);
+    }
+    .cheat-grid .cell .ch{ font-weight: 700; min-width: 1.5ch; color: var(--text); }
+    .cheat-grid .cell .code{ font-family: var(--font-mono); color: var(--text-muted); font-size: 11px; }
+
+    .cheat-table{
+      width: 100%;
+      font-size: var(--fs-sm);
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      overflow: hidden;
+    }
+    .cheat-table td{
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    .cheat-table tr:last-child td{ border-bottom: 0; }
+    .cheat-table .code{ font-family: var(--font-mono); }
+    .cheat-table td:first-child{ width: 90px; }
+
+    .cheat-two{
+      display: grid;
+      gap: var(--s-4);
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 760px){
+      .cheat-two{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .cheat-history, .cheat-tips{ margin: 0; padding-left: var(--s-5); font-size: var(--fs-sm); }
+    .cheat-history li, .cheat-tips li{ margin: 0 0 var(--s-1); }
+
+    .cheat-foot{
+      margin-top: var(--s-5);
+      padding-top: var(--s-3);
+      border-top: 1px solid var(--line);
+      font-size: var(--fs-xs);
+    }
+
+    /* Print: hide the chrome, force a clean monochrome layout, keep
+       everything on one or two A4/US-Letter sheets. */
+    @media print {
+      :root, body{ background: #fff !important; color: #000 !important; }
+      .no-print, .site-header, .site-footer, .skip, .crumbs, .page-hero, .section{ display: none !important; }
+      .main-wrap{ padding: 0 !important; }
+      .cheat{
+        background: #fff !important;
+        border: 0 !important;
+        padding: 8mm !important;
+        border-radius: 0 !important;
+      }
+      .cheat-head{ border-color: #000 !important; }
+      .cheat-title, .cheat-sub, .cheat-url, .cheat-h, .cheat-foot, .muted{ color: #000 !important; }
+      .cheat-grid .cell, .cheat-table{ border-color: #999 !important; background: #fff !important; }
+      .cheat-grid .cell .ch, .cheat-grid .cell .code, .cheat-table td{ color: #000 !important; }
+      .cheat-table td{ border-bottom-color: #ddd !important; }
+      a{ color: #000 !important; text-decoration: none !important; }
+      @page { margin: 12mm; }
+    }
+  </style>
+</Layout>
