@@ -330,6 +330,90 @@ export const bodies = {
 <p>The <a href="/chart/">printable Morse chart</a> is designed to print on one page in either light or dark mode. Stash a copy in your camping kit, glovebox, or first-aid bag. The whole International Morse Code is 36 letters and 10 digits — pre-printed is faster than memorized when you're under stress.</p>
 `,
 
+  "international-vs-american-morse": `
+<p>When most people say "Morse code" today, they mean <strong>International Morse</strong> — the system defined in ITU-R M.1677-1 and used everywhere from ham radio to aviation navaids. But that's the second version of the system. The original — <strong>American Morse</strong>, sometimes called "Railroad Morse" — predates it by 21 years and looks surprisingly different.</p>
+
+<p>Here's what changed between the two, why the change happened, and where the old code still leaves a fingerprint on modern technology.</p>
+
+<h2>American Morse (1844): the original</h2>
+
+<p>Samuel Morse and Alfred Vail sent the first telegraph message — "What hath God wrought" — between Washington and Baltimore on May 24, 1844. The code they used is now called <strong>American Morse</strong> or <strong>Railroad Morse</strong> (because the US railroads kept using it long after everyone else moved on).</p>
+
+<p>American Morse has three timing elements, not two:</p>
+<ul>
+  <li><strong>Dits</strong> (short tone)</li>
+  <li><strong>Dahs</strong> (long tone, ~3 dits)</li>
+  <li><strong>Long dahs</strong> (~5 dits — used for the letter L)</li>
+</ul>
+
+<p>It also has <strong>internal letter spaces</strong>: the letter C, for instance, is sent as "di-di-(small-pause)-di-dit" — the pause is part of the letter, not just timing between letters. That works on a mechanical key-and-sounder system at the receiving end, but it's nearly impossible to copy by audio tone.</p>
+
+<h2>International Morse (1865): the simplified rebuild</h2>
+
+<p>By the 1860s, undersea cables were being laid between continents, and operators in different countries were trying to interoperate. American Morse had two problems for that world:</p>
+
+<ul>
+  <li>The internal-letter spaces didn't survive long submarine cables — line capacitance smeared the pauses</li>
+  <li>The third element (the long dah) was hard to send consistently with the variable hardware in use across countries</li>
+</ul>
+
+<p>The 1865 International Telegraph Convention in Paris adopted a cleaned-up code, originally proposed by Friedrich Gerke in 1848. The changes:</p>
+
+<ul>
+  <li><strong>Only two elements</strong> — dit and dah, with a strict 1:3 ratio</li>
+  <li><strong>No internal spaces inside a letter</strong> — every letter is one continuous dit-dah pattern</li>
+  <li><strong>Different patterns</strong> for many letters — about half the alphabet got recoded</li>
+</ul>
+
+<p>This is the code you'll find at <a href="/chart/">our chart</a>, on <a href="/morse-code/">/morse-code/</a>, and in every modern reference.</p>
+
+<h2>The actual differences (selected letters)</h2>
+
+<table>
+  <thead><tr><th>Letter</th><th>American</th><th>International</th></tr></thead>
+  <tbody>
+    <tr><td>C</td><td>·· ·   (with internal space)</td><td><span class="k">-·-·</span></td></tr>
+    <tr><td>F</td><td>·-·</td><td><span class="k">··-·</span></td></tr>
+    <tr><td>J</td><td>-·-·</td><td><span class="k">·---</span></td></tr>
+    <tr><td>L</td><td>— (a single long dah)</td><td><span class="k">·-··</span></td></tr>
+    <tr><td>O</td><td>· ·   (with internal space)</td><td><span class="k">---</span></td></tr>
+    <tr><td>P</td><td>·····</td><td><span class="k">·--·</span></td></tr>
+    <tr><td>Q</td><td>··-·</td><td><span class="k">--·-</span></td></tr>
+    <tr><td>R</td><td>· ··  (with internal space)</td><td><span class="k">·-·</span></td></tr>
+    <tr><td>X</td><td>·-··</td><td><span class="k">-··-</span></td></tr>
+    <tr><td>Y</td><td>·· ··</td><td><span class="k">-·--</span></td></tr>
+    <tr><td>Z</td><td>··· ·</td><td><span class="k">--··</span></td></tr>
+  </tbody>
+</table>
+
+<p>About 56% of the letters changed pattern. E (a single dit) and T (a single dah) stayed the same in both systems — and remain the two shortest letters in International Morse, which is partly why they're the first letters in any sensible learning order.</p>
+
+<h2>Why International won everywhere except US railroads</h2>
+
+<p>By 1900, every European country and most of the British Empire used International Morse. The US lagged for two reasons:</p>
+
+<ol>
+  <li><strong>Installed base.</strong> Western Union and the major US railroads had decades of operators trained on American Morse. Re-training cost more than the interoperability was worth domestically.</li>
+  <li><strong>Sounder vs receiver.</strong> American operators copied Morse by ear from a clicking sounder, not from a tone. Sounders preserved the internal-letter pauses the system depended on; the audio-tone copying that the rest of the world used didn't.</li>
+</ol>
+
+<p>The US Navy switched to International around 1912 (largely driven by the <em>Titanic</em> aftermath and the new global wireless conventions). US railroads held on until the late 1960s. American Morse is now effectively a dead language — kept alive by historical societies and a small group of dedicated railroad-telegraph hobbyists.</p>
+
+<h2>Where the old code still echoes</h2>
+
+<ul>
+  <li><strong>The clicking-sounder sound.</strong> Movies set in the 19th-century American west often use the American Morse "click-click" — the rhythmic chatter you hear in a Western Union office scene is American, not International.</li>
+  <li><strong>Some prosigns.</strong> A few American Morse procedural signals survived into International (notably AR, KN), often with the same pattern.</li>
+  <li><strong>Vocabulary.</strong> Words like "73" (best regards) and "30" (end of message, journalism) came from the Western Union 92 Code, which sat on top of American Morse before the International switchover. See the <a href="/abbreviations/73/">73 page</a> for the origin story.</li>
+</ul>
+
+<h2>The one-line takeaway</h2>
+
+<p>American Morse was a brilliant first draft that worked great on mechanical relays inside a single country. International Morse is the cleaner, audio-friendly rebuild that scaled globally — and that we still use 160 years later because <em>nobody has come up with a better way</em> to encode text into rhythm on a low-bandwidth channel.</p>
+
+<p>For learning: skip American Morse entirely. It's an interesting historical artifact, not a path to anywhere useful. Start with <a href="/chart/">International</a> and the <a href="/practice/">Koch trainer</a>.</p>
+`,
+
   "common-cw-mistakes-and-how-to-fix-them": `
 <p>If you've been sending or copying Morse for more than a few weeks, you've already developed habits. The good ones compound into fluency. The bad ones get harder to unlearn at every higher speed. Here are the ten most common mistakes — from beginner clunkers to intermediate plateaus — with the specific fix for each.</p>
 

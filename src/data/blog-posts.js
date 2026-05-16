@@ -113,6 +113,16 @@ export const posts = [
     ],
   },
   {
+    slug: "international-vs-american-morse",
+    title: "International Morse vs American Morse: what changed and why",
+    excerpt:
+      "American Morse came first, in 1844. By 1865 most of the world had switched to International. Here's what was different, why the change happened, and where the old code still echoes today.",
+    published: "2026-05-16",
+    kind: "compare",
+    minutes: 6,
+    tags: ["history", "compare", "telegraph", "international"],
+  },
+  {
     slug: "common-cw-mistakes-and-how-to-fix-them",
     title: "Common CW mistakes (and how to fix them)",
     excerpt:
