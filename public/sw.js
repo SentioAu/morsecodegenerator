@@ -9,17 +9,30 @@
  *  - For Astro's content-hashed /_astro/* assets we use cache-first.
  *    These URLs are immutable; if they exist in the cache we never
  *    refetch.
- *  - For navigations and any other same-origin GETs we use
- *    stale-while-revalidate: return the cached copy immediately,
- *    refresh the cache in the background. If neither network nor
- *    cache works, fall back to /offline/.
+ *  - For HTML navigations we use **network-first with a 2.5 s
+ *    timeout** and an /offline/ fallback. This is the critical
+ *    freshness setting: an active content site updates daily, and
+ *    stale-while-revalidate (the previous strategy) showed every
+ *    returning visitor yesterday's content first, then refreshed in
+ *    the background. Network-first guarantees the freshest HTML
+ *    whenever the network is healthy, with cache as a fallback for
+ *    slow networks and offline mode.
+ *  - /morse.json is also network-first so data updates propagate fast.
  *  - Cross-origin requests (fonts, ads, analytics) bypass the SW.
  *  - The cache version is bumped on every release so old caches are
- *    purged automatically on activate.
+ *    purged automatically on activate. Bumping the VERSION constant
+ *    is also the canonical way to flush stale HTML for existing
+ *    visitors after a logic change like the freshness fix above.
  */
-const VERSION = "mcg-v3";
+const VERSION = "mcg-v4";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
+
+// HTML navigations get this long to win the race against the cache
+// before we serve the (possibly older) cached entry. 2.5 s is enough
+// to survive a 4G/3G hop on a cold cache; longer than that and the
+// user would notice the delay.
+const HTML_NETWORK_TIMEOUT_MS = 2500;
 
 const SHELL_URLS = [
   "/",
@@ -107,12 +120,14 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // HTML navigations: stale-while-revalidate with /offline/ fallback.
-  // We *always* route HTML through here, including queryful URLs
-  // (PWA start_url is /?utm_source=pwa, share links are /translate/?q=...).
-  // The cache match is path-only so all variants share one shell entry.
+  // HTML navigations: network-first with a 2.5 s timeout and an
+  // /offline/ fallback. This is the freshness contract — an active
+  // content site that updates daily can't serve cached HTML first or
+  // returning visitors always see yesterday's pageview-before-last.
+  // The previous stale-while-revalidate path is preserved (renamed)
+  // for non-HTML same-origin GETs further down.
   if (isHtmlRequest(request)) {
-    event.respondWith(staleWhileRevalidate(request, "/offline/"));
+    event.respondWith(networkFirstNav(request));
     return;
   }
 
@@ -154,6 +169,65 @@ async function networkFirst(request) {
       headers: { "content-type": "application/json" },
     });
   }
+}
+
+/**
+ * Network-first HTML navigation handler.
+ *
+ * The browser tries the network with a HTML_NETWORK_TIMEOUT_MS budget.
+ * On success we update the runtime cache (keyed by bare URL so query
+ * permutations share one entry) and return the fresh response.
+ * On failure (timeout or network error) we fall back to:
+ *   1. the runtime cache (last fresh fetch of this URL)
+ *   2. the install-time shell cache
+ *   3. the pre-cached /offline/ page
+ *   4. a plain-text 503
+ */
+async function networkFirstNav(request) {
+  const cache = await caches.open(RUNTIME_CACHE);
+  const shell = await caches.open(SHELL_CACHE);
+
+  const url = new URL(request.url);
+  const cacheKey = url.origin + url.pathname; // ignore query/hash
+
+  const networkPromise = fetch(request).then((res) => {
+    if (res && res.ok) {
+      cache.put(cacheKey, res.clone()).catch(() => {});
+    }
+    return res;
+  });
+
+  // Race the network against the timeout. A null timeout resolution
+  // means "fall back to cache now" — we still let networkPromise run
+  // to completion so the cache eventually gets updated.
+  let timeoutId;
+  const timeoutPromise = new Promise((resolve) => {
+    timeoutId = setTimeout(() => resolve(null), HTML_NETWORK_TIMEOUT_MS);
+  });
+
+  try {
+    const fresh = await Promise.race([networkPromise, timeoutPromise]);
+    clearTimeout(timeoutId);
+    if (fresh && fresh.ok) return fresh;
+  } catch (_) {
+    clearTimeout(timeoutId);
+    // network errored — fall through to cache lookup
+  }
+
+  // Cache fallback (runtime cache first, then install shell).
+  const cached =
+    (await cache.match(request, { ignoreSearch: true })) ||
+    (await shell.match(request, { ignoreSearch: true }));
+  if (cached) return cached;
+
+  // Offline fallback page (pre-cached at install).
+  const offline = await shell.match("/offline/");
+  if (offline) return offline;
+
+  return new Response("Offline. Please reconnect.", {
+    status: 503,
+    headers: { "content-type": "text/plain" },
+  });
 }
 
 async function staleWhileRevalidate(request, offlineFallback) {
