@@ -79,6 +79,15 @@
 # because the whole point is third-party blogs and classroom sites
 # putting the translator on their page. Everything else stays
 # locked to same-origin via the global rule above.
+#
+# Cloudflare Pages JOINS duplicate header values with commas across
+# matching path globs rather than letting later blocks override
+# earlier ones. The `! Header-Name` directive detaches the inherited
+# value before we set a fresh one. Without `!` the browser would see
+#   Content-Security-Policy: frame-ancestors 'self', frame-ancestors *
+# and apply the stricter directive, breaking third-party embeds.
 /embed.html
+  ! Content-Security-Policy
   Content-Security-Policy: frame-ancestors *
+  ! Cache-Control
   Cache-Control: public, max-age=300
