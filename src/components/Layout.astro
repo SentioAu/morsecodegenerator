@@ -1,4 +1,6 @@
 ---
+import { ogUrlForPath } from "../data/og-pages.js";
+
 const {
   title = "Morse Code Generator",
   description = "Translate text to Morse code instantly, learn the alphabet, and practice common phrases.",
@@ -29,6 +31,13 @@ const path = Astro.url.pathname || "/";
 // Canonical must follow trailingSlash: "always"
 const normalizedPath =
   path === "/" ? "/" : path.endsWith("/") ? path : `${path}/`;
+
+// Open Graph image — per-page PNG when the page is in the curated set
+// (see src/data/og-pages.js), otherwise the static brand SVG. PNG is
+// preferred by Twitter/Facebook/LinkedIn; SVG works elsewhere.
+const ogRelativeUrl = ogUrlForPath(normalizedPath);
+const ogImageUrl = ogRelativeUrl ? `${site}${ogRelativeUrl}` : `${site}/og-image.svg`;
+const ogImageType = ogRelativeUrl ? "image/png" : "image/svg+xml";
 
 // Default canonical (auto)
 const canonicalAuto = `${site}${normalizedPath}`;
@@ -204,7 +213,8 @@ const jsonLd = {
     <meta property="og:site_name" content="Morse Code Generator" />
     <meta property="og:locale" content={ogLocale} />
     <meta property="og:locale:alternate" content={ogLocaleAlt} />
-    <meta property="og:image" content={`${site}/og-image.svg`} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content={ogImageType} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Morse Code Generator preview banner" />
@@ -215,7 +225,7 @@ const jsonLd = {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${site}/og-image.svg`} />
+    <meta name="twitter:image" content={ogImageUrl} />
 
     <meta name="application-name" content="Morse Code Generator" />
     <meta name="apple-mobile-web-app-title" content="MorseGen" />
