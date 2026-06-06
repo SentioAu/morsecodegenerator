@@ -39,6 +39,7 @@ const SHELL_URLS = [
   "/translate/",
   "/decoder/",
   "/practice/",
+  "/flashcards/",
   "/timing-calculator/",
   "/chart/",
   "/cheat-sheet/",
