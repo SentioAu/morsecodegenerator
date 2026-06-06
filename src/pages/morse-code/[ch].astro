@@ -2,6 +2,7 @@
 import Layout from "../../components/Layout.astro";
 import data from "../../data/morse.json";
 import { textToMorse } from "../../utils/morse";
+import { mnemonicFor } from "../../data/mnemonics.js";
 
 // -------------------------------------------------------------------
 // getStaticPaths (MUST be self-contained and not rely on outer helpers)
@@ -61,6 +62,11 @@ const code = map[CH] ?? "";
 
 const isLetter = /^[A-Z]$/.test(CH);
 const isNumber = /^[0-9]$/.test(CH);
+
+// Mnemonic for this character — phrase for letters, pattern rule
+// for digits. Lets each per-character detail page carry genuinely
+// original content beyond the bare Morse pattern.
+const mnemonic = mnemonicFor(CH);
 
 // Title/description (SEO)
 const title = code ? `${CH} in Morse Code (${code})` : `${CH} in Morse Code`;
@@ -234,6 +240,35 @@ const practiceLinks = [
 
   {/* Accessible toast (used by Copy/Listen) */}
   <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+  {mnemonic && mnemonic.kind === "letter" && (
+    <section class="card mnemonic-card">
+      <h2>Memory mnemonic</h2>
+      <p class="mnemonic-phrase"><strong>{mnemonic.phrase}</strong></p>
+      <p class="muted">
+        Say it aloud with the stresses shown. The phrase carries the same
+        dit/dah rhythm as the Morse for <strong>{CH}</strong>. Once the
+        rhythm sticks the dots and dashes follow.
+      </p>
+      <p class="muted micro">
+        This is the widely-circulated Scout-meeting variant. Many teachers
+        develop their own — the words don't matter, only that the chosen
+        phrase carries the same dit/dah rhythm.
+      </p>
+    </section>
+  )}
+
+  {mnemonic && mnemonic.kind === "digit" && (
+    <section class="card mnemonic-card">
+      <h2>The digit rule</h2>
+      <p>{mnemonic.rule}</p>
+      <p class="muted">
+        Digits 1–5 are <em>N dits then (5−N) dahs</em>; 6–0 mirror that with
+        leading dahs. Once you see the rule, all ten digits cost no extra
+        memorisation effort.
+      </p>
+    </section>
+  )}
 
   <section class="card">
     <div class="section-head">
@@ -666,6 +701,18 @@ const practiceLinks = [
 
     @media (max-width: 600px){
       .char-show-actions > *{ flex: 1; }
+    }
+
+    .mnemonic-card .mnemonic-phrase{
+      font-family: var(--font-display);
+      font-size: clamp(22px, 3.4vw, 32px);
+      letter-spacing: 0.01em;
+      color: var(--accent);
+      margin: var(--s-2) 0 var(--s-3);
+    }
+    .mnemonic-card .micro{
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
     }
   </style>
 </Layout>

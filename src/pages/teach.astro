@@ -1,5 +1,6 @@
 ---
 import Layout from "../components/Layout.astro";
+import { letterMnemonics } from "../data/mnemonics.js";
 
 const title = "Teach Morse code: lesson plans for kids, classrooms, and Scouts";
 const description =
@@ -13,39 +14,11 @@ const robots = "index,follow";
 const keywords =
   "teach morse code to kids, morse code lesson plan, scouts morse badge, morse code for children, morse code classroom activity, morse code accessibility, single switch input";
 
-// Per-letter mnemonics. The standard "stress-pattern" mnemonics widely
-// taught at Scout meetings — each phrase carries the same dit/dah
-// rhythm as the letter, so saying it out loud teaches the pattern. We
-// give a handful here as starters; the full canonical set is at the
-// /morse-code/<ch>/ pages.
-const mnemonics = [
-  { letter: "A", code: ".-",   m: "a-LOOOOONG" },
-  { letter: "B", code: "-...", m: "BOOOOOM-ba-da-da" },
-  { letter: "C", code: "-.-.", m: "COO-ca-COO-ca" },
-  { letter: "D", code: "-..",  m: "DOH-ga-da" },
-  { letter: "E", code: ".",    m: "Eh" },
-  { letter: "F", code: "..-.", m: "did-i-DAH-dit" },
-  { letter: "G", code: "--.",  m: "GOOD-GREEEEN-grass" },
-  { letter: "H", code: "....", m: "hippity-hop" },
-  { letter: "I", code: "..",   m: "i-bid" },
-  { letter: "J", code: ".---", m: "ja-MAI-CAA-AA" },
-  { letter: "K", code: "-.-",  m: "KOOOO-ka-KAAAA" },
-  { letter: "L", code: ".-..", m: "to LIIIIIVE for-eveh" },
-  { letter: "M", code: "--",   m: "MOOOO-MOOOO" },
-  { letter: "N", code: "-.",   m: "NOOOO-now" },
-  { letter: "O", code: "---",  m: "OOO-LOOONG-HOOOOLE" },
-  { letter: "P", code: ".--.", m: "ah-POOO-LLOOO-gize" },
-  { letter: "Q", code: "--.-", m: "GOOOD-GOOLLY-Miss-MOOOLLY" },
-  { letter: "R", code: ".-.",  m: "ro-TAAA-tion" },
-  { letter: "S", code: "...",  m: "si-si-si" },
-  { letter: "T", code: "-",    m: "TOOOOO" },
-  { letter: "U", code: "..-",  m: "you-too-WOOOON" },
-  { letter: "V", code: "...-", m: "vic-tor-ee-AAAAA" },
-  { letter: "W", code: ".--",  m: "the WOOORLD WAAAR" },
-  { letter: "X", code: "-..-", m: "XX-ray-i-XXX" },
-  { letter: "Y", code: "-.--", m: "YOU-are-WROOONG-WROOONG" },
-  { letter: "Z", code: "--..", m: "ZOOOO-ZOOOO-zip-zip" },
-];
+// Per-letter mnemonics now live in src/data/mnemonics.js so the
+// /morse-code/<ch>/ detail pages share the same canonical table.
+const mnemonics = Object.entries(letterMnemonics).map(([letter, { code, phrase }]) => ({
+  letter, code, m: phrase,
+}));
 
 const crumbs = [
   { name: "Home", url: `${site}/` },
