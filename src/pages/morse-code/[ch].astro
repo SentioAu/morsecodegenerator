@@ -383,6 +383,7 @@ const practiceLinks = [
       // --- Audio playback (dot/dash) ---
       let playing = false;
       let stopFlag = false;
+      let activeCtx = null; // tracked so visibilitychange/pagehide can close it
 
       listenBtn?.addEventListener("click", async () => {
         const value = String(code || "");
@@ -413,6 +414,7 @@ const practiceLinks = [
         const freq = 700;
 
         const ctx = new Ctx();
+        activeCtx = ctx;
 
         try {
           // iOS/Safari often starts suspended; must resume on gesture
@@ -479,6 +481,7 @@ const practiceLinks = [
         }
 
         try { await ctx.close(); } catch {}
+        if (activeCtx === ctx) activeCtx = null;
 
         // reset UI
         playing = false;
@@ -488,6 +491,18 @@ const practiceLinks = [
         listenBtn.classList.remove("danger");
         toast("Done ✓");
       });
+
+      // Stop ghost audio if the tab is hidden or the page unloads
+      // mid-playback. Matches the cleanup pattern shipped on the
+      // translator/decoder/practice in PR #36.
+      function teardownAudio() {
+        stopFlag = true;
+        if (activeCtx) { try { activeCtx.close(); } catch {} activeCtx = null; }
+      }
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") teardownAudio();
+      });
+      window.addEventListener("pagehide", teardownAudio);
     })();
   </script>
 

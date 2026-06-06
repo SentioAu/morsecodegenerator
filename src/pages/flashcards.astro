@@ -402,12 +402,6 @@ const jsonLd = {
       $("fc-reset")?.addEventListener("click", resetScore);
       $("fc-skip")?.addEventListener("click", skip);
       form?.addEventListener("submit", (e) => { e.preventDefault(); judge(); });
-      // Allow plain Enter to submit even if focus drifts to a checkbox or such
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !board.hidden && document.activeElement === answerInput) {
-          // form submit handles it
-        }
-      });
 
       renderStats();
     })();

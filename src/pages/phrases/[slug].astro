@@ -351,10 +351,18 @@ const jsonLd = {
     // Inline audio playback (shares timing with the translator)
     let audioCtx;
     let stopFlag = false;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      // Browser autoplay policy may leave the context suspended until a
+      // user gesture; resume on each access so the next play() works.
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    }
     async function playMorse(sequence, wpm) {
       if (!sequence) return;
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = audioCtx;
+      const ctx = getAudioCtx();
       const unit = 1200 / wpm;
       let t = ctx.currentTime + 0.05;
       const cleaned = sequence.replace(/[^.\-\/\s]/g, "").trim();
@@ -394,6 +402,18 @@ const jsonLd = {
       await playMorse(value, 18);
       setTimeout(() => (playBtn.innerHTML = old), 600);
     });
+
+    // Stop playback and release the AudioContext when the tab is hidden
+    // or the page is unloaded. Prevents ghost audio in a backgrounded
+    // tab and keeps the per-origin Web Audio budget clean.
+    function teardownAudio() {
+      stopFlag = true;
+      if (audioCtx) { try { audioCtx.close(); } catch {} audioCtx = undefined; }
+    }
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") teardownAudio();
+    });
+    window.addEventListener("pagehide", teardownAudio);
   </script>
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
