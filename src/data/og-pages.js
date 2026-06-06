@@ -27,6 +27,7 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/decoder/") return "Decoder";
   if (p === "/practice/") return "Practice";
   if (p === "/flashcards/") return "Flashcards quiz";
+  if (p === "/random-cw/") return "Practice generator";
   if (p === "/timing-calculator/") return "Tool";
   if (p === "/chart/") return "Reference";
   if (p === "/cheat-sheet/") return "One-page reference";
@@ -57,6 +58,7 @@ export const OG_PAGES = new Set([
   "/decoder/",
   "/practice/",
   "/flashcards/",
+  "/random-cw/",
   "/timing-calculator/",
   "/chart/",
   "/cheat-sheet/",

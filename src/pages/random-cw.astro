@@ -1,0 +1,480 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Random CW practice generator: realistic on-air messages";
+const description =
+  "Generate realistic CW practice text — full QSO openings, CQ calls, contest exchanges, slow-net check-ins — with random call signs, names, locations, and signal reports. Copy or play in your browser.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/random-cw/`;
+const robots = "index,follow";
+const keywords =
+  "cw practice text, random morse code generator, cw qso practice, morse code drill, cw contest exchange, callsign generator practice";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Random CW", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebApplication",
+      "@id": `${canonical}#tool`,
+      name: "Random CW Practice Generator",
+      url: canonical,
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Any (web browser)",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      featureList: [
+        "Full-QSO opening generator with realistic call signs, names, locations, RST",
+        "CQ call generator",
+        "Contest exchange generator (5NN + serial)",
+        "Closing exchange generator (73 SK)",
+        "Audio playback at adjustable WPM",
+        "One-click copy to clipboard",
+      ],
+      publisher: { "@id": `${site}#org` },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Random CW</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Free tool · runs in your browser</p>
+    <h1 class="page-hero-title">Random CW practice generator</h1>
+    <p class="muted page-hero-sub">
+      Real on-air shapes — not random letter groups. Generate a full QSO
+      opening, a CQ call, a contest exchange, or a closing line with random
+      but realistic call signs, names, locations, and signal reports. Copy
+      it for practice text or play it as audio at your target WPM.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn secondary" href="/practice/">Koch trainer</a>
+      <a class="btn ghost" href="/operating/">CW operating reference</a>
+    </div>
+  </header>
+
+  <section class="card rcw-card" aria-labelledby="rcw-setup-h">
+    <h2 id="rcw-setup-h">Pick a shape</h2>
+    <div class="rcw-modes">
+      <label class="rcw-mode">
+        <input type="radio" name="rcw-mode" value="qso-open" checked />
+        <span>
+          <strong>Full QSO opening</strong>
+          <span class="muted">Their call, your call, RST, name, QTH, HW? BK</span>
+        </span>
+      </label>
+      <label class="rcw-mode">
+        <input type="radio" name="rcw-mode" value="cq" />
+        <span>
+          <strong>CQ call</strong>
+          <span class="muted">CQ CQ CQ DE <span class="k">&lt;call&gt;</span> K</span>
+        </span>
+      </label>
+      <label class="rcw-mode">
+        <input type="radio" name="rcw-mode" value="contest" />
+        <span>
+          <strong>Contest exchange</strong>
+          <span class="muted">5NN plus serial or state — under 10 seconds on air</span>
+        </span>
+      </label>
+      <label class="rcw-mode">
+        <input type="radio" name="rcw-mode" value="closing" />
+        <span>
+          <strong>Closing</strong>
+          <span class="muted">TNX FB QSO &lt;name&gt; 73 ES GL SK</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="rcw-controls">
+      <label class="rcw-row">
+        <span>Audio speed</span>
+        <input type="range" id="rcw-wpm" min="10" max="30" step="1" value="18" />
+        <span class="rcw-wpm-val k" aria-live="polite">18 WPM</span>
+      </label>
+    </div>
+  </section>
+
+  <section class="card rcw-card rcw-output-card">
+    <h2>Generated text</h2>
+    <pre class="codeblock rcw-output" id="rcw-output" aria-live="polite">Click "Generate" to start.</pre>
+    <p class="muted micro" id="rcw-meta">&nbsp;</p>
+
+    <div class="rcw-actions">
+      <button class="btn primary" type="button" id="rcw-generate">Generate</button>
+      <button class="btn secondary" type="button" id="rcw-play">▶ Play</button>
+      <button class="btn ghost" type="button" id="rcw-copy">Copy</button>
+    </div>
+    <p class="rcw-toast" id="rcw-toast" aria-live="polite">&nbsp;</p>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">How to use it</p>
+        <h2 class="section-title">A real practice routine</h2>
+      </div>
+    </div>
+    <div class="prose">
+      <ol>
+        <li><strong>Generate a QSO opening.</strong> Copy what you see to paper. Speak it aloud the way it would sound — the call, the DE, the RST. This trains the *shape* before the rhythm.</li>
+        <li><strong>Hit Play.</strong> Listen with eyes closed. Don't write. Just identify the shape: "that was a CQ", "that was an exchange".</li>
+        <li><strong>Generate three more</strong> at the same WPM. After 5 minutes you'll start hearing the boundaries between elements automatically.</li>
+        <li><strong>Bump WPM up by 1.</strong> Repeat. The audio renderer respects WPM exactly so your training matches what real on-air operators send.</li>
+        <li><strong>Once 22 WPM feels natural,</strong> open the <a href="/operating/">operating reference</a>, find a slow-speed net, and call CQ for real.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Related</p>
+        <h2 class="section-title">Other practice surfaces</h2>
+      </div>
+    </div>
+    <div class="pill-grid">
+      <a href="/practice/">Koch audio trainer</a>
+      <a href="/flashcards/">Flashcards (visual + audio)</a>
+      <a href="/translate/">Translator</a>
+      <a href="/decoder/">Decoder</a>
+      <a href="/timing-calculator/">Timing calculator</a>
+      <a href="/operating/">CW operating reference</a>
+      <a href="/abbreviations/">CW abbreviations</a>
+      <a href="/q-codes/">Q-codes</a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <script is:inline>
+    (function () {
+      "use strict";
+
+      // ---------------- Morse map (subset; matches public/morse.json) ----------------
+      const M = {
+        A:".-",   B:"-...", C:"-.-.", D:"-..",  E:".",    F:"..-.",
+        G:"--.",  H:"....", I:"..",   J:".---", K:"-.-",  L:".-..",
+        M:"--",   N:"-.",   O:"---",  P:".--.", Q:"--.-", R:".-.",
+        S:"...",  T:"-",    U:"..-",  V:"...-", W:".--",  X:"-..-",
+        Y:"-.--", Z:"--..",
+        0:"-----",1:".----",2:"..---",3:"...--",4:"....-",
+        5:".....",6:"-....",7:"--...",8:"---..",9:"----.",
+        "?": "..--..", "/": "-..-.", "=": "-...-",
+      };
+
+      // ---------------- Realistic data pools ----------------
+      // Call-sign prefixes are real ITU allocations. We pick from a
+      // common subset so generated calls feel like the ones a learner
+      // would actually hear on the air.
+      const PREFIXES_1 = ["W", "K", "N"];                  // US 1-letter
+      const PREFIXES_2 = ["WA", "WB", "AA", "AB", "KA", "KB", "KC", "KD", "KE"]; // US 2-letter
+      const PREFIXES_DX = ["G", "M", "VE", "VK", "JA", "DL", "F", "I", "EA", "PA", "OK", "ZS", "PY"];
+
+      const NAMES = [
+        "JIM", "TOM", "BOB", "DAVE", "JOHN", "BILL", "STEVE", "MIKE",
+        "RICK", "KEN", "DAN", "PAUL", "GARY", "FRED", "DOUG", "JEFF",
+        "ED", "RAY", "SAM", "WALT", "ART", "HANK", "MARK", "AL",
+        "SARAH", "LINDA", "JEAN", "MARY", "ANNE", "JOY", "LISA", "RUTH",
+      ];
+
+      const QTHS = [
+        "MA", "CT", "NY", "NJ", "PA", "OH", "MI", "IL", "WI", "MN",
+        "IA", "MO", "TX", "OK", "CA", "OR", "WA", "FL", "GA", "AL",
+        "TN", "VA", "NC", "SC",
+      ];
+
+      const QTHS_DX = [
+        "ENGLAND", "GERMANY", "FRANCE", "ITALY", "SPAIN", "JAPAN",
+        "AUSTRALIA", "BRAZIL", "CANADA", "POLAND", "FINLAND",
+      ];
+
+      // ---------------- Generators ----------------
+      const pick = (a) => a[Math.floor(Math.random() * a.length)];
+      function randDigit() { return String(Math.floor(Math.random() * 10)); }
+      function randLetters(n) {
+        let s = "";
+        for (let i = 0; i < n; i++) s += String.fromCharCode(65 + Math.floor(Math.random() * 26));
+        return s;
+      }
+      // US call shape: <prefix><region-digit><1-3 letter suffix>.
+      // DX: <prefix><1 digit><1-2 letter suffix>.
+      function randCallUS() {
+        const pre = Math.random() < 0.55 ? pick(PREFIXES_1) : pick(PREFIXES_2);
+        const reg = randDigit();
+        const sufLen = pre.length === 1 ? 2 + Math.floor(Math.random() * 2) : 2 + Math.floor(Math.random() * 2);
+        return pre + reg + randLetters(sufLen);
+      }
+      function randCallDX() {
+        const pre = pick(PREFIXES_DX);
+        const reg = randDigit();
+        const sufLen = 1 + Math.floor(Math.random() * 2);
+        return pre + reg + randLetters(sufLen);
+      }
+      function randCall() { return Math.random() < 0.75 ? randCallUS() : randCallDX(); }
+      function randRST() {
+        // 599 is by far the most common. We weight it.
+        const r = Math.random();
+        if (r < 0.55) return "599";
+        if (r < 0.75) return "589";
+        if (r < 0.88) return "579";
+        if (r < 0.95) return "569";
+        return String(4 + Math.floor(Math.random() * 2)) + String(5 + Math.floor(Math.random() * 5)) + "9";
+      }
+      function randName() { return pick(NAMES); }
+      function randQTH(isDX) {
+        if (isDX || Math.random() < 0.1) return pick(QTHS_DX);
+        return pick(QTHS);
+      }
+      function randSerial() {
+        // 001..999 with leading zeros.
+        const n = 1 + Math.floor(Math.random() * 999);
+        return n.toString().padStart(3, "0");
+      }
+
+      // ---------------- Templates ----------------
+      // The "=" character is the BT prosign in spoken CW; we use it as
+      // a paragraph break in the printable form, exactly as operators
+      // type it in real CW logs.
+      function tmplQsoOpen() {
+        const them = randCall();
+        const me = randCall();
+        const rst = randRST();
+        const name = randName();
+        const qth = randQTH(/^[GMFI]|VK|JA|DL|EA|PA|OK|ZS|PY/.test(me));
+        return {
+          text: `${them} DE ${me} ${me} = UR RST ${rst} = NAME ${name} = QTH ${qth} = HW? BK`,
+          meta: `Calling ${them} from ${me} — name ${name}, QTH ${qth}, sending ${rst}`,
+        };
+      }
+      function tmplCq() {
+        const me = randCall();
+        return {
+          text: `CQ CQ CQ DE ${me} ${me} ${me} K`,
+          meta: `CQ from ${me}`,
+        };
+      }
+      function tmplContest() {
+        const them = randCall();
+        const me = randCall();
+        const serial = randSerial();
+        return {
+          text: `${them} DE ${me} 5NN ${serial} 5NN ${serial} K`,
+          meta: `Contest exchange from ${me} to ${them}, serial ${serial}`,
+        };
+      }
+      function tmplClosing() {
+        const them = randCall();
+        const me = randCall();
+        const name = randName();
+        return {
+          text: `${them} DE ${me} TNX FB QSO ${name} 73 ES GL SK ${them} DE ${me}`,
+          meta: `Closing from ${me} to ${them}`,
+        };
+      }
+      const TEMPLATES = {
+        "qso-open": tmplQsoOpen,
+        "cq": tmplCq,
+        "contest": tmplContest,
+        "closing": tmplClosing,
+      };
+
+      // ---------------- DOM ----------------
+      const out = document.getElementById("rcw-output");
+      const meta = document.getElementById("rcw-meta");
+      const genBtn = document.getElementById("rcw-generate");
+      const playBtn = document.getElementById("rcw-play");
+      const copyBtn = document.getElementById("rcw-copy");
+      const toast = document.getElementById("rcw-toast");
+      const wpmInput = document.getElementById("rcw-wpm");
+      const wpmVal = document.querySelector(".rcw-wpm-val");
+
+      let current = null;
+      let wpm = 18;
+
+      function getMode() {
+        const r = document.querySelector('input[name="rcw-mode"]:checked');
+        return r ? r.value : "qso-open";
+      }
+      function generate() {
+        const fn = TEMPLATES[getMode()] || tmplQsoOpen;
+        current = fn();
+        out.textContent = current.text;
+        meta.textContent = current.meta;
+        toast.textContent = " ";
+      }
+      function flashToast(msg) {
+        toast.textContent = msg;
+        setTimeout(() => { toast.textContent = " "; }, 1800);
+      }
+      function copy() {
+        if (!current) return;
+        navigator.clipboard?.writeText(current.text).then(
+          () => flashToast("Copied to clipboard"),
+          () => flashToast("Copy failed — select and Ctrl+C")
+        );
+      }
+
+      // ---------------- Audio ----------------
+      let audioCtx = null;
+      function getAudioCtx() {
+        if (!audioCtx) {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return null;
+          audioCtx = new Ctx();
+        }
+        if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
+        return audioCtx;
+      }
+      function teardownAudio() {
+        if (audioCtx) { try { audioCtx.close(); } catch {} audioCtx = null; }
+      }
+      function play() {
+        if (!current) { flashToast("Generate something first"); return; }
+        const ctx = getAudioCtx();
+        if (!ctx) { flashToast("Audio not supported in this browser"); return; }
+        const unit = 1.2 / wpm; // seconds
+        const freq = 650;
+        let t = ctx.currentTime + 0.08;
+        const text = current.text.toUpperCase();
+        for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          if (ch === " ") { t += 3 * unit; continue; }
+          if (ch === "/") {
+            // Word boundary marker if it appears alone, otherwise it's
+            // the slash prosign — we emit it as the prosign here.
+          }
+          const pattern = M[ch];
+          if (!pattern) continue;
+          for (const sym of pattern) {
+            const dur = sym === "-" ? 3 * unit : unit;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.0001, t);
+            gain.gain.exponentialRampToValueAtTime(0.18, t + 0.008);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(t);
+            osc.stop(t + dur + 0.01);
+            t += dur + unit; // intra-character gap
+          }
+          // Inter-letter gap = 3u; we already added 1u after last element
+          t += 2 * unit;
+        }
+      }
+
+      // ---------------- Wire-up ----------------
+      genBtn?.addEventListener("click", generate);
+      playBtn?.addEventListener("click", play);
+      copyBtn?.addEventListener("click", copy);
+
+      if (wpmInput) {
+        wpmInput.addEventListener("input", () => {
+          wpm = Number(wpmInput.value) || 18;
+          if (wpmVal) wpmVal.textContent = wpm + " WPM";
+        });
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") teardownAudio();
+      });
+      window.addEventListener("pagehide", teardownAudio);
+
+      // Auto-generate the first one so the page lands feeling alive.
+      generate();
+    })();
+  </script>
+
+  <style>
+    .rcw-card{ margin-top: var(--s-5); }
+    .rcw-card h2{ margin-top: 0; }
+
+    .rcw-modes{
+      display: grid;
+      gap: var(--s-2);
+      margin: var(--s-3) 0;
+    }
+    .rcw-mode{
+      display: flex;
+      align-items: flex-start;
+      gap: var(--s-3);
+      padding: var(--s-3);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .rcw-mode:has(input:checked){
+      background: var(--surface-2);
+      border-color: var(--accent-line);
+    }
+    .rcw-mode input{ width: 18px; height: 18px; margin-top: 2px; flex: 0 0 auto; }
+    .rcw-mode > span{ display: flex; flex-direction: column; gap: 2px; }
+    .rcw-mode .muted{ font-size: var(--fs-sm); }
+
+    .rcw-controls{
+      margin-top: var(--s-3);
+      padding-top: var(--s-3);
+      border-top: 1px solid var(--line);
+    }
+    .rcw-row{
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+    }
+    .rcw-row > span:first-child{
+      font-size: var(--fs-sm);
+      color: var(--text-muted);
+      min-width: 8ch;
+    }
+    .rcw-row input[type="range"]{ flex: 1 1 200px; min-width: 160px; }
+    .rcw-wpm-val{ font-size: var(--fs-sm); min-width: 5ch; text-align: right; color: var(--text); }
+
+    .rcw-output-card{ background: var(--surface); }
+    .rcw-output{
+      font-size: var(--fs-md);
+      line-height: 1.7;
+      letter-spacing: 0.03em;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .rcw-actions{
+      display: flex;
+      gap: var(--s-2);
+      margin-top: var(--s-3);
+      flex-wrap: wrap;
+    }
+    .rcw-toast{
+      margin: var(--s-3) 0 0;
+      min-height: var(--s-4);
+      font-size: var(--fs-sm);
+      color: var(--good);
+    }
+  </style>
+</Layout>
