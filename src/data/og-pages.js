@@ -33,6 +33,7 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/glossary/") return "Glossary";
   if (p === "/faq/") return "FAQ";
   if (p === "/history/") return "History";
+  if (p === "/operating/") return "CW operating";
   if (p === "/about/") return "About";
   if (p === "/sponsor/") return "Partner";
   if (p === "/disclosure/") return "Disclosure";
@@ -68,6 +69,7 @@ export const OG_PAGES = new Set([
   "/morse-code/punctuation/",
   "/morse-code/words/",
   "/phrases/",
+  "/operating/",
   "/q-codes/",
   "/abbreviations/",
   "/prosigns/",

@@ -1,0 +1,324 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "CW operating: band plan, slow-speed nets, and your first QSO";
+const description =
+  "Where CW lives on every amateur band, how to find a slow-speed QSO, the shape of a real on-air contact, and the clubs every new CW operator should know about. Reference for first-time CW operators.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/operating/`;
+const robots = "index,follow";
+const keywords =
+  "cw band plan, cw operating, slow speed net, ham radio cw, morse code radio, skcc, fists, cwops, qrp calling frequencies, first cw qso";
+
+// HF CW band plan. Frequencies are the canonical CW segments per the
+// IARU Region 1/2/3 band plans + ARRL US bandplan. CW is technically
+// allowed across the whole exclusive CW/data sub-band, but the segments
+// here are where CW activity actually clusters. QRP calling frequencies
+// are the de-facto worldwide gathering spots for low-power operators.
+const bands = [
+  { band: "160m", segment: "1.800 – 1.840 MHz", qrp: "1.810",  note: "Best at night. Antennas are huge — most operators use loops or end-feds." },
+  { band: "80m",  segment: "3.500 – 3.600 MHz", qrp: "3.560",  note: "Regional ragchew band. Heavy QRN in summer." },
+  { band: "60m",  segment: "Channelised (5 channels US)", qrp: "—", note: "Channelised in most countries; very little CW. Skip for normal CW operating." },
+  { band: "40m",  segment: "7.000 – 7.125 MHz (US Extra)", qrp: "7.030", note: "The all-rounder. Day local, night DX. Where most new ops first get on the air." },
+  { band: "30m",  segment: "10.100 – 10.150 MHz", qrp: "10.106", note: "CW + digital only. Reliable propagation; no SSB voice interference." },
+  { band: "20m",  segment: "14.000 – 14.150 MHz", qrp: "14.060", note: "The DX band. Open across daylight hours. Where the contest action lives." },
+  { band: "17m",  segment: "18.068 – 18.110 MHz", qrp: "18.086", note: "Quieter than 20m. Excellent for DX without the crowd." },
+  { band: "15m",  segment: "21.000 – 21.200 MHz", qrp: "21.060", note: "DX band, sun-cycle dependent." },
+  { band: "12m",  segment: "24.890 – 24.930 MHz", qrp: "24.906", note: "Narrow band. Sometimes spectacular when open." },
+  { band: "10m",  segment: "28.000 – 28.300 MHz", qrp: "28.060", note: "Pure-magic when the sun cycle is up. Often dead between cycles." },
+  { band: "6m",   segment: "50.000 – 50.100 MHz", qrp: "50.096", note: "The 'magic band'. Mostly sporadic-E and meteor scatter for CW." },
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Operating", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      "@id": canonical,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "en",
+      isPartOf: { "@id": `${site}#website` },
+      publisher: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "Where is CW on 20 metres?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "20 metre CW activity clusters between 14.000 and 14.060 MHz. 14.060 MHz is the international QRP (low-power) calling frequency where many slow-speed and beginner operators gather.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What's the best band for a brand-new CW operator?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "40 metres (7.000–7.125 MHz, with US Extras able to use the full segment) is the most forgiving. It works during the day for local QSOs and opens for medium-distance contacts at night. SKCC slow-speed activity clusters around 7.055 MHz.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Which CW club should I join first?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "The Straight Key Century Club (SKCC) is the best first stop: free to join, active on every band, and explicitly welcomes slow-speed operators. FISTS CW Club and CWops are the other two big international communities, each with strong learner programmes.",
+          },
+        },
+      ],
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  robots={robots}
+  keywords={keywords}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Operating</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">CW reference · for licensed amateurs</p>
+    <h1 class="page-hero-title">CW operating: where to go, what to send, who to talk to</h1>
+    <p class="muted page-hero-sub">
+      The bit that almost every introductory site skips. Where CW lives on each
+      band, how to find a slow-speed QSO, the shape of a real on-air contact,
+      and which clubs to join the day after you pass your licence exam.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/blog/how-to-send-morse-code/">Beginner keying guide</a>
+      <a class="btn secondary" href="/timing-calculator/">Timing calculator</a>
+      <a class="btn ghost" href="/abbreviations/">CW abbreviations</a>
+    </div>
+  </header>
+
+  <section class="card op-card">
+    <h2>Where CW lives on each band</h2>
+    <p>
+      CW is technically permitted across the whole exclusive CW/data sub-band
+      on every amateur HF band, but activity <em>actually</em> clusters in the
+      ranges below. <span class="k">QRP</span> is the de-facto worldwide
+      low-power calling frequency — newcomers and slow-speed operators
+      gather there.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Band</th><th>CW activity (MHz)</th><th>QRP calling</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          {bands.map((b) => (
+            <tr>
+              <td><strong>{b.band}</strong></td>
+              <td class="k">{b.segment}</td>
+              <td class="k">{b.qrp}</td>
+              <td class="muted">{b.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted micro">
+      Frequencies follow the ARRL US band plan and IARU Region 1/2/3 conventions. Always check
+      your country's regulations before transmitting — UK Extras have different sub-band edges
+      than US Extras; some countries restrict the lower edges to higher licence classes.
+    </p>
+  </section>
+
+  <section class="card op-card">
+    <h2>How to find a slow QSO</h2>
+    <p>
+      Calling CQ at 15 WPM as a brand-new operator into an empty band is
+      demoralising. Better to <em>park</em> on a known slow-speed gathering
+      spot and answer someone else first.
+    </p>
+
+    <h3>Slow-speed nets and gathering spots</h3>
+    <ul>
+      <li>
+        <strong>SKCC Sked Page</strong> — the Straight Key Century Club runs
+        the largest slow-speed community on HF. The sked page (visible to
+        members) lets you flag your call as "QRS sked wanted" and find a
+        partner without calling cold. Activity clusters around
+        <span class="k">1.820, 3.550, 7.055, 14.050, 21.050, 28.050</span> MHz.
+      </li>
+      <li>
+        <strong>FISTS CW Club</strong> — the original CW friendliness society.
+        Watering-hole frequencies sit ~5 kHz above SKCC: <span class="k">7.058, 14.058, 21.058, 28.058</span> MHz.
+        FISTS runs scheduled slow-speed nets on most continents — check their
+        site for current times.
+      </li>
+      <li>
+        <strong>CWops CW Academy (CWA)</strong> — eight-week structured online
+        course (free; multiple sessions a year). Pairs each student with a
+        cohort plus an advisor who runs real on-air practice sessions. The
+        single highest-leverage thing a new operator can do.
+      </li>
+      <li>
+        <strong>ARRL CW Slow Speed Net</strong> — the W1AW slow-speed code
+        practice runs at the ARRL HQ station at scheduled times daily.
+        Listening practice with predictable content; not interactive but
+        excellent for calibrating ear copy.
+      </li>
+    </ul>
+    <p class="muted micro">
+      Net times and exact frequencies shift; treat the values above as starting
+      points and cross-check with each club's current schedule before sitting
+      down.
+    </p>
+  </section>
+
+  <section class="card op-card">
+    <h2>The shape of a real CW QSO</h2>
+    <p>
+      Almost every contact follows the same skeleton. Once you've heard it twice
+      it stops being mysterious. Memorise this template before you tune up.
+    </p>
+
+    <h3>1. Calling CQ (or answering one)</h3>
+    <pre class="codeblock"><code>CQ CQ CQ DE W1AW W1AW W1AW K</code></pre>
+    <p class="muted">
+      Three CQs, the prosign DE (= "from"), your call sent three times,
+      then K (= "any station, go ahead"). KN at the end means
+      "only the station I'm working may reply".
+    </p>
+
+    <h3>2. The first turn — call signs + signal report</h3>
+    <pre class="codeblock"><code>W1AW DE K1ABC K1ABC = UR RST 599 5NN = BT
+NAME JIM JIM = QTH MA MA = HW? BK</code></pre>
+    <p class="muted">
+      Their call, DE, your call (twice for clarity), the prosign BT (= paragraph
+      break, often written =), a 599 signal report (the "5NN" is the
+      contest-friendly short form), name, location, HW? (= "how is your
+      copy?"), BK (= over).
+    </p>
+
+    <h3>3. The reply</h3>
+    <pre class="codeblock"><code>K1ABC DE W1AW = TNX FB RPT JIM = UR RST 579 = BT
+NAME HIRAM HIRAM = QTH CT CT = HW? BK</code></pre>
+
+    <h3>4. Wrap-up</h3>
+    <pre class="codeblock"><code>W1AW DE K1ABC = TNX FB QSO HIRAM = 73 ES GL = SK
+W1AW DE K1ABC</code></pre>
+    <p class="muted">
+      73 (= best regards), ES (= and), GL (= good luck), SK (= end of contact).
+      Then a final ID with both call signs so anyone listening knows the QSO
+      closed cleanly.
+    </p>
+
+    <p>
+      Look up the unfamiliar shorthand on the
+      <a href="/abbreviations/">CW abbreviations reference</a> and the
+      <a href="/q-codes/">Q-codes reference</a>. The
+      <a href="/prosigns/">prosigns reference</a> covers
+      AR / BT / SK / KN / K.
+    </p>
+  </section>
+
+  <section class="card op-card">
+    <h2>On-air etiquette in five lines</h2>
+    <ol>
+      <li><strong>Always send QRL? before calling CQ</strong> on a clear-sounding frequency. A faint DX station you can't hear may be working someone there. Wait at least three seconds; absence of "C" or "QRL" is your green light.</li>
+      <li><strong>Match the speed of the station you're answering.</strong> If they call at 15 WPM, reply at 15 WPM. If you can only copy at 12, send "QRS PSE" (please slow down) on your first transmission.</li>
+      <li><strong>Don't tune up on top of an active QSO.</strong> Tune into a dummy load, or at least move 1–2 kHz off any signal you hear.</li>
+      <li><strong>End with both call signs.</strong> A clean "W1AW DE K1ABC SK" tells anyone who tuned in mid-QSO that the frequency just freed up.</li>
+      <li><strong>Log every contact.</strong> Even on paper. Future-you will want the QSL data; future-them might want it for an award.</li>
+    </ol>
+  </section>
+
+  <section class="card op-card">
+    <h2>Contesting in one paragraph</h2>
+    <p>
+      CW contests are the same shape as a normal QSO compressed to its bones.
+      The exchange is fixed (usually just <span class="k">5NN</span> + a
+      serial number or state/province), the QSO lasts 8–15 seconds, and
+      operators stay on a single frequency calling CQ or run-and-pounce
+      tuning across the band. New operators do well to <em>listen</em> to a
+      contest weekend first, then jump in for the second half with a goal of
+      ten QSOs. ARRL Sweepstakes (November), CQ WW CW (late November), and
+      the ARRL DX CW contest (February) are the three big international ones.
+    </p>
+  </section>
+
+  <section class="card op-card">
+    <h2>Find a club</h2>
+    <ul>
+      <li><strong>SKCC</strong> (Straight Key Century Club) — straight key + bug + sideswiper community. Free, ~30 000 members. Friendly to slow-speed operators.</li>
+      <li><strong>FISTS CW Club</strong> — original CW-friendliness society. Modest annual dues; runs a strong mentor program.</li>
+      <li><strong>CWops</strong> — slightly higher speed bar; runs the free CW Academy beginner classes.</li>
+      <li><strong>ARRL Club Locator</strong> — find a physical amateur radio club in your area. Many sponsor CW nets, Field Day operations, and informal mentorship.</li>
+      <li><strong>RAC, RSGB, DARC, JARL</strong> — your national amateur radio society. Most run a CW interest group or sponsor a CW net.</li>
+    </ul>
+  </section>
+
+  <section class="card op-card">
+    <h2>After your first QSO</h2>
+    <ol>
+      <li>Log it. Paper, ADIF, LoTW — any format. You'll want this data.</li>
+      <li>Send a QSL card (electronic or paper). Many operators set "first CW QSO" as a treasured exchange.</li>
+      <li>Aim for ten contacts at the same speed before pushing speed up. Comfort matters more than WPM in the first month on the air.</li>
+      <li>Add 1 WPM every two weeks. The <a href="/timing-calculator/">timing calculator</a> shows what your character + effective speed actually translate to in milliseconds.</li>
+      <li>Sign up for CW Academy. The single biggest accelerator.</li>
+    </ol>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Related</p>
+        <h2 class="section-title">Keep reading</h2>
+      </div>
+    </div>
+    <div class="pill-grid">
+      <a href="/blog/how-to-send-morse-code/">How to send Morse code</a>
+      <a href="/blog/common-cw-mistakes-and-how-to-fix-them/">Common CW mistakes</a>
+      <a href="/blog/farnsworth-timing-explained/">Farnsworth timing</a>
+      <a href="/blog/best-morse-code-keys-buyers-guide/">Buyer's guide: keys</a>
+      <a href="/q-codes/">Q-codes</a>
+      <a href="/abbreviations/">CW abbreviations</a>
+      <a href="/prosigns/">Prosigns</a>
+      <a href="/practice/">Koch trainer</a>
+      <a href="/flashcards/">Flashcards quiz</a>
+      <a href="/cheat-sheet/">One-page cheat sheet</a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .op-card{ margin-top: var(--s-4); }
+    .op-card h2{ margin-top: 0; }
+    .op-card h3{ margin-top: var(--s-4); }
+    .op-card pre.codeblock{ margin: var(--s-2) 0 var(--s-3); }
+    .op-card .micro{ font-size: var(--fs-xs); margin-top: var(--s-3); }
+  </style>
+</Layout>
