@@ -46,6 +46,7 @@ const SHELL_URLS = [
   "/morse-code/",
   "/phrases/",
   "/operating/",
+  "/teach/",
   "/faq/",
   "/disclosure/",
   "/offline/",

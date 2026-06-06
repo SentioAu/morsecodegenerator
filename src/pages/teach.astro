@@ -1,0 +1,316 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Teach Morse code: lesson plans for kids, classrooms, and Scouts";
+const description =
+  "A real guide for the adults: 45-minute classroom lesson plan, kids' mnemonic alphabet, Scouts/Cubs Morse badge requirements, accessibility uses, and ten classroom-tested activities. Free, printable-friendly.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/teach/`;
+const robots = "index,follow";
+const keywords =
+  "teach morse code to kids, morse code lesson plan, scouts morse badge, morse code for children, morse code classroom activity, morse code accessibility, single switch input";
+
+// Per-letter mnemonics. The standard "stress-pattern" mnemonics widely
+// taught at Scout meetings — each phrase carries the same dit/dah
+// rhythm as the letter, so saying it out loud teaches the pattern. We
+// give a handful here as starters; the full canonical set is at the
+// /morse-code/<ch>/ pages.
+const mnemonics = [
+  { letter: "A", code: ".-",   m: "a-LOOOOONG" },
+  { letter: "B", code: "-...", m: "BOOOOOM-ba-da-da" },
+  { letter: "C", code: "-.-.", m: "COO-ca-COO-ca" },
+  { letter: "D", code: "-..",  m: "DOH-ga-da" },
+  { letter: "E", code: ".",    m: "Eh" },
+  { letter: "F", code: "..-.", m: "did-i-DAH-dit" },
+  { letter: "G", code: "--.",  m: "GOOD-GREEEEN-grass" },
+  { letter: "H", code: "....", m: "hippity-hop" },
+  { letter: "I", code: "..",   m: "i-bid" },
+  { letter: "J", code: ".---", m: "ja-MAI-CAA-AA" },
+  { letter: "K", code: "-.-",  m: "KOOOO-ka-KAAAA" },
+  { letter: "L", code: ".-..", m: "to LIIIIIVE for-eveh" },
+  { letter: "M", code: "--",   m: "MOOOO-MOOOO" },
+  { letter: "N", code: "-.",   m: "NOOOO-now" },
+  { letter: "O", code: "---",  m: "OOO-LOOONG-HOOOOLE" },
+  { letter: "P", code: ".--.", m: "ah-POOO-LLOOO-gize" },
+  { letter: "Q", code: "--.-", m: "GOOOD-GOOLLY-Miss-MOOOLLY" },
+  { letter: "R", code: ".-.",  m: "ro-TAAA-tion" },
+  { letter: "S", code: "...",  m: "si-si-si" },
+  { letter: "T", code: "-",    m: "TOOOOO" },
+  { letter: "U", code: "..-",  m: "you-too-WOOOON" },
+  { letter: "V", code: "...-", m: "vic-tor-ee-AAAAA" },
+  { letter: "W", code: ".--",  m: "the WOOORLD WAAAR" },
+  { letter: "X", code: "-..-", m: "XX-ray-i-XXX" },
+  { letter: "Y", code: "-.--", m: "YOU-are-WROOONG-WROOONG" },
+  { letter: "Z", code: "--..", m: "ZOOOO-ZOOOO-zip-zip" },
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Teach Morse", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      "@id": canonical,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "en",
+      isPartOf: { "@id": `${site}#website` },
+      publisher: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "HowTo",
+      name: "Teach Morse code in a 45-minute classroom lesson",
+      description:
+        "A tested classroom plan for teaching Morse code to learners aged 8 and up in a single 45-minute session.",
+      totalTime: "PT45M",
+      tool: [
+        { "@type": "HowToTool", name: "Printable Morse chart" },
+        { "@type": "HowToTool", name: "A whistle, torch, or buzzer per pair" },
+        { "@type": "HowToTool", name: "Paper and pencil per learner" },
+      ],
+      step: [
+        { "@type": "HowToStep", name: "Hook (5 min)", text: "Open with the SOS pattern on a flashlight or buzzer. Ask the class to guess what it means and why it was chosen. The unmistakable rhythm hooks attention; the back-story carries the first lesson." },
+        { "@type": "HowToStep", name: "Pattern not letter (10 min)", text: "Teach E (·), T (-), A (·-), and N (-·) only. Demonstrate the rhythm by saying each one aloud. Ask learners to write 'TEA' (- · ·-) on paper using dots and dashes." },
+        { "@type": "HowToStep", name: "Mnemonic alphabet (10 min)", text: "Hand out the mnemonic table. Have learners say S as 'si-si-si' and O as 'OOO-LOOONG-HOOOOLE' until the rhythms stick. Most kids latch onto five to seven mnemonics in one sitting." },
+        { "@type": "HowToStep", name: "Partner exchange (15 min)", text: "Pair learners up. Each pair gets a whistle/torch/buzzer and the printable chart. They take turns sending short three-letter words while the partner copies. Move around the room helping with rhythm." },
+        { "@type": "HowToStep", name: "Wrap-up (5 min)", text: "Each learner sends their initials as a final exchange. Send a class SOS together at the end as a memory marker." },
+      ],
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} robots={robots} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Teach Morse</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">For the adults · classroom + Scouts + accessibility</p>
+    <h1 class="page-hero-title">Teach Morse code: lesson plans that actually work</h1>
+    <p class="muted page-hero-sub">
+      A real guide for parents, teachers, and Scout leaders. The hook that
+      makes 8-year-olds care about dots and dashes, a 45-minute classroom
+      plan you can run tomorrow, the mnemonics that get a kid to "I know
+      the alphabet" in one sitting, and an honest section on Morse as an
+      accessibility input device.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="#lesson-plan">Lesson plan</a>
+      <a class="btn secondary" href="/chart/">Printable chart</a>
+      <a class="btn ghost" href="/flashcards/">Flashcards quiz</a>
+    </div>
+  </header>
+
+  <section class="card t-card">
+    <h2>Why teach Morse code?</h2>
+    <p>
+      Honest answer first: not because anyone needs to send Morse on a key for
+      work. The real reasons hold up:
+    </p>
+    <ul>
+      <li><strong>It's a complete signalling system kids can master.</strong> 36 letters and 10 digits. No more, no less. A 9-year-old can fluently send their own name within an hour. Few subjects offer that kind of closed-loop achievement.</li>
+      <li><strong>It teaches rhythm and listening.</strong> Decoding Morse is pure ear training — pattern recognition under noise. This carries directly into musical training and language learning.</li>
+      <li><strong>It bridges to electronics and radio.</strong> A buzzer + battery + key on a piece of cardboard is a working signalling system. From there, a few short jumps lead to amateur radio, electronics, and computer programming.</li>
+      <li><strong>It's a real accessibility input.</strong> Single-switch Morse remains a working method for people with severe motor disabilities to type. Teaching it matters for that reason alone.</li>
+      <li><strong>It's a portable secret.</strong> Tapping a code on a desk in a noisy room is a real, useful skill for two people who both know it. Children find this delightful.</li>
+    </ul>
+  </section>
+
+  <section class="card t-card">
+    <h2>What ages work for what approach?</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Age</th><th>Approach</th><th>Goal in one session</th></tr></thead>
+        <tbody>
+          <tr><td>5–7</td><td>Game and song only. SOS as a "secret signal". Light flashes.</td><td>Send SOS with a torch.</td></tr>
+          <tr><td>8–10</td><td>Mnemonic alphabet + paired sending exercise.</td><td>Send and copy their initials.</td></tr>
+          <tr><td>11–14</td><td>Full alphabet via flashcards + buzzer practice.</td><td>Copy a five-letter word at 5 WPM.</td></tr>
+          <tr><td>15+</td><td>Same as adults: Koch trainer audio + timing calculator.</td><td>10–15 letters memorised; first audio copy.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card t-card" id="lesson-plan">
+    <h2>45-minute classroom lesson plan</h2>
+    <p class="muted">Tested with mixed-ability groups aged 8–12. Works in a school classroom, library after-school, Cub Scout meeting, or homeschool group.</p>
+
+    <h3>You need</h3>
+    <ul>
+      <li>Printable Morse chart per learner — the <a href="/chart/">/chart/ page</a> prints clean on A4 / US Letter.</li>
+      <li>One whistle, torch, or buzzer per pair of learners.</li>
+      <li>Paper and pencil per learner.</li>
+      <li>Optional: laptop or tablet with the <a href="/translate/">translator</a> open for the wrap-up demo.</li>
+    </ul>
+
+    <h3>Run-of-show</h3>
+    <ol>
+      <li><strong>5 min — Hook.</strong> Walk in, turn off the lights, flash <span class="k">··· --- ···</span> on a torch. Ask: "What did I just say? When would you use it?" Five minutes of conversation about distress signals carries the rest of the lesson.</li>
+      <li><strong>10 min — Pattern not letter.</strong> Whiteboard: E = · &nbsp; T = - &nbsp; A = ·- &nbsp; N = -·. Write the word <span class="k">TEA</span> as <span class="k">- · ·-</span>. Have the class say it aloud as "DAH di di-DAH". Pattern first; letter second.</li>
+      <li><strong>10 min — Mnemonics.</strong> Hand out the mnemonic table from the section below. Pick five letters and chant them as a class. Add a sixth and check that the first five still stick.</li>
+      <li><strong>15 min — Partner exchange.</strong> Pair the learners. One sends, the other copies, then swap. Start with three-letter words from the chart. Move around the room checking rhythm: <em>dits are equal, dahs are three times as long, leave a clear gap between letters</em>.</li>
+      <li><strong>5 min — Wrap-up.</strong> Each learner sends their initials to the whole class. Finish with a class SOS together (everyone flashes together if there are enough torches). That shared moment is the memory marker that makes the lesson stick.</li>
+    </ol>
+
+    <h3>What goes wrong, and how to fix it</h3>
+    <ul>
+      <li><strong>Learners send dots and dashes at random tempo.</strong> Stop, clap a steady beat, ask them to send only E and T to your clap until the rhythm is in their hand.</li>
+      <li><strong>Pairs argue about correctness.</strong> Refer to the printed chart as the umpire. "The chart wins" prevents fights and reinforces that the chart is the canonical reference.</li>
+      <li><strong>Fast learners get bored.</strong> Hand them a longer word (six letters) or the digit table.</li>
+      <li><strong>Struggling learners shut down.</strong> Quietly switch them to a torch-flash exchange instead of writing. Visual feedback works for many learners who freeze in front of paper.</li>
+    </ul>
+  </section>
+
+  <section class="card t-card">
+    <h2>The kid mnemonic alphabet</h2>
+    <p>
+      Each letter is paired with a phrase that has the same dit/dah rhythm as
+      the Morse code for that letter. Say the phrase aloud with the right
+      stresses and the rhythm sticks faster than memorising dots and dashes.
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Letter</th><th>Code</th><th>Say it like</th></tr></thead>
+        <tbody>
+          {mnemonics.map((row) => (
+            <tr>
+              <td><strong>{row.letter}</strong></td>
+              <td class="k">{row.code}</td>
+              <td>{row.m}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">
+      These are starters used widely in Scout meetings; many leaders develop
+      their own variants. The exact phrase doesn't matter — what matters is
+      that the chosen phrase carries the same dit/dah rhythm as the letter.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Scouts, Cubs, and earning a Morse badge</h2>
+    <p>
+      Most national Scout associations include Morse code as part of a
+      Signaller, Communicator, or Radio Communicator badge requirement.
+      Specifics vary; the typical requirements look like:
+    </p>
+    <ul>
+      <li>Demonstrate the SOS signal using <em>two</em> different methods (e.g. torch + whistle).</li>
+      <li>Send and receive a short message of around 6 letters using Morse code.</li>
+      <li>Explain when Morse code is and isn't still used today.</li>
+      <li>Identify three call signs spelled out in NATO phonetic alphabet.</li>
+    </ul>
+    <p>
+      For a Cub or Beaver Scout, focus on the SOS hook and a torch-flash
+      partner exercise. For an older Scout going for a Communicator badge,
+      add receiving practice using the <a href="/flashcards/">flashcards quiz</a>
+      and an audio listen using the <a href="/practice/">Koch trainer</a>.
+    </p>
+    <p>
+      Always check the current requirements with your specific Scout
+      association — Scouts UK, BSA, Scouts Australia, and Scouts Canada each
+      have their own current badge sheets, and these change every few years.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Morse code as accessibility input</h2>
+    <p>
+      Single-switch Morse is one of the working solutions for people with
+      severe motor disabilities to type without a keyboard. Two-switch Morse
+      (dit-switch and dah-switch) gives roughly the same throughput as voice
+      dictation at trained speed, without the privacy and ambient-noise
+      problems of voice. One-switch Morse uses the duration of a single
+      press to distinguish dit from dah — slower, but workable for users
+      with only one reliable input.
+    </p>
+    <h3>Working solutions to be aware of</h3>
+    <ul>
+      <li><strong>Google Gboard Morse keyboard</strong> — built into Android. Two-switch Morse with external switches plugged into the headphone jack or paired via Bluetooth.</li>
+      <li><strong>Apple Switch Control on iOS / iPadOS</strong> — supports Morse as one of the available switch-input recipes.</li>
+      <li><strong>AbleNet TASH Bug Bar</strong> — a hardware key designed for accessibility use; pairs with desktop screen-readers.</li>
+      <li><strong>OnScreen Keyboard on Windows + Switch Access</strong> — supports two-switch Morse input through the AAC industry standard switch protocols.</li>
+    </ul>
+    <p>
+      If you're teaching a learner who would benefit from Morse as an input
+      method, start with a torch-flash partner exercise for the rhythm, then
+      move to the device they'll actually use. Skip the audio-copy step — the
+      goal is sending, not receiving.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Ten classroom-tested activities</h2>
+    <ol>
+      <li><strong>Name relay</strong> — each learner sends their initials around a circle. Receiver writes them down. Tally correct copies at the end.</li>
+      <li><strong>Mystery word</strong> — teacher sends a word; pairs decode and put up their hand when they have it. Five-letter words from the chart.</li>
+      <li><strong>Torch-flash treasure hunt</strong> — hide clues around the room marked with single letters in Morse. Learners must decode each marker to find the next.</li>
+      <li><strong>Two-room signalling</strong> — split into two groups in adjacent rooms; signal messages by torch flashes through a glass door or by tapping on a wall.</li>
+      <li><strong>SOS speed drill</strong> — how many SOS patterns can the class send together in one minute? Personal best?</li>
+      <li><strong>Whistle Morse outdoors</strong> — outside, partners send three-word phrases at 20 m apart using whistle blasts.</li>
+      <li><strong>Spell-the-room game</strong> — give each learner a Post-it with one letter sent in Morse. They walk around the room finding others to spell out a word.</li>
+      <li><strong>Tapping code</strong> — across-the-room messaging by tapping a pencil or finger on a desk. Quiet game; tests rhythm discipline.</li>
+      <li><strong>Make a Morse buzzer</strong> — battery, buzzer, switch on a piece of cardboard. STEM crossover.</li>
+      <li><strong>Send your name in lights</strong> — learners record themselves sending their name with a torch, slow-frame it back, and check it against the chart.</li>
+    </ol>
+  </section>
+
+  <section class="card t-card">
+    <h2>What this site already gives you</h2>
+    <div class="pill-grid">
+      <a href="/chart/">Printable chart (A4/Letter)</a>
+      <a href="/cheat-sheet/">One-page cheat sheet</a>
+      <a href="/flashcards/">Flashcards quiz (visual)</a>
+      <a href="/practice/">Koch trainer (audio)</a>
+      <a href="/translate/">Translator</a>
+      <a href="/morse-code/">Per-letter pages</a>
+      <a href="/blog/the-story-behind-sos/">SOS story (lesson hook)</a>
+      <a href="/blog/morse-code-in-pop-culture/">Pop-culture examples</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Send feedback</p>
+        <h2 class="section-title">If you teach this</h2>
+      </div>
+    </div>
+    <p>
+      If you run this lesson in a real classroom, scout meeting, or
+      accessibility setting and find something that worked better than what's
+      written above, please <a href="/contact/">tell us</a>. This page gets
+      updated when we hear about it.
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <style>
+    .t-card{ margin-top: var(--s-4); }
+    .t-card h2{ margin-top: 0; }
+    .t-card h3{ margin-top: var(--s-4); }
+  </style>
+</Layout>
