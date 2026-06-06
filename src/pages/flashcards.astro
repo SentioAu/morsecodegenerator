@@ -1,0 +1,528 @@
+---
+import Layout from "../components/Layout.astro";
+
+const title = "Morse Code Flashcards – Visual Recognition & Reverse Drill";
+const description =
+  "Free Morse code flashcards quiz. Two modes: see Morse → type the letter, or see the letter → type the Morse. Letters, numbers, or both. Streak + best-score tracking, all in your browser.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/flashcards/`;
+const robots = "index,follow";
+const keywords =
+  "morse code flashcards, morse code quiz, morse code drill, learn morse alphabet, morse code memorization";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Flashcards", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+    {
+      "@type": "WebApplication",
+      "@id": `${canonical}#tool`,
+      name: "Morse Code Flashcards",
+      url: canonical,
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Any (web browser)",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      featureList: [
+        "Morse → letter visual recognition drill",
+        "Letter → Morse reverse drill",
+        "Alphabet / numbers / mixed character sets",
+        "Per-session score, streak, and accuracy stats",
+        "Best score persisted locally",
+      ],
+      publisher: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "What's the difference between flashcards and the Koch trainer?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "The Koch trainer at /practice/ teaches you to copy Morse by ear — it plays the tone, you type the letter. Flashcards work visually: you see the dits and dashes (or the letter) on screen and type the answer. Use flashcards before headphones come on; use the Koch trainer once you're comfortable reading patterns.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Which mode should I start with?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Start with 'See Morse → letter' on the alphabet set. Once you can clear 90% accuracy on letters, add numbers and try 'See letter → type Morse' to lock in the patterns from both directions.",
+          },
+        },
+      ],
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  robots={robots}
+  keywords={keywords}
+>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Flashcards</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Free tool · runs in your browser</p>
+    <h1 class="page-hero-title">Morse code flashcards</h1>
+    <p class="muted page-hero-sub">
+      Visual recognition drill. See the dits and dashes, type the letter — or
+      flip it: see the letter, type the Morse. The fastest way to lock the
+      alphabet into long-term memory before you start copying by ear.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn secondary" href="/practice/">Audio Koch trainer →</a>
+      <a class="btn ghost" href="/chart/">Printable chart</a>
+    </div>
+  </header>
+
+  <section class="card fc-card" aria-labelledby="fc-setup-h">
+    <h2 id="fc-setup-h" class="fc-h">Pick a deck</h2>
+    <div class="fc-modes">
+      <label class="fc-mode">
+        <input type="radio" name="mode" value="morse-to-letter" checked />
+        <span><strong>See Morse → type the letter</strong>
+          <span class="muted">recommended for first 2 weeks</span></span>
+      </label>
+      <label class="fc-mode">
+        <input type="radio" name="mode" value="letter-to-morse" />
+        <span><strong>See letter → type the Morse</strong>
+          <span class="muted">use <code>.</code> for dit, <code>-</code> for dah</span></span>
+      </label>
+    </div>
+
+    <div class="fc-sets">
+      <label class="fc-set">
+        <input type="checkbox" name="set" value="letters" checked /> Letters (A–Z)
+      </label>
+      <label class="fc-set">
+        <input type="checkbox" name="set" value="digits" /> Numbers (0–9)
+      </label>
+      <label class="fc-set">
+        <input type="checkbox" name="set" value="prosigns" />
+        Prosigns (SOS, AR, BT, SK, KN)
+      </label>
+    </div>
+
+    <div class="fc-actions">
+      <button class="btn primary" type="button" id="fc-start">Start drill</button>
+      <button class="btn ghost" type="button" id="fc-reset">Reset score</button>
+    </div>
+  </section>
+
+  <section class="card fc-card fc-board" aria-labelledby="fc-board-h" hidden id="fc-board">
+    <h2 id="fc-board-h" class="fc-h">Drill</h2>
+    <p class="muted fc-prompt-label">Convert this:</p>
+    <div class="fc-prompt" id="fc-prompt" aria-live="polite">—</div>
+
+    <form class="fc-answer-row" id="fc-form" autocomplete="off">
+      <label for="fc-answer" class="sr-only">Your answer</label>
+      <input
+        id="fc-answer"
+        type="text"
+        autocapitalize="characters"
+        autocomplete="off"
+        spellcheck="false"
+        inputmode="text"
+        aria-describedby="fc-feedback"
+        placeholder="Type and press Enter"
+      />
+      <button class="btn primary" type="submit">Submit</button>
+      <button class="btn ghost" type="button" id="fc-skip">Skip</button>
+    </form>
+
+    <p class="fc-feedback" id="fc-feedback" aria-live="polite">&nbsp;</p>
+
+    <ul class="fc-stats">
+      <li><span class="fc-stat-label">Score</span> <span id="fc-score">0</span></li>
+      <li><span class="fc-stat-label">Streak</span> <span id="fc-streak">0</span></li>
+      <li><span class="fc-stat-label">Best streak</span> <span id="fc-best">—</span></li>
+      <li><span class="fc-stat-label">Accuracy</span> <span id="fc-acc">—</span></li>
+      <li><span class="fc-stat-label">Cards seen</span> <span id="fc-seen">0</span></li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">How to use it</p>
+        <h2 class="section-title">A 4-week plan</h2>
+      </div>
+    </div>
+    <div class="prose">
+      <ol>
+        <li><strong>Week 1.</strong> Letters only, "See Morse → type the letter" mode. Aim for 5 minutes a day until you can clear the alphabet at &gt; 80% accuracy.</li>
+        <li><strong>Week 2.</strong> Add numbers. Same mode. The number patterns are systematic (1 = .---- through 9 = ----.) — they come fast once you spot the pattern.</li>
+        <li><strong>Week 3.</strong> Switch to "See letter → type the Morse". This is where memorisation becomes recall. Most learners' accuracy drops temporarily — that's normal.</li>
+        <li><strong>Week 4.</strong> Move to the <a href="/practice/">Koch audio trainer</a>. The flashcard work has built the pattern library; audio adds the rhythm.</li>
+      </ol>
+
+      <p>
+        Use the <a href="/chart/">printable chart</a> as a reference while drilling.
+        When you mistake a letter twice in one session, go look it up on the
+        chart before the next attempt — short feedback loops beat brute-force
+        repetition every time.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Keep going</p>
+        <h2 class="section-title">Related</h2>
+      </div>
+    </div>
+    <div class="pill-grid">
+      <a href="/practice/">Koch audio trainer</a>
+      <a href="/translate/">Translator</a>
+      <a href="/decoder/">Decoder</a>
+      <a href="/timing-calculator/">Timing calculator</a>
+      <a href="/chart/">Printable chart</a>
+      <a href="/cheat-sheet/">Cheat sheet</a>
+      <a href="/glossary/">Glossary</a>
+      <a href="/blog/how-to-learn-morse-code-in-30-days/">30-day plan</a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <script is:inline>
+    (function () {
+      "use strict";
+
+      // ---------------- Data ----------------
+      // Kept inline so the page works offline and doesn't need to fetch
+      // /morse.json for what's a small fixed list. Mirrors morse.json's
+      // morseMap for the same keys.
+      const LETTERS = {
+        A: ".-",   B: "-...", C: "-.-.", D: "-..",  E: ".",    F: "..-.",
+        G: "--.",  H: "....", I: "..",   J: ".---", K: "-.-",  L: ".-..",
+        M: "--",   N: "-.",   O: "---",  P: ".--.", Q: "--.-", R: ".-.",
+        S: "...",  T: "-",    U: "..-",  V: "...-", W: ".--",  X: "-..-",
+        Y: "-.--", Z: "--..",
+      };
+      const DIGITS = {
+        0: "-----", 1: ".----", 2: "..---", 3: "...--", 4: "....-",
+        5: ".....", 6: "-....", 7: "--...", 8: "---..", 9: "----.",
+      };
+      // Prosigns are sent as one continuous shape (no inter-letter gap)
+      // so the "Morse" form is the joined element string.
+      const PROSIGNS = {
+        SOS: "...---...",
+        AR:  ".-.-.",
+        BT:  "-...-",
+        SK:  "...-.-",
+        KN:  "-.--.",
+      };
+
+      // ---------------- Storage ----------------
+      const KEY = "mcg.flashcards.v1";
+      function loadPrefs() {
+        try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch { return {}; }
+      }
+      function savePrefs(patch) {
+        try { localStorage.setItem(KEY, JSON.stringify(Object.assign({}, loadPrefs(), patch))); } catch {}
+      }
+
+      // ---------------- State ----------------
+      let mode = "morse-to-letter";
+      let deck = []; // [{ letter, morse }]
+      let current = null;
+      let score = 0;
+      let streak = 0;
+      let seen = 0;
+      let correct = 0;
+
+      // ---------------- DOM ----------------
+      const $ = (id) => document.getElementById(id);
+      const board = $("fc-board");
+      const promptEl = $("fc-prompt");
+      const answerInput = $("fc-answer");
+      const feedbackEl = $("fc-feedback");
+      const scoreEl = $("fc-score");
+      const streakEl = $("fc-streak");
+      const bestEl = $("fc-best");
+      const accEl = $("fc-acc");
+      const seenEl = $("fc-seen");
+      const form = $("fc-form");
+
+      function getSelectedMode() {
+        const r = document.querySelector('input[name="mode"]:checked');
+        return r ? r.value : "morse-to-letter";
+      }
+      function getSelectedSets() {
+        return Array.from(document.querySelectorAll('input[name="set"]:checked')).map((x) => x.value);
+      }
+      function buildDeck() {
+        const sets = getSelectedSets();
+        const out = [];
+        if (sets.includes("letters")) for (const [k, v] of Object.entries(LETTERS)) out.push({ letter: k, morse: v });
+        if (sets.includes("digits"))  for (const [k, v] of Object.entries(DIGITS))  out.push({ letter: k, morse: v });
+        if (sets.includes("prosigns")) for (const [k, v] of Object.entries(PROSIGNS)) out.push({ letter: k, morse: v });
+        return out;
+      }
+      function pickCard() {
+        if (deck.length === 0) return null;
+        // Avoid immediate repeats when there's a choice
+        let card;
+        for (let i = 0; i < 5; i++) {
+          card = deck[Math.floor(Math.random() * deck.length)];
+          if (!current || card.letter !== current.letter || deck.length === 1) break;
+        }
+        return card;
+      }
+      function renderCard() {
+        if (!current) {
+          promptEl.textContent = "—";
+          return;
+        }
+        if (mode === "morse-to-letter") {
+          promptEl.textContent = current.morse;
+          promptEl.classList.add("k");
+          promptEl.classList.remove("plain");
+        } else {
+          promptEl.textContent = current.letter;
+          promptEl.classList.remove("k");
+          promptEl.classList.add("plain");
+        }
+      }
+      function renderStats() {
+        scoreEl.textContent = String(score);
+        streakEl.textContent = String(streak);
+        seenEl.textContent = String(seen);
+        accEl.textContent = seen > 0 ? Math.round((correct / seen) * 100) + "%" : "—";
+        const best = loadPrefs().bestStreak || 0;
+        bestEl.textContent = best > 0 ? String(best) : "—";
+      }
+      function normalizeAnswer(raw) {
+        return String(raw || "")
+          .trim()
+          .replace(/\s+/g, "")
+          .replace(/·/g, ".")
+          .replace(/[–—−]/g, "-")
+          .toUpperCase();
+      }
+      function expectedAnswer() {
+        if (!current) return "";
+        return mode === "morse-to-letter" ? current.letter : current.morse;
+      }
+      function judge() {
+        if (!current) return;
+        const given = normalizeAnswer(answerInput.value);
+        const expected = expectedAnswer();
+        const ok = given === expected;
+        seen++;
+        if (ok) {
+          correct++;
+          streak++;
+          score += 1 + Math.floor(streak / 5); // small streak bonus
+          feedbackEl.textContent = "Correct";
+          feedbackEl.className = "fc-feedback ok";
+          const prev = loadPrefs().bestStreak || 0;
+          if (streak > prev) savePrefs({ bestStreak: streak });
+        } else {
+          streak = 0;
+          feedbackEl.textContent = "Answer was " + expected + ".";
+          feedbackEl.className = "fc-feedback miss";
+        }
+        renderStats();
+        answerInput.value = "";
+        current = pickCard();
+        renderCard();
+        answerInput.focus();
+      }
+      function start() {
+        mode = getSelectedMode();
+        deck = buildDeck();
+        if (deck.length === 0) {
+          feedbackEl.textContent = "Pick at least one character set.";
+          feedbackEl.className = "fc-feedback miss";
+          return;
+        }
+        score = 0; streak = 0; seen = 0; correct = 0;
+        board.hidden = false;
+        current = pickCard();
+        renderCard();
+        renderStats();
+        feedbackEl.textContent = " ";
+        feedbackEl.className = "fc-feedback";
+        answerInput.value = "";
+        answerInput.focus();
+        if (mode === "letter-to-morse") {
+          answerInput.setAttribute("placeholder", "Type the Morse, e.g. .- for A");
+        } else {
+          answerInput.setAttribute("placeholder", "Type the letter or digit");
+        }
+      }
+      function skip() {
+        if (!current) return;
+        const expected = expectedAnswer();
+        feedbackEl.textContent = "Skipped — answer was " + expected + ".";
+        feedbackEl.className = "fc-feedback miss";
+        streak = 0;
+        seen++;
+        renderStats();
+        answerInput.value = "";
+        current = pickCard();
+        renderCard();
+        answerInput.focus();
+      }
+      function resetScore() {
+        savePrefs({ bestStreak: 0 });
+        renderStats();
+      }
+
+      // ---------------- Wire-up ----------------
+      $("fc-start")?.addEventListener("click", start);
+      $("fc-reset")?.addEventListener("click", resetScore);
+      $("fc-skip")?.addEventListener("click", skip);
+      form?.addEventListener("submit", (e) => { e.preventDefault(); judge(); });
+      // Allow plain Enter to submit even if focus drifts to a checkbox or such
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !board.hidden && document.activeElement === answerInput) {
+          // form submit handles it
+        }
+      });
+
+      renderStats();
+    })();
+  </script>
+
+  <style>
+    .fc-card{ margin-top: var(--s-5); }
+    .fc-h{ margin-top: 0; }
+
+    .fc-modes{
+      display: grid;
+      gap: var(--s-2);
+      margin: var(--s-3) 0;
+    }
+    .fc-mode{
+      display: flex;
+      align-items: flex-start;
+      gap: var(--s-3);
+      padding: var(--s-3);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .fc-mode:has(input:checked){
+      background: var(--surface-2);
+      border-color: var(--accent-line);
+    }
+    .fc-mode input{ width: 18px; height: 18px; margin-top: 2px; flex: 0 0 auto; }
+    .fc-mode > span{ display: flex; flex-direction: column; gap: 2px; }
+    .fc-mode .muted{ font-size: var(--fs-sm); }
+
+    .fc-sets{
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-3) var(--s-5);
+      padding: var(--s-3) 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .fc-set{ display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--fs-sm); cursor: pointer; }
+    .fc-set input{ width: 18px; height: 18px; }
+
+    .fc-actions{
+      display: flex;
+      gap: var(--s-2);
+      margin-top: var(--s-4);
+      flex-wrap: wrap;
+    }
+
+    .fc-board{ text-align: left; }
+    .fc-prompt-label{ margin: 0 0 var(--s-2); font-size: var(--fs-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-subtle); }
+    .fc-prompt{
+      font-family: var(--font-mono);
+      font-size: clamp(40px, 7vw, 72px);
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: var(--s-5) var(--s-4);
+      text-align: center;
+      word-break: break-all;
+    }
+    .fc-prompt.plain{
+      font-family: var(--font-display);
+      letter-spacing: 0.04em;
+    }
+
+    .fc-answer-row{
+      display: flex;
+      gap: var(--s-2);
+      margin-top: var(--s-4);
+      flex-wrap: wrap;
+    }
+    .fc-answer-row input{
+      flex: 1 1 240px;
+      min-width: 0;
+      font-family: var(--font-mono);
+      font-size: var(--fs-lg);
+      letter-spacing: 0.06em;
+    }
+    .fc-answer-row .btn{ flex: 0 0 auto; }
+
+    .fc-feedback{
+      margin: var(--s-3) 0;
+      font-size: var(--fs-sm);
+      min-height: var(--s-5);
+      color: var(--text-muted);
+    }
+    .fc-feedback.ok{ color: var(--good); }
+    .fc-feedback.miss{ color: var(--bad); }
+
+    .fc-stats{
+      list-style: none;
+      padding: 0;
+      margin: var(--s-3) 0 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: var(--s-2);
+    }
+    .fc-stats li{
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      padding: var(--s-2) var(--s-3);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .fc-stat-label{ font-size: var(--fs-xs); color: var(--text-subtle); letter-spacing: 0.06em; text-transform: uppercase; }
+    .fc-stats li span:last-child{
+      font-family: var(--font-mono);
+      font-size: var(--fs-md);
+      color: var(--text);
+    }
+  </style>
+</Layout>
