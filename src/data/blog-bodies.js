@@ -10,6 +10,110 @@
 //  - Use <a class="k"> or <span class="k"> for inline Morse code.
 
 export const bodies = {
+  "farnsworth-timing-explained": `
+<p>Almost every Morse learner stalls at 8–10 WPM. The reason is almost always the same: they're sending the characters slowly. Slow characters teach you to <em>count</em> dits and dahs, and counting doesn't scale. Once you can count individual elements, your brain locks into that strategy and refuses to switch to pattern recognition — which is the only way to reach 20 WPM and beyond.</p>
+
+<p>The fix is older than every learning app you've seen: <strong>Farnsworth timing</strong>. Send each character at full target speed (say 18 WPM) so the rhythm is right, but stretch the gaps between characters and words so the overall message is slow enough to follow. You hear "real" Morse at 18 WPM from day one — you just hear less of it per minute. Within weeks you scale to native effective speed without unlearning anything.</p>
+
+<p>This article unpacks the math, the muscle memory, and the exact way to set it up.</p>
+
+<h2>The PARIS standard, briefly</h2>
+
+<p>Morse timing is defined by a single unit. One <em>unit</em> at WPM <span class="k">W</span> is:</p>
+
+<pre class="codeblock"><code>unit_ms = 1200 / W</code></pre>
+
+<p>So at 20 WPM, one unit is 60 ms. Every element of Morse is a multiple of that unit:</p>
+
+<ul>
+  <li><strong>Dit</strong> = 1 unit</li>
+  <li><strong>Dah</strong> = 3 units</li>
+  <li><strong>Gap inside a character</strong> = 1 unit</li>
+  <li><strong>Gap between letters</strong> = 3 units</li>
+  <li><strong>Gap between words</strong> = 7 units</li>
+</ul>
+
+<p>The benchmark word is <em>PARIS</em>. P-A-R-I-S spans 50 units including the trailing word gap, so a "20 WPM" station fits 20 PARIS-equivalents into 60 seconds. That's the PARIS standard.</p>
+
+<p>If you want to see the numbers for any speed instantly, the <a href="/timing-calculator/">timing calculator</a> shows every gap and element in milliseconds for a given WPM, with a Farnsworth slider.</p>
+
+<h2>Why slow characters trap you</h2>
+
+<p>At 5 WPM, a dit is 240 ms and a dah is 720 ms — almost three-quarters of a second per dah. That's slow enough for your conscious brain to do counting:</p>
+
+<p><em>"… one, two, three dits, that's an S. Then dah-dit-dit-dit, two dahs and a dit no wait three dits, that's…"</em></p>
+
+<p>This works at 5 WPM. It collapses at 12 WPM. By 15 WPM there's no time to count — the elements are running together too fast. Learners who built their copying skill on counting end up needing to <strong>retrain from scratch</strong> when they hit the wall, because the strategy that got them this far is the strategy that's now broken.</p>
+
+<p>Farnsworth sidesteps the trap by never letting counting work in the first place. Even at 5 WPM <em>effective</em> speed, each character zips by at 18 WPM. Counting fails on the first letter, so your brain reaches for pattern recognition immediately. That's the strategy you need at any speed, so any progress is direct progress — no rebuild required.</p>
+
+<h2>The Farnsworth multiplier</h2>
+
+<p>Setting up Farnsworth means picking two numbers: <strong>character WPM</strong> (the speed each letter is played at) and <strong>effective WPM</strong> (the apparent overall speed after the gaps are stretched). The gap stretch factor follows from those.</p>
+
+<p>Starting from the PARIS framework — each word is 50 units, of which 31 are inside characters and 19 are in inter-character + inter-word gaps — the gap multiplier <span class="k">m</span> is:</p>
+
+<pre class="codeblock"><code>m = (W_c / W_e − 1) × (50 / 19) + 1</code></pre>
+
+<p>Where <span class="k">W_c</span> is character WPM and <span class="k">W_e</span> is effective WPM. At 18 / 8 (character 18, effective 8), <span class="k">m ≈ 4.3</span>: gaps are over four times as long as they'd be in equal-WPM Morse. The characters race past, then there's a generous pause to think.</p>
+
+<p>Don't memorise the formula. <a href="/timing-calculator/">/timing-calculator/</a> does the work — slide character and effective WPM and the multiplier updates live.</p>
+
+<h2>What to set</h2>
+
+<p>The setup that works for almost every learner is the original one:</p>
+
+<table>
+  <thead><tr><th>Phase</th><th>Char WPM</th><th>Effective WPM</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td>First two weeks</td><td>18</td><td>5</td><td>Wide gaps for processing time; rhythm already in place.</td></tr>
+    <tr><td>Weeks 3–5</td><td>18</td><td>10</td><td>Same rhythm, half the gap.</td></tr>
+    <tr><td>Weeks 6+</td><td>20</td><td>15</td><td>Bumping up the rhythm too.</td></tr>
+    <tr><td>Comfortable</td><td>20–25</td><td>20–25</td><td>"Equal-WPM" once you can keep up.</td></tr>
+  </tbody>
+</table>
+
+<p>The exact numbers don't matter. What matters is: <em>character WPM is at least 15 from day one</em> and <em>effective WPM grows separately</em>. Never set character WPM under 15.</p>
+
+<h2>Where to drill it</h2>
+
+<p>Two places on this site implement Farnsworth properly:</p>
+
+<ul>
+  <li><strong><a href="/practice/">Koch trainer</a></strong> — the canonical place to spend 5 minutes a day. Character and effective WPM are separate sliders. Use 18 / 10 for the first month, then move both up.</li>
+  <li><strong><a href="/translate/">Translator</a></strong> — type a word, hit Play, and the audio respects Farnsworth speed. Good for ad-hoc practice on words you encounter elsewhere.</li>
+</ul>
+
+<p>For visual recognition (so you can drill anywhere, no headphones), <a href="/flashcards/">/flashcards/</a> covers the letter and pattern memorisation half of the work.</p>
+
+<h2>Common Farnsworth mistakes</h2>
+
+<ol>
+  <li><strong>Setting character WPM equal to effective.</strong> If they're equal, Farnsworth isn't doing anything — you're just at "slow Morse". Always keep at least a 5-WPM gap until you're comfortable above 18 effective.</li>
+  <li><strong>Letting effective WPM stay low forever.</strong> The point is to <em>shrink</em> the gap over time. If you've been at 18/5 for six weeks, push to 18/8 even if it feels uncomfortable. The discomfort is the signal that growth is happening.</li>
+  <li><strong>Cranking character WPM above 25 too soon.</strong> If you can't reliably copy at 18 WPM character speed, jumping to 25 is sound theatre, not progress. Lock in 18/15 first.</li>
+  <li><strong>Not using a metronome / consistent practice cadence.</strong> The whole point of Farnsworth is locking in correct rhythm. Practising for 5 minutes daily wins over 30 minutes weekly. Set a real reminder.</li>
+</ol>
+
+<h2>How long does it take?</h2>
+
+<p>Realistic timeline for someone doing 5 minutes a day:</p>
+
+<ul>
+  <li><strong>Week 2:</strong> letters of the Koch first 10 at 18/5 with &gt; 80% accuracy.</li>
+  <li><strong>Week 4:</strong> all 26 letters at 18/5. Numbers added.</li>
+  <li><strong>Week 6:</strong> 18/8.</li>
+  <li><strong>Week 10:</strong> 20/12. First on-air QSO becomes possible.</li>
+  <li><strong>Week 16:</strong> 22/18.</li>
+  <li><strong>Month 6:</strong> 25/20 — solid amateur CW operator territory.</li>
+</ul>
+
+<p>Some learners get there faster. Many take longer. The single biggest predictor of "how long" is consistency, not raw practice hours.</p>
+
+<h2>The one-line summary</h2>
+
+<p>Set the character speed to 18 WPM and start with a 5-WPM effective speed. Keep character speed pinned and let effective speed climb. Use the <a href="/practice/">Koch trainer</a> 5 minutes a day. Don't count. The rhythm is the lesson.</p>
+`,
   // ============================================================
   "how-to-learn-morse-code-in-30-days": `
 <p>You can copy plain-text Morse at 20 WPM in 30 days. Not 90, not 6 months — 30. The catch is that you have to do it almost every day, follow a method designed to short-circuit the dot-and-dash counting habit, and stop trying to be perfect on day three.</p>

@@ -90,6 +90,7 @@ export const OG_PAGES = new Set([
   "/blog/international-vs-american-morse/",
   "/blog/morse-code-in-pop-culture/",
   "/blog/best-morse-code-keys-buyers-guide/",
+  "/blog/farnsworth-timing-explained/",
 
   // Site / meta
   "/about/",
