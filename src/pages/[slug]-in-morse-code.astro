@@ -453,18 +453,29 @@ const jsonLd = {
       }
 
       let audioCtx;
+      let stopFlag = false;
+      function getAudioCtx() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Browser autoplay policy may leave the context suspended until
+        // a user gesture; resume on each access so the next play() fires.
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume().catch(() => {});
+        }
+        return audioCtx;
+      }
       async function playMorse(sequence, wpm) {
         if (!sequence) return;
-        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-        const ctx = audioCtx;
+        const ctx = getAudioCtx();
         const unit = 1200 / wpm;
         let t = ctx.currentTime + 0.05;
         const cleaned = sequence.replace(/[^.\-\/\s]/g, "").trim();
         if (!cleaned) return;
         const parts = cleaned.split(/\s+/);
         for (const part of parts) {
+          if (stopFlag) return;
           if (part === "/") { t += (unit * 7) / 1000; continue; }
           for (const sym of part) {
+            if (stopFlag) return;
             const dur = sym === "-" ? unit * 3 : unit;
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -485,12 +496,25 @@ const jsonLd = {
       }
 
       playBtn?.addEventListener("click", async () => {
+        stopFlag = false;
         const old = playBtn.innerHTML;
         playBtn.textContent = "Playing…";
         renderRhythm(morse || "", 18);
         await playMorse(morse || "", 18);
         setTimeout(() => (playBtn.innerHTML = old), 600);
       });
+
+      // Stop playback and release the AudioContext when the tab is hidden
+      // or the page is unloaded. Matches the cleanup pattern shipped in
+      // PR #36 for /translate/, /decoder/, /practice/.
+      function teardownAudio() {
+        stopFlag = true;
+        if (audioCtx) { try { audioCtx.close(); } catch {} audioCtx = undefined; }
+      }
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") teardownAudio();
+      });
+      window.addEventListener("pagehide", teardownAudio);
     </script>
   )}
 
