@@ -20,6 +20,16 @@
 
 export const posts = [
   {
+    slug: "farnsworth-timing-explained",
+    title: "Farnsworth timing explained: the right way to learn Morse fast",
+    excerpt:
+      "Full character speed with stretched gaps — the timing trick that lets you learn Morse at 18 WPM from day one without counting dots. The math, the muscle memory, and how to set it up.",
+    published: "2026-06-06",
+    kind: "explainer",
+    minutes: 8,
+    tags: ["learning", "farnsworth", "wpm", "practice"],
+  },
+  {
     slug: "how-to-learn-morse-code-in-30-days",
     title: "How to learn Morse code in 30 days (a daily plan)",
     excerpt:
