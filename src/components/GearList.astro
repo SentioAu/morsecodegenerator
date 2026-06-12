@@ -1,0 +1,91 @@
+---
+/*
+ * GearList — renders a list of product picks from src/data/gear.js.
+ *
+ * Affiliate hygiene: every outbound link carries
+ * rel="sponsored nofollow noopener" (Google's required annotation for
+ * paid links) and data-aff for the GA4 affiliate_click event wired in
+ * Layout.astro. Buttons say "Check price" — never a hard-coded price
+ * promise — because the data file only stores approximate ranges.
+ */
+const { items = [] } = Astro.props;
+---
+
+<div class="gear-list">
+  {items.map((p) => (
+    <article class="card gear-item" id={p.id}>
+      <header class="gear-item-head">
+        <span class="gear-verdict">{p.verdict}</span>
+        <h2 class="gear-item-name">{p.name}</h2>
+        <span class="gear-price">{p.price}</span>
+      </header>
+      <p class="gear-summary">{p.summary}</p>
+      <div class="gear-proscons">
+        <div>
+          <h3 class="gear-pc-h">Pros</h3>
+          <ul>{p.pros.map((x) => <li>{x}</li>)}</ul>
+        </div>
+        <div>
+          <h3 class="gear-pc-h">Cons</h3>
+          <ul>{p.cons.map((x) => <li>{x}</li>)}</ul>
+        </div>
+      </div>
+      <p class="gear-buy">
+        <a
+          class="btn primary"
+          href={p.href}
+          target="_blank"
+          rel="sponsored nofollow noopener"
+          data-aff={p.id}
+        >{p.direct ? "View at manufacturer" : "Check price"}</a>
+      </p>
+    </article>
+  ))}
+</div>
+
+<style>
+  .gear-list{ display: grid; gap: var(--s-5); margin: var(--s-5) 0; }
+  .gear-item{ padding: var(--s-5); max-width: var(--content); }
+  .gear-item-head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-3);
+    margin-bottom: var(--s-3);
+  }
+  .gear-verdict{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm, 6px);
+    padding: 2px 6px;
+    color: var(--text-muted);
+  }
+  .gear-item-name{ margin: 0; font-size: var(--fs-lg); flex: 1 1 auto; }
+  .gear-price{
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .gear-summary{ line-height: 1.6; margin: 0 0 var(--s-4); }
+  .gear-proscons{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--s-4);
+    margin-bottom: var(--s-4);
+  }
+  .gear-pc-h{
+    margin: 0 0 var(--s-2);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .gear-proscons ul{ margin: 0; padding-left: 1.1em; }
+  .gear-proscons li{ margin-bottom: var(--s-1); font-size: var(--fs-sm); line-height: 1.5; }
+  .gear-buy{ margin: 0; }
+</style>

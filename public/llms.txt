@@ -44,6 +44,13 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 - [Emergency Morse code cheat sheet](https://morsecodegenerator.com/blog/emergency-morse-code-cheat-sheet/)
 - [Glossary](https://morsecodegenerator.com/glossary/) — every term, defined.
 
+## Gear guides (buying advice)
+
+- [Gear hub](https://morsecodegenerator.com/gear/): honest CW gear buying guides.
+- [Best straight keys](https://morsecodegenerator.com/gear/best-morse-code-keys/)
+- [Best paddles for beginners](https://morsecodegenerator.com/gear/best-cw-paddles-for-beginners/)
+- [QRP CW transceivers compared](https://morsecodegenerator.com/gear/qrp-cw-transceivers/)
+
 ## Phrases
 
 - [Phrase index](https://morsecodegenerator.com/phrases/): SOS, HELP, MAYDAY, EMERGENCY, I LOVE YOU, THANK YOU, ...

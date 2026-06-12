@@ -62,7 +62,9 @@ export function getStaticPaths() {
     );
   }
 
-  const raw = data?.phrases ?? [];
+  // Widen to any[]: morse.json types `phrases` as [slug, phrase] pairs,
+  // but this loader also accepts object entries ({slug, phrase|text|...}).
+  const raw: any[] = data?.phrases ?? [];
   const items = [];
 
   if (Array.isArray(raw)) {

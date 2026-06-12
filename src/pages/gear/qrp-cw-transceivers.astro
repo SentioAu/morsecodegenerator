@@ -1,0 +1,105 @@
+---
+import Layout from "../../components/Layout.astro";
+import GearList from "../../components/GearList.astro";
+import Newsletter from "../../components/Newsletter.astro";
+import { qrpRigs, GEAR_UPDATED } from "../../data/gear.js";
+
+const title = "QRP CW transceivers compared in 2026: real radios from $95";
+const description =
+  "Four CW-capable QRP transceivers compared honestly: the $95 QMX kit, the (tr)uSDX, the do-everything Xiegu G90, and the Elecraft KX2 — who each one is for.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/gear/qrp-cw-transceivers/`;
+const keywords =
+  "qrp cw transceiver, QMX QRP Labs, truSDX, Xiegu G90, Elecraft KX2, cheap ham radio cw, portable cw rig, SOTA radio";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Gear", url: `${site}/gear/` },
+  { name: "QRP CW transceivers", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "Article",
+      "@id": canonical,
+      headline: title,
+      description,
+      dateModified: GEAR_UPDATED,
+      inLanguage: "en",
+      mainEntityOfPage: canonical,
+      publisher: { "@id": `${site}#org` },
+      author: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "ItemList",
+      itemListElement: qrpRigs.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: p.name,
+        url: `${canonical}#${p.id}`,
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/gear/">Gear</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">QRP CW transceivers</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Buying guide · updated {GEAR_UPDATED}</p>
+    <h1 class="page-hero-title">QRP CW transceivers, compared honestly</h1>
+    <p class="muted page-hero-sub">
+      QRP means five watts or less — and CW is the mode that makes five watts
+      work. A licence, a wire in a tree, and any radio below will get you real
+      contacts across a continent. Here's the ladder, from a $95 kit to the
+      rig everyone eventually wants.
+    </p>
+  </header>
+
+  <p class="aff-note">
+    Some links are affiliate links — we may earn a commission at no extra cost
+    to you. Two of the four picks link straight to the manufacturer and pay us
+    nothing. Full policy: <a href="/disclosure/">disclosure</a>.
+  </p>
+
+  <GearList items={qrpRigs} />
+
+  <section class="card t-card">
+    <h2>Before you buy a radio</h2>
+    <ul>
+      <li><strong>You need a licence to transmit.</strong> Receiving is free for everyone, anywhere. If you're not licensed yet, a $25 RTL-SDR dongle or the websdr.org receivers let you listen to real CW today while you study.</li>
+      <li><strong>Your copy speed is the real spec.</strong> A KX2 won't help you if you copy at 5 WPM. The free path — <a href="/practice/">Koch trainer</a>, <a href="/random-cw/">random CW</a>, <a href="/flashcards/">flashcards</a> — matters more than any purchase on this page.</li>
+      <li><strong>The antenna outranks the radio.</strong> $100 rig + decent wire antenna beats $1,000 rig + bad antenna, every time. Budget for wire, coax, and an antenna book before upgrading the transceiver.</li>
+      <li><strong>Know the bands.</strong> Where CW lives on each band, and how a first QSO actually goes, is covered in our <a href="/operating/">CW operating reference</a> — including the script to follow when your hands are shaking.</li>
+    </ul>
+  </section>
+
+  <Newsletter compact heading="One Morse tip per week" body="A technique, a piece of history, a practice drill. We flag QRP kit price drops to subscribers first." />
+
+  <style>
+    .aff-note{
+      max-width: var(--content);
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
+      margin: 0 0 var(--s-4);
+    }
+  </style>
+</Layout>

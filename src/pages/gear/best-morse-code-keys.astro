@@ -1,0 +1,109 @@
+---
+import Layout from "../../components/Layout.astro";
+import GearList from "../../components/GearList.astro";
+import Newsletter from "../../components/Newsletter.astro";
+import { straightKeys, GEAR_UPDATED } from "../../data/gear.js";
+
+const title = "Best Morse code keys in 2026: straight keys actually worth buying";
+const description =
+  "Four straight keys that earn a place on the desk — from a $25 first key to a buy-it-once classic — with honest pros, cons, and who each one is for.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/gear/best-morse-code-keys/`;
+const keywords =
+  "best morse code key, straight key, morse key for beginners, telegraph key, J-38 key, Kent hand key, Vibroplex straight key";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Gear", url: `${site}/gear/` },
+  { name: "Best straight keys", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "Article",
+      "@id": canonical,
+      headline: title,
+      description,
+      dateModified: GEAR_UPDATED,
+      inLanguage: "en",
+      mainEntityOfPage: canonical,
+      publisher: { "@id": `${site}#org` },
+      author: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "ItemList",
+      itemListElement: straightKeys.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: p.name,
+        url: `${canonical}#${p.id}`,
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/gear/">Gear</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Best straight keys</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Buying guide · updated {GEAR_UPDATED}</p>
+    <h1 class="page-hero-title">The best Morse code straight keys</h1>
+    <p class="muted page-hero-sub">
+      A straight key is the simplest instrument in radio: a sprung lever and a
+      contact. That simplicity is why a good one lasts a century — and why a
+      bad one teaches you bad timing. Four picks, one honest verdict each.
+    </p>
+  </header>
+
+  <p class="aff-note">
+    Some links are affiliate links — we may earn a commission at no extra cost
+    to you. It never affects the picks. Full policy: <a href="/disclosure/">disclosure</a>.
+  </p>
+
+  <GearList items={straightKeys} />
+
+  <section class="card t-card">
+    <h2>How to choose (60-second version)</h2>
+    <ul>
+      <li><strong>Weight beats features.</strong> The single biggest difference between a frustrating key and a lovely one is whether it stays put on the desk. Heavy base, or screw/tape it down.</li>
+      <li><strong>Adjustability matters more than materials.</strong> You want adjustable contact gap and spring tension. Tight gap + light spring for speed; wider + heavier while learning.</li>
+      <li><strong>Straight key or paddle first?</strong> Straight key builds timing in your arm — every dit length is yours to get right. Paddles (see <a href="/gear/best-cw-paddles-for-beginners/">the paddle guide</a>) make perfect elements automatically but need a keyer. Many learn on a straight key for a month, then move to a paddle and keep the straight key for fun. Neither choice is wrong.</li>
+      <li><strong>Don't buy two cheap keys.</strong> One cheap key to find out you love sending, then one good key for life, is the efficient path.</li>
+    </ul>
+    <p>
+      Whatever you key with, practice material is free: the
+      <a href="/random-cw/">random CW generator</a> gives you realistic text and
+      the <a href="/timing-calculator/">timing calculator</a> shows exactly how
+      long your dits and dahs should be at any WPM.
+    </p>
+  </section>
+
+  <Newsletter compact heading="One Morse tip per week" body="A technique, a piece of history, a practice drill. Gear deals when a recommended key drops in price." />
+
+  <style>
+    .aff-note{
+      max-width: var(--content);
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
+      margin: 0 0 var(--s-4);
+    }
+  </style>
+</Layout>
