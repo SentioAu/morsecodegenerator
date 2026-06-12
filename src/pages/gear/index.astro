@@ -1,0 +1,179 @@
+---
+import Layout from "../../components/Layout.astro";
+import Newsletter from "../../components/Newsletter.astro";
+import { straightKeys, paddles, qrpRigs, books, GEAR_UPDATED } from "../../data/gear.js";
+
+const title = "Morse code gear guide: keys, paddles, and QRP radios that are worth it";
+const description =
+  "Honest buying guides for CW gear: the best straight keys, iambic paddles for beginners, and QRP transceivers — with real prices, real trade-offs, and what to skip.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/gear/`;
+const keywords =
+  "best morse code key, cw paddle, iambic paddle, qrp cw transceiver, morse key for beginners, straight key vs paddle";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Gear", url: canonical },
+];
+
+const guides = [
+  {
+    href: "/gear/best-morse-code-keys/",
+    title: "Best straight keys",
+    sub: "From a $25 first key to a buy-it-once classic.",
+    top: straightKeys[0],
+  },
+  {
+    href: "/gear/best-cw-paddles-for-beginners/",
+    title: "Best paddles for beginners",
+    sub: "Iambic paddles that won't fight your fist.",
+    top: paddles[0],
+  },
+  {
+    href: "/gear/qrp-cw-transceivers/",
+    title: "QRP CW transceivers",
+    sub: "Real radios from $95 — kits to dream rigs.",
+    top: qrpRigs[0],
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": canonical,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "en",
+      isPartOf: { "@id": `${site}#website` },
+      publisher: { "@id": `${site}#org` },
+      hasPart: guides.map((g) => ({
+        "@type": "WebPage",
+        url: `${site}${g.href}`,
+        name: g.title,
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Gear</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Buying guides · updated {GEAR_UPDATED}</p>
+    <h1 class="page-hero-title">Morse code gear that's actually worth buying</h1>
+    <p class="muted page-hero-sub">
+      You can learn Morse with nothing but this website and a spacebar. But the
+      moment you want to <em>send</em>, you need a key — and the gear world is
+      full of $300 answers to $30 questions. These guides cut it down to the
+      few pieces that earn their place on a desk.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/gear/best-morse-code-keys/">Straight keys</a>
+      <a class="btn secondary" href="/gear/best-cw-paddles-for-beginners/">Paddles</a>
+      <a class="btn ghost" href="/gear/qrp-cw-transceivers/">QRP radios</a>
+    </div>
+  </header>
+
+  <p class="aff-note">
+    Some links below are affiliate links — if you buy through them we may earn
+    a commission at no extra cost to you. It never affects what we recommend;
+    several picks here pay us nothing. Full policy: <a href="/disclosure/">disclosure</a>.
+  </p>
+
+  <section class="gear-guides">
+    {guides.map((g) => (
+      <a class="card gear-guide-card" href={g.href}>
+        <h2>{g.title}</h2>
+        <p class="muted">{g.sub}</p>
+        <p class="gear-top-pick">
+          <span class="gear-verdict">{g.top.verdict}</span>
+          {g.top.name} · {g.top.price}
+        </p>
+        <span class="gear-cta">Read the guide →</span>
+      </a>
+    ))}
+  </section>
+
+  <section class="card t-card">
+    <h2>Where to start (the honest version)</h2>
+    <ul>
+      <li><strong>Still learning to receive?</strong> Buy nothing. Use the free <a href="/practice/">Koch trainer</a> and <a href="/flashcards/">flashcards</a> until you can copy at 10+ WPM. Gear can't do that part for you.</li>
+      <li><strong>Ready to send?</strong> Get one cheap key — the {straightKeys[0].name} ({straightKeys[0].price}) or the {paddles[0].name} ({paddles[0].price}) — and our <a href="/random-cw/">random CW generator</a> for material. Straight key teaches timing; paddle is what you'll likely use long-term. Either is a fine first choice.</li>
+      <li><strong>Licensed and want on the air?</strong> The {qrpRigs[0].name} is the best value in all of amateur radio right now. See the <a href="/operating/">operating reference</a> for band plans and your first QSO script.</li>
+    </ul>
+  </section>
+
+  <section class="card t-card">
+    <h2>Three books worth the shelf space</h2>
+    <ul class="gear-books">
+      {books.map((b) => (
+        <li>
+          <a href={b.href} target="_blank" rel="sponsored nofollow noopener" data-aff={b.id}><strong>{b.name}</strong></a>
+          — {b.note}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <Newsletter
+    heading="Gear deals + one Morse tip per week"
+    body="When a recommended kit drops in price or a new rig is worth knowing about, subscribers hear first. Plus the usual weekly practice tip."
+  />
+
+  <style>
+    .aff-note{
+      max-width: var(--content);
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
+      margin: 0 0 var(--s-5);
+    }
+    .gear-guides{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--s-4);
+      margin-bottom: var(--s-6);
+    }
+    .gear-guide-card{
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      padding: var(--s-5);
+    }
+    .gear-guide-card h2{ margin: 0 0 var(--s-2); font-size: var(--fs-lg); }
+    .gear-top-pick{
+      margin: var(--s-3) 0;
+      font-size: var(--fs-sm);
+    }
+    .gear-verdict{
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm, 6px);
+      padding: 2px 6px;
+      margin-right: var(--s-2);
+      color: var(--text-muted);
+    }
+    .gear-cta{ font-size: var(--fs-sm); font-weight: 600; }
+    .gear-books li{ margin-bottom: var(--s-3); line-height: 1.55; }
+  </style>
+</Layout>

@@ -323,6 +323,31 @@ const jsonLd = {
       })();
     </script>
 
+    {/*
+      mcgEvent — site-wide GA4 event helper. Tool pages call
+      `mcgEvent("play_audio", {wpm: 18})` without caring whether
+      analytics is loaded: if the visitor hasn't accepted the "ads"
+      consent category, `window.gtag` never exists and the call is a
+      silent no-op. Events before consent are intentionally dropped,
+      not queued.
+    */}
+    <script is:inline>
+      window.mcgEvent = function (name, params) {
+        try {
+          if (typeof window.gtag === "function" && name) {
+            window.gtag("event", String(name), params || {});
+          }
+        } catch (e) { /* analytics must never break a tool */ }
+      };
+      // Delegated affiliate-click tracking: any <a data-aff="..."> fires
+      // one event. Lives here (not per-page) so every current and future
+      // monetized page gets it for free.
+      document.addEventListener("click", function (e) {
+        var a = e.target && e.target.closest ? e.target.closest("a[data-aff]") : null;
+        if (a) window.mcgEvent("affiliate_click", { item: a.getAttribute("data-aff"), page: location.pathname });
+      });
+    </script>
+
     {/* Service worker: pre-caches the app shell so the site keeps working offline.
         Registration is deferred to first idle so it never competes with first paint. */}
     <script is:inline>
@@ -463,6 +488,7 @@ const jsonLd = {
             <ul>
               <li><a href="/phrases/">Common phrases</a></li>
               <li><a href="/operating/">CW operating</a></li>
+              <li><a href="/gear/">Gear guide</a></li>
               <li><a href="/teach/">Teach Morse code</a></li>
               <li><a href="/history/">History of Morse</a></li>
               <li><a href="/blog/">Articles / Blog</a></li>

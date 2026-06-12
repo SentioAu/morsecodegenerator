@@ -1,0 +1,109 @@
+---
+import Layout from "../../components/Layout.astro";
+import GearList from "../../components/GearList.astro";
+import Newsletter from "../../components/Newsletter.astro";
+import { paddles, GEAR_UPDATED } from "../../data/gear.js";
+
+const title = "Best CW paddles for beginners in 2026: three that won't fight you";
+const description =
+  "Iambic paddles for new CW operators: a $40 paddle good enough to keep forever, the industry benchmark, and the smoothest bearing action — with honest trade-offs.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/gear/best-cw-paddles-for-beginners/`;
+const keywords =
+  "best cw paddle, iambic paddle beginner, morse paddle, Bencher BY-1, CW Morse SP4, dual lever paddle, keyer paddle";
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Gear", url: `${site}/gear/` },
+  { name: "Best paddles for beginners", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "Article",
+      "@id": canonical,
+      headline: title,
+      description,
+      dateModified: GEAR_UPDATED,
+      inLanguage: "en",
+      mainEntityOfPage: canonical,
+      publisher: { "@id": `${site}#org` },
+      author: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "ItemList",
+      itemListElement: paddles.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: p.name,
+        url: `${canonical}#${p.id}`,
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a class="crumb" href="/gear/">Gear</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Best paddles for beginners</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Buying guide · updated {GEAR_UPDATED}</p>
+    <h1 class="page-hero-title">The best CW paddles for beginners</h1>
+    <p class="muted page-hero-sub">
+      A paddle plus an electronic keyer makes perfectly-timed dits and dahs —
+      you supply the rhythm, the keyer supplies the precision. That's how most
+      modern CW is sent. Three paddles, three price points, no filler.
+    </p>
+  </header>
+
+  <p class="aff-note">
+    Some links are affiliate links — we may earn a commission at no extra cost
+    to you. It never affects the picks. Full policy: <a href="/disclosure/">disclosure</a>.
+  </p>
+
+  <GearList items={paddles} />
+
+  <section class="card t-card">
+    <h2>Paddle questions every beginner asks</h2>
+    <ul>
+      <li><strong>Do I need a keyer too?</strong> Almost every modern transceiver has one built in — check the menu before buying anything. For practice off-radio, a $15 keyer kit or a phone app sidetone works.</li>
+      <li><strong>Single-lever or dual-lever (iambic)?</strong> Buy dual-lever. It does everything single-lever does, and iambic squeeze-keying is there if you want it later. All three picks above are dual-lever.</li>
+      <li><strong>What speed should the keyer be set to?</strong> Same as your copy speed. If you copy at 15 WPM with Farnsworth spacing, send at 15. The <a href="/timing-calculator/">timing calculator</a> translates WPM into element lengths if you're curious what your thumb is actually doing.</li>
+      <li><strong>Light paddle sliding around?</strong> Museum putty or a steel plate underneath fixes the budget picks. This is the entire price difference to the heavy paddles — decide if it's worth $100 to you.</li>
+    </ul>
+    <p>
+      Receive skill still rules everything: keep drilling with the
+      <a href="/practice/">Koch trainer</a> and <a href="/flashcards/">audio flashcards</a> —
+      sending always races ahead of copying, and on-air QSOs run at the speed
+      of your ears, not your paddle.
+    </p>
+  </section>
+
+  <Newsletter compact heading="One Morse tip per week" body="A technique, a piece of history, a practice drill. Gear deals when a recommended paddle drops in price." />
+
+  <style>
+    .aff-note{
+      max-width: var(--content);
+      font-size: var(--fs-xs);
+      color: var(--text-subtle);
+      margin: 0 0 var(--s-4);
+    }
+  </style>
+</Layout>

@@ -65,6 +65,15 @@ export function sourcesForUrl(urlPath) {
     return ["src/pages/[slug]-in-morse-code.astro", "src/data/seo-slugs.json", "src/data/morse.json"];
   }
 
+  // Gear guides — hub + review pages all render from the shared data file.
+  if (urlPath === "/gear/") {
+    return ["src/pages/gear/index.astro", "src/data/gear.js"];
+  }
+  const gearMatch = urlPath.match(/^\/gear\/([a-z0-9-]+)\/$/);
+  if (gearMatch) {
+    return [`src/pages/gear/${gearMatch[1]}.astro`, "src/data/gear.js"];
+  }
+
   // Static one-pagers — each maps to its own .astro file.
   const named = urlPath.replace(/^\/|\/$/g, "");
   if (named && !named.includes("/")) {

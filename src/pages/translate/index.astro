@@ -26,6 +26,7 @@ const translations = {
     clear: "Clear",
     play: "Play Morse",
     stop: "Stop",
+    download: "Download .wav",
     speed: "Speed",
     popularTitle: "Popular translations",
     popularSub: "Quick links to common phrases people translate.",
@@ -51,6 +52,7 @@ const translations = {
     clear: "Borrar",
     play: "Reproducir Morse",
     stop: "Detener",
+    download: "Descargar .wav",
     speed: "Velocidad",
     popularTitle: "Traducciones populares",
     popularSub: "Enlaces rápidos a frases comunes.",
@@ -172,6 +174,10 @@ const robots = "index,follow";
         <button id="mcg-buzz" type="button" class="ctrl-btn ghost" aria-label="Vibrate Morse (mobile)">
           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 18h.01"/></svg>
           <span>Vibrate</span>
+        </button>
+        <button id="mcg-download" type="button" class="ctrl-btn ghost" aria-label={t.download}>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+          <span>{t.download}</span>
         </button>
       </div>
 
@@ -318,6 +324,74 @@ const robots = "index,follow";
           }
           t += (unit * 2) / 1000;
         }
+      }
+
+      // ---- WAV export ----
+      // Renders the same tone/timing as playMorse() into an
+      // OfflineAudioContext, then encodes 16-bit PCM WAV. Fully
+      // client-side: nothing is uploaded anywhere.
+      function morseToSegments(sequence, wpm) {
+        const unit = 1200 / wpm; // ms
+        const cleaned = (sequence || "").split("\n")[0].replace(/[^.\-\/\s]/g, "").trim();
+        if (!cleaned) return null;
+        const segs = [];
+        let t = 0;
+        for (const part of cleaned.split(/\s+/)) {
+          if (part === "/") { t += unit * 7; continue; }
+          for (const sym of part) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            segs.push({ start: t / 1000, dur: dur / 1000 });
+            t += dur + unit; // element + intra-element gap
+          }
+          t += unit * 2; // letter gap (3u total)
+        }
+        return { segs, total: t / 1000 };
+      }
+
+      function encodeWav(buffer) {
+        const data = buffer.getChannelData(0);
+        const rate = buffer.sampleRate;
+        const out = new DataView(new ArrayBuffer(44 + data.length * 2));
+        const str = (off, s) => { for (let i = 0; i < s.length; i += 1) out.setUint8(off + i, s.charCodeAt(i)); };
+        str(0, "RIFF"); out.setUint32(4, 36 + data.length * 2, true); str(8, "WAVE");
+        str(12, "fmt "); out.setUint32(16, 16, true); out.setUint16(20, 1, true);
+        out.setUint16(22, 1, true); out.setUint32(24, rate, true);
+        out.setUint32(28, rate * 2, true); out.setUint16(32, 2, true); out.setUint16(34, 16, true);
+        str(36, "data"); out.setUint32(40, data.length * 2, true);
+        for (let i = 0; i < data.length; i += 1) {
+          const s = Math.max(-1, Math.min(1, data[i]));
+          out.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+        }
+        return new Blob([out], { type: "audio/wav" });
+      }
+
+      async function renderWav(sequence, wpm, volume) {
+        const plan = morseToSegments(sequence, wpm);
+        if (!plan) return null;
+        const rate = 44100;
+        // +0.25s tail so the final envelope release isn't clipped.
+        const length = Math.ceil((plan.total + 0.25) * rate);
+        // ~80s of audio is plenty and keeps memory bounded on mobile.
+        if (length > rate * 80) return null;
+        const Offline = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        if (!Offline) return null;
+        const ctx = new Offline(1, length, rate);
+        const peak = Math.max(0.05, Math.min(1, volume == null ? 0.4 : volume));
+        for (const seg of plan.segs) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = 600;
+          gain.gain.setValueAtTime(0.001, seg.start);
+          gain.gain.exponentialRampToValueAtTime(peak, seg.start + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, seg.start + seg.dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(seg.start);
+          osc.stop(seg.start + seg.dur + 0.02);
+        }
+        const buffer = await ctx.startRendering();
+        return encodeWav(buffer);
       }
 
       // ---- Rhythm bar (visualizes the audio playback) ----
@@ -574,6 +648,51 @@ const robots = "index,follow";
             setTimeout(() => (buzzBtn.textContent = old), 1200);
           }
         });
+
+        // Download the current Morse output as a WAV file.
+        const downloadBtn = document.getElementById("mcg-download");
+        downloadBtn?.addEventListener("click", async () => {
+          const seq = (output?.value || "").trim();
+          if (!seq) return;
+          const wpm = Number(speed?.value || 18);
+          const v = Number(vol?.value || 40) / 100;
+          const label = downloadBtn.querySelector("span");
+          const old = label?.textContent;
+          if (label) label.textContent = "Rendering…";
+          downloadBtn.disabled = true;
+          try {
+            const blob = await renderWav(seq, wpm, v);
+            if (!blob) {
+              if (label) label.textContent = "Too long / unsupported";
+              setTimeout(() => { if (label && old) label.textContent = old; }, 1600);
+              return;
+            }
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `morse-code-${wpm}wpm.wav`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+            if (label && old) label.textContent = old;
+            window.mcgEvent?.("download_wav", { wpm });
+          } finally {
+            downloadBtn.disabled = false;
+            if (label && old && label.textContent === "Rendering…") label.textContent = old;
+          }
+        });
+
+        // GA4 engagement events (no-ops until the visitor accepts
+        // analytics consent — see mcgEvent in Layout).
+        document.getElementById("mcg-text-to-morse")
+          ?.addEventListener("click", () => window.mcgEvent?.("translate", { dir: "text_to_morse" }));
+        document.getElementById("mcg-morse-to-text")
+          ?.addEventListener("click", () => window.mcgEvent?.("translate", { dir: "morse_to_text" }));
+        playBtn?.addEventListener("click", () => window.mcgEvent?.("play_audio", { wpm: Number(speed?.value || 18) }));
+        copyBtn?.addEventListener("click", () => window.mcgEvent?.("copy_output", {}));
+        copyLinkBtn?.addEventListener("click", () => window.mcgEvent?.("copy_share_link", {}));
+        flashBtn?.addEventListener("click", () => window.mcgEvent?.("flash_light", {}));
+        buzzBtn?.addEventListener("click", () => window.mcgEvent?.("vibrate", {}));
 
         function refreshNato() {
           if (!natoToggle || !natoOut) return;
