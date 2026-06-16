@@ -1,0 +1,226 @@
+---
+import Layout from "../../components/Layout.astro";
+import morsePayload from "../../data/morse.json";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const title = "Traductor de Código Morse — texto a Morse al instante";
+const description =
+  "Traduce texto a código Morse y descodifica Morse a texto al instante. Escucha el audio, copia el resultado y comparte. Gratis, privado y sin registro.";
+const canonical = `${site}/es/traductor/`;
+const keywords =
+  "traductor código morse, texto a morse, código morse traductor, descodificar morse, traducir morse, código morse español";
+
+const alternates = [
+  { lang: "en", href: `${site}/translate/` },
+  { lang: "es", href: canonical },
+];
+
+// Letters/digits/punctuation map for the inline tool.
+const morseMap = Object.fromEntries(
+  Object.entries(morsePayload?.morseMap ?? {})
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+);
+
+const crumbs = [
+  { name: "Inicio", url: `${site}/es/` },
+  { name: "Traductor", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Traductor de Código Morse",
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Cualquiera (navegador web)",
+      url: canonical,
+      inLanguage: "es",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      publisher: { "@id": `${site}#org` },
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  keywords={keywords}
+  lang="es"
+  alternates={alternates}
+>
+  <nav class="crumbs" aria-label="Ruta de navegación">
+    <a class="crumb" href="/es/">Inicio</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Traductor</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Rápido · Privado · Sin registro</p>
+    <h1 class="page-hero-title">Traductor de código Morse</h1>
+    <p class="muted page-hero-sub">
+      Escribe o pega texto para convertirlo a código Morse, descodifica Morse a
+      texto, escúchalo en audio y copia el resultado. Todo funciona en tu
+      navegador — nada se envía a ningún servidor.
+    </p>
+  </header>
+
+  <section class="card es-tr" aria-label="Traductor">
+    <div class="es-tr-grid">
+      <div class="es-side">
+        <div class="es-side-head">
+          <span class="es-side-label">Texto</span>
+          <button id="es-clear" type="button" class="es-icon" aria-label="Borrar">✕</button>
+        </div>
+        <textarea id="es-input" class="es-area" rows="7" placeholder="Escribe aquí — HOLA MUNDO"
+          spellcheck="false" maxlength="5000"></textarea>
+      </div>
+
+      <div class="es-side">
+        <div class="es-side-head">
+          <span class="es-side-label">Morse</span>
+          <button id="es-copy" type="button" class="es-icon" aria-label="Copiar resultado">Copiar</button>
+        </div>
+        <textarea id="es-output" class="es-area mono" rows="7" readonly placeholder="Aquí aparece el resultado…"></textarea>
+      </div>
+    </div>
+
+    <div class="es-actions">
+      <button id="es-t2m" type="button" class="btn primary">Texto → Morse</button>
+      <button id="es-m2t" type="button" class="btn secondary">Morse → Texto</button>
+      <button id="es-play" type="button" class="btn ghost">▶ Reproducir</button>
+      <button id="es-stop" type="button" class="btn ghost">■ Detener</button>
+    </div>
+
+    <div class="es-speed">
+      <label for="es-wpm">Velocidad: <span id="es-wpm-val">18 PPM</span></label>
+      <input id="es-wpm" type="range" min="10" max="30" value="18" step="1" aria-label="Palabras por minuto" />
+    </div>
+
+    <p class="es-tip muted">
+      ¿Prefieres el inglés? <a href="/translate/">English translator</a>.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Cómo usar el traductor</h2>
+    <ul>
+      <li><strong>Texto a Morse:</strong> escribe cualquier palabra o frase y pulsa «Texto → Morse». El punto (·) es una señal corta y la raya (−) es tres veces más larga.</li>
+      <li><strong>Morse a texto:</strong> pega puntos y rayas (separa las letras con un espacio y las palabras con «/») y pulsa «Morse → Texto».</li>
+      <li><strong>Escúchalo:</strong> pulsa «Reproducir» para oír el código en audio y ajusta la velocidad en palabras por minuto (PPM).</li>
+      <li><strong>Aprende más:</strong> consulta el <a href="/es/alfabeto-morse/">alfabeto Morse completo</a> con todas las letras y números.</li>
+    </ul>
+  </section>
+
+  <script is:inline define:vars={{ MAP: morseMap }}>
+    (function () {
+      "use strict";
+      const $ = (id) => document.getElementById(id);
+      const input = $("es-input"), output = $("es-output");
+      const wpm = $("es-wpm"), wpmVal = $("es-wpm-val");
+
+      // Reverse map for decoding.
+      const REV = {};
+      for (const k in MAP) REV[MAP[k]] = k;
+
+      function textToMorse(t) {
+        return String(t || "").toUpperCase().trim().split(/\s+/).filter(Boolean)
+          .map((w) => w.split("").map((c) => MAP[c] || "").filter(Boolean).join(" "))
+          .filter(Boolean).join(" / ");
+      }
+      function morseToText(m) {
+        return String(m || "").trim().split(/\s*\/\s*/).map((word) =>
+          word.trim().split(/\s+/).map((sym) => REV[sym] || "").join("")
+        ).join(" ").trim();
+      }
+
+      $("es-t2m").addEventListener("click", () => {
+        output.value = textToMorse(input.value);
+        window.mcgEvent?.("translate", { dir: "text_to_morse", lang: "es" });
+      });
+      $("es-m2t").addEventListener("click", () => {
+        // If the input box holds Morse, decode it; else decode the output box.
+        const src = /[.\-]/.test(input.value) && !/[a-z]/i.test(input.value) ? input.value : output.value;
+        const text = morseToText(src);
+        if (text) { input.value = text; output.value = textToMorse(text); }
+        window.mcgEvent?.("translate", { dir: "morse_to_text", lang: "es" });
+      });
+      $("es-clear").addEventListener("click", () => { input.value = ""; output.value = ""; });
+      $("es-copy").addEventListener("click", async () => {
+        const v = (output.value || "").trim(); if (!v) return;
+        try { await navigator.clipboard.writeText(v); $("es-copy").textContent = "¡Copiado!"; setTimeout(() => ($("es-copy").textContent = "Copiar"), 1100); } catch {}
+        window.mcgEvent?.("copy_output", { lang: "es" });
+      });
+
+      // Live update as you type text.
+      input.addEventListener("input", () => {
+        if (/[.\-]/.test(input.value) && !/[a-zñ]/i.test(input.value)) return; // looks like Morse; wait for button
+        output.value = textToMorse(input.value);
+      });
+
+      wpm.addEventListener("input", () => { wpmVal.textContent = wpm.value + " PPM"; });
+
+      // Audio playback (Web Audio).
+      let ctx, stop = false;
+      function getCtx() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === "suspended") ctx.resume();
+        return ctx;
+      }
+      $("es-play").addEventListener("click", () => {
+        const seq = (output.value || "").trim(); if (!seq) return;
+        stop = false;
+        const c = getCtx();
+        const unit = 1.2 / Number(wpm.value || 18);
+        let t = c.currentTime + 0.05;
+        for (const group of seq.split(/\s+/)) {
+          if (group === "/") { t += unit * 7; continue; }
+          for (const sym of group) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            const osc = c.createOscillator(), g = c.createGain();
+            osc.type = "sine"; osc.frequency.value = 600;
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.3, t + 0.008);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            osc.connect(g); g.connect(c.destination);
+            osc.start(t); osc.stop(t + dur + 0.02);
+            t += dur + unit;
+          }
+          t += unit * 2;
+        }
+        window.mcgEvent?.("play_audio", { lang: "es", wpm: Number(wpm.value || 18) });
+      });
+      $("es-stop").addEventListener("click", () => { stop = true; if (ctx) { ctx.close(); ctx = null; } });
+      document.addEventListener("visibilitychange", () => { if (document.hidden && ctx) { ctx.close(); ctx = null; } });
+
+      // Seed with an example.
+      input.value = "HOLA"; output.value = textToMorse("HOLA");
+    })();
+  </script>
+
+  <style>
+    .es-tr{ padding: var(--s-5); max-width: var(--content); }
+    .es-tr-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); margin-bottom: var(--s-4); }
+    .es-side-head{ display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--s-2); }
+    .es-side-label{ font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+    .es-icon{ background: none; border: 1px solid var(--line); border-radius: var(--r-sm,6px); padding: 4px 10px; font-size: var(--fs-xs); color: var(--text-muted); cursor: pointer; }
+    .es-area{ width: 100%; margin: 0; font-size: var(--fs-md); }
+    .es-area.mono{ letter-spacing: 0.08em; }
+    .es-actions{ display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-4); }
+    .es-speed{ display: flex; align-items: center; gap: var(--s-3); font-size: var(--fs-sm); color: var(--text-muted); }
+    .es-speed input{ flex: 1 1 200px; }
+    .es-tip{ margin: var(--s-3) 0 0; font-size: var(--fs-sm); }
+    @media (max-width: 560px){ .es-tr-grid{ grid-template-columns: 1fr; } }
+  </style>
+</Layout>

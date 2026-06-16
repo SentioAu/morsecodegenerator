@@ -60,6 +60,11 @@ export function sourcesForUrl(urlPath) {
     return ["src/data/morse.json", "src/pages/phrases/[slug].astro"];
   }
 
+  // Spanish (es) pages.
+  if (urlPath === "/es/") return ["src/pages/es/index.astro"];
+  if (urlPath === "/es/traductor/") return ["src/pages/es/traductor.astro", "src/data/morse.json"];
+  if (urlPath === "/es/alfabeto-morse/") return ["src/pages/es/alfabeto-morse.astro", "src/data/morse.json"];
+
   // Names hub — static page (must be matched before the generic
   // /<word>-in-morse-code/ rule below, which would otherwise claim it).
   if (urlPath === "/names-in-morse-code/") {

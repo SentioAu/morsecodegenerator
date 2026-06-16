@@ -81,7 +81,7 @@ const canonical = `${site}/translate/`;
 const robots = "index,follow";
 ---
 
-<Layout title={title} description={description} canonical={canonical} robots={robots}>
+<Layout title={title} description={description} canonical={canonical} robots={robots} alternates={[{ lang: "en", href: `${site}/translate/` }, { lang: "es", href: `${site}/es/traductor/` }]}>
   <header class="t-hero">
     <p class="page-hero-kicker">{t.kicker}</p>
     <h1 class="t-hero-title">{t.heroTitle}</h1>
