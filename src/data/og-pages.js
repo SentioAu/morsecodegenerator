@@ -27,6 +27,7 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/decoder/") return "Decoder";
   if (p === "/practice/") return "Practice";
   if (p === "/keyer/") return "Send practice";
+  if (p === "/morse-bracelet/") return "Make something";
   if (p === "/daily/") return "Daily challenge";
   if (p.startsWith("/gear/")) return "Gear guide";
   if (p === "/flashcards/") return "Flashcards quiz";
@@ -61,6 +62,7 @@ export const OG_PAGES = new Set([
   "/decoder/",
   "/practice/",
   "/keyer/",
+  "/morse-bracelet/",
   "/daily/",
   "/flashcards/",
   "/random-cw/",

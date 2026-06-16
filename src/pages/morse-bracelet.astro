@@ -1,0 +1,403 @@
+---
+import Layout from "../components/Layout.astro";
+import morse from "../data/morse.json";
+import { amazonSearch } from "../data/gear.js";
+
+const title = "Morse Code Bracelet & Tattoo Generator — make a pattern, download free";
+const description =
+  "Turn any word into a Morse code bead pattern or clean dot-and-dash design. Pick colours, preview live, and download a free PNG or SVG — perfect for bracelets, jewelry, tattoos, and gifts.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/morse-bracelet/`;
+const keywords =
+  "morse code bracelet generator, morse code tattoo generator, morse code jewelry, morse code bracelet pattern, morse code necklace, morse code gift, name in morse code design, morse code art";
+
+// Letters + digits + space only — the design tool ignores punctuation.
+const DESIGN_MAP = {};
+for (const [ch, code] of Object.entries(morse.morseMap)) {
+  if (/^[A-Z0-9]$/.test(ch)) DESIGN_MAP[ch] = code;
+}
+
+const braceletKits = amazonSearch("morse code bracelet making kit beads");
+const jewelry = amazonSearch("morse code bracelet");
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Bracelet & tattoo generator", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebApplication",
+      "@id": canonical,
+      name: "Morse Code Bracelet & Tattoo Generator",
+      url: canonical,
+      applicationCategory: "DesignApplication",
+      operatingSystem: "Any (web browser)",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      description,
+      featureList: [
+        "Text to Morse bead pattern",
+        "Clean dot-and-dash design for tattoos",
+        "Custom colours",
+        "Free PNG and SVG download",
+      ],
+      publisher: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "HowTo",
+      name: "How to make a Morse code bracelet pattern",
+      step: [
+        { "@type": "HowToStep", name: "Type your word", text: "Enter a name, word, or short phrase. Each letter becomes a group of dots and dashes." },
+        { "@type": "HowToStep", name: "Choose a style", text: "Pick the bead style for jewelry or the clean dot-and-dash style for tattoos, then set your colours." },
+        { "@type": "HowToStep", name: "Download", text: "Save a free PNG or SVG and take it to your beads, your artist, or your printer." },
+      ],
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Bracelet &amp; tattoo generator</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Make something · bracelets · tattoos · gifts</p>
+    <h1 class="page-hero-title">Morse code bracelet &amp; tattoo generator</h1>
+    <p class="muted page-hero-sub">
+      Turn a name, a date, or a secret message into a Morse code pattern you can
+      actually use. Choose the bead style for jewelry or the clean dot-and-dash
+      style for a tattoo, set your colours, and download a free PNG or SVG.
+    </p>
+  </header>
+
+  <section class="card mb-card" aria-label="Generator">
+    <div class="mb-field">
+      <label class="mb-label" for="mb-text">Your word or phrase</label>
+      <input id="mb-text" class="mb-input" type="text" maxlength="40" value="LOVE"
+        placeholder="e.g. a name, LOVE, a date" autocomplete="off" spellcheck="false" />
+    </div>
+
+    <div class="mb-options">
+      <label class="mb-opt">
+        <span>Style</span>
+        <select id="mb-style">
+          <option value="beads" selected>Beads (jewelry)</option>
+          <option value="clean">Dots &amp; dashes (tattoo)</option>
+        </select>
+      </label>
+      <label class="mb-opt">
+        <span>Layout</span>
+        <select id="mb-layout">
+          <option value="horizontal" selected>Horizontal</option>
+          <option value="vertical">Vertical</option>
+        </select>
+      </label>
+      <label class="mb-opt">
+        <span>Colour</span>
+        <input id="mb-color" type="color" value="#111111" />
+      </label>
+      <label class="mb-opt">
+        <span>Background</span>
+        <select id="mb-bg">
+          <option value="transparent" selected>Transparent</option>
+          <option value="#ffffff">White</option>
+          <option value="#000000">Black</option>
+        </select>
+      </label>
+      <label class="mb-opt mb-opt-check">
+        <input id="mb-cord" type="checkbox" checked />
+        <span>Show cord line</span>
+      </label>
+      <label class="mb-opt mb-opt-check">
+        <input id="mb-labels" type="checkbox" />
+        <span>Show letters</span>
+      </label>
+    </div>
+
+    <div id="mb-preview" class="mb-preview" role="img" aria-label="Morse code design preview"></div>
+
+    <p id="mb-morse" class="mb-morse mono" aria-live="polite"></p>
+
+    <div class="mb-actions">
+      <button id="mb-png" type="button" class="btn primary">Download PNG</button>
+      <button id="mb-svg" type="button" class="btn secondary">Download SVG</button>
+      <a class="btn ghost" href="/translate/">Open in translator</a>
+    </div>
+  </section>
+
+  <p class="mb-aff-note">
+    Making the real thing? <a href={braceletKits} target="_blank" rel="sponsored nofollow noopener" data-aff="bracelet-kit">Bead bracelet kits</a>
+    and <a href={jewelry} target="_blank" rel="sponsored nofollow noopener" data-aff="morse-jewelry">ready-made Morse jewelry</a>
+    are affiliate links — we may earn a commission at no cost to you. See our <a href="/disclosure/">disclosure</a>.
+  </p>
+
+  <section class="card t-card">
+    <h2>Ideas for your Morse design</h2>
+    <ul>
+      <li><strong>Bracelets &amp; necklaces.</strong> Use the bead style: small beads for dots, long beads (or three small ones) for dashes, with a spacer bead between letters. The cord line shows exactly where the string runs.</li>
+      <li><strong>Tattoos.</strong> Switch to the clean dot-and-dash style on a transparent background and download the SVG — your artist can scale it to any size with no blur.</li>
+      <li><strong>Gifts &amp; cards.</strong> A name, a wedding date, or "I love you" makes a quiet, personal message. Pair it with our <a href="/phrases/">common phrases</a> for inspiration.</li>
+      <li><strong>Get the spacing right.</strong> The pattern follows real <a href="/timing-calculator/">Morse timing</a>: dot, dash, the gap inside a letter, and the bigger gap between letters. That spacing is what makes it readable as actual Morse.</li>
+    </ul>
+    <p>
+      Want to hear it too? Paste the same word into the <a href="/translate/">translator</a>
+      to play it as audio, or learn to send it yourself on the <a href="/keyer/">keyer</a>.
+    </p>
+  </section>
+
+  <script is:inline define:vars={{ DESIGN_MAP }}>
+    (function () {
+      "use strict";
+      const $ = (id) => document.getElementById(id);
+      const textEl = $("mb-text");
+      const styleEl = $("mb-style");
+      const layoutEl = $("mb-layout");
+      const colorEl = $("mb-color");
+      const bgEl = $("mb-bg");
+      const cordEl = $("mb-cord");
+      const labelsEl = $("mb-labels");
+      const previewEl = $("mb-preview");
+      const morseEl = $("mb-morse");
+
+      // Geometry (in SVG user units; 1 unit ≈ 1px before export scaling).
+      const DIT = 22;          // dit bead diameter
+      const DAH = 58;          // dah bead length
+      const THICK = 22;        // element thickness
+      const GAP_EL = 16;       // gap between elements within a letter
+      const GAP_LETTER = 44;   // gap between letters
+      const PAD = 30;          // outer padding
+      const LABEL_H = 26;      // space for letter labels
+
+      function lettersOf(text) {
+        const out = [];
+        for (const raw of text.toUpperCase()) {
+          if (raw === " ") { out.push({ ch: " ", code: "" }); continue; }
+          const code = DESIGN_MAP[raw];
+          if (code) out.push({ ch: raw, code });
+        }
+        return out;
+      }
+
+      function buildSvg(text, opts) {
+        const letters = lettersOf(text);
+        const clean = opts.style === "clean";
+        const color = opts.color;
+        const bg = opts.bg;
+        const showCord = opts.cord && !clean;
+        const showLabels = opts.labels;
+        const vertical = opts.layout === "vertical";
+
+        // Lay every element out along a single axis ("run"), tracking the
+        // run position of each letter's centre for optional labels.
+        const segs = []; // {start, len, dit}
+        const letterCentres = [];
+        let pos = PAD;
+        letters.forEach((l, li) => {
+          if (l.ch === " ") { pos += GAP_LETTER; return; }
+          const startOfLetter = pos;
+          [...l.code].forEach((sym, i) => {
+            const dit = sym === ".";
+            const len = dit ? DIT : DAH;
+            segs.push({ start: pos, len, dit });
+            pos += len;
+            if (i < l.code.length - 1) pos += GAP_EL;
+          });
+          letterCentres.push((startOfLetter + pos) / 2);
+          if (li < letters.length - 1) pos += GAP_LETTER;
+        });
+        const runLen = pos + PAD;
+
+        const cross = PAD + THICK / 2 + (showLabels ? LABEL_H : 0);
+        const crossTotal = cross + THICK / 2 + PAD + (showLabels ? 0 : 0);
+
+        const W = vertical ? crossTotal : runLen;
+        const H = vertical ? runLen : crossTotal;
+
+        // Map (alongRun, acrossCross) -> (x,y) honouring orientation.
+        const X = (a, c) => (vertical ? c : a);
+        const Y = (a, c) => (vertical ? a : c);
+
+        let body = "";
+        if (bg !== "transparent") {
+          body += `<rect x="0" y="0" width="${W}" height="${H}" fill="${bg}"/>`;
+        }
+        if (showCord) {
+          const a1 = PAD / 2, a2 = runLen - PAD / 2;
+          body += `<line x1="${X(a1, cross)}" y1="${Y(a1, cross)}" x2="${X(a2, cross)}" y2="${Y(a2, cross)}" stroke="${color}" stroke-width="2" opacity="0.5"/>`;
+        }
+        for (const s of segs) {
+          if (s.dit) {
+            const a = s.start + DIT / 2;
+            body += `<circle cx="${X(a, cross)}" cy="${Y(a, cross)}" r="${(clean ? DIT : DIT) / 2}" fill="${color}"/>`;
+          } else {
+            const a = s.start, len = s.len;
+            const rx = THICK / 2;
+            const x = X(a, cross - THICK / 2);
+            const y = Y(a, cross - THICK / 2);
+            const w = vertical ? THICK : len;
+            const h = vertical ? len : THICK;
+            body += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" ry="${rx}" fill="${color}"/>`;
+          }
+        }
+        if (showLabels) {
+          let ci = 0;
+          for (const l of letters) {
+            if (l.ch === " ") continue;
+            const a = letterCentres[ci++];
+            const lc = PAD + (showLabels ? LABEL_H - 8 : 0);
+            const tx = X(a, lc), ty = Y(a, lc);
+            body += `<text x="${tx}" y="${ty}" fill="${color}" font-family="monospace" font-size="18" text-anchor="middle" ${vertical ? 'dominant-baseline="middle"' : ''}>${l.ch}</text>`;
+          }
+        }
+
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${Math.max(1, Math.round(W))} ${Math.max(1, Math.round(H))}" width="${Math.round(W)}" height="${Math.round(H)}" role="img">${body}</svg>`;
+      }
+
+      function currentOpts() {
+        return {
+          style: styleEl.value,
+          layout: layoutEl.value,
+          color: colorEl.value,
+          bg: bgEl.value,
+          cord: cordEl.checked,
+          labels: labelsEl.checked,
+        };
+      }
+
+      function morseString(text) {
+        return lettersOf(text).map((l) => (l.ch === " " ? "/" : l.code)).join(" ");
+      }
+
+      let lastSvg = "";
+      function render() {
+        const text = textEl.value.trim() || "LOVE";
+        lastSvg = buildSvg(text, currentOpts());
+        previewEl.innerHTML = lastSvg;
+        morseEl.textContent = morseString(text);
+        // Reflect the chosen background behind the preview for fidelity.
+        const bg = bgEl.value;
+        previewEl.style.background =
+          bg === "transparent" ? "" : bg;
+      }
+
+      [textEl, styleEl, layoutEl, colorEl, bgEl, cordEl, labelsEl].forEach((el) => {
+        el.addEventListener("input", render);
+        el.addEventListener("change", render);
+      });
+      // Cord only makes sense in bead mode.
+      styleEl.addEventListener("change", () => {
+        const clean = styleEl.value === "clean";
+        cordEl.disabled = clean;
+      });
+
+      function fileBase() {
+        return (textEl.value.trim() || "morse").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30) || "morse";
+      }
+
+      $("mb-svg").addEventListener("click", () => {
+        const blob = new Blob([lastSvg], { type: "image/svg+xml" });
+        triggerDownload(URL.createObjectURL(blob), fileBase() + "-morse.svg");
+        window.mcgEvent?.("bracelet_download", { format: "svg", style: styleEl.value });
+      });
+
+      $("mb-png").addEventListener("click", () => {
+        const svg = lastSvg;
+        const m = svg.match(/width="(\d+)" height="(\d+)"/);
+        const w = m ? Number(m[1]) : 800;
+        const h = m ? Number(m[2]) : 200;
+        const scale = Math.min(4, Math.max(2, 1600 / Math.max(1, w))); // crisp, capped
+        const img = new Image();
+        const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.round(w * scale);
+          canvas.height = Math.round(h * scale);
+          const cx = canvas.getContext("2d");
+          cx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          URL.revokeObjectURL(url);
+          canvas.toBlob((blob) => {
+            if (!blob) return;
+            triggerDownload(URL.createObjectURL(blob), fileBase() + "-morse.png");
+            window.mcgEvent?.("bracelet_download", { format: "png", style: styleEl.value });
+          }, "image/png");
+        };
+        img.onerror = () => URL.revokeObjectURL(url);
+        img.src = url;
+      });
+
+      function triggerDownload(href, name) {
+        const a = document.createElement("a");
+        a.href = href; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(href), 5000);
+      }
+
+      render();
+    })();
+  </script>
+
+  <style>
+    .mb-card{ padding: var(--s-5); max-width: var(--content); }
+    .mb-field{ margin-bottom: var(--s-4); }
+    .mb-label{ display: block; font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: var(--s-2); }
+    .mb-input{
+      width: 100%; height: 48px; margin: 0;
+      font-size: var(--fs-lg); font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .mb-options{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--s-3);
+      margin-bottom: var(--s-4);
+    }
+    .mb-opt{ display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); color: var(--text-muted); }
+    .mb-opt select, .mb-opt input[type="color"]{ height: 38px; margin: 0; }
+    .mb-opt input[type="color"]{ padding: 2px; cursor: pointer; }
+    .mb-opt-check{ flex-direction: row; align-items: center; gap: 8px; align-self: end; min-height: 38px; }
+
+    .mb-preview{
+      display: grid; place-items: center;
+      min-height: 140px;
+      padding: var(--s-4);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md, 10px);
+      margin-bottom: var(--s-3);
+      overflow-x: auto;
+      background-image:
+        linear-gradient(45deg, var(--surface-2) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--surface-2) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--surface-2) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--surface-2) 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+    }
+    .mb-preview svg{ max-width: 100%; height: auto; }
+    .mb-morse{
+      text-align: center; color: var(--text-muted);
+      font-size: var(--fs-sm); letter-spacing: 0.14em;
+      min-height: 1.4em; margin: 0 0 var(--s-4);
+      overflow-x: auto; white-space: nowrap;
+    }
+    .mb-actions{ display: flex; flex-wrap: wrap; gap: var(--s-2); }
+    .mb-aff-note{
+      max-width: var(--content);
+      font-size: var(--fs-xs); color: var(--text-subtle);
+      margin: var(--s-3) 0 var(--s-6);
+    }
+  </style>
+</Layout>
