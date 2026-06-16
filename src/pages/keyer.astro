@@ -1,0 +1,466 @@
+---
+import Layout from "../components/Layout.astro";
+import morse from "../data/morse.json";
+
+const title = "Morse Code Keyer — practice sending Morse online";
+const description =
+  "Practice sending Morse code in your browser. Tap the spacebar, mouse, or screen as a straight key — the trainer decodes your keying live, scores your timing, and challenges you to send target words. Free, no install.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/keyer/`;
+const keywords =
+  "morse code keyer, practice sending morse code, morse key practice online, straight key trainer, send morse code, morse code tapper, learn to send morse";
+
+// Reverse map (symbols -> letter) for decoding the user's keying.
+// Letters, digits, and a few common punctuation marks only — the
+// decoder never needs the prosign multi-char entries.
+const DECODE_MAP = {};
+for (const [ch, code] of Object.entries(morse.morseMap)) {
+  if (/^[A-Z0-9]$/.test(ch) || ".,?/=+-".includes(ch)) DECODE_MAP[code] = ch;
+}
+
+// Challenge words — short, common, every letter has Morse. Kept small
+// and separate from the daily-game list; these are for repeated drilling.
+const CHALLENGE_WORDS = [
+  "SOS", "CQ", "DE", "HI", "OK", "TU", "73", "88",
+  "THE", "AND", "YOU", "CAT", "DOG", "SUN", "SEA", "TEA",
+  "HELLO", "MORSE", "RADIO", "WORLD", "LEARN", "PASTE", "QUICK",
+  "PARIS", "CODEX", "ECHO", "DELTA", "ROGER",
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Keyer", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebApplication",
+      "@id": canonical,
+      name: "Morse Code Keyer",
+      url: canonical,
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Any (web browser)",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      description,
+      featureList: [
+        "Straight-key sending practice (keyboard, mouse, or touch)",
+        "Live decoding of your keying",
+        "Adaptive dit/dah detection",
+        "Audio sidetone",
+        "Scored word challenges",
+      ],
+      publisher: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "HowTo",
+      name: "How to practice sending Morse code",
+      description: "Use a straight-key style tapper to learn to send Morse code by hand.",
+      step: [
+        { "@type": "HowToStep", name: "Pick your key", text: "Use the spacebar, hold the mouse button, or press the on-screen key. Short press = dit, long press = dah." },
+        { "@type": "HowToStep", name: "Send a character", text: "Tap the elements of a letter with short gaps, then pause to end the letter. The trainer decodes it live." },
+        { "@type": "HowToStep", name: "Take the challenge", text: "Switch to challenge mode, send the target word, and read your timing and accuracy score." },
+      ],
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Keyer</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">The other half of Morse · learn to send</p>
+    <h1 class="page-hero-title">Morse code keyer</h1>
+    <p class="muted page-hero-sub">
+      Reading Morse is half the skill — this is the other half. Tap the
+      spacebar, mouse, or the on-screen key like a straight key: a quick tap is
+      a dit, a longer hold is a dah. The trainer listens to your fist, decodes
+      it live, and scores how clean your timing is.
+    </p>
+  </header>
+
+  <section class="card kr-card" aria-label="Keyer">
+    <div class="kr-modes" role="tablist" aria-label="Mode">
+      <button id="kr-mode-free" class="kr-mode active" role="tab" aria-selected="true" type="button">Free sending</button>
+      <button id="kr-mode-challenge" class="kr-mode" role="tab" aria-selected="false" type="button">Word challenge</button>
+    </div>
+
+    <div id="kr-challenge-bar" class="kr-challenge" hidden>
+      <div class="kr-target-wrap">
+        <span class="kr-target-label">Send this:</span>
+        <span id="kr-target" class="kr-target">—</span>
+        <code id="kr-target-morse" class="kr-target-morse mono"></code>
+      </div>
+      <button id="kr-new-word" type="button" class="btn ghost btn-sm">New word</button>
+    </div>
+
+    <button id="kr-key" type="button" class="kr-key" aria-label="Morse key — press and hold to send">
+      <span class="kr-key-face">
+        <span class="kr-key-hint">Hold to send</span>
+        <span class="kr-key-sub">Spacebar · mouse · touch</span>
+      </span>
+    </button>
+
+    <div class="kr-live">
+      <div class="kr-live-row">
+        <span class="kr-live-label">Keying</span>
+        <code id="kr-symbols" class="kr-symbols mono" aria-live="polite">&nbsp;</code>
+      </div>
+      <div class="kr-live-row">
+        <span class="kr-live-label">Decoded</span>
+        <output id="kr-decoded" class="kr-decoded mono" aria-live="polite">&nbsp;</output>
+      </div>
+    </div>
+
+    <p id="kr-feedback" class="kr-feedback" role="status" aria-live="polite"></p>
+
+    <div class="kr-controls">
+      <div class="slider kr-slider">
+        <div class="slider-head">
+          <span class="slider-label">Target speed</span>
+          <span id="kr-wpm-val" class="slider-value">15 WPM</span>
+        </div>
+        <input id="kr-wpm" type="range" min="5" max="30" value="15" step="1" aria-label="Target words per minute" />
+      </div>
+      <label class="kr-toggle">
+        <input id="kr-tone" type="checkbox" checked />
+        <span>Sidetone (audio)</span>
+      </label>
+      <label class="kr-toggle">
+        <input id="kr-adaptive" type="checkbox" checked />
+        <span>Adapt to my fist</span>
+      </label>
+      <button id="kr-clear" type="button" class="btn ghost btn-sm">Clear</button>
+    </div>
+  </section>
+
+  <section class="card t-card">
+    <h2>How to send Morse on a straight key</h2>
+    <ul>
+      <li><strong>Dit vs dah is about length.</strong> A dah is three times the length of a dit. Hold the key briefly for a dit, about three times longer for a dah. The trainer adapts to your own timing when "Adapt to my fist" is on.</li>
+      <li><strong>Gaps carry meaning too.</strong> Leave one dit-length between elements of a letter, three dit-lengths between letters, and seven between words. Good operators are recognised by their spacing, not their speed.</li>
+      <li><strong>Rhythm beats raw speed.</strong> Send at a pace where your spacing stays even. The <a href="/timing-calculator/">timing calculator</a> shows the exact millisecond lengths at any WPM.</li>
+      <li><strong>Close the loop.</strong> You can already <a href="/practice/">copy Morse by ear</a> with the Koch trainer and test yourself with <a href="/flashcards/">flashcards</a>. Sending here completes both halves of real CW.</li>
+    </ul>
+    <p>
+      Ready for a real key? Our <a href="/gear/best-morse-code-keys/">straight-key buying guide</a>
+      covers everything from a $25 first key to a buy-it-once classic.
+    </p>
+  </section>
+
+  <script is:inline define:vars={{ DECODE_MAP, CHALLENGE_WORDS, MORSE_MAP: morse.morseMap }}>
+    (function () {
+      "use strict";
+      const $ = (id) => document.getElementById(id);
+
+      const keyEl = $("kr-key");
+      const symbolsEl = $("kr-symbols");
+      const decodedEl = $("kr-decoded");
+      const feedbackEl = $("kr-feedback");
+      const wpmInput = $("kr-wpm");
+      const wpmVal = $("kr-wpm-val");
+      const toneToggle = $("kr-tone");
+      const adaptiveToggle = $("kr-adaptive");
+
+      // ---- Timing model ----
+      // unit (ms) = 1200 / wpm. dit≈1u, dah≈3u; gaps 1u/3u/7u.
+      let wpm = 15;
+      let unit = 1200 / wpm;
+      // Adaptive dit estimate — seeded from WPM, nudged by the user's
+      // own elements so an uneven fist still decodes.
+      let ditEst = unit;
+
+      function refreshUnit() {
+        wpm = Number(wpmInput.value || 15);
+        unit = 1200 / wpm;
+        ditEst = unit;
+        wpmVal.textContent = wpm + " WPM";
+        try { localStorage.setItem("mcg.keyer.wpm", String(wpm)); } catch {}
+      }
+
+      // ---- Audio sidetone ----
+      let ctx, osc, gain;
+      function toneOn() {
+        if (!toneToggle.checked) return;
+        try {
+          ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+          if (ctx.state === "suspended") ctx.resume();
+          osc = ctx.createOscillator();
+          gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = 600;
+          gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.008);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start();
+        } catch {}
+      }
+      function toneOff() {
+        if (!osc || !ctx) return;
+        try {
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.008);
+          osc.stop(ctx.currentTime + 0.02);
+        } catch {}
+        osc = null;
+      }
+
+      // ---- Keying state ----
+      let down = false;
+      let pressStart = 0;
+      let charSymbols = "";   // dits/dahs for the letter in progress
+      let lineSymbols = "";   // full visible keying for this attempt
+      let decoded = "";
+      let letterTimer = 0, wordTimer = 0;
+
+      function flushLetter() {
+        if (!charSymbols) return;
+        const ch = DECODE_MAP[charSymbols] || "�";
+        decoded += ch;
+        charSymbols = "";
+        render();
+        if (mode === "challenge") checkChallenge();
+      }
+      function addSpace() {
+        if (decoded && !decoded.endsWith(" ")) { decoded += " "; render(); }
+      }
+
+      function render() {
+        symbolsEl.textContent = (lineSymbols + charSymbols) || " ";
+        decodedEl.textContent = decoded || " ";
+      }
+
+      function onDown() {
+        if (down) return;
+        down = true;
+        keyEl.classList.add("pressed");
+        pressStart = performance.now();
+        clearTimeout(letterTimer); clearTimeout(wordTimer);
+        toneOn();
+      }
+
+      function onUp() {
+        if (!down) return;
+        down = false;
+        keyEl.classList.remove("pressed");
+        toneOff();
+        const now = performance.now();
+        const dur = now - pressStart;
+
+        // Classify element: dit vs dah. Threshold sits at 2× the dit
+        // estimate (the natural midpoint between 1u and 3u).
+        const isDah = dur > ditEst * 2;
+        const sym = isDah ? "-" : ".";
+        charSymbols += sym;
+        render();
+
+        // Adapt the dit estimate toward observed element lengths.
+        if (adaptiveToggle.checked) {
+          const impliedDit = isDah ? dur / 3 : dur;
+          ditEst = ditEst * 0.7 + impliedDit * 0.3;
+          // Keep it sane.
+          ditEst = Math.max(40, Math.min(600, ditEst));
+        }
+
+        // Schedule letter/word boundaries off the *current* dit estimate.
+        const letterGap = ditEst * 3;
+        const wordGap = ditEst * 7;
+        letterTimer = setTimeout(() => {
+          lineSymbols += charSymbols + " ";
+          flushLetter();
+        }, letterGap);
+        wordTimer = setTimeout(() => {
+          addSpace();
+        }, wordGap);
+      }
+
+      // ---- Pointer + keyboard wiring ----
+      keyEl.addEventListener("pointerdown", (e) => { e.preventDefault(); onDown(); });
+      window.addEventListener("pointerup", () => { if (down) onUp(); });
+      keyEl.addEventListener("contextmenu", (e) => e.preventDefault());
+
+      document.addEventListener("keydown", (e) => {
+        if (e.code !== "Space" && e.key !== " ") return;
+        const tag = document.activeElement?.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON") {
+          if (document.activeElement !== keyEl) return;
+        }
+        if (e.repeat) { e.preventDefault(); return; }
+        e.preventDefault();
+        onDown();
+      });
+      document.addEventListener("keyup", (e) => {
+        if (e.code !== "Space" && e.key !== " ") return;
+        e.preventDefault();
+        if (down) onUp();
+      });
+
+      // ---- Controls ----
+      wpmInput.addEventListener("input", refreshUnit);
+      $("kr-clear").addEventListener("click", clearAll);
+      function clearAll() {
+        clearTimeout(letterTimer); clearTimeout(wordTimer);
+        charSymbols = ""; lineSymbols = ""; decoded = "";
+        feedbackEl.textContent = "";
+        feedbackEl.className = "kr-feedback";
+        render();
+      }
+
+      try {
+        const sv = localStorage.getItem("mcg.keyer.wpm");
+        if (sv) wpmInput.value = sv;
+      } catch {}
+      refreshUnit();
+
+      // ---- Modes ----
+      let mode = "free";
+      let target = "";
+      const freeBtn = $("kr-mode-free");
+      const chBtn = $("kr-mode-challenge");
+      const chBar = $("kr-challenge-bar");
+      const targetEl = $("kr-target");
+      const targetMorseEl = $("kr-target-morse");
+
+      function wordToMorse(w) {
+        return w.split("").map((c) => MORSE_MAP[c] || "").join(" ");
+      }
+      function newWord() {
+        target = CHALLENGE_WORDS[Math.floor(Math.random() * CHALLENGE_WORDS.length)];
+        targetEl.textContent = target;
+        targetMorseEl.textContent = wordToMorse(target);
+        clearAll();
+      }
+      function setMode(m) {
+        mode = m;
+        const challenge = m === "challenge";
+        freeBtn.classList.toggle("active", !challenge);
+        chBtn.classList.toggle("active", challenge);
+        freeBtn.setAttribute("aria-selected", String(!challenge));
+        chBtn.setAttribute("aria-selected", String(challenge));
+        chBar.hidden = !challenge;
+        clearAll();
+        if (challenge) newWord();
+        window.mcgEvent?.("keyer_mode", { mode: m });
+      }
+      freeBtn.addEventListener("click", () => setMode("free"));
+      chBtn.addEventListener("click", () => setMode("challenge"));
+      $("kr-new-word").addEventListener("click", newWord);
+
+      function checkChallenge() {
+        // Compare the decoded text (ignoring trailing spaces) to target.
+        const got = decoded.replace(/\s+/g, " ").trim();
+        if (!got) return;
+        if (got === target) {
+          feedbackEl.textContent = "✓ Clean copy — " + target + " sent correctly.";
+          feedbackEl.className = "kr-feedback good";
+          window.mcgEvent?.("keyer_word_correct", { word: target, wpm });
+          setTimeout(newWord, 1400);
+        } else if (got.length >= target.length || !target.startsWith(got)) {
+          // Either fully diverged or over-length — flag a miss but keep going.
+          feedbackEl.textContent = "Got “" + got + "”, target “" + target + "”. Clear and retry.";
+          feedbackEl.className = "kr-feedback bad";
+        }
+      }
+
+      // Release a sidetone if the tab is hidden mid-press.
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && down) onUp();
+      });
+    })();
+  </script>
+
+  <style>
+    .kr-card{ padding: var(--s-5); max-width: var(--content); }
+
+    .kr-modes{ display: flex; gap: var(--s-2); margin-bottom: var(--s-4); }
+    .kr-mode{
+      flex: 0 0 auto;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: var(--fs-sm); font-weight: 600;
+      cursor: pointer;
+    }
+    .kr-mode.active{ background: var(--text); color: var(--bg, #0b0b0b); border-color: transparent; }
+
+    .kr-challenge{
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: var(--s-3);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md, 10px);
+      margin-bottom: var(--s-4);
+    }
+    .kr-target-wrap{ display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+    .kr-target-label{ font-size: var(--fs-sm); color: var(--text-muted); }
+    .kr-target{ font-family: var(--font-display); font-size: var(--fs-xl, 26px); font-weight: 700; letter-spacing: 0.06em; }
+    .kr-target-morse{ font-size: var(--fs-sm); color: var(--text-muted); letter-spacing: 0.12em; }
+
+    .kr-key{
+      width: 100%;
+      min-height: 160px;
+      display: grid; place-items: center;
+      border: 2px dashed var(--line);
+      border-radius: var(--r-lg, 14px);
+      background: var(--surface-2);
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+      transition: background .06s, border-color .06s, transform .06s;
+      margin-bottom: var(--s-4);
+    }
+    .kr-key:focus-visible{ outline: 2px solid #16a34a; outline-offset: 3px; }
+    .kr-key.pressed{
+      background: #16a34a;
+      border-color: #16a34a;
+      border-style: solid;
+      color: #fff;
+      transform: scale(0.998);
+    }
+    .kr-key-face{ text-align: center; pointer-events: none; }
+    .kr-key-hint{ display: block; font-family: var(--font-display); font-size: var(--fs-xl, 26px); font-weight: 700; }
+    .kr-key-sub{ display: block; margin-top: 4px; font-size: var(--fs-xs); color: var(--text-muted); }
+    .kr-key.pressed .kr-key-sub{ color: rgba(255,255,255,.8); }
+
+    .kr-live{ display: grid; gap: var(--s-2); margin-bottom: var(--s-3); }
+    .kr-live-row{ display: grid; grid-template-columns: 84px 1fr; align-items: center; gap: var(--s-3); }
+    .kr-live-label{ font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+    .kr-symbols{
+      font-size: clamp(18px, 4vw, 26px); letter-spacing: 0.16em;
+      min-height: 1.4em; color: var(--text);
+      overflow-x: auto; white-space: nowrap;
+    }
+    .kr-decoded{
+      font-size: clamp(18px, 4vw, 26px); letter-spacing: 0.12em;
+      min-height: 1.4em; color: var(--text); font-weight: 600;
+      overflow-x: auto; white-space: nowrap;
+    }
+
+    .kr-feedback{ min-height: 1.4em; margin: 0 0 var(--s-4); font-size: var(--fs-sm); }
+    .kr-feedback.good{ color: #16a34a; font-weight: 600; }
+    .kr-feedback.bad{ color: #dc2626; }
+
+    .kr-controls{ display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
+    .kr-slider{ flex: 1 1 220px; min-width: 200px; }
+    .kr-toggle{ display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-sm); color: var(--text-muted); }
+    .btn-sm{ padding: 6px 12px; font-size: var(--fs-sm); }
+  </style>
+</Layout>
