@@ -1,0 +1,113 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const title = "Código Morse — traductor, alfabeto y práctica (gratis)";
+const description =
+  "El centro del código Morse en español: traductor de texto a Morse con audio, alfabeto completo (A–Z y 0–9), y herramientas de práctica. Gratis, privado y sin registro.";
+const canonical = `${site}/es/`;
+const keywords =
+  "código morse, traductor código morse, alfabeto morse, morse español, aprender código morse, texto a morse";
+
+const alternates = [
+  { lang: "en", href: `${site}/` },
+  { lang: "es", href: canonical },
+];
+
+const cards = [
+  { href: "/es/traductor/", title: "Traductor", desc: "Texto ⇄ Morse con audio y copia instantánea." },
+  { href: "/es/alfabeto-morse/", title: "Alfabeto Morse", desc: "Todas las letras y números con sus puntos y rayas." },
+  { href: "/morse-bracelet/", title: "Pulsera y tatuaje", desc: "Convierte una palabra en un diseño descargable." },
+  { href: "/translate/", title: "English tools", desc: "Decoder, practice, charts and more in English." },
+];
+
+const crumbs = [{ name: "Inicio", url: canonical }];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      inLanguage: "es",
+      isPartOf: { "@id": `${site}#website` },
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  keywords={keywords}
+  lang="es"
+  alternates={alternates}
+>
+  <header class="page-hero">
+    <p class="page-hero-kicker">·– &nbsp;El centro del código Morse</p>
+    <h1 class="page-hero-title">Código Morse en español</h1>
+    <p class="muted page-hero-sub">
+      Traduce texto a código Morse al instante, escúchalo en audio y aprende el
+      alfabeto completo. Todo es gratis, funciona en tu navegador y no requiere
+      registro.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/es/traductor/">Abrir el traductor →</a>
+      <a class="btn ghost" href="/es/alfabeto-morse/">Ver el alfabeto</a>
+    </div>
+  </header>
+
+  <section class="card-grid">
+    {cards.map((c) => (
+      <a class="tk-card" href={c.href}>
+        <h2 class="tk-title">{c.title}</h2>
+        <p class="tk-desc">{c.desc}</p>
+      </a>
+    ))}
+  </section>
+
+  <section class="card t-card">
+    <h2>¿Qué es el código Morse?</h2>
+    <p>
+      El código Morse representa cada letra y número mediante combinaciones de
+      señales cortas (puntos, <span class="mono">·</span>) y largas (rayas,
+      <span class="mono">−</span>). Se creó en la década de 1840 para el
+      telégrafo y todavía se usa hoy en radioafición, aviación y situaciones de
+      emergencia — la señal <strong>SOS</strong> (<span class="mono">··· −−− ···</span>)
+      es la más conocida del mundo.
+    </p>
+    <p>
+      Empieza con el <a href="/es/traductor/">traductor</a> para convertir
+      cualquier palabra, o estudia el <a href="/es/alfabeto-morse/">alfabeto
+      completo</a> para aprender a leerlo tú mismo.
+    </p>
+  </section>
+
+  <style>
+    .card-grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--s-4);
+      margin-bottom: var(--s-6);
+    }
+    .tk-card{
+      display: block; padding: var(--s-5);
+      border: 1px solid var(--line); border-radius: var(--r-lg, 14px);
+      background: var(--surface-2); text-decoration: none; color: inherit;
+    }
+    .tk-card:hover{ border-color: var(--text-muted); }
+    .tk-title{ margin: 0 0 var(--s-2); font-size: var(--fs-lg); }
+    .tk-desc{ margin: 0; color: var(--text-muted); font-size: var(--fs-sm); }
+  </style>
+</Layout>

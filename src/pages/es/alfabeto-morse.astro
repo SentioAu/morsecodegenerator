@@ -1,0 +1,123 @@
+---
+import Layout from "../../components/Layout.astro";
+import morsePayload from "../../data/morse.json";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const title = "Alfabeto en código Morse — todas las letras y números (A–Z, 0–9)";
+const description =
+  "El alfabeto completo en código Morse: cada letra de la A a la Z y los números del 0 al 9 con sus puntos y rayas. Tabla clara para aprender y consultar, gratis.";
+const canonical = `${site}/es/alfabeto-morse/`;
+const keywords =
+  "alfabeto morse, abecedario morse, código morse letras, código morse números, tabla código morse, alfabeto código morse completo";
+
+const alternates = [
+  { lang: "en", href: `${site}/morse-code/` },
+  { lang: "es", href: canonical },
+];
+
+const map = morsePayload?.morseMap ?? {};
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((c) => ({ c, m: map[c] }));
+const digits = "0123456789".split("").map((c) => ({ c, m: map[c] }));
+
+const crumbs = [
+  { name: "Inicio", url: `${site}/es/` },
+  { name: "Alfabeto Morse", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      inLanguage: "es",
+      isPartOf: { "@id": `${site}#website` },
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  keywords={keywords}
+  lang="es"
+  alternates={alternates}
+>
+  <nav class="crumbs" aria-label="Ruta de navegación">
+    <a class="crumb" href="/es/">Inicio</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Alfabeto Morse</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Referencia · A–Z y 0–9</p>
+    <h1 class="page-hero-title">Alfabeto en código Morse</h1>
+    <p class="muted page-hero-sub">
+      El abecedario completo en código Morse. Cada letra y número se forma con
+      puntos (<span class="mono">·</span>, señal corta) y rayas
+      (<span class="mono">−</span>, señal larga). Úsalo como tabla de consulta o
+      para memorizar, y prueba cualquier palabra en el
+      <a href="/es/traductor/">traductor</a>.
+    </p>
+  </header>
+
+  <section class="al-section">
+    <h2 class="al-h">Letras (A–Z)</h2>
+    <div class="al-grid">
+      {letters.map((x) => (
+        <div class="al-cell">
+          <span class="al-char">{x.c}</span>
+          <span class="al-morse mono">{x.m}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="al-section">
+    <h2 class="al-h">Números (0–9)</h2>
+    <div class="al-grid">
+      {digits.map((x) => (
+        <div class="al-cell">
+          <span class="al-char">{x.c}</span>
+          <span class="al-morse mono">{x.m}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="card t-card">
+    <h2>Cómo leer el código Morse</h2>
+    <ul>
+      <li><strong>Punto (·):</strong> una señal corta, de una unidad de tiempo.</li>
+      <li><strong>Raya (−):</strong> una señal larga, de tres unidades.</li>
+      <li><strong>Entre letras:</strong> una pausa de tres unidades; entre palabras, siete (se escribe «/»).</li>
+      <li><strong>Consejo:</strong> empieza por las letras más simples — E (·) y T (−) — y avanza. El <a href="/es/traductor/">traductor</a> te deja oír el ritmo de cada letra.</li>
+    </ul>
+    <p>Looking for the English version? See the <a href="/morse-code/">Morse code alphabet</a>.</p>
+  </section>
+
+  <style>
+    .al-section{ margin-bottom: var(--s-6); }
+    .al-h{ font-size: var(--fs-lg); margin: 0 0 var(--s-3); padding-bottom: var(--s-2); border-bottom: 1px solid var(--line); }
+    .al-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--s-2); }
+    .al-cell{
+      display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-2);
+      padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-md, 10px);
+      background: var(--surface-2);
+    }
+    .al-char{ font-family: var(--font-display); font-weight: 700; font-size: var(--fs-lg); }
+    .al-morse{ color: var(--text-muted); letter-spacing: 0.12em; }
+  </style>
+</Layout>

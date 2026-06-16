@@ -55,6 +55,12 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 - [Best paddles for beginners](https://morsecodegenerator.com/gear/best-cw-paddles-for-beginners/)
 - [QRP CW transceivers compared](https://morsecodegenerator.com/gear/qrp-cw-transceivers/)
 
+## Español (Spanish)
+
+- [Código Morse (inicio)](https://morsecodegenerator.com/es/): Spanish hub.
+- [Traductor de código Morse](https://morsecodegenerator.com/es/traductor/): text ⇄ Morse with audio, in Spanish.
+- [Alfabeto en código Morse](https://morsecodegenerator.com/es/alfabeto-morse/): full A–Z and 0–9 reference, in Spanish.
+
 ## Phrases
 
 - [Phrase index](https://morsecodegenerator.com/phrases/): SOS, HELP, MAYDAY, EMERGENCY, I LOVE YOU, THANK YOU, ...

@@ -12,6 +12,11 @@ const {
   modifiedTime,
   prevUrl,
   nextUrl,
+  // i18n: pages with a localized URL (e.g. /es/...) set `lang` to force
+  // the document language, and `alternates` to declare cross-language
+  // hreflang siblings: [{ lang: "en", href }, { lang: "es", href }].
+  lang: langProp,
+  alternates,
 } = Astro.props;
 
 const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
@@ -45,16 +50,20 @@ const canonicalAuto = `${site}${normalizedPath}`;
 // Final canonical (page override wins)
 const canonical = String(canonicalProp || canonicalAuto);
 
-// Locale handling (?lang=es supported across pages)
-const lang = (Astro.url.searchParams.get("lang") || "en").toLowerCase();
+// Locale handling. A `lang` prop (set by /es/ pages) wins; otherwise we
+// honour the legacy ?lang=es query param used on /translate/.
+const lang = (langProp || Astro.url.searchParams.get("lang") || "en").toLowerCase();
 const htmlLang = lang === "es" ? "es" : "en";
 const ogLocale = htmlLang === "es" ? "es_ES" : "en_US";
 const ogLocaleAlt = htmlLang === "es" ? "en_US" : "es_ES";
 
-// hreflang alternates — only emit when the page actually has ES content.
-// Right now only /translate/ ships Spanish strings; everywhere else, advertising
-// ?lang=es would point Google at a non-localized page (= soft 404 risk).
-const hasEsVersion = /\/translate\/?$/.test(normalizedPath);
+// hreflang alternates.
+//  - Preferred: an explicit `alternates` prop with real localized URLs
+//    (used by the /es/ pages, each pointing at its EN sibling and back).
+//  - Legacy fallback: /translate/ still advertises its ?lang=es variant.
+// Everywhere else we emit nothing, so Google never sees a soft-404 ES URL.
+const explicitAlternates = Array.isArray(alternates) && alternates.length > 0;
+const hasEsVersion = !explicitAlternates && /\/translate\/?$/.test(normalizedPath);
 const hrefEn = canonical.replace(/[?&]lang=es/, "");
 const hrefEs = canonical.includes("?")
   ? canonical.replace(/([?&])lang=[a-z]{2}/i, "") + (canonical.includes("?lang=") ? "" : "&lang=es")
@@ -173,7 +182,17 @@ const jsonLd = {
       <meta name="facebook-domain-verification" content={import.meta.env.FACEBOOK_DOMAIN_VERIFICATION} />
     )}
 
-    {/* hreflang — only on pages that actually have a localized version */}
+    {/* hreflang — explicit localized siblings (e.g. EN ⇄ ES /es/ pages) */}
+    {explicitAlternates && (
+      <>
+        {alternates.map((a) => (
+          <link rel="alternate" href={a.href} hreflang={a.lang} />
+        ))}
+        <link rel="alternate" href={(alternates.find((a) => a.lang === "en") || alternates[0]).href} hreflang="x-default" />
+      </>
+    )}
+
+    {/* hreflang — legacy ?lang=es variant on /translate/ */}
     {hasEsVersion && (
       <>
         <link rel="alternate" href={hrefEn} hreflang="en" />
@@ -518,6 +537,7 @@ const jsonLd = {
           <div class="foot-col">
             <h4 class="foot-h">Site</h4>
             <ul>
+              <li><a href="/es/" lang="es">Español</a></li>
               <li><a href="/about/">About</a></li>
               <li><a href="/contact/">Contact</a></li>
               <li><a href="/privacy/">Privacy</a></li>

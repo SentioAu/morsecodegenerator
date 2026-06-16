@@ -49,6 +49,9 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/nato/" || p === "/abbreviations/" || p === "/q-codes/" || p === "/prosigns/")
     return "Reference";
   if (p === "/names-in-morse-code/") return "Names";
+  if (p === "/es/") return "Código Morse";
+  if (p === "/es/traductor/") return "Traductor";
+  if (p === "/es/alfabeto-morse/") return "Alfabeto Morse";
   if (p.startsWith("/morse-code/") || p === "/phrases/") return "Learn";
   return "MorseCodeGenerator.com";
 }
@@ -112,6 +115,11 @@ export const OG_PAGES = new Set([
   "/blog/morse-code-in-pop-culture/",
   "/blog/best-morse-code-keys-buyers-guide/",
   "/blog/farnsworth-timing-explained/",
+
+  // Spanish (es)
+  "/es/",
+  "/es/traductor/",
+  "/es/alfabeto-morse/",
 
   // Site / meta
   "/about/",
