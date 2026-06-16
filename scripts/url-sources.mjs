@@ -60,9 +60,15 @@ export function sourcesForUrl(urlPath) {
     return ["src/data/morse.json", "src/pages/phrases/[slug].astro"];
   }
 
-  // /<word>-in-morse-code/ pages.
+  // Names hub — static page (must be matched before the generic
+  // /<word>-in-morse-code/ rule below, which would otherwise claim it).
+  if (urlPath === "/names-in-morse-code/") {
+    return ["src/pages/names-in-morse-code.astro", "src/data/names.js", "src/data/morse.json"];
+  }
+
+  // /<word>-in-morse-code/ pages (includes popular first names).
   if (/^\/[a-z0-9-]+-in-morse-code\/$/.test(urlPath)) {
-    return ["src/pages/[slug]-in-morse-code.astro", "src/data/seo-slugs.json", "src/data/morse.json"];
+    return ["src/pages/[slug]-in-morse-code.astro", "src/data/seo-slugs.json", "src/data/names.js", "src/data/morse.json"];
   }
 
   // Daily challenge — word list changes also refresh the page.

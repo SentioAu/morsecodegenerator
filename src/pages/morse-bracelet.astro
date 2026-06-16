@@ -282,6 +282,13 @@ const jsonLd = {
         return lettersOf(text).map((l) => (l.ch === " " ? "/" : l.code)).join(" ");
       }
 
+      // Prefill from ?text= so name pages can deep-link
+      // (e.g. /morse-bracelet/?text=Emma).
+      try {
+        const pre = new URLSearchParams(location.search).get("text");
+        if (pre) textEl.value = pre.slice(0, 40);
+      } catch {}
+
       let lastSvg = "";
       function render() {
         const text = textEl.value.trim() || "LOVE";

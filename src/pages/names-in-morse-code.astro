@@ -1,0 +1,156 @@
+---
+import Layout from "../components/Layout.astro";
+import morsePayload from "../data/morse.json";
+import { NAME_SLUGS } from "../data/names.js";
+
+const title = "Names in Morse Code — A–Z list with free bracelet & tattoo maker";
+const description =
+  "Find any popular first name in Morse code. Browse the A–Z list, copy the dots and dashes, and turn a name into a free bracelet, necklace, or tattoo design.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/names-in-morse-code/`;
+const keywords =
+  "names in morse code, name in morse code, morse code name generator, morse code bracelet name, first name morse code";
+
+// Build map for the inline mini-morse on each name chip.
+const morseMap = Object.fromEntries(
+  Object.entries(morsePayload?.morseMap ?? {})
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+);
+const toMorse = (w) =>
+  w.toUpperCase().split("").map((c) => morseMap[c] || "").filter(Boolean).join(" ");
+
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Group names by first letter for a scannable directory.
+const groups = {};
+for (const slug of NAME_SLUGS) {
+  const L = slug.charAt(0).toUpperCase();
+  (groups[L] = groups[L] || []).push(slug);
+}
+const letters = Object.keys(groups).sort();
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Names in Morse code", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": canonical,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "en",
+      isPartOf: { "@id": `${site}#website` },
+      publisher: { "@id": `${site}#org` },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Names in Morse code</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Names · gifts · bracelets · tattoos</p>
+    <h1 class="page-hero-title">Names in Morse code</h1>
+    <p class="muted page-hero-sub">
+      Every name is a little rhythm of dots and dashes. Pick a name below to
+      copy its Morse, hear it, or turn it into a free bracelet, necklace, or
+      tattoo design. Don't see yours? The
+      <a href="/translate/">translator</a> handles any name instantly, and the
+      <a href="/morse-bracelet/">bracelet maker</a> turns it into art.
+    </p>
+  </header>
+
+  <nav class="names-az" aria-label="Jump to letter">
+    {letters.map((L) => <a href={`#letter-${L}`}>{L}</a>)}
+  </nav>
+
+  {letters.map((L) => (
+    <section class="names-group" id={`letter-${L}`}>
+      <h2 class="names-group-h">{L}</h2>
+      <div class="names-grid">
+        {groups[L].map((slug) => (
+          <a class="name-chip" href={`/${slug}-in-morse-code/`}>
+            <span class="name-chip-name">{cap(slug)}</span>
+            <span class="name-chip-morse mono">{toMorse(slug)}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <section class="card t-card">
+    <h2>Make a name into something you can keep</h2>
+    <p>
+      A name in Morse makes a quiet, personal gift. Use the free
+      <a href="/morse-bracelet/">bracelet &amp; tattoo maker</a> to render any name
+      as a bead pattern for jewelry or a clean dot-and-dash design for a tattoo,
+      then download a PNG or SVG. Learn the
+      <a href="/morse-code/">alphabet</a> to read it yourself, or
+      <a href="/keyer/">practice sending</a> it on a key.
+    </p>
+  </section>
+
+  <style>
+    .names-az{
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: 0 0 var(--s-5);
+    }
+    .names-az a{
+      display: inline-grid; place-items: center;
+      min-width: 34px; height: 34px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm, 6px);
+      font-family: var(--font-mono); font-weight: 600;
+      text-decoration: none; color: var(--text);
+    }
+    .names-az a:hover{ background: var(--surface-2); }
+    .names-group{ margin-bottom: var(--s-5); }
+    .names-group-h{
+      font-family: var(--font-mono);
+      font-size: var(--fs-lg);
+      margin: 0 0 var(--s-3);
+      padding-bottom: var(--s-2);
+      border-bottom: 1px solid var(--line);
+    }
+    .names-grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: var(--s-2);
+    }
+    .name-chip{
+      display: flex; flex-direction: column; gap: 3px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md, 10px);
+      text-decoration: none; color: inherit;
+      background: var(--surface-2);
+    }
+    .name-chip:hover{ border-color: var(--text-muted); }
+    .name-chip-name{ font-weight: 600; }
+    .name-chip-morse{
+      font-size: var(--fs-xs); color: var(--text-muted);
+      letter-spacing: 0.1em;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+  </style>
+</Layout>
