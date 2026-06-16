@@ -65,6 +65,11 @@ export function sourcesForUrl(urlPath) {
     return ["src/pages/[slug]-in-morse-code.astro", "src/data/seo-slugs.json", "src/data/morse.json"];
   }
 
+  // Daily challenge — word list changes also refresh the page.
+  if (urlPath === "/daily/") {
+    return ["src/pages/daily.astro", "src/data/daily-words.js"];
+  }
+
   // Gear guides — hub + review pages all render from the shared data file.
   if (urlPath === "/gear/") {
     return ["src/pages/gear/index.astro", "src/data/gear.js"];

@@ -1,0 +1,467 @@
+---
+import Layout from "../components/Layout.astro";
+import morse from "../data/morse.json";
+import { DAILY_WORDS, DAILY_EPOCH_UTC } from "../data/daily-words.js";
+
+const title = "Daily Morse Challenge — decode today's word";
+const description =
+  "A free daily Morse code puzzle: decode the dots and dashes (or copy by ear), guess the 5-letter word in 6 tries, keep your streak, share your score. New word every day at 00:00 UTC.";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const canonical = `${site}/daily/`;
+const keywords =
+  "morse code game, daily morse puzzle, morse wordle, morse code quiz, decode morse game, morse code challenge";
+
+// Only letters go to the client — the game never needs digits/punctuation.
+const LETTER_MAP = Object.fromEntries(
+  Object.entries(morse.morseMap).filter(([k]) => /^[A-Z]$/.test(k))
+);
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Daily challenge", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebApplication",
+      "@id": canonical,
+      name: "Daily Morse Challenge",
+      url: canonical,
+      applicationCategory: "GameApplication",
+      operatingSystem: "Any (web browser)",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      description,
+      publisher: { "@id": `${site}#org` },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Daily challenge</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">One word a day · same word for everyone · resets 00:00 UTC</p>
+    <h1 class="page-hero-title">Daily Morse Challenge <span id="dc-number" class="dc-number"></span></h1>
+    <p class="muted page-hero-sub">
+      Decode the Morse below — by eye or by ear — and guess the 5-letter word
+      in 6 tries. Tiles work like the crossword-coloring game you already
+      know: green is right, yellow is misplaced.
+    </p>
+  </header>
+
+  <section class="card dc-card" aria-label="Today's puzzle">
+    <div class="dc-morse-row">
+      <div id="dc-morse" class="dc-morse mono" aria-label="Today's word in Morse code"></div>
+      <div class="dc-audio">
+        <button id="dc-play" type="button" class="btn secondary" aria-label="Play today's word as Morse audio">▶ Play audio</button>
+        <label class="dc-wpm">
+          <span class="sr-only">Audio speed</span>
+          <select id="dc-wpm" aria-label="Audio speed">
+            <option value="12">12 WPM</option>
+            <option value="18" selected>18 WPM</option>
+            <option value="25">25 WPM</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div id="dc-board" class="dc-board" role="group" aria-label="Guess board"></div>
+
+    <p id="dc-msg" class="dc-msg" role="status" aria-live="polite"></p>
+
+    <div id="dc-keyboard" class="dc-kb" aria-label="On-screen keyboard"></div>
+
+    <div id="dc-result" class="dc-result" hidden>
+      <p id="dc-result-text" class="dc-result-text"></p>
+      <div class="dc-result-actions">
+        <button id="dc-share" type="button" class="btn primary">Share result</button>
+        <a class="btn ghost" id="dc-learn-link" href="/morse-code/">Study the alphabet</a>
+      </div>
+      <p class="dc-countdown muted">Next word in <span id="dc-countdown">—</span></p>
+    </div>
+
+    <details class="dc-stats-wrap">
+      <summary>Your stats</summary>
+      <div id="dc-stats" class="dc-stats"></div>
+    </details>
+  </section>
+
+  <section class="card t-card">
+    <h2>How to play</h2>
+    <ul>
+      <li><strong>Read or listen.</strong> The five Morse groups above are today's word, one group per letter. Use the <a href="/chart/">chart</a> if you're new — that's not cheating, that's learning.</li>
+      <li><strong>Guess any 5-letter word.</strong> Green tile = right letter, right spot. Yellow = in the word, wrong spot. Gray = not in the word. Six tries.</li>
+      <li><strong>Train your ear.</strong> Try one honest audio-only attempt before reading the dots. That's real CW copy practice — the skill the <a href="/practice/">Koch trainer</a> builds.</li>
+      <li><strong>Keep the streak.</strong> Stats and streaks are stored on your device only. Same word for the whole planet, new word at 00:00 UTC.</li>
+    </ul>
+  </section>
+
+  <script is:inline define:vars={{ LETTER_MAP, DAILY_WORDS, DAILY_EPOCH_UTC }}>
+    (function () {
+      "use strict";
+      const ROWS = 6, COLS = 5;
+
+      // ---- Today's word (deterministic, UTC) ----
+      const epoch = Date.parse(DAILY_EPOCH_UTC + "T00:00:00Z");
+      const todayUtc = Math.floor(Date.now() / 86400000) * 86400000;
+      const dayNum = Math.max(1, Math.floor((todayUtc - epoch) / 86400000) + 1);
+      // Prime stride so consecutive days don't walk the list in order.
+      const WORD = DAILY_WORDS[(dayNum * 137 + 41) % DAILY_WORDS.length];
+      const MORSE = WORD.split("").map((ch) => LETTER_MAP[ch]).join(" ");
+
+      const $ = (id) => document.getElementById(id);
+      $("dc-number").textContent = "#" + dayNum;
+      $("dc-morse").textContent = MORSE;
+
+      // ---- State (per-day) + stats (forever), localStorage ----
+      const ST_KEY = "mcg-daily-state", STAT_KEY = "mcg-daily-stats";
+      function loadJson(key, fallback) {
+        try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+        catch { return fallback; }
+      }
+      function saveJson(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch {} }
+
+      let state = loadJson(ST_KEY, null);
+      if (!state || state.day !== dayNum) state = { day: dayNum, guesses: [], done: false, won: false };
+      let stats = loadJson(STAT_KEY, { games: 0, wins: 0, streak: 0, maxStreak: 0, lastWinDay: 0, dist: [0, 0, 0, 0, 0, 0] });
+
+      let current = "";
+
+      // ---- Board ----
+      const board = $("dc-board");
+      const tiles = [];
+      for (let r = 0; r < ROWS; r += 1) {
+        const row = document.createElement("div");
+        row.className = "dc-row";
+        const rowTiles = [];
+        for (let c = 0; c < COLS; c += 1) {
+          const t = document.createElement("div");
+          t.className = "dc-tile";
+          row.appendChild(t);
+          rowTiles.push(t);
+        }
+        board.appendChild(row);
+        tiles.push(rowTiles);
+      }
+
+      // Wordle-correct scoring with duplicate handling.
+      function score(guess, target) {
+        const res = new Array(COLS).fill("absent");
+        const left = {};
+        for (let i = 0; i < COLS; i += 1) {
+          if (guess[i] === target[i]) res[i] = "correct";
+          else left[target[i]] = (left[target[i]] || 0) + 1;
+        }
+        for (let i = 0; i < COLS; i += 1) {
+          if (res[i] === "correct") continue;
+          if (left[guess[i]] > 0) { res[i] = "present"; left[guess[i]] -= 1; }
+        }
+        return res;
+      }
+
+      // ---- Keyboard ----
+      const KB_ROWS = ["QWERTYUIOP", "ASDFGHJKL", "↵ZXCVBNM⌫"];
+      const kb = $("dc-keyboard");
+      const keyEls = {};
+      KB_ROWS.forEach((rowStr) => {
+        const row = document.createElement("div");
+        row.className = "dc-kb-row";
+        rowStr.split("").forEach((k) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "dc-key" + (k === "↵" || k === "⌫" ? " wide" : "");
+          b.textContent = k === "↵" ? "ENTER" : k === "⌫" ? "DEL" : k;
+          b.setAttribute("aria-label", k === "↵" ? "Submit guess" : k === "⌫" ? "Delete letter" : "Letter " + k + (LETTER_MAP[k] ? ", Morse " + LETTER_MAP[k] : ""));
+          if (LETTER_MAP[k]) {
+            const m = document.createElement("span");
+            m.className = "dc-key-morse mono";
+            m.textContent = LETTER_MAP[k];
+            b.appendChild(m);
+          }
+          b.addEventListener("click", () => handleKey(k === "↵" ? "Enter" : k === "⌫" ? "Backspace" : k));
+          row.appendChild(b);
+          if (k !== "↵" && k !== "⌫") keyEls[k] = b;
+        });
+        kb.appendChild(row);
+      });
+
+      const msg = $("dc-msg");
+      let msgTimer;
+      function flash(text) {
+        msg.textContent = text;
+        clearTimeout(msgTimer);
+        msgTimer = setTimeout(() => { msg.textContent = ""; }, 1800);
+      }
+
+      function paintRow(r, guess, marks, instant) {
+        for (let c = 0; c < COLS; c += 1) {
+          const t = tiles[r][c];
+          t.textContent = guess[c] || "";
+          if (marks) {
+            const apply = () => t.classList.add("filled", marks[c]);
+            if (instant) apply();
+            else setTimeout(apply, c * 220);
+            const k = keyEls[guess[c]];
+            if (k) setTimeout(() => {
+              // Never downgrade a key: correct > present > absent.
+              const rank = { absent: 1, present: 2, correct: 3 };
+              const cur = k.dataset.mark;
+              if (!cur || rank[marks[c]] > rank[cur]) {
+                k.classList.remove("absent", "present", "correct");
+                k.classList.add(marks[c]);
+                k.dataset.mark = marks[c];
+              }
+            }, instant ? 0 : c * 220);
+          } else if (guess[c]) {
+            t.classList.add("typed");
+          } else {
+            t.classList.remove("typed");
+          }
+        }
+      }
+
+      function renderStats() {
+        const el = $("dc-stats");
+        const pct = stats.games ? Math.round((stats.wins / stats.games) * 100) : 0;
+        const maxDist = Math.max.apply(null, stats.dist.concat(1));
+        el.innerHTML =
+          '<div class="dc-stat"><b>' + stats.games + "</b><span>played</span></div>" +
+          '<div class="dc-stat"><b>' + pct + "%</b><span>win rate</span></div>" +
+          '<div class="dc-stat"><b>' + stats.streak + "</b><span>streak</span></div>" +
+          '<div class="dc-stat"><b>' + stats.maxStreak + "</b><span>best</span></div>" +
+          '<div class="dc-dist">' + stats.dist.map(function (n, i) {
+            return '<div class="dc-dist-row"><span>' + (i + 1) + "</span><i style=\"width:" + Math.max(7, (n / maxDist) * 100) + "%\">" + n + "</i></div>";
+          }).join("") + "</div>";
+      }
+
+      function finish(won) {
+        state.done = true;
+        state.won = won;
+        stats.games += 1;
+        if (won) {
+          stats.wins += 1;
+          stats.dist[state.guesses.length - 1] += 1;
+          stats.streak = stats.lastWinDay === dayNum - 1 ? stats.streak + 1 : 1;
+          stats.maxStreak = Math.max(stats.maxStreak, stats.streak);
+          stats.lastWinDay = dayNum;
+        } else {
+          stats.streak = 0;
+        }
+        saveJson(ST_KEY, state);
+        saveJson(STAT_KEY, stats);
+        showResult();
+        window.mcgEvent?.(won ? "daily_win" : "daily_loss", { day: dayNum, tries: state.guesses.length });
+      }
+
+      function showResult() {
+        const box = $("dc-result");
+        box.hidden = false;
+        $("dc-result-text").textContent = state.won
+          ? "Solved in " + state.guesses.length + "/6 — the word was " + WORD + " (" + MORSE + ")."
+          : "Out of tries — the word was " + WORD + " (" + MORSE + "). Tomorrow is a new word.";
+        renderStats();
+        const wrap = document.querySelector(".dc-stats-wrap");
+        if (wrap) wrap.open = true;
+        tickCountdown();
+        setInterval(tickCountdown, 1000);
+      }
+
+      function tickCountdown() {
+        const next = todayUtc + 86400000;
+        let s = Math.max(0, Math.floor((next - Date.now()) / 1000));
+        const h = String(Math.floor(s / 3600)).padStart(2, "0");
+        const m = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+        const ss = String(s % 60).padStart(2, "0");
+        const el = $("dc-countdown");
+        if (el) el.textContent = h + ":" + m + ":" + ss + " (UTC)";
+      }
+
+      function submit() {
+        if (state.done) return;
+        if (current.length !== COLS) { flash("Need 5 letters"); return; }
+        const r = state.guesses.length;
+        const marks = score(current, WORD);
+        state.guesses.push(current);
+        saveJson(ST_KEY, state);
+        paintRow(r, current, marks, false);
+        const won = current === WORD;
+        const out = won || state.guesses.length === ROWS;
+        current = "";
+        if (out) setTimeout(() => finish(won), COLS * 220 + 150);
+      }
+
+      function handleKey(key) {
+        if (state.done) return;
+        if (key === "Enter") { submit(); return; }
+        if (key === "Backspace") {
+          current = current.slice(0, -1);
+        } else if (/^[a-zA-Z]$/.test(key) && current.length < COLS) {
+          current += key.toUpperCase();
+        } else return;
+        paintRow(state.guesses.length, current, null, true);
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        const tag = document.activeElement?.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        if (e.key === "Enter" || e.key === "Backspace" || /^[a-zA-Z]$/.test(e.key)) {
+          e.preventDefault();
+          handleKey(e.key.length === 1 ? e.key : e.key);
+        }
+      });
+
+      // ---- Restore an in-progress / finished day ----
+      state.guesses.forEach((g, r) => paintRow(r, g, score(g, WORD), true));
+      if (state.done) showResult();
+
+      // ---- Audio ----
+      let ctx;
+      $("dc-play").addEventListener("click", () => {
+        try {
+          ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+          if (ctx.state === "suspended") ctx.resume();
+        } catch { return; }
+        const wpm = Number($("dc-wpm").value || 18);
+        const unit = 1.2 / wpm;
+        let t = ctx.currentTime + 0.1;
+        for (const group of MORSE.split(" ")) {
+          for (const sym of group) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine"; osc.frequency.value = 600;
+            gain.gain.setValueAtTime(0.001, t);
+            gain.gain.exponentialRampToValueAtTime(0.35, t + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(t); osc.stop(t + dur + 0.02);
+            t += dur + unit;
+          }
+          t += unit * 2;
+        }
+        window.mcgEvent?.("daily_play_audio", { day: dayNum, wpm });
+      });
+
+      // ---- Share ----
+      $("dc-share").addEventListener("click", async () => {
+        const grid = state.guesses.map((g) =>
+          score(g, WORD).map((m) => (m === "correct" ? "🟩" : m === "present" ? "🟨" : "⬛")).join("")
+        ).join("\n");
+        const text = "Daily Morse Challenge #" + dayNum + " — " +
+          (state.won ? state.guesses.length : "X") + "/6\n\n" + grid +
+          "\n\nmorsecodegenerator.com/daily/";
+        try {
+          if (navigator.share) await navigator.share({ text });
+          else { await navigator.clipboard.writeText(text); flash("Copied to clipboard"); }
+          window.mcgEvent?.("daily_share", { day: dayNum, won: state.won });
+        } catch { /* user cancelled the share sheet */ }
+      });
+    })();
+  </script>
+
+  <style>
+    .dc-number{ color: var(--text-muted); font-weight: 600; }
+    .dc-card{ padding: var(--s-5); max-width: var(--content); }
+    .dc-morse-row{
+      display: flex; flex-wrap: wrap; gap: var(--s-3);
+      align-items: center; justify-content: space-between;
+      margin-bottom: var(--s-5);
+    }
+    .dc-morse{
+      font-size: clamp(16px, 3.4vw, 24px);
+      letter-spacing: 0.18em;
+      word-spacing: 0.6em;
+      color: var(--text);
+    }
+    .dc-audio{ display: flex; gap: var(--s-2); align-items: center; }
+    .dc-wpm select{ height: 36px; }
+
+    .dc-board{ display: grid; gap: 6px; justify-content: center; margin-bottom: var(--s-3); }
+    .dc-row{ display: grid; grid-template-columns: repeat(5, 52px); gap: 6px; }
+    .dc-tile{
+      width: 52px; height: 52px;
+      display: grid; place-items: center;
+      border: 2px solid var(--line);
+      border-radius: var(--r-sm, 6px);
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 700;
+      text-transform: uppercase;
+      transition: background .18s, border-color .18s, color .18s;
+    }
+    .dc-tile.typed{ border-color: var(--text-muted); }
+    .dc-tile.filled{ color: #fff; border-color: transparent; }
+    .dc-tile.correct{ background: #16a34a; }
+    .dc-tile.present{ background: #ca8a04; }
+    .dc-tile.absent{ background: #52525b; }
+
+    .dc-msg{ min-height: 1.4em; text-align: center; font-size: var(--fs-sm); color: var(--text-muted); margin: 0 0 var(--s-3); }
+
+    .dc-kb{ display: grid; gap: 6px; justify-content: center; margin-bottom: var(--s-4); }
+    .dc-kb-row{ display: flex; gap: 5px; justify-content: center; }
+    .dc-key{
+      min-width: 32px; padding: 6px 7px 4px;
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm, 6px);
+      color: var(--text);
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+    }
+    .dc-key.wide{ min-width: 52px; font-size: 11px; }
+    .dc-key-morse{ font-size: 8px; color: var(--text-subtle); letter-spacing: 0.1em; }
+    .dc-key.correct{ background: #16a34a; color: #fff; border-color: transparent; }
+    .dc-key.present{ background: #ca8a04; color: #fff; border-color: transparent; }
+    .dc-key.absent{ background: #52525b; color: #d4d4d8; border-color: transparent; }
+    .dc-key.correct .dc-key-morse, .dc-key.present .dc-key-morse, .dc-key.absent .dc-key-morse{ color: rgba(255,255,255,.75); }
+
+    .dc-result{
+      text-align: center;
+      border-top: 1px solid var(--line);
+      padding-top: var(--s-4);
+      margin-top: var(--s-2);
+    }
+    .dc-result-text{ font-weight: 600; margin: 0 0 var(--s-3); }
+    .dc-result-actions{ display: flex; gap: var(--s-2); justify-content: center; flex-wrap: wrap; }
+    .dc-countdown{ margin: var(--s-3) 0 0; font-size: var(--fs-sm); }
+
+    .dc-stats-wrap{ margin-top: var(--s-4); }
+    .dc-stats-wrap summary{ cursor: pointer; color: var(--text-muted); font-size: var(--fs-sm); }
+    .dc-stats{
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: var(--s-3); margin-top: var(--s-3); text-align: center;
+    }
+    .dc-stat b{ display: block; font-size: var(--fs-xl, 24px); }
+    .dc-stat span{ font-size: var(--fs-xs); color: var(--text-muted); }
+    .dc-dist{ grid-column: 1 / -1; display: grid; gap: 4px; text-align: left; }
+    .dc-dist-row{ display: flex; align-items: center; gap: 8px; font-size: var(--fs-xs); }
+    .dc-dist-row i{
+      display: inline-block; font-style: normal;
+      background: var(--surface-2); border: 1px solid var(--line);
+      border-radius: 4px; padding: 1px 6px; min-width: 14px;
+    }
+
+    @media (max-width: 420px){
+      .dc-row{ grid-template-columns: repeat(5, 44px); }
+      .dc-tile{ width: 44px; height: 44px; font-size: 19px; }
+      .dc-key{ min-width: 26px; padding: 5px 5px 3px; }
+    }
+  </style>
+</Layout>
