@@ -2,6 +2,7 @@
 import Layout from "../components/Layout.astro";
 import morsePayload from "../data/morse.json";
 import slugs from "../data/seo-slugs.json";
+import { NAME_SLUGS, isNameSlug } from "../data/names.js";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -93,9 +94,12 @@ export function getStaticPaths() {
   }
 
   // Always include the named punctuation slugs in the build output,
-  // even if seo-slugs.json does NOT contain them.
+  // even if seo-slugs.json does NOT contain them. Popular first names
+  // are merged in too so "<name>-in-morse-code" pages build (they get
+  // a name-aware gift/bracelet CTA in the body).
   const base = (Array.isArray(slugs) ? slugs : []).map(normalize);
-  const combined = new Set([...base, ...EXTRA_NAMED]);
+  const names = (Array.isArray(NAME_SLUGS) ? NAME_SLUGS : []).map(normalize);
+  const combined = new Set([...base, ...EXTRA_NAMED, ...names]);
 
   return Array.from(combined)
     .filter(isSafeSlug)
@@ -199,6 +203,11 @@ const valid = pageSlugValidForThisRoute(slug);
 const term = termFromSlug(slug);
 const morse = valid ? textToMorse(term.value) : "";
 
+// Name-aware: when the slug is a popular first name, the page leans into
+// gift/jewelry/tattoo intent and funnels to the bracelet generator.
+const isName = valid && !isSingleLetter && !isNumber && isNameSlug(slug);
+const braceletHref = `/morse-bracelet/?text=${encodeURIComponent(term.display)}`;
+
 // Robots rules:
 // - If this is a letter/number, do NOT index here (canonical is /morse-code/{slug}/)
 // - If invalid OR empty output, do NOT index
@@ -215,6 +224,8 @@ const pageTitle =
 const description =
   (isSingleLetter || isNumber)
     ? `The canonical reference page for ${term.display} in Morse code is available. Copy, practice, and translate instantly.`
+    : isName && morse
+        ? `${term.display} in Morse code is ${morse}. Copy it, hear it played, or turn it into a free bracelet or tattoo design.`
     : (valid && morse
         ? `Learn how to write ${term.display} in Morse code: ${morse}. Copy, practice, and translate instantly.`
         : `Learn how to write terms in Morse code. Copy, practice, and translate instantly.`);
@@ -288,12 +299,23 @@ const jsonLd = {
   ) : valid ? (
     <>
       <header class="page-hero">
-        <p class="page-hero-kicker">Word · Copy · Practice</p>
+        <p class="page-hero-kicker">{isName ? "Name · Gift · Bracelet" : "Word · Copy · Practice"}</p>
         <h1 class="page-hero-title">{pageTitle}</h1>
         <p class="muted page-hero-sub">
-          Copy the Morse code for <strong>{term.display}</strong>, hear it played back, or open it in the
-          translator to edit it.
+          {isName ? (
+            <>Copy the Morse code for <strong>{term.display}</strong>, hear it played back, or turn it into a
+            bracelet, necklace, or tattoo design with our free maker.</>
+          ) : (
+            <>Copy the Morse code for <strong>{term.display}</strong>, hear it played back, or open it in the
+            translator to edit it.</>
+          )}
         </p>
+        {isName && (
+          <div class="page-hero-actions">
+            <a class="btn primary" href={braceletHref}>Make {term.display} into a bracelet/tattoo →</a>
+            <a class="btn ghost" href={`/translate/?q=${encodeURIComponent(term.value)}`}>Open in translator</a>
+          </div>
+        )}
       </header>
 
       {morse ? (
@@ -322,6 +344,22 @@ const jsonLd = {
       ) : (
         <section class="card">
           <p class="muted">No Morse output available for this term.</p>
+        </section>
+      )}
+
+      {isName && morse && (
+        <section class="card name-gift">
+          <h2>Turn {term.display} into something you can keep</h2>
+          <p>
+            The dots and dashes for <strong>{term.display}</strong> make a quiet, personal design.
+            Our free generator renders the name as a <strong>bead pattern</strong> for a bracelet or
+            necklace, or a clean <strong>dot-and-dash</strong> design for a tattoo — then downloads it
+            as a PNG or SVG.
+          </p>
+          <div class="page-hero-actions">
+            <a class="btn primary" href={braceletHref}>Open the bracelet &amp; tattoo maker →</a>
+            <a class="btn ghost" href="/morse-bracelet/">See all styles</a>
+          </div>
         </section>
       )}
 
@@ -360,6 +398,8 @@ const jsonLd = {
           </div>
         </div>
         <div class="pill-grid">
+          {isName && <a href="/names-in-morse-code/">All names A–Z</a>}
+          {isName && <a href={braceletHref}>Make a bracelet</a>}
           <a href="/morse-code/words/">Browse words A–Z</a>
           <a href="/morse-code/">Learn the alphabet</a>
           <a href="/phrases/">Common phrases</a>

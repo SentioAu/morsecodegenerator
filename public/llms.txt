@@ -28,6 +28,7 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 - [Numbers (0–9)](https://morsecodegenerator.com/morse-code/numbers/)
 - [Punctuation](https://morsecodegenerator.com/morse-code/punctuation/)
 - [Words A–Z](https://morsecodegenerator.com/morse-code/words/)
+- [Names A–Z](https://morsecodegenerator.com/names-in-morse-code/): popular first names in Morse, each with a bracelet/tattoo design link.
 - [Prosigns](https://morsecodegenerator.com/prosigns/): SK, AR, BT, KN, AS, etc.
 - [Abbreviations (CW)](https://morsecodegenerator.com/abbreviations/): 73, 88, OM, YL, FB, ...
 - [Q-codes](https://morsecodegenerator.com/q-codes/): QRZ, QSL, QTH, QSY, ...

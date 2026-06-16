@@ -48,6 +48,7 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/embed/") return "Embed widget";
   if (p === "/nato/" || p === "/abbreviations/" || p === "/q-codes/" || p === "/prosigns/")
     return "Reference";
+  if (p === "/names-in-morse-code/") return "Names";
   if (p.startsWith("/morse-code/") || p === "/phrases/") return "Learn";
   return "MorseCodeGenerator.com";
 }
@@ -78,6 +79,7 @@ export const OG_PAGES = new Set([
   "/morse-code/numbers/",
   "/morse-code/punctuation/",
   "/morse-code/words/",
+  "/names-in-morse-code/",
   "/phrases/",
   "/operating/",
   "/teach/",
