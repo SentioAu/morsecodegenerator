@@ -394,6 +394,12 @@ const jsonLd = {
           >Practice</a>
 
           <a
+            class:list={["nav-link", isActive("/keyer/") && "active"]}
+            href="/keyer/"
+            aria-current={isActive("/keyer/") ? "page" : undefined}
+          >Send</a>
+
+          <a
             class:list={["nav-link", isActive("/daily/") && "active"]}
             href="/daily/"
             aria-current={isActive("/daily/") ? "page" : undefined}
@@ -467,6 +473,7 @@ const jsonLd = {
               <li><a href="/translate/">Translator</a></li>
               <li><a href="/decoder/">Decoder</a></li>
               <li><a href="/practice/">Practice / Koch trainer</a></li>
+              <li><a href="/keyer/">Keyer (send practice)</a></li>
               <li><a href="/daily/">Daily Morse challenge</a></li>
               <li><a href="/flashcards/">Flashcards quiz</a></li>
               <li><a href="/random-cw/">Random CW generator</a></li>
