@@ -26,6 +26,8 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/translate/") return "Translator";
   if (p === "/decoder/") return "Decoder";
   if (p === "/practice/") return "Practice";
+  if (p === "/daily/") return "Daily challenge";
+  if (p.startsWith("/gear/")) return "Gear guide";
   if (p === "/flashcards/") return "Flashcards quiz";
   if (p === "/random-cw/") return "Practice generator";
   if (p === "/timing-calculator/") return "Tool";
@@ -57,6 +59,7 @@ export const OG_PAGES = new Set([
   "/translate/",
   "/decoder/",
   "/practice/",
+  "/daily/",
   "/flashcards/",
   "/random-cw/",
   "/timing-calculator/",
@@ -74,6 +77,12 @@ export const OG_PAGES = new Set([
   "/phrases/",
   "/operating/",
   "/teach/",
+
+  // Gear guides
+  "/gear/",
+  "/gear/best-morse-code-keys/",
+  "/gear/best-cw-paddles-for-beginners/",
+  "/gear/qrp-cw-transceivers/",
   "/q-codes/",
   "/abbreviations/",
   "/prosigns/",
