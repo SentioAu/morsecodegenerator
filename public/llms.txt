@@ -18,6 +18,7 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 - [Keyer](https://morsecodegenerator.com/keyer/): practice *sending* Morse — tap spacebar/mouse/touch as a straight key; live decode + scored word challenges.
 - [Daily challenge](https://morsecodegenerator.com/daily/): decode the daily 5-letter word from Morse, 6 tries, shareable score. New word 00:00 UTC.
 - [Chart](https://morsecodegenerator.com/chart/): printable Morse code chart (A–Z, 0–9, punctuation).
+- [Worksheets](https://morsecodegenerator.com/worksheets/): generate free printable practice worksheets (decode/encode) with an answer key.
 - [Bracelet & tattoo generator](https://morsecodegenerator.com/morse-bracelet/): turn a word into a bead pattern or clean dot-dash design; free PNG/SVG download.
 - [Embed widget](https://morsecodegenerator.com/embed/): drop-in iframe for any site.
 - [Public API (data)](https://morsecodegenerator.com/morse.json): canonical character map + phrase list.

@@ -34,6 +34,7 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/random-cw/") return "Practice generator";
   if (p === "/timing-calculator/") return "Tool";
   if (p === "/chart/") return "Reference";
+  if (p === "/worksheets/") return "Printable worksheets";
   if (p === "/cheat-sheet/") return "One-page reference";
   if (p === "/glossary/") return "Glossary";
   if (p === "/faq/") return "FAQ";
@@ -72,6 +73,7 @@ export const OG_PAGES = new Set([
   "/random-cw/",
   "/timing-calculator/",
   "/chart/",
+  "/worksheets/",
   "/cheat-sheet/",
   "/embed/",
   "/api/",
