@@ -1,0 +1,325 @@
+---
+import Layout from "../components/Layout.astro";
+import Newsletter from "../components/Newsletter.astro";
+import morsePayload from "../data/morse.json";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const title = "Free Morse Code Worksheets — printable practice sheets + answer key";
+const description =
+  "Generate free printable Morse code worksheets for kids, classrooms, and Scouts. Pick the level, choose decode or encode exercises, and print a practice sheet with an answer key — no signup.";
+const canonical = `${site}/worksheets/`;
+const keywords =
+  "morse code worksheet, morse code worksheets printable, morse code activity sheet, morse code practice sheet, morse code for kids printable, morse code classroom activity, morse code worksheet pdf";
+
+// Letters + digits map for the client generator.
+const morseMap = Object.fromEntries(
+  Object.entries(morsePayload?.morseMap ?? {})
+    .filter(([k, v]) => k && v && k !== " ")
+    .map(([k, v]) => [String(k).toUpperCase(), String(v)])
+);
+
+// Short, simple words for word-mode worksheets (kid-friendly, A–Z only).
+const WORDS = [
+  "CAT", "DOG", "SUN", "HAT", "BED", "CUP", "BOX", "PEN", "MAP", "KEY",
+  "FISH", "BIRD", "TREE", "STAR", "MOON", "BOOK", "CAKE", "MILK", "FROG",
+  "RAIN", "SNOW", "LEAF", "BOAT", "DUCK", "BALL", "HAND", "LAMP", "RING",
+  "HELLO", "HAPPY", "SMILE", "HEART", "MUSIC", "PLANT", "WATER", "LIGHT",
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Worksheets", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebApplication",
+      "@id": canonical,
+      name: "Morse Code Worksheet Generator",
+      url: canonical,
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Any (web browser)",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      description,
+      publisher: { "@id": `${site}#org` },
+    },
+    {
+      "@type": "HowTo",
+      name: "How to make a Morse code worksheet",
+      step: [
+        { "@type": "HowToStep", name: "Choose the level", text: "Pick the character set (beginner letters, full alphabet, numbers) and how many questions." },
+        { "@type": "HowToStep", name: "Pick the exercises", text: "Choose decode (Morse to letter), encode (letter to Morse), or a mix, and whether to use words." },
+        { "@type": "HowToStep", name: "Print it", text: "Click Print / Save as PDF. The answer key prints on its own page." },
+      ],
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Worksheets</span>
+  </nav>
+
+  <header class="page-hero ws-no-print">
+    <p class="page-hero-kicker">For teachers, parents &amp; Scout leaders</p>
+    <h1 class="page-hero-title">Free Morse code worksheets</h1>
+    <p class="muted page-hero-sub">
+      Generate a printable Morse code practice sheet in seconds. Choose the
+      level and the type of exercise, then print it or save as PDF — the answer
+      key prints on its own page. No signup, free for classroom use.
+    </p>
+  </header>
+
+  <section class="card ws-controls ws-no-print" aria-label="Worksheet options">
+    <div class="ws-opts">
+      <label class="ws-opt">
+        <span>Character set</span>
+        <select id="ws-set">
+          <option value="beginner">Beginner (E T A I N O S H R D)</option>
+          <option value="letters" selected>Letters (A–Z)</option>
+          <option value="numbers">Numbers (0–9)</option>
+          <option value="all">Letters + numbers</option>
+        </select>
+      </label>
+      <label class="ws-opt">
+        <span>Exercises</span>
+        <select id="ws-mode">
+          <option value="mixed" selected>Mixed (decode + encode)</option>
+          <option value="decode">Decode only (Morse → letter)</option>
+          <option value="encode">Encode only (letter → Morse)</option>
+        </select>
+      </label>
+      <label class="ws-opt">
+        <span>Questions</span>
+        <select id="ws-count">
+          <option value="10">10</option>
+          <option value="16" selected>16</option>
+          <option value="20">20</option>
+          <option value="24">24</option>
+        </select>
+      </label>
+      <label class="ws-opt ws-opt-check">
+        <input id="ws-words" type="checkbox" />
+        <span>Use words (not single letters)</span>
+      </label>
+      <label class="ws-opt ws-opt-check">
+        <input id="ws-key" type="checkbox" checked />
+        <span>Include answer key</span>
+      </label>
+    </div>
+    <div class="ws-actions">
+      <button id="ws-gen" type="button" class="btn secondary">↻ New worksheet</button>
+      <button id="ws-print" type="button" class="btn primary">🖨 Print / Save as PDF</button>
+    </div>
+  </section>
+
+  <!-- The printable document -->
+  <div id="ws-sheet" class="ws-sheet">
+    <div class="ws-page">
+      <header class="ws-head">
+        <div class="ws-head-row">
+          <h2 class="ws-title">Morse Code Practice</h2>
+          <span class="ws-brand">morsecodegenerator.com</span>
+        </div>
+        <div class="ws-meta">
+          <span>Name: ____________________</span>
+          <span>Date: ____________</span>
+          <span id="ws-score-line">Score: ____ / ____</span>
+        </div>
+        <p id="ws-legend" class="ws-legend mono">A&nbsp;·−&nbsp;&nbsp;Dot = short&nbsp;(·)&nbsp;&nbsp;Dash = long&nbsp;(−)</p>
+      </header>
+      <div id="ws-body" class="ws-body"></div>
+    </div>
+
+    <div id="ws-answers" class="ws-page ws-answers">
+      <header class="ws-head">
+        <div class="ws-head-row">
+          <h2 class="ws-title">Answer Key</h2>
+          <span class="ws-brand">morsecodegenerator.com</span>
+        </div>
+      </header>
+      <div id="ws-answer-body" class="ws-answer-body"></div>
+    </div>
+  </div>
+
+  <section class="card t-card ws-no-print">
+    <h2>How to use these worksheets</h2>
+    <ul>
+      <li><strong>Start easy.</strong> The "Beginner" set uses the ten most common, most distinct letters — perfect for a first lesson. Move up to the full alphabet once those are solid.</li>
+      <li><strong>Pair it with a chart.</strong> For a first attempt, let learners use the <a href="/chart/">printable chart</a> as a reference — that's learning, not cheating. Hide the chart for a quiz.</li>
+      <li><strong>Mix in sound.</strong> Read the answers aloud on a buzzer or with the <a href="/translate/">translator's audio</a> so learners connect the written code to its rhythm.</li>
+      <li><strong>Make it a game.</strong> See the full lesson plans and classroom activities on the <a href="/teach/">teach Morse code</a> page, or try the <a href="/daily/">daily challenge</a> together.</li>
+    </ul>
+  </section>
+
+  <Newsletter
+    heading="Want the full classroom pack?"
+    body="Join the list for a free printable Morse pack in the works — chart, workbook, flashcards, and a teacher's guide — plus one short Morse tip each week."
+  />
+
+  <script is:inline define:vars={{ MAP: morseMap, WORDS }}>
+    (function () {
+      "use strict";
+      const $ = (id) => document.getElementById(id);
+      const SETS = {
+        beginner: "ETAINOSHRD".split(""),
+        letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+        numbers: "0123456789".split(""),
+        all: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split(""),
+      };
+
+      const toMorse = (w) =>
+        w.toUpperCase().split("").map((c) => MAP[c] || "").filter(Boolean).join(" ");
+      const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+      function buildItems() {
+        const set = $("ws-set").value;
+        const mode = $("ws-mode").value;
+        const count = Number($("ws-count").value || 16);
+        const useWords = $("ws-words").checked;
+        const pool = SETS[set] || SETS.letters;
+
+        const items = [];
+        for (let i = 0; i < count; i += 1) {
+          let token;
+          if (useWords && set !== "numbers") {
+            token = sample(WORDS);
+          } else if (useWords && set === "numbers") {
+            // random 3-digit "number word"
+            token = String(Math.floor(100 + Math.random() * 900));
+          } else {
+            token = sample(pool);
+          }
+          let dir = mode;
+          if (mode === "mixed") dir = i % 2 === 0 ? "decode" : "encode";
+          items.push({ token, morse: toMorse(token), dir });
+        }
+        return items;
+      }
+
+      function render() {
+        const items = buildItems();
+        const showKey = $("ws-key").checked;
+        const body = $("ws-body");
+        const ansBody = $("ws-answer-body");
+        const ansPage = $("ws-answers");
+
+        body.innerHTML = "";
+        ansBody.innerHTML = "";
+
+        items.forEach((it, i) => {
+          const q = document.createElement("div");
+          q.className = "ws-q";
+          const n = i + 1;
+          if (it.dir === "decode") {
+            q.innerHTML =
+              '<span class="ws-qn">' + n + '.</span>' +
+              '<span class="ws-prompt mono">' + it.morse + '</span>' +
+              '<span class="ws-blank">__________</span>';
+          } else {
+            q.innerHTML =
+              '<span class="ws-qn">' + n + '.</span>' +
+              '<span class="ws-prompt">' + it.token + '</span>' +
+              '<span class="ws-blank mono">______________________</span>';
+          }
+          body.appendChild(q);
+
+          const a = document.createElement("div");
+          a.className = "ws-a";
+          a.innerHTML = '<span class="ws-qn">' + n + '.</span> ' +
+            (it.dir === "decode"
+              ? '<span class="mono">' + it.morse + '</span> = <strong>' + it.token + '</strong>'
+              : '<strong>' + it.token + '</strong> = <span class="mono">' + it.morse + '</span>');
+          ansBody.appendChild(a);
+        });
+
+        ansPage.style.display = showKey ? "" : "none";
+        const scoreLine = $("ws-score-line");
+        if (scoreLine) scoreLine.textContent = "Score: ____ / " + items.length;
+      }
+
+      $("ws-gen").addEventListener("click", () => { render(); window.mcgEvent?.("worksheet_generate", { set: $("ws-set").value, mode: $("ws-mode").value }); });
+      ["ws-set", "ws-mode", "ws-count", "ws-words", "ws-key"].forEach((id) => $(id).addEventListener("change", render));
+      $("ws-print").addEventListener("click", () => { window.print(); window.mcgEvent?.("worksheet_print", { set: $("ws-set").value }); });
+
+      render();
+    })();
+  </script>
+
+  <style is:global>
+    /* Screen styling (namespaced .ws-*). Print rules at the bottom hide
+       the site chrome and show only the worksheet document. */
+    .ws-controls .ws-opts{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: var(--s-3);
+      margin-bottom: var(--s-4);
+    }
+    .ws-opt{ display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); color: var(--text-muted); }
+    .ws-opt select{ height: 38px; margin: 0; }
+    .ws-opt-check{ flex-direction: row; align-items: center; gap: 8px; align-self: end; min-height: 38px; }
+    .ws-actions{ display: flex; flex-wrap: wrap; gap: var(--s-2); }
+
+    .ws-sheet{ margin: var(--s-5) 0; }
+    .ws-page{
+      background: #fff; color: #111;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md, 10px);
+      padding: 28px 32px;
+      max-width: var(--content);
+      margin: 0 auto var(--s-5);
+    }
+    .ws-head{ border-bottom: 2px solid #111; padding-bottom: 12px; margin-bottom: 18px; }
+    .ws-head-row{ display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .ws-title{ margin: 0; font-size: 22px; color: #111; }
+    .ws-brand{ font-size: 12px; color: #666; }
+    .ws-meta{ display: flex; flex-wrap: wrap; gap: 18px; margin-top: 10px; font-size: 13px; color: #333; }
+    .ws-legend{ margin: 10px 0 0; font-size: 12px; color: #555; }
+    .ws-body{
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px;
+    }
+    .ws-q{ display: flex; align-items: baseline; gap: 8px; font-size: 15px; color: #111; padding: 4px 0; }
+    .ws-qn{ color: #666; min-width: 22px; }
+    .ws-prompt{ font-weight: 700; letter-spacing: 0.08em; }
+    .ws-prompt.mono, .ws-blank.mono{ font-family: var(--font-mono); }
+    .ws-blank{ color: #999; flex: 1; border-bottom: 1px dotted #bbb; }
+    .ws-answers .ws-answer-body{
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px;
+    }
+    .ws-a{ font-size: 14px; color: #111; }
+    .ws-a .mono{ font-family: var(--font-mono); }
+
+    @media (max-width: 560px){
+      .ws-body, .ws-answers .ws-answer-body{ grid-template-columns: 1fr; }
+    }
+
+    /* Print: show only the worksheet, hide everything else. */
+    @media print {
+      :root, body{ background: #fff !important; color: #000 !important; }
+      .site-header, .site-footer, .skip, .crumbs, .page-hero,
+      .ws-no-print, .newsletter, .ws-controls, .t-card{ display: none !important; }
+      .main-wrap, main{ max-width: none !important; padding: 0 !important; margin: 0 !important; }
+      .ws-sheet{ margin: 0 !important; }
+      .ws-page{
+        border: none !important; border-radius: 0 !important;
+        padding: 0 !important; margin: 0 0 0 0 !important; max-width: none !important;
+        page-break-after: always; break-after: page;
+      }
+      .ws-answers{ page-break-before: always; break-before: page; }
+      .ws-head{ border-color: #000 !important; }
+    }
+  </style>
+</Layout>
