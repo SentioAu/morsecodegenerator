@@ -35,6 +35,7 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/timing-calculator/") return "Tool";
   if (p === "/chart/") return "Reference";
   if (p === "/worksheets/") return "Printable worksheets";
+  if (p === "/printables/") return "Printable pack";
   if (p === "/cheat-sheet/") return "One-page reference";
   if (p === "/glossary/") return "Glossary";
   if (p === "/faq/") return "FAQ";
@@ -74,6 +75,7 @@ export const OG_PAGES = new Set([
   "/timing-calculator/",
   "/chart/",
   "/worksheets/",
+  "/printables/",
   "/cheat-sheet/",
   "/embed/",
   "/api/",
