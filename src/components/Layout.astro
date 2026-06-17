@@ -28,6 +28,13 @@ const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
 const DONATE_URL =
   import.meta.env.DONATE_URL || "/disclosure/#support";
 
+// Analytics + ads IDs are env-configurable so the owner can point them at
+// their OWN Google properties without a code edit. Defaults are the
+// project's existing IDs (kept for backward compatibility). Set GA4_ID
+// (e.g. "G-XXXXXXX") and ADSENSE_CLIENT ("ca-pub-…") on Cloudflare Pages.
+const GA4_ID = import.meta.env.GA4_ID || "G-1K9JZ9ZQ2L";
+const ADSENSE_CLIENT = import.meta.env.ADSENSE_CLIENT || "ca-pub-7616383336440831";
+
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
@@ -278,7 +285,7 @@ const jsonLd = {
       visitor decides. We listen for that event AND check
       localStorage on boot so cross-tab decisions are respected too.
     */}
-    <script is:inline>
+    <script is:inline define:vars={{ GA4_ID, ADSENSE_CLIENT }}>
       (function () {
         function consent() {
           try { return localStorage.getItem("mcg-consent"); } catch (e) { return null; }
@@ -292,17 +299,17 @@ const jsonLd = {
           function gtag(){ dataLayer.push(arguments); }
           window.gtag = gtag;
           gtag("js", new Date());
-          gtag("config", "G-1K9JZ9ZQ2L", { anonymize_ip: true });
+          gtag("config", GA4_ID, { anonymize_ip: true });
           var ga = document.createElement("script");
           ga.async = true;
-          ga.src = "https://www.googletagmanager.com/gtag/js?id=G-1K9JZ9ZQ2L";
+          ga.src = "https://www.googletagmanager.com/gtag/js?id=" + GA4_ID;
           document.head.appendChild(ga);
 
           // AdSense loader.
           var ad = document.createElement("script");
           ad.async = true;
           ad.crossOrigin = "anonymous";
-          ad.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7616383336440831";
+          ad.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + ADSENSE_CLIENT;
           ad.onload = function () {
             // Fill any <ins class="adsbygoogle"> already on the page.
             try {
