@@ -88,14 +88,25 @@ const EFFECTIVE_DATE = "2026-05-15";
       identifiers for measurement, fraud prevention, and ad delivery.
     </p>
 
-    <h3>Cookie consent banner</h3>
+    <h3>Cookie consent banner &amp; Google Consent Mode</h3>
     <p>
       On your first visit you'll see a banner asking you to choose between
-      <strong>Accept all</strong> (analytics + ads enabled) and
-      <strong>Essential only</strong> (no analytics, no ads loaded). Your
-      choice is stored locally as <code>mcg-consent</code> in your
-      browser's <code>localStorage</code> — not in a server-side cookie —
-      and is honoured on every subsequent page load.
+      <strong>Accept all</strong> (analytics + ads cookies enabled) and
+      <strong>Essential only</strong> (nothing loaded). Your choice is
+      stored locally as <code>mcg-consent</code> in your browser's
+      <code>localStorage</code> — not in a server-side cookie — and is
+      honoured on every subsequent page load.
+    </p>
+    <p>
+      We use <strong>Google Consent Mode v2</strong>. Before you choose,
+      all storage and advertising signals default to <em>denied</em>: no
+      cookies or other identifiers are written to your device. In this
+      state Google Analytics sends only cookieless, non-identifying signals
+      that Google uses to model aggregate usage — we never receive or store
+      anything that identifies you. Cookies and personalized/measurement
+      storage are enabled <em>only</em> if you click <strong>Accept all</strong>.
+      If you click <strong>Essential only</strong>, we treat it as a full
+      opt-out and load no analytics or ad scripts at all.
     </p>
     <p>
       You can change your decision at any time by clicking
