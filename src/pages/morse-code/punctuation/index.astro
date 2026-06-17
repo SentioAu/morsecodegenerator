@@ -48,6 +48,16 @@ const items = [
 const hasPunctuation = items.some((x) => x.morse && String(x.morse).trim().length > 0);
 const robots = hasPunctuation ? "index,follow" : "noindex,follow";
 
+// Dedicated per-symbol pages (internal links so they're crawled/indexed,
+// not orphaned). Each resolves to /<name>-in-morse-code/.
+const symbolPages = [
+  ["period", "Period (.)"], ["comma", "Comma (,)"], ["question", "Question mark (?)"],
+  ["exclamation", "Exclamation (!)"], ["colon", "Colon (:)"], ["semicolon", "Semicolon (;)"],
+  ["slash", "Slash (/)"], ["hyphen", "Hyphen (-)"], ["plus", "Plus (+)"],
+  ["equals", "Equals (=)"], ["underscore", "Underscore (_)"], ["quote", "Quotation (\")"],
+  ["apostrophe", "Apostrophe (')"], ["dollar", "Dollar ($)"], ["at", "At (@)"],
+];
+
 const crumbs = [
   { name: "Home", url: `${site}/` },
   { name: "Learn", url: `${site}/morse-code/` },
@@ -154,6 +164,18 @@ const jsonLd = {
     <p class="muted note">
       Tip: punctuation codes are often longer than letters. Learn the ones you actually use (., ?, !, /, @) first.
     </p>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <h2>Dedicated symbol pages</h2>
+      <p class="muted">Each punctuation mark has its own page with copy, audio, and a breakdown:</p>
+    </div>
+    <div class="pill-grid">
+      {symbolPages.map(([slug, label]) => (
+        <a href={`/${slug}-in-morse-code/`}>{label}</a>
+      ))}
+    </div>
   </section>
 
   <section class="card">
