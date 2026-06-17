@@ -79,6 +79,59 @@ const site =
 
 const canonical = `${site}/translate/`;
 const robots = "index,follow";
+
+// Long-form support content for the head-term page ("morse code
+// translator"). Adds genuine depth + an FAQ, and the JSON-LD below
+// describes the tool for search engines. English only (the /es/
+// translator ships its own copy).
+const faqs = [
+  {
+    q: "How does the Morse code translator work?",
+    a: "Type or paste text and it converts each letter and number to International Morse code instantly — a dot (·) for a short signal and a dash (−) for one three times as long. Paste dots and dashes instead and it decodes them back to text. Everything runs in your browser; nothing is sent to a server.",
+  },
+  {
+    q: "How do I read Morse code?",
+    a: "Each letter is a short group of dots and dashes. Leave a one-unit gap between dots and dashes inside a letter, a three-unit gap between letters, and a seven-unit gap (shown as “/”) between words. Press Play to hear the rhythm at any speed.",
+  },
+  {
+    q: "Can it translate numbers and punctuation?",
+    a: "Yes. All digits 0–9 and common punctuation (period, comma, question mark, slash and more) are supported, following the ITU-R M.1677-1 international standard.",
+  },
+  {
+    q: "Can I hear the Morse code as audio?",
+    a: "Yes — press Play to hear it as a 600 Hz tone, adjust the speed in words per minute, and download a WAV file. You can also flash it as light or vibrate it on a phone.",
+  },
+  {
+    q: "Is the Morse code translator free?",
+    a: "Completely free, with no sign-up and no limits. It also works offline once the page has loaded, and you can put it on your own site with the free embed widget.",
+  },
+];
+
+const translateJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "@id": `${canonical}#faq`,
+      mainEntity: faqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+    {
+      "@type": "HowTo",
+      name: "How to translate text to Morse code",
+      description: "Convert any text to International Morse code in seconds.",
+      totalTime: "PT20S",
+      step: [
+        { "@type": "HowToStep", name: "Enter text", text: "Type or paste your text into the input box." },
+        { "@type": "HowToStep", name: "Convert", text: "Tap “Text → Morse” — the dots and dashes appear instantly." },
+        { "@type": "HowToStep", name: "Play or copy", text: "Press Play to hear it, or copy the Morse / a share link." },
+      ],
+    },
+  ],
+};
 ---
 
 <Layout title={title} description={description} canonical={canonical} robots={robots} alternates={[{ lang: "en", href: `${site}/translate/` }, { lang: "es", href: `${site}/es/traductor/` }]}>
@@ -235,6 +288,72 @@ const robots = "index,follow";
   </section>
 
   <div id="mcg-toast" class="toast" role="status" aria-live="polite"></div>
+
+  {/* ---- Long-form support content (head-term depth + internal links) ---- */}
+  <section class="section tr-content">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">About this tool</p>
+        <h2 class="section-title">The free Morse code translator</h2>
+      </div>
+    </div>
+    <div class="tr-prose">
+      <p>
+        This <strong>Morse code translator</strong> converts text to Morse code and back,
+        instantly and entirely in your browser. Type a message to get its dots and dashes,
+        or paste Morse to decode it to plain text. Press <strong>Play</strong> to hear it as
+        audio at any speed, flash it as light, vibrate it on a phone, or
+        <a href="/translate/?q=SOS">download it as a WAV file</a> — and nothing you type is
+        ever sent to a server.
+      </p>
+      <p>
+        It follows the international standard (ITU-R M.1677-1), so every letter, digit, and
+        common punctuation mark is covered. New to the code? Start with the
+        <a href="/morse-code/">Morse alphabet</a>, keep the
+        <a href="/chart/">printable chart</a> handy, then learn to read by ear with the
+        <a href="/practice/">Koch trainer</a> and to send on the <a href="/keyer/">keyer</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Popular</p>
+        <h2 class="section-title">Words, names &amp; messages in Morse</h2>
+      </div>
+      <p class="muted section-sub">Ready-made pages with copy, audio, and a bracelet/tattoo maker.</p>
+    </div>
+    <div class="quick-grid">
+      <a class="quick" href="/i-love-you-in-morse-code/">I love you</a>
+      <a class="quick" href="/happy-birthday-in-morse-code/">Happy birthday</a>
+      <a class="quick" href="/sos-in-morse-code/">SOS</a>
+      <a class="quick" href="/names-in-morse-code/">Your name</a>
+      <a class="quick" href="/soulmate-in-morse-code/">Soulmate</a>
+      <a class="quick" href="/morse-bracelet/">Make a bracelet</a>
+      <a class="quick" href="/phrases/">All phrases</a>
+      <a class="quick" href="/morse-code/words/">Words A–Z</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">FAQ</p>
+        <h2 class="section-title">Morse code translator — questions</h2>
+      </div>
+    </div>
+    <div class="tr-faq">
+      {faqs.map((f) => (
+        <details class="tr-faq-item">
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(translateJsonLd)}></script>
 
   <script defer src="/mcg-tool.js"></script>
 
@@ -775,6 +894,26 @@ const robots = "index,follow";
   </script>
 
   <style>
+    /* Long-form support content */
+    .tr-content{ margin-top: var(--s-7); }
+    .tr-prose{ max-width: var(--content); }
+    .tr-prose p{ line-height: 1.7; margin: 0 0 var(--s-4); color: var(--text); }
+    .tr-faq{ max-width: var(--content); display: grid; gap: var(--s-2); }
+    .tr-faq-item{
+      border: 1px solid var(--line);
+      border-radius: var(--r-md, 10px);
+      background: var(--surface-2);
+      padding: var(--s-3) var(--s-4);
+    }
+    .tr-faq-item summary{
+      cursor: pointer; font-weight: 600; color: var(--text);
+      list-style: none;
+    }
+    .tr-faq-item summary::-webkit-details-marker{ display: none; }
+    .tr-faq-item summary::before{ content: "+ "; color: var(--text-muted); }
+    .tr-faq-item[open] summary::before{ content: "− "; }
+    .tr-faq-item p{ margin: var(--s-3) 0 0; line-height: 1.65; color: var(--text-muted); }
+
     /* Hero — left aligned, focused */
     .t-hero{ margin: var(--s-3) 0 var(--s-6); max-width: 720px; }
     .t-hero-title{
