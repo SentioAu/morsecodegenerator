@@ -290,28 +290,44 @@ const jsonLd = {
         function consent() {
           try { return localStorage.getItem("mcg-consent"); } catch (e) { return null; }
         }
-        function load() {
-          if (window.__mcgLoadedAds) return;
-          window.__mcgLoadedAds = true;
 
-          // GA4
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){ dataLayer.push(arguments); }
-          window.gtag = gtag;
+        // ---- Google Consent Mode v2 ----
+        // Everything starts DENIED: no cookies, no device storage. In the
+        // denied state GA4 sends only cookieless, non-identifying pings,
+        // which Google uses for behavioural modelling — so we get fuller
+        // (modelled) analytics from the silent majority who never touch the
+        // banner, WITHOUT storing anything on their device. Storage (and
+        // ads) only turn on if the visitor explicitly clicks "Accept all".
+        // Someone who explicitly clicks "Essential only" gets nothing
+        // loaded at all — we honour the opt-out literally.
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        window.gtag = gtag;
+        gtag("consent", "default", {
+          ad_storage: "denied",
+          analytics_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+          wait_for_update: 500
+        });
+
+        var gaLoaded = false, adsLoaded = false;
+        function loadGA() {
+          if (gaLoaded) return; gaLoaded = true;
           gtag("js", new Date());
           gtag("config", GA4_ID, { anonymize_ip: true });
           var ga = document.createElement("script");
           ga.async = true;
           ga.src = "https://www.googletagmanager.com/gtag/js?id=" + GA4_ID;
           document.head.appendChild(ga);
-
-          // AdSense loader.
+        }
+        function loadAds() {
+          if (adsLoaded) return; adsLoaded = true;
           var ad = document.createElement("script");
           ad.async = true;
           ad.crossOrigin = "anonymous";
           ad.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + ADSENSE_CLIENT;
           ad.onload = function () {
-            // Fill any <ins class="adsbygoogle"> already on the page.
             try {
               document.querySelectorAll("ins.adsbygoogle:not([data-adsbygoogle-status])").forEach(function () {
                 (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -320,31 +336,42 @@ const jsonLd = {
           };
           document.head.appendChild(ad);
         }
-        function maybeLoad() {
-          if (consent() !== "all") return;
-          if ("requestIdleCallback" in window) {
-            requestIdleCallback(load, { timeout: 2500 });
-            return;
-          }
-          // Fallback for browsers without rIC (e.g. older Safari). If the
-          // page is already loaded — which is the case when a first-time
-          // visitor clicks "Accept all" — `load` has fired and a new
-          // listener would never run. Schedule directly in that case.
-          if (document.readyState === "complete") {
-            setTimeout(load, 0);
-          } else {
-            window.addEventListener("load", function () { setTimeout(load, 800); });
-          }
+        function grantAll() {
+          gtag("consent", "update", {
+            ad_storage: "granted",
+            analytics_storage: "granted",
+            ad_user_data: "granted",
+            ad_personalization: "granted"
+          });
+          loadGA();
+          loadAds();
         }
-        // Boot path: load if already accepted on a prior visit.
-        maybeLoad();
-        // Same-tab path: banner dispatches this event.
+        function idle(fn) {
+          if ("requestIdleCallback" in window) requestIdleCallback(fn, { timeout: 2500 });
+          else if (document.readyState === "complete") setTimeout(fn, 0);
+          else window.addEventListener("load", function () { setTimeout(fn, 800); });
+        }
+
+        var c = consent();
+        if (c === "all") {
+          // Returning visitor who accepted — full consent + ads.
+          idle(grantAll);
+        } else if (c === "essential") {
+          // Explicit opt-out — load nothing, send nothing.
+        } else {
+          // No choice yet — privacy-preserving cookieless analytics only
+          // (denied consent state; modelled, no storage). No ads.
+          idle(loadGA);
+        }
+
+        // Same-tab path: the banner dispatches this when the visitor decides.
         window.addEventListener("mcg:consent", function (e) {
-          if (e && e.detail === "all") maybeLoad();
+          if (e && e.detail === "all") grantAll();
+          // "essential" → stays denied; nothing further loads.
         });
-        // Cross-tab path: another tab may flip the value.
+        // Cross-tab path: another tab may accept.
         window.addEventListener("storage", function (e) {
-          if (e.key === "mcg-consent" && e.newValue === "all") maybeLoad();
+          if (e.key === "mcg-consent" && e.newValue === "all") grantAll();
         });
       })();
     </script>
@@ -1627,10 +1654,12 @@ const jsonLd = {
     >
       <div class="consent-inner">
         <div class="consent-copy">
-          <strong id="consent-h" class="consent-h">We use cookies</strong>
+          <strong id="consent-h" class="consent-h">Your privacy</strong>
           <p id="consent-p" class="consent-p">
-            We use cookies for analytics and to show ads that keep this
-            site free. You can accept all, or choose essentials only.
+            <strong>Accept all</strong> turns on cookies for analytics and
+            ads that keep this site free. <strong>Essential only</strong>
+            loads none of that. Until you choose, we use privacy-preserving
+            analytics that store nothing on your device.
             See our <a href="/privacy/">Privacy Policy</a>.
           </p>
         </div>

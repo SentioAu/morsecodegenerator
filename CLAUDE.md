@@ -184,6 +184,12 @@ four done poorly.
   events: `translate`, `play_audio`, `copy_output`, `copy_share_link`,
   `flash_light`, `vibrate`, `download_wav`, `daily_*`, `keyer_*`,
   `bracelet_download`, `affiliate_click`.
+- **Consent Mode v2** (Layout): all signals default to `denied` (no cookies
+  / no device storage). Before a choice, GA4 runs in cookieless mode →
+  modelled analytics from the silent majority. "Accept all" → `gtag consent
+  update granted` + AdSense loads. "Essential only" → nothing loads (literal
+  opt-out). `mcgEvent` still only reports meaningfully once gtag is live.
+  Keep the banner + `/privacy/` copy in sync with this behaviour.
 
 **Revenue is dormant until the site owner sets env vars on Cloudflare Pages
 (see §8).** The code is ready; the accounts/keys are the owner's job.
