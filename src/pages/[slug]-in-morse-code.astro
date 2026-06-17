@@ -54,9 +54,12 @@ export function getStaticPaths() {
   const BLOCKED = new Set(["", "-", "--", "---", "index", "null", "undefined"]);
 
   // Keep this list INSIDE getStaticPaths so it never depends on outer scope
+  // Note: "dot"/"dash" are intentionally omitted — they're duplicate
+  // aliases of "period"/"hyphen" (same symbol) and would be thin
+  // duplicate-content pages. One canonical page per symbol.
   const EXTRA_NAMED = [
-    "comma","period","dot","question","exclamation","colon","semicolon",
-    "plus","equals","hyphen","dash","slash","at","dollar","quote","apostrophe","underscore"
+    "comma","period","question","exclamation","colon","semicolon",
+    "plus","equals","hyphen","slash","at","dollar","quote","apostrophe","underscore"
   ];
   const named = new Set(EXTRA_NAMED);
 

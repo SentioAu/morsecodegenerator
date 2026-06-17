@@ -4,9 +4,9 @@ import morse from "../data/morse.json";
 import { amazonSearch } from "../data/gear.js";
 import { GIFT_PHRASES } from "../data/gift-phrases.js";
 
-// A handful of popular gift ideas to seed the tool + internally link the
-// gift phrase pages.
-const giftIdeas = GIFT_PHRASES.slice(0, 12);
+// Link every gift-phrase page here (internal links so they get crawled
+// and indexed — orphan pages don't). The chips stay compact.
+const giftIdeas = GIFT_PHRASES;
 
 const title = "Morse Code Bracelet & Tattoo Generator — make a pattern, download free";
 const description =
