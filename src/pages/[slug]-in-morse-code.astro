@@ -3,6 +3,7 @@ import Layout from "../components/Layout.astro";
 import morsePayload from "../data/morse.json";
 import slugs from "../data/seo-slugs.json";
 import { NAME_SLUGS, isNameSlug } from "../data/names.js";
+import { GIFT_PHRASE_SLUGS, isGiftSlug } from "../data/gift-phrases.js";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -99,7 +100,8 @@ export function getStaticPaths() {
   // a name-aware gift/bracelet CTA in the body).
   const base = (Array.isArray(slugs) ? slugs : []).map(normalize);
   const names = (Array.isArray(NAME_SLUGS) ? NAME_SLUGS : []).map(normalize);
-  const combined = new Set([...base, ...EXTRA_NAMED, ...names]);
+  const gifts = (Array.isArray(GIFT_PHRASE_SLUGS) ? GIFT_PHRASE_SLUGS : []).map(normalize);
+  const combined = new Set([...base, ...EXTRA_NAMED, ...names, ...gifts]);
 
   return Array.from(combined)
     .filter(isSafeSlug)
@@ -203,9 +205,12 @@ const valid = pageSlugValidForThisRoute(slug);
 const term = termFromSlug(slug);
 const morse = valid ? textToMorse(term.value) : "";
 
-// Name-aware: when the slug is a popular first name, the page leans into
-// gift/jewelry/tattoo intent and funnels to the bracelet generator.
+// Gift-aware: when the slug is a popular first name OR a gift/message
+// phrase, the page leans into gift/jewelry/tattoo intent and funnels to
+// the bracelet generator.
 const isName = valid && !isSingleLetter && !isNumber && isNameSlug(slug);
+const isGift = valid && !isSingleLetter && !isNumber && !isName && isGiftSlug(slug);
+const showGift = isName || isGift;
 const braceletHref = `/morse-bracelet/?text=${encodeURIComponent(term.display)}`;
 
 // Robots rules:
@@ -299,10 +304,10 @@ const jsonLd = {
   ) : valid ? (
     <>
       <header class="page-hero">
-        <p class="page-hero-kicker">{isName ? "Name · Gift · Bracelet" : "Word · Copy · Practice"}</p>
+        <p class="page-hero-kicker">{isName ? "Name · Gift · Bracelet" : isGift ? "Message · Gift · Bracelet" : "Word · Copy · Practice"}</p>
         <h1 class="page-hero-title">{pageTitle}</h1>
         <p class="muted page-hero-sub">
-          {isName ? (
+          {showGift ? (
             <>Copy the Morse code for <strong>{term.display}</strong>, hear it played back, or turn it into a
             bracelet, necklace, or tattoo design with our free maker.</>
           ) : (
@@ -310,7 +315,7 @@ const jsonLd = {
             translator to edit it.</>
           )}
         </p>
-        {isName && (
+        {showGift && (
           <div class="page-hero-actions">
             <a class="btn primary" href={braceletHref}>Make {term.display} into a bracelet/tattoo →</a>
             <a class="btn ghost" href={`/translate/?q=${encodeURIComponent(term.value)}`}>Open in translator</a>
@@ -347,7 +352,7 @@ const jsonLd = {
         </section>
       )}
 
-      {isName && morse && (
+      {showGift && morse && (
         <section class="card name-gift">
           <h2>Turn {term.display} into something you can keep</h2>
           <p>
@@ -399,7 +404,8 @@ const jsonLd = {
         </div>
         <div class="pill-grid">
           {isName && <a href="/names-in-morse-code/">All names A–Z</a>}
-          {isName && <a href={braceletHref}>Make a bracelet</a>}
+          {showGift && <a href={braceletHref}>Make a bracelet</a>}
+          {isGift && <a href="/phrases/">More phrases</a>}
           <a href="/morse-code/words/">Browse words A–Z</a>
           <a href="/morse-code/">Learn the alphabet</a>
           <a href="/phrases/">Common phrases</a>

@@ -71,9 +71,9 @@ export function sourcesForUrl(urlPath) {
     return ["src/pages/names-in-morse-code.astro", "src/data/names.js", "src/data/morse.json"];
   }
 
-  // /<word>-in-morse-code/ pages (includes popular first names).
+  // /<word>-in-morse-code/ pages (includes popular first names + gift phrases).
   if (/^\/[a-z0-9-]+-in-morse-code\/$/.test(urlPath)) {
-    return ["src/pages/[slug]-in-morse-code.astro", "src/data/seo-slugs.json", "src/data/names.js", "src/data/morse.json"];
+    return ["src/pages/[slug]-in-morse-code.astro", "src/data/seo-slugs.json", "src/data/names.js", "src/data/gift-phrases.js", "src/data/morse.json"];
   }
 
   // Daily challenge — word list changes also refresh the page.
