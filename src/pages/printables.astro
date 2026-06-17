@@ -1,29 +1,38 @@
 ---
 import Layout from "../components/Layout.astro";
+import Newsletter from "../components/Newsletter.astro";
+import morsePayload from "../data/morse.json";
+import { letterMnemonics } from "../data/mnemonics.js";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
 
-// Gumroad store/product URL + price are env-configurable so the owner can
-// point at a specific product page and change pricing without a code edit.
-// Defaults to the store opened at gumroad. See CLAUDE.md §8.
-const GUMROAD_URL = import.meta.env.GUMROAD_URL || "https://morsecodegenerator.gumroad.com/";
-const PRICE = import.meta.env.PRODUCT_PRICE || "7";
-
-const title = "Morse Code Starter Pack (printable PDF) — chart, workbook & flashcards";
+const title = "Free Morse Code Printable Pack — chart, workbook, flashcards (PDF)";
 const description =
-  "A printable Morse code PDF pack: full reference chart, mnemonic alphabet, practice worksheets with answer keys, cut-out flashcards, and a teacher's quick guide. One file, ready to print.";
+  "A free printable Morse code pack: full reference chart, mnemonic alphabet, practice worksheets with answer keys, cut-out flashcards, and a teacher's quick guide. Print it or save as PDF — no signup, no cost.";
 const canonical = `${site}/printables/`;
 const keywords =
-  "morse code printable, morse code pdf, morse code workbook, morse code flashcards printable, morse code chart pdf, morse code worksheets pdf, morse code teaching pack";
+  "morse code printable, morse code pdf, free morse code worksheets pdf, morse code chart pdf, morse code flashcards printable, morse code workbook, morse code teaching pack";
 
-const contents = [
-  { t: "Reference chart", d: "A–Z, 0–9, and punctuation on one clean, printable page (ITU standard)." },
-  { t: "Mnemonic alphabet", d: "Learn every letter by rhythm — the trick that sticks in one sitting." },
-  { t: "Two practice worksheets", d: "Decode and encode exercises, with full answer keys at the back." },
-  { t: "Cut-out flashcards", d: "The highest-frequency letters, ready to print and trim." },
-  { t: "Teacher / parent quick guide", d: "A tested 45-minute lesson plan for kids, classrooms, and Scouts." },
-];
+const map = morsePayload?.morseMap ?? {};
+const dash = (s) => String(s || "").replace(/-/g, "−"); // − for print clarity
+
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((c) => ({ c, m: map[c] }));
+const digits = "0123456789".split("").map((c) => ({ c, m: map[c] }));
+const punct = [
+  [".", "period"], [",", "comma"], ["?", "question"], ["'", "apostrophe"],
+  ["!", "exclam."], ["/", "slash"], ["(", "paren ("], [")", "paren )"],
+  ["&", "ampersand"], [":", "colon"], [";", "semicolon"], ["=", "equals"],
+].map(([s, name]) => ({ s, name, m: map[s] }));
+
+const mnemonics = letters.map(({ c }) => ({
+  c, m: map[c], phrase: letterMnemonics[c]?.phrase || "",
+}));
+
+// Deterministic worksheets so the answer key always matches.
+const W1 = ["F","Q","K","B","R","Y","L","V","G","C","P","N","D","X","Z","W"]; // decode
+const W2 = ["A","E","T","M","S","O","U","H","I","J","K","Y","Q","V","G","P"]; // encode
+const fcLetters = "ESARNTOILCD".split(""); // flashcards (high-frequency)
 
 const crumbs = [
   { name: "Home", url: `${site}/` },
@@ -40,88 +49,184 @@ const jsonLd = {
       })),
     },
     {
-      "@type": "Product",
-      "@id": `${canonical}#product`,
-      name: "Morse Code Starter Pack",
-      description,
-      brand: { "@type": "Brand", name: "MorseCodeGenerator.com" },
-      category: "Educational printable (PDF)",
-      url: canonical,
-      offers: {
-        "@type": "Offer",
-        price: PRICE,
-        priceCurrency: "USD",
-        availability: "https://schema.org/InStock",
-        url: GUMROAD_URL,
-      },
-      // No aggregateRating until real reviews exist (site policy — avoids
-      // a structured-data manual action).
+      "@type": "HowTo",
+      name: "How to print the Morse code pack",
+      step: [
+        { "@type": "HowToStep", name: "Open the pack", text: "Scroll to the pack below." },
+        { "@type": "HowToStep", name: "Print", text: "Click Print / Save as PDF — the site menus are hidden automatically." },
+        { "@type": "HowToStep", name: "Save", text: "Choose “Save as PDF” to keep a copy, or print on Letter/A4." },
+      ],
     },
   ],
 };
 ---
 
-<Layout title={title} description={description} canonical={canonical} keywords={keywords} ogType="product">
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
-  <nav class="crumbs" aria-label="Breadcrumb">
+  <nav class="crumbs pk-noprint" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>
     <span class="crumb-current">Printable pack</span>
   </nav>
 
-  <header class="page-hero">
-    <p class="page-hero-kicker">Printable PDF · instant download</p>
-    <h1 class="page-hero-title">Morse Code Starter Pack</h1>
+  <header class="page-hero pk-noprint">
+    <p class="page-hero-kicker">Free · print or save as PDF · no signup</p>
+    <h1 class="page-hero-title">Free Morse code printable pack</h1>
     <p class="muted page-hero-sub">
-      Everything to learn or teach Morse in one print-ready PDF: the reference
-      chart, the mnemonic alphabet, two worksheets with answer keys, cut-out
-      flashcards, and a teacher's quick guide. No ads, no assembling free pages
-      — one beautiful file you can print again and again.
+      Everything to learn or teach Morse on paper — the reference chart, the
+      mnemonic alphabet, two worksheets with answer keys, cut-out flashcards,
+      and a teacher's quick guide. It's all free: print it, or save it as a PDF
+      to keep. Prints cleanly on Letter or A4.
     </p>
     <div class="page-hero-actions">
-      <a class="btn primary" href={GUMROAD_URL} target="_blank" rel="noopener" data-aff="starter-pack">Get the pack — ${PRICE}</a>
-      <a class="btn ghost" href="/worksheets/">Try the free worksheet maker</a>
+      <button id="pk-print" type="button" class="btn primary">🖨 Print / Save as PDF</button>
+      <a class="btn ghost" href="/worksheets/">Make custom worksheets</a>
     </div>
   </header>
 
-  <section class="card t-card">
-    <h2>What's inside</h2>
-    <ul class="pk-list">
-      {contents.map((c) => (
-        <li><strong>{c.t}.</strong> {c.d}</li>
-      ))}
-    </ul>
+  <div class="pk-doc">
+    <!-- Chart -->
+    <section class="pk-page card">
+      <h2 class="pk-h">Morse Code Reference Chart</h2>
+      <p class="pk-lead">A dot (·) is a short signal; a dash (−) is three times as long. Leave a 3-unit gap between letters and a 7-unit gap between words. (ITU-R M.1677-1.)</p>
+      <h3 class="pk-sub">Letters</h3>
+      <div class="pk-grid pk-g6">
+        {letters.map((x) => (<div class="pk-cell"><span class="pk-ch">{x.c}</span><span class="pk-cd mono">{dash(x.m)}</span></div>))}
+      </div>
+      <h3 class="pk-sub">Numbers</h3>
+      <div class="pk-grid pk-g5">
+        {digits.map((x) => (<div class="pk-cell"><span class="pk-ch">{x.c}</span><span class="pk-cd mono">{dash(x.m)}</span></div>))}
+      </div>
+      <h3 class="pk-sub">Punctuation</h3>
+      <div class="pk-grid pk-g6">
+        {punct.map((x) => (<div class="pk-cell"><span class="pk-ch">{x.name} {x.s}</span><span class="pk-cd mono">{dash(x.m)}</span></div>))}
+      </div>
+    </section>
+
+    <!-- Mnemonics -->
+    <section class="pk-page card">
+      <h2 class="pk-h">The Mnemonic Alphabet</h2>
+      <p class="pk-lead">Say each phrase aloud with the stress shown: a stressed (CAPITAL) syllable is a dash, an unstressed one is a dot. The rhythm sticks faster than the dots and dashes themselves.</p>
+      <table class="pk-table">
+        <thead><tr><th>Letter</th><th>Morse</th><th>Say it like…</th></tr></thead>
+        <tbody>{mnemonics.map((x) => (<tr><td><b>{x.c}</b></td><td class="mono">{dash(x.m)}</td><td>{x.phrase}</td></tr>))}</tbody>
+      </table>
+    </section>
+
+    <!-- Worksheet 1 -->
+    <section class="pk-page card">
+      <h2 class="pk-h">Worksheet 1 — Read the Morse</h2>
+      <p class="pk-meta">Name: ___________________ &nbsp;&nbsp; Date: ____________ &nbsp;&nbsp; Score: ____ / {W1.length}</p>
+      <p class="pk-lead">Write the letter each Morse group stands for.</p>
+      <div class="pk-qrow">
+        {W1.map((c, i) => (<div class="pk-q"><span class="pk-n">{i + 1}.</span><span class="pk-p mono">{dash(map[c])}</span><span class="pk-b"></span></div>))}
+      </div>
+    </section>
+
+    <!-- Worksheet 2 -->
+    <section class="pk-page card">
+      <h2 class="pk-h">Worksheet 2 — Write the Morse</h2>
+      <p class="pk-meta">Name: ___________________ &nbsp;&nbsp; Date: ____________ &nbsp;&nbsp; Score: ____ / {W2.length}</p>
+      <p class="pk-lead">Write the Morse code (dots and dashes) for each letter.</p>
+      <div class="pk-qrow">
+        {W2.map((c, i) => (<div class="pk-q"><span class="pk-n">{i + 1}.</span><span class="pk-p">{c}</span><span class="pk-b"></span></div>))}
+      </div>
+    </section>
+
+    <!-- Answer keys -->
+    <section class="pk-page card">
+      <h2 class="pk-h">Answer Keys</h2>
+      <h3 class="pk-sub">Worksheet 1 — Read the Morse</h3>
+      <div class="pk-qrow">
+        {W1.map((c, i) => (<div class="pk-q"><span class="pk-n">{i + 1}.</span><span><span class="mono">{dash(map[c])}</span> = <b>{c}</b></span></div>))}
+      </div>
+      <h3 class="pk-sub">Worksheet 2 — Write the Morse</h3>
+      <div class="pk-qrow">
+        {W2.map((c, i) => (<div class="pk-q"><span class="pk-n">{i + 1}.</span><span><b>{c}</b> = <span class="mono">{dash(map[c])}</span></span></div>))}
+      </div>
+    </section>
+
+    <!-- Flashcards -->
+    <section class="pk-page card">
+      <h2 class="pk-h">Flashcards</h2>
+      <p class="pk-lead">Print, cut along the lines, and quiz yourself. Fold each card so the code hides behind the letter.</p>
+      <div class="pk-cards">
+        {fcLetters.map((c) => (<div class="pk-fcard"><span class="pk-fbig">{c}</span><span class="pk-fsm mono">{dash(map[c])}</span></div>))}
+      </div>
+    </section>
+
+    <!-- Teacher guide -->
+    <section class="pk-page card">
+      <h2 class="pk-h">Quick Guide for Parents, Teachers &amp; Scouts</h2>
+      <p class="pk-lead">A 45-minute plan that gets an 8-year-old sending their initials in one sitting.</p>
+      <table class="pk-table">
+        <tr><th style="width:32%">Step</th><th>What to do</th></tr>
+        <tr><td><b>Hook (5 min)</b></td><td>Flash SOS (··· −−− ···) on a torch or buzzer. Ask what it means and why it's used.</td></tr>
+        <tr><td><b>Pattern not letter (10 min)</b></td><td>Teach only E (·), T (−), A (·−), N (−·). Have them write “TEA” = − · ·− in dots and dashes.</td></tr>
+        <tr><td><b>Mnemonics (10 min)</b></td><td>Hand out the mnemonic alphabet. Say S as “si-si-si”, O as “OOO-LOONG-HOOLE” until the rhythms stick.</td></tr>
+        <tr><td><b>Partner sending (15 min)</b></td><td>In pairs with a torch/buzzer + the chart, take turns sending 3-letter words while the partner copies.</td></tr>
+        <tr><td><b>Wrap-up (5 min)</b></td><td>Each learner sends their initials. Finish with a whole-group SOS.</td></tr>
+      </table>
+      <p class="pk-lead" style="margin-top:12px"><b>Keep going free:</b> the <a href="/translate/">translator</a>, <a href="/practice/">Koch trainer</a>, <a href="/daily/">daily game</a>, and <a href="/keyer/">send-trainer keyer</a> are all free at MorseCodeGenerator.com.</p>
+    </section>
+  </div>
+
+  <section class="pk-noprint">
+    <Newsletter
+      heading="Get new printables + one Morse tip a week"
+      body="When a new free printable or lesson drops, subscribers hear first — plus a short weekly tip: one technique, one bit of history, one drill."
+    />
   </section>
 
-  <section class="card t-card">
-    <h2>Who it's for</h2>
-    <p>
-      <strong>Parents and teachers</strong> who want a ready-to-print lesson
-      without building it from scratch. <strong>Scout and club leaders</strong>
-      working toward a signalling badge. <strong>Self-learners</strong> who'd
-      rather have one clean PDF on the desk than ten browser tabs. It prints
-      cleanly on Letter or A4.
-    </p>
-  </section>
+  <script is:inline>
+    document.getElementById("pk-print")?.addEventListener("click", () => {
+      window.print();
+      window.mcgEvent?.("printable_pack_print", {});
+    });
+  </script>
 
-  <section class="card t-card">
-    <h2>Honest note: the tools here are free</h2>
-    <p>
-      You never have to pay to use MorseCodeGenerator.com — the
-      <a href="/translate/">translator</a>, <a href="/practice/">trainer</a>,
-      <a href="/chart/">chart</a>, and <a href="/worksheets/">worksheet maker</a>
-      are free and always will be. The pack exists for one reason: convenience.
-      It's the best of the site curated into a single, polished, print-ready file,
-      and buying it supports keeping everything else free.
-    </p>
-    <div class="page-hero-actions">
-      <a class="btn primary" href={GUMROAD_URL} target="_blank" rel="noopener" data-aff="starter-pack">Get the Starter Pack — ${PRICE}</a>
-    </div>
-  </section>
+  <style is:global>
+    .pk-doc{ margin: var(--s-5) 0; display: grid; gap: var(--s-5); }
+    .pk-page{ max-width: var(--content); }
+    .pk-h{ margin: 0 0 var(--s-2); font-size: var(--fs-xl, 24px); }
+    .pk-sub{ margin: var(--s-4) 0 var(--s-2); font-size: var(--fs-md); }
+    .pk-lead{ color: var(--text-muted); font-size: var(--fs-sm); line-height: 1.55; margin: 0 0 var(--s-3); }
+    .pk-meta{ font-size: var(--fs-sm); color: var(--text); margin: 0 0 var(--s-3); }
+    .pk-grid{ display: grid; gap: 6px; }
+    .pk-g6{ grid-template-columns: repeat(6, 1fr); }
+    .pk-g5{ grid-template-columns: repeat(5, 1fr); }
+    .pk-cell{ border: 1px solid var(--line); border-radius: 8px; padding: 8px 6px; text-align: center; }
+    .pk-ch{ display: block; font-weight: 700; font-size: var(--fs-md); }
+    .pk-cd{ display: block; font-size: var(--fs-sm); color: var(--text-muted); margin-top: 2px; }
+    .pk-table{ width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+    .pk-table td, .pk-table th{ border: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+    .pk-table th{ background: var(--surface-2); }
+    .pk-qrow{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+    .pk-q{ display: flex; align-items: baseline; gap: 8px; font-size: var(--fs-sm); padding: 3px 0; }
+    .pk-n{ color: var(--text-muted); min-width: 20px; }
+    .pk-p{ font-weight: 700; }
+    .pk-b{ flex: 1; border-bottom: 1px dotted var(--line); min-height: 1em; }
+    .pk-cards{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .pk-fcard{ border: 1px dashed var(--text-muted); border-radius: 8px; height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .pk-fbig{ font-size: 28px; font-weight: 700; }
+    .pk-fsm{ font-size: var(--fs-md); color: var(--text-muted); margin-top: 4px; }
 
-  <style>
-    .pk-list{ max-width: var(--content); }
-    .pk-list li{ margin-bottom: var(--s-3); line-height: 1.6; }
+    @media (max-width: 560px){ .pk-qrow, .pk-cards{ grid-template-columns: 1fr 1fr; } .pk-g6{ grid-template-columns: repeat(4,1fr); } }
+
+    @media print{
+      :root, body{ background: #fff !important; color: #000 !important; }
+      .site-header, .site-footer, .skip, .crumbs, .page-hero, .pk-noprint, .newsletter{ display: none !important; }
+      .main-wrap, main{ max-width: none !important; padding: 0 !important; margin: 0 !important; }
+      .pk-doc{ margin: 0 !important; gap: 0 !important; }
+      .pk-page{
+        max-width: none !important; border: none !important; border-radius: 0 !important;
+        box-shadow: none !important; padding: 0 !important; margin: 0 !important;
+        page-break-after: always; break-after: page;
+      }
+      .pk-cell, .pk-table td, .pk-table th, .pk-fcard{ border-color: #999 !important; }
+      .pk-cd, .pk-lead, .pk-n{ color: #444 !important; }
+      a{ color: #000 !important; text-decoration: none !important; }
+    }
   </style>
 </Layout>

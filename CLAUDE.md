@@ -201,8 +201,7 @@ four done poorly.
 | `DONATE_URL` | footer "Support" link | 💰 donations |
 | `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` | Search Console | 📈 SEO data |
 | `YANDEX_VERIFICATION` / `PINTEREST_VERIFICATION` / `FACEBOOK_DOMAIN_VERIFICATION` | platform verification | 📈 |
-| `GUMROAD_URL` | `/printables/` buy-button target (default: the Gumroad store) | 💰 product |
-| `PRODUCT_PRICE` | price shown on `/printables/` + in Product schema (default `7`) | 💰 product |
+| `GUMROAD_URL` / `PRODUCT_PRICE` | reserved for a future paid product; **currently unused** (`/printables/` is free) | 💰 product (later) |
 | `SITE_URL` | overrides site origin (default morsecodegenerator.com) | build |
 | `INDEXNOW_FORCE=1` | force IndexNow ping off-CI | SEO |
 
@@ -243,12 +242,17 @@ no-ops (never a broken page).
 PNG/SVG), `/worksheets/` (printable generator), `/timing-calculator/`,
 `/chart/`, `/cheat-sheet/`, `/embed/`, `/api/` + `/morse.json`.
 
-**Product:** `/printables/` is the sales page for the paid "Morse Code
-Starter Pack"; the actual product master is `product/starter-pack.html`
-— a self-contained print-to-PDF file kept OUT of `dist/` (not in
-`src/pages` or `public/`) so the paid asset isn't given away free. Open
-it in a browser → Save as PDF → upload to Gumroad. Buy button + price
-are env-driven (`GUMROAD_URL`, `PRODUCT_PRICE`).
+**Printables:** `/printables/` is a **free** printable pack (chart,
+mnemonic alphabet, two worksheets + answer keys, flashcards, teacher
+guide), server-rendered from `morse.json` + `mnemonics.js` and
+print-to-PDF in the browser (print CSS hides the site chrome). It's a
+lead-magnet for the newsletter, not a paid product — selling a PDF of
+content that's free elsewhere on the site wasn't worth it (decided
+2026-06-17). The Gumroad store + the `GUMROAD_URL`/`PRODUCT_PRICE` env
+vars are kept in reserve for a *future* genuinely-paid product (the
+strongest candidate is a downloadable Koch-method audio practice
+course — hard to self-serve, leverages the audio engine). Don't
+resurrect a paid PDF of free content.
 
 **Reference:** `/morse-code/` (A–Z, numbers, punctuation, words),
 `/names-in-morse-code/`, `/prosigns/`, `/abbreviations/`, `/q-codes/`,
