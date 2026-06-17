@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morse Code Starter Pack — MorseCodeGenerator.com</title>
+<!--
+  ============================================================
+  THIS IS THE PRODUCT MASTER — it is NOT published on the site.
+  ============================================================
+  It lives in /product/ (outside src/pages and public/), so Astro never
+  builds or deploys it. That keeps the paid pack off the free site.
+
+  To turn it into the Gumroad product:
+    1. Open this file in Chrome (double-click it).
+    2. File → Print → Destination "Save as PDF".
+       Paper: Letter or A4. Margins: Default. Background graphics: ON.
+    3. Save as "morse-code-starter-pack.pdf".
+    4. Upload that PDF to https://morsecodegenerator.gumroad.com/ as the
+       product file, price it (suggested $5–9), publish, and copy the
+       product URL into the GUMROAD_URL env var (see /printables/).
+
+  Content is generated from an inline copy of the site's canonical data
+  so the pack matches the website exactly.
+-->
+<style>
+  :root{ --ink:#111; --muted:#555; --line:#bbb; --soft:#f3f4f6; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; color:var(--ink); background:#fff;
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+  .page{
+    width:210mm; min-height:295mm; padding:18mm 16mm;
+    margin:0 auto; page-break-after:always; position:relative;
+  }
+  .page:last-child{ page-break-after:auto; }
+  h1,h2,h3{ margin:0 0 8px; }
+  .mono{ font-family:"SF Mono",Consolas,Menlo,monospace; letter-spacing:.06em; }
+  .foot{ position:absolute; bottom:10mm; left:16mm; right:16mm;
+    display:flex; justify-content:space-between; font-size:10px; color:var(--muted);
+    border-top:1px solid var(--line); padding-top:6px; }
+
+  /* Cover */
+  .cover{ display:flex; flex-direction:column; justify-content:center; height:259mm; text-align:center; }
+  .cover .dotdash{ font-size:34px; letter-spacing:.3em; color:var(--ink); margin-bottom:18px; }
+  .cover h1{ font-size:40px; line-height:1.1; }
+  .cover .sub{ font-size:17px; color:var(--muted); margin:14px 0 26px; }
+  .cover ul{ display:inline-block; text-align:left; font-size:15px; line-height:1.9; color:#333; }
+  .cover .brand{ margin-top:30px; font-size:13px; color:var(--muted); }
+
+  .lead{ font-size:13px; color:var(--muted); margin:0 0 14px; line-height:1.5; }
+  .grid{ display:grid; gap:6px; }
+  .g6{ grid-template-columns:repeat(6,1fr); }
+  .g5{ grid-template-columns:repeat(5,1fr); }
+  .cell{ border:1px solid var(--line); border-radius:6px; padding:8px 6px; text-align:center; }
+  .cell .ch{ font-size:20px; font-weight:700; }
+  .cell .cd{ font-size:12px; color:#333; margin-top:3px; }
+
+  table{ width:100%; border-collapse:collapse; font-size:12px; }
+  td,th{ border:1px solid var(--line); padding:6px 8px; text-align:left; }
+  th{ background:var(--soft); }
+
+  .mnem td:nth-child(2){ font-size:13px; }
+  .mnem td:nth-child(3){ color:var(--muted); }
+
+  /* Worksheet */
+  .qrow{ display:grid; grid-template-columns:1fr 1fr; gap:10px 26px; }
+  .q{ display:flex; align-items:baseline; gap:8px; font-size:14px; padding:5px 0; }
+  .q .n{ color:var(--muted); min-width:20px; }
+  .q .p{ font-weight:700; }
+  .q .b{ flex:1; border-bottom:1px dotted var(--line); min-height:1em; }
+  .meta{ display:flex; gap:20px; font-size:12px; color:#333; margin:8px 0 14px; }
+
+  /* Flashcards */
+  .cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
+  .card{ border:1px dashed #999; height:46mm; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; }
+  .card .big{ font-size:30px; font-weight:700; }
+  .card .sm{ font-size:15px; color:#333; margin-top:6px; }
+
+  @media print{
+    .page{ margin:0; }
+    @page{ size:A4; margin:0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="page cover">
+  <div class="dotdash mono">·−· · · −·· −·−−</div>
+  <h1>Morse Code<br>Starter Pack</h1>
+  <p class="sub">Everything you need to learn and teach Morse — in one printable file.</p>
+  <ul>
+    <li>✓ Full reference chart (A–Z, 0–9, punctuation)</li>
+    <li>✓ Mnemonic alphabet (learn by rhythm)</li>
+    <li>✓ Two practice worksheets + answer keys</li>
+    <li>✓ Cut-out flashcards</li>
+    <li>✓ Quick guide for parents, teachers &amp; Scouts</li>
+  </ul>
+  <p class="brand">MorseCodeGenerator.com — the hub of Morse code</p>
+</section>
+
+<!-- CHART -->
+<section class="page">
+  <h2>Morse Code Reference Chart</h2>
+  <p class="lead">A dot (·) is a short signal; a dash (−) is three times as long. Leave a 3-unit gap between letters and a 7-unit gap between words. (ITU-R M.1677-1 international standard.)</p>
+  <h3>Letters</h3>
+  <div id="chart-letters" class="grid g6"></div>
+  <h3 style="margin-top:16px">Numbers</h3>
+  <div id="chart-digits" class="grid g5"></div>
+  <h3 style="margin-top:16px">Punctuation</h3>
+  <div id="chart-punct" class="grid g6"></div>
+  <div class="foot"><span>Morse Code Starter Pack</span><span>MorseCodeGenerator.com</span></div>
+</section>
+
+<!-- MNEMONICS -->
+<section class="page">
+  <h2>The Mnemonic Alphabet</h2>
+  <p class="lead">Say each phrase out loud with the stress shown: a stressed (CAPITAL) syllable is a dash, an unstressed one is a dot. The rhythm sticks faster than the dots and dashes themselves — the trick Scouts and teachers have used for a century.</p>
+  <table class="mnem"><thead><tr><th>Letter</th><th>Morse</th><th>Say it like…</th></tr></thead>
+  <tbody id="mnem-body"></tbody></table>
+  <div class="foot"><span>Morse Code Starter Pack</span><span>MorseCodeGenerator.com</span></div>
+</section>
+
+<!-- WORKSHEET 1: decode -->
+<section class="page">
+  <h2>Worksheet 1 — Read the Morse</h2>
+  <div class="meta"><span>Name: ___________________</span><span>Date: ____________</span><span>Score: ____ / 16</span></div>
+  <p class="lead">Write the letter each Morse group stands for. Use the chart if you need it.</p>
+  <div id="ws1" class="qrow"></div>
+  <div class="foot"><span>Worksheet 1 · answer key at the back</span><span>MorseCodeGenerator.com</span></div>
+</section>
+
+<!-- WORKSHEET 2: encode -->
+<section class="page">
+  <h2>Worksheet 2 — Write the Morse</h2>
+  <div class="meta"><span>Name: ___________________</span><span>Date: ____________</span><span>Score: ____ / 16</span></div>
+  <p class="lead">Write the Morse code (dots and dashes) for each letter.</p>
+  <div id="ws2" class="qrow"></div>
+  <div class="foot"><span>Worksheet 2 · answer key at the back</span><span>MorseCodeGenerator.com</span></div>
+</section>
+
+<!-- FLASHCARDS -->
+<section class="page">
+  <h2>Flashcards</h2>
+  <p class="lead">Print, cut along the dashed lines, and quiz yourself: letter on one glance, Morse on the next. Tip: print double-sided is not needed — fold each card so the code hides behind the letter.</p>
+  <div id="cards" class="cards"></div>
+  <div class="foot"><span>Cut-out flashcards</span><span>MorseCodeGenerator.com</span></div>
+</section>
+
+<!-- QUICK GUIDE -->
+<section class="page">
+  <h2>Quick Guide for Parents, Teachers &amp; Scouts</h2>
+  <p class="lead">A 45-minute plan that gets an 8-year-old sending their initials in one sitting.</p>
+  <table>
+    <tr><th style="width:32%">Step</th><th>What to do</th></tr>
+    <tr><td><b>Hook (5 min)</b></td><td>Flash <b>SOS</b> (··· −−− ···) on a torch or buzzer. Ask what it means and why it's used. The rhythm grabs attention instantly.</td></tr>
+    <tr><td><b>Pattern not letter (10 min)</b></td><td>Teach only E (·), T (−), A (·−), N (−·). Have them write “TEA” = − · ·− using dots and dashes.</td></tr>
+    <tr><td><b>Mnemonics (10 min)</b></td><td>Hand out the mnemonic alphabet. Say S as “si-si-si”, O as “OOO-LOONG-HOOLE” until the rhythms stick. Most kids hold 5–7 in one go.</td></tr>
+    <tr><td><b>Partner sending (15 min)</b></td><td>In pairs with a torch/buzzer + the chart, take turns sending 3-letter words while the partner copies.</td></tr>
+    <tr><td><b>Wrap-up (5 min)</b></td><td>Each learner sends their initials. Finish with a whole-group SOS as a memory marker.</td></tr>
+  </table>
+  <p class="lead" style="margin-top:14px"><b>Keep going free:</b> the interactive translator, audio practice (Koch trainer), the daily Morse game, and a send-trainer keyer are all free at MorseCodeGenerator.com.</p>
+  <div class="foot"><span>Quick guide</span><span>MorseCodeGenerator.com</span></div>
+</section>
+
+<!-- ANSWER KEY -->
+<section class="page">
+  <h2>Answer Keys</h2>
+  <h3>Worksheet 1 — Read the Morse</h3>
+  <div id="ak1" class="qrow"></div>
+  <h3 style="margin-top:16px">Worksheet 2 — Write the Morse</h3>
+  <div id="ak2" class="qrow"></div>
+  <div class="foot"><span>Answer keys</span><span>© MorseCodeGenerator.com — personal &amp; classroom use</span></div>
+</section>
+
+<script>
+/* Canonical data (inlined copy of the site's morse.json + mnemonics so
+   this file is fully self-contained when opened from disk). */
+var MAP={A:".-",B:"-...",C:"-.-.",D:"-..",E:".",F:"..-.",G:"--.",H:"....",I:"..",J:".---",K:"-.-",L:".-..",M:"--",N:"-.",O:"---",P:".--.",Q:"--.-",R:".-.",S:"...",T:"-",U:"..-",V:"...-",W:".--",X:"-..-",Y:"-.--",Z:"--..","0":"-----","1":".----","2":"..---","3":"...--","4":"....-","5":".....","6":"-....","7":"--...","8":"---..","9":"----."};
+var PUNCT={".":".-.-.-",",":"--..--","?":"..--..","'":".----.","!":"-.-.--","/":"-..-.","(":"-.--.",")":"-.--.-","&":".-...",":":"---...",";":"-.-.-.","=":"-...-","+":".-.-.","-":"-....-",'"':".-..-.","@":".--.-."};
+var MNEM={A:"a-LOOOOONG",B:"BOOOOOM-ba-da-da",C:"COO-ca-COO-ca",D:"DOH-ga-da",E:"Eh",F:"did-i-DAH-dit",G:"GOOD-GREEEEN-grass",H:"hippity-hop",I:"i-bid",J:"ja-MAI-CAA-AA",K:"KOOOO-ka-KAAAA",L:"to LIIIIIVE for-eveh",M:"MOOOO-MOOOO",N:"NOOOO-now",O:"OOO-LOOONG-HOOOOLE",P:"ah-POOO-LLOOO-gize",Q:"GOOOD-GOOLLY-Miss-MOOOLLY",R:"ro-TAAA-tion",S:"si-si-si",T:"TOOOOO",U:"you-too-WOOOON",V:"vic-tor-ee-AAAAA",W:"the WOOORLD WAAAR",X:"XX-ray-i-XXX",Y:"YOU-are-WROOONG-WROOONG",Z:"ZOOOO-ZOOOO-zip-zip"};
+function dash(s){return s.replace(/-/g,"−");}
+function cell(ch,cd){return '<div class="cell"><div class="ch">'+ch+'</div><div class="cd mono">'+dash(cd)+'</div></div>';}
+var L="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""), D="0123456789".split("");
+document.getElementById("chart-letters").innerHTML=L.map(function(c){return cell(c,MAP[c]);}).join("");
+document.getElementById("chart-digits").innerHTML=D.map(function(c){return cell(c,MAP[c]);}).join("");
+var PN=[[".","period"],[",","comma"],["?","question"],["'","apostrophe"],["!","exclam."],["/","slash"],["(","paren ("],[")","paren )"],["&","ampersand"],[":","colon"],[";","semicolon"],["=","equals"]];
+document.getElementById("chart-punct").innerHTML=PN.map(function(p){return cell(p[1]+" "+p[0],PUNCT[p[0]]);}).join("");
+document.getElementById("mnem-body").innerHTML=L.map(function(c){return '<tr><td><b>'+c+'</b></td><td class="mono">'+dash(MAP[c])+'</td><td>'+MNEM[c]+'</td></tr>';}).join("");
+
+/* Deterministic worksheets so the answer key always matches. */
+var W1=["F","Q","K","B","R","Y","L","V","G","C","P","N","D","X","Z","W"]; // decode
+var W2=["A","E","T","M","S","O","U","H","I","J","K","Y","Q","V","G","P"]; // encode
+function q(n,prompt,blank){return '<div class="q"><span class="n">'+n+'.</span><span class="p '+(blank==="mono"?"mono":"")+'">'+prompt+'</span><span class="b"></span></div>';}
+document.getElementById("ws1").innerHTML=W1.map(function(c,i){return q(i+1,'<span class="mono">'+dash(MAP[c])+'</span>');}).join("");
+document.getElementById("ws2").innerHTML=W2.map(function(c,i){return q(i+1,c);}).join("");
+function ans(n,t){return '<div class="q"><span class="n">'+n+'.</span><span>'+t+'</span></div>';}
+document.getElementById("ak1").innerHTML=W1.map(function(c,i){return ans(i+1,'<span class="mono">'+dash(MAP[c])+'</span> = <b>'+c+'</b>');}).join("");
+document.getElementById("ak2").innerHTML=W2.map(function(c,i){return ans(i+1,'<b>'+c+'</b> = <span class="mono">'+dash(MAP[c])+'</span>');}).join("");
+
+/* Flashcards: 12 high-frequency letters. */
+var FC="ESARNTOILCD".split("");
+document.getElementById("cards").innerHTML=FC.map(function(c){return '<div class="card"><div class="big">'+c+'</div><div class="sm mono">'+dash(MAP[c])+'</div></div>';}).join("");
+</script>
+</body>
+</html>

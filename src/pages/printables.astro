@@ -1,0 +1,127 @@
+---
+import Layout from "../components/Layout.astro";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+// Gumroad store/product URL + price are env-configurable so the owner can
+// point at a specific product page and change pricing without a code edit.
+// Defaults to the store opened at gumroad. See CLAUDE.md §8.
+const GUMROAD_URL = import.meta.env.GUMROAD_URL || "https://morsecodegenerator.gumroad.com/";
+const PRICE = import.meta.env.PRODUCT_PRICE || "7";
+
+const title = "Morse Code Starter Pack (printable PDF) — chart, workbook & flashcards";
+const description =
+  "A printable Morse code PDF pack: full reference chart, mnemonic alphabet, practice worksheets with answer keys, cut-out flashcards, and a teacher's quick guide. One file, ready to print.";
+const canonical = `${site}/printables/`;
+const keywords =
+  "morse code printable, morse code pdf, morse code workbook, morse code flashcards printable, morse code chart pdf, morse code worksheets pdf, morse code teaching pack";
+
+const contents = [
+  { t: "Reference chart", d: "A–Z, 0–9, and punctuation on one clean, printable page (ITU standard)." },
+  { t: "Mnemonic alphabet", d: "Learn every letter by rhythm — the trick that sticks in one sitting." },
+  { t: "Two practice worksheets", d: "Decode and encode exercises, with full answer keys at the back." },
+  { t: "Cut-out flashcards", d: "The highest-frequency letters, ready to print and trim." },
+  { t: "Teacher / parent quick guide", d: "A tested 45-minute lesson plan for kids, classrooms, and Scouts." },
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "Printable pack", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "Product",
+      "@id": `${canonical}#product`,
+      name: "Morse Code Starter Pack",
+      description,
+      brand: { "@type": "Brand", name: "MorseCodeGenerator.com" },
+      category: "Educational printable (PDF)",
+      url: canonical,
+      offers: {
+        "@type": "Offer",
+        price: PRICE,
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+        url: GUMROAD_URL,
+      },
+      // No aggregateRating until real reviews exist (site policy — avoids
+      // a structured-data manual action).
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords} ogType="product">
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Printable pack</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Printable PDF · instant download</p>
+    <h1 class="page-hero-title">Morse Code Starter Pack</h1>
+    <p class="muted page-hero-sub">
+      Everything to learn or teach Morse in one print-ready PDF: the reference
+      chart, the mnemonic alphabet, two worksheets with answer keys, cut-out
+      flashcards, and a teacher's quick guide. No ads, no assembling free pages
+      — one beautiful file you can print again and again.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={GUMROAD_URL} target="_blank" rel="noopener" data-aff="starter-pack">Get the pack — ${PRICE}</a>
+      <a class="btn ghost" href="/worksheets/">Try the free worksheet maker</a>
+    </div>
+  </header>
+
+  <section class="card t-card">
+    <h2>What's inside</h2>
+    <ul class="pk-list">
+      {contents.map((c) => (
+        <li><strong>{c.t}.</strong> {c.d}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="card t-card">
+    <h2>Who it's for</h2>
+    <p>
+      <strong>Parents and teachers</strong> who want a ready-to-print lesson
+      without building it from scratch. <strong>Scout and club leaders</strong>
+      working toward a signalling badge. <strong>Self-learners</strong> who'd
+      rather have one clean PDF on the desk than ten browser tabs. It prints
+      cleanly on Letter or A4.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Honest note: the tools here are free</h2>
+    <p>
+      You never have to pay to use MorseCodeGenerator.com — the
+      <a href="/translate/">translator</a>, <a href="/practice/">trainer</a>,
+      <a href="/chart/">chart</a>, and <a href="/worksheets/">worksheet maker</a>
+      are free and always will be. The pack exists for one reason: convenience.
+      It's the best of the site curated into a single, polished, print-ready file,
+      and buying it supports keeping everything else free.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={GUMROAD_URL} target="_blank" rel="noopener" data-aff="starter-pack">Get the Starter Pack — ${PRICE}</a>
+    </div>
+  </section>
+
+  <style>
+    .pk-list{ max-width: var(--content); }
+    .pk-list li{ margin-bottom: var(--s-3); line-height: 1.6; }
+  </style>
+</Layout>
