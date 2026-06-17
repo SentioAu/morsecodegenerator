@@ -213,6 +213,19 @@ const isGift = valid && !isSingleLetter && !isNumber && !isName && isGiftSlug(sl
 const showGift = isName || isGift;
 const braceletHref = `/morse-bracelet/?text=${encodeURIComponent(term.display)}`;
 
+// Per-character breakdown — genuinely useful (shows how to build the word
+// letter by letter) AND unique per page, which lifts these template pages
+// above the "thin content" threshold that keeps them out of Google's index.
+const breakdown = (valid && !isSingleLetter && !isNumber)
+  ? String(term.value).toUpperCase().split(/\s+/).filter(Boolean).map((word) => ({
+      word,
+      chars: word.split("").map((ch) => ({ ch, code: morseMap[ch] || "" })).filter((x) => x.code),
+    })).filter((w) => w.chars.length)
+  : [];
+const allChars = breakdown.flatMap((w) => w.chars);
+const ditCount = allChars.reduce((n, c) => n + (c.code.match(/\./g) || []).length, 0);
+const dahCount = allChars.reduce((n, c) => n + (c.code.match(/-/g) || []).length, 0);
+
 // Robots rules:
 // - If this is a letter/number, do NOT index here (canonical is /morse-code/{slug}/)
 // - If invalid OR empty output, do NOT index
@@ -349,6 +362,35 @@ const jsonLd = {
       ) : (
         <section class="card">
           <p class="muted">No Morse output available for this term.</p>
+        </section>
+      )}
+
+      {breakdown.length > 0 && (
+        <section class="section bd-section">
+          <div class="section-head">
+            <div>
+              <p class="page-hero-kicker">Letter by letter</p>
+              <h2 class="section-title">How "{term.display}" is built in Morse</h2>
+            </div>
+          </div>
+          <p class="muted bd-intro">
+            {term.display} is {allChars.length} character{allChars.length === 1 ? "" : "s"} —
+            {" "}{ditCount} dot{ditCount === 1 ? "" : "s"} and {dahCount} dash{dahCount === 1 ? "" : "es"} in all.
+            Here is each letter with its Morse code so you can send or write it one symbol at a time:
+          </p>
+          {breakdown.map((w) => (
+            <div class="bd-word">
+              {breakdown.length > 1 && <span class="bd-word-label">{w.word}</span>}
+              <div class="bd-grid">
+                {w.chars.map((c) => (
+                  <div class="bd-cell">
+                    <span class="bd-char">{c.ch}</span>
+                    <span class="bd-code mono">{c.code}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </section>
       )}
 
@@ -567,6 +609,24 @@ const jsonLd = {
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
+    .bd-section{ margin-top: var(--s-6); }
+    .bd-intro{ max-width: var(--content); margin: 0 0 var(--s-4); line-height: 1.6; }
+    .bd-word{ margin-bottom: var(--s-4); }
+    .bd-word-label{
+      display: block; font-family: var(--font-mono); font-size: var(--fs-xs);
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
+      margin-bottom: var(--s-2);
+    }
+    .bd-grid{ display: flex; flex-wrap: wrap; gap: var(--s-2); }
+    .bd-cell{
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      min-width: 52px; padding: 10px 12px;
+      border: 1px solid var(--line); border-radius: var(--r-md, 10px);
+      background: var(--surface-2);
+    }
+    .bd-char{ font-family: var(--font-display); font-weight: 700; font-size: var(--fs-lg); }
+    .bd-code{ font-size: var(--fs-sm); color: var(--text-muted); letter-spacing: 0.12em; }
+
     .word-show{
       margin-top: var(--s-3);
       padding: var(--s-6);
