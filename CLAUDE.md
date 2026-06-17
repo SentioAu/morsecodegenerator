@@ -199,6 +199,7 @@ four done poorly.
 | `ADSENSE_CLIENT` | overrides AdSense pub id (has a default) | 💰 ads |
 | `NEWSLETTER_ACTION` / `NEWSLETTER_FIELD` | enables signup form | 💰 list |
 | `DONATE_URL` | footer "Support" link | 💰 donations |
+| `GA4_ID` | GA4 measurement id (default is the project's; set to the owner's `G-…`) | 📈 analytics |
 | `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` | Search Console | 📈 SEO data |
 | `YANDEX_VERIFICATION` / `PINTEREST_VERIFICATION` / `FACEBOOK_DOMAIN_VERIFICATION` | platform verification | 📈 |
 | `GUMROAD_URL` / `PRODUCT_PRICE` | reserved for a future paid product; **currently unused** (`/printables/` is free) | 💰 product (later) |
