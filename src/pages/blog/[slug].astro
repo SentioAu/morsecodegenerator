@@ -76,10 +76,16 @@ const jsonLd = {
     },
   ],
 };
+
+// Keep the <title> under ~60 chars so Google doesn't truncate it. Append
+// a short brand only when the headline leaves room; otherwise the bare
+// headline (Google appends the site name in results anyway).
+const BRAND = " — MorseGen";
+const pageTitle = post.title.length + BRAND.length <= 60 ? post.title + BRAND : post.title;
 ---
 
 <Layout
-  title={`${post.title} — MorseCodeGenerator.com`}
+  title={pageTitle}
   description={post.excerpt}
   canonical={canonical}
   robots={robots}
