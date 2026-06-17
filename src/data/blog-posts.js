@@ -68,7 +68,7 @@ export const posts = [
   },
   {
     slug: "the-story-behind-sos",
-    title: "The story behind SOS: why we chose three dots, three dashes, three dots",
+    title: "The story behind SOS: three dots, three dashes, three dots",
     excerpt:
       "SOS doesn't stand for 'Save Our Souls.' It was chosen in 1906 because the rhythm is unmistakable under poor signal. Here's the full story.",
     published: "2026-05-14",
