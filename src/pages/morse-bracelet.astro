@@ -2,6 +2,11 @@
 import Layout from "../components/Layout.astro";
 import morse from "../data/morse.json";
 import { amazonSearch } from "../data/gear.js";
+import { GIFT_PHRASES } from "../data/gift-phrases.js";
+
+// A handful of popular gift ideas to seed the tool + internally link the
+// gift phrase pages.
+const giftIdeas = GIFT_PHRASES.slice(0, 12);
 
 const title = "Morse Code Bracelet & Tattoo Generator — make a pattern, download free";
 const description =
@@ -144,6 +149,16 @@ const jsonLd = {
     and <a href={jewelry} target="_blank" rel="sponsored nofollow noopener" data-aff="morse-jewelry">ready-made Morse jewelry</a>
     are affiliate links — we may earn a commission at no cost to you. See our <a href="/disclosure/">disclosure</a>.
   </p>
+
+  <section class="mb-ideas-wrap" aria-label="Popular ideas">
+    <h2 class="mb-ideas-h">Popular gift ideas</h2>
+    <div class="mb-ideas">
+      {giftIdeas.map((g) => (
+        <a class="mb-idea" href={`/${g.slug}-in-morse-code/`}>{g.label}</a>
+      ))}
+      <a class="mb-idea mb-idea-more" href="/names-in-morse-code/">A name →</a>
+    </div>
+  </section>
 
   <section class="card t-card">
     <h2>Ideas for your Morse design</h2>
@@ -404,7 +419,18 @@ const jsonLd = {
     .mb-aff-note{
       max-width: var(--content);
       font-size: var(--fs-xs); color: var(--text-subtle);
-      margin: var(--s-3) 0 var(--s-6);
+      margin: var(--s-3) 0 var(--s-5);
     }
+    .mb-ideas-wrap{ max-width: var(--content); margin: 0 0 var(--s-6); }
+    .mb-ideas-h{ font-size: var(--fs-md); margin: 0 0 var(--s-3); }
+    .mb-ideas{ display: flex; flex-wrap: wrap; gap: var(--s-2); }
+    .mb-idea{
+      display: inline-block; padding: 6px 12px;
+      border: 1px solid var(--line); border-radius: 999px;
+      background: var(--surface-2); color: var(--text);
+      text-decoration: none; font-size: var(--fs-sm);
+    }
+    .mb-idea:hover{ border-color: var(--text-muted); }
+    .mb-idea-more{ font-weight: 600; }
   </style>
 </Layout>
