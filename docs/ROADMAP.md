@@ -8,9 +8,41 @@ The grand vision: **the hub and center for Morse code on the internet** —
 then monetize the traffic. This document is the working plan, ordered by
 return on effort.
 
+> **For build/architecture/conventions, see [`/CLAUDE.md`](../CLAUDE.md).**
+> This file is *strategy*; CLAUDE.md is *how the codebase works*.
+
 ---
 
-## 1. Health check (current state)
+## 0. Progress log (newest first)
+
+**2026-06-16 — shipped (PRs #50–#55, all merged to `main`):**
+- ✅ Audit + this roadmap; `check-links.mjs` in the build; typecheck fixed
+  (`@astrojs/check` added) — **resolves the §1 typecheck ⚠️ below**.
+- ✅ `/gear/` affiliate hub + 3 buying guides (keys, paddles, QRP rigs).
+- ✅ Translator WAV download; site-wide consent-gated GA4 `mcgEvent` +
+  `affiliate_click` tracking.
+- ✅ `/daily/` — Wordle-style daily Morse game (streaks, shareable).
+- ✅ `/keyer/` — send/keying trainer with adaptive decode (completes the
+  read+send learning loop).
+- ✅ `/morse-bracelet/` — visual generator (bead/tattoo, PNG/SVG) monetizing
+  the gift/jewelry audience.
+- ✅ Names-in-Morse SEO cluster (~210 pages + `/names-in-morse-code/` hub)
+  funneled into the bracelet tool.
+- ✅ Spanish i18n: `/es/`, `/es/traductor/`, `/es/alfabeto-morse/` with
+  reciprocal hreflang (path-based, SEO-correct). Site now ~720 pages.
+
+**Still the #1 blocker (owner action, not code):** set the Cloudflare Pages
+env vars in §2 / CLAUDE.md §8 — until then revenue is $0 and there's no
+Search Console data.
+
+**Suggested next (my owner plan):** (1) expand Spanish into gift/phrase
+pages, then add French; (2) a $7 printable product pack on Gumroad (first
+real-margin revenue); (3) streaks/leaderboard on `/daily/` for return
+visits + newsletter signups. Once GSC is live, let query data pick next.
+
+---
+
+## 1. Health check (original audit — see §0 for what's since shipped)
 
 | Area | Status |
 |---|---|
