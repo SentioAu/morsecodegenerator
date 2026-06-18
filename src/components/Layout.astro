@@ -1,6 +1,18 @@
 ---
 import { ogUrlForPath } from "../data/og-pages.js";
 
+// Self-hosted fonts (privacy: no visitor IP sent to Google's font CDN —
+// consistent with our Consent Mode posture — and no render-blocking
+// third-party request). @fontsource ships font-display: swap. Weights
+// match the old Google Fonts request: Inter 400/500/700/800, Space
+// Grotesk 600/700. Mono stays system-only.
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/700.css";
+import "@fontsource/inter/800.css";
+import "@fontsource/space-grotesk/600.css";
+import "@fontsource/space-grotesk/700.css";
+
 const {
   title = "Morse Code Generator",
   description = "Translate text to Morse code instantly, learn the alphabet, and practice common phrases.",
@@ -218,15 +230,11 @@ const jsonLd = {
     <link rel="alternate" type="text/plain" href="/llms-full.txt" title="Full content for LLMs" />
     <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="MorseCodeGenerator.com Blog (RSS)" />
 
-    <!-- Typography (Inter + Space Grotesk) — trimmed weights, async-ish via media swap -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Typography: Inter + Space Grotesk are self-hosted (imported in the
+         frontmatter) — no third-party font CDN, no visitor-IP leak, no
+         render-blocking external request. -->
     <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Space+Grotesk:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
 
     <!-- Preload core data so tools start fast -->
     <link rel="preload" as="fetch" href="/morse.json" type="application/json" crossorigin="anonymous" />
