@@ -26,6 +26,7 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/translate/") return "Translator";
   if (p === "/decoder/") return "Decoder";
   if (p === "/practice/") return "Practice";
+  if (p === "/cw-audio-course/") return "Audio course";
   if (p === "/keyer/") return "Send practice";
   if (p === "/morse-bracelet/") return "Make something";
   if (p === "/daily/") return "Daily challenge";
@@ -67,6 +68,7 @@ export const OG_PAGES = new Set([
   "/translate/",
   "/decoder/",
   "/practice/",
+  "/cw-audio-course/",
   "/keyer/",
   "/morse-bracelet/",
   "/daily/",

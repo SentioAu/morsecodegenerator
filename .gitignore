@@ -4,6 +4,9 @@ node_modules/
 # build output
 dist/
 
+# generated paid product (run `npm run course`; upload to Gumroad)
+course-output/
+
 # Astro cache
 .astro/
 
