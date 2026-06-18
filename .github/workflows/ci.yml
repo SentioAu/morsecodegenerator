@@ -1,0 +1,43 @@
+name: CI
+
+# Gate every PR into main on a full production build. `npm run build`
+# already runs astro build + the postbuild steps + verify-build.mjs +
+# check-links.mjs, so a green job here means: builds clean, all required
+# pages/canonicals/H1s present, and zero broken internal links. We also
+# run the type checker. This catches regressions before merge — Cloudflare
+# Pages builds on push, but this fails the PR first.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build, typecheck & verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Build + verify + link check
+        run: npm run build
