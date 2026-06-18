@@ -1,0 +1,120 @@
+---
+import Layout from "../components/Layout.astro";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+// Real paid product. Env-configurable (defaults to the Gumroad store).
+const GUMROAD_URL = import.meta.env.GUMROAD_URL || "https://morsecodegenerator.gumroad.com/";
+const PRICE = import.meta.env.PRODUCT_PRICE || "12";
+
+const title = "Koch Method CW Audio Course (downloadable MP3/WAV)";
+const description =
+  "A downloadable Koch-method Morse code audio course: graded lessons at full character speed with Farnsworth spacing, plus answer keys. Practice CW offline — commute, gym, anywhere, no screen.";
+const canonical = `${site}/cw-audio-course/`;
+const keywords =
+  "morse code audio course, koch method audio, learn cw audio, morse code mp3, cw practice audio download, farnsworth morse training";
+
+const contents = [
+  { t: "~40 graded lessons", d: "One per Koch character. Lesson 1 starts with two letters; each lesson adds one." },
+  { t: "Full-speed characters", d: "Sent at 20 WPM character speed with Farnsworth spacing (10 WPM overall) — you learn the sound, never counting dots." },
+  { t: "Answer keys", d: "Every lesson ships the exact 5-character groups so you can score your copy." },
+  { t: "Offline & portable", d: "Plain audio files — phone, car, gym, headphones, no internet, no screen." },
+];
+
+const crumbs = [
+  { name: "Home", url: `${site}/` },
+  { name: "CW audio course", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "Product",
+      "@id": `${canonical}#product`,
+      name: "Koch Method CW Audio Course",
+      description,
+      brand: { "@type": "Brand", name: "MorseCodeGenerator.com" },
+      category: "Audio course (downloadable)",
+      url: canonical,
+      offers: {
+        "@type": "Offer",
+        price: PRICE,
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+        url: GUMROAD_URL,
+      },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords} ogType="product">
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a class="crumb" href="/">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">CW audio course</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Downloadable audio · learn CW by ear</p>
+    <h1 class="page-hero-title">Koch Method CW Audio Course</h1>
+    <p class="muted page-hero-sub">
+      The fastest, most-proven way to learn Morse by ear — as downloadable
+      audio you can practice with anywhere. Characters at full speed so you
+      learn the rhythm, spaced out so you never learn to count dots. One new
+      character per lesson, with answer keys to track your progress.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={GUMROAD_URL} target="_blank" rel="noopener" data-aff="cw-audio-course">Get the course — ${PRICE}</a>
+      <a class="btn ghost" href="/practice/">Try the free browser trainer</a>
+    </div>
+  </header>
+
+  <section class="card t-card">
+    <h2>What you get</h2>
+    <ul class="cc-list">
+      {contents.map((c) => (<li><strong>{c.t}.</strong> {c.d}</li>))}
+    </ul>
+  </section>
+
+  <section class="card t-card">
+    <h2>Why audio (and why it's not the free trainer)</h2>
+    <p>
+      The <a href="/practice/">Koch trainer on this site is free</a> and great
+      at a desk. This course is the opposite situation: <strong>structured,
+      offline, screen-free practice</strong> you can do on a commute, a walk,
+      or at the gym. The hard part of learning CW is the daily reps — the
+      course makes those reps portable, sequenced, and self-scoring. That
+      convenience is what you're paying for; the web tools stay free forever.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>How it works</h2>
+    <ol class="cc-steps">
+      <li>Download, start at Lesson 1 (two characters), pencil and paper ready.</li>
+      <li>Write what you hear in 5-character groups.</li>
+      <li>Score against the answer key. At ~90% accuracy, move to the next lesson.</li>
+      <li>15–20 minutes a day. Most people copy real text within weeks.</li>
+    </ol>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={GUMROAD_URL} target="_blank" rel="noopener" data-aff="cw-audio-course">Get the course — ${PRICE}</a>
+    </div>
+  </section>
+
+  <style>
+    .cc-list, .cc-steps{ max-width: var(--content); }
+    .cc-list li{ margin-bottom: var(--s-3); line-height: 1.6; }
+    .cc-steps li{ margin-bottom: var(--s-2); line-height: 1.6; }
+  </style>
+</Layout>
