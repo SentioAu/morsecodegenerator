@@ -38,7 +38,7 @@ const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
 // footer link points to the affiliate-disclosure page's "Support" anchor,
 // which itself explains how to help if no donation channel is open.
 const DONATE_URL =
-  import.meta.env.DONATE_URL || "/disclosure/#support";
+  import.meta.env.DONATE_URL || "https://ko-fi.com/sentioaurum";
 
 // Analytics + ads IDs are env-configurable so the owner can point them at
 // their OWN Google properties without a code edit. Defaults are the
@@ -589,7 +589,7 @@ const jsonLd = {
               <li><a href="/terms/">Terms</a></li>
               <li><a href="/disclosure/">Disclosure</a></li>
               <li><a href="/sponsor/">Sponsor</a></li>
-              <li><a href={DONATE_URL} rel="noopener">Support the site</a></li>
+              <li><a href={DONATE_URL} target="_blank" rel="noopener">Support the site</a></li>
               <li><a href="#" data-open-consent>Cookie preferences</a></li>
               <li><a href="/sitemap/">Sitemap</a></li>
             </ul>
@@ -615,7 +615,7 @@ const jsonLd = {
       </div>
     </footer>
 
-    <style>
+    <style is:global>
       /* =========================================================
          Design tokens
          ========================================================= */
@@ -1009,6 +1009,7 @@ const jsonLd = {
       .btn.ghost:hover{ background: var(--surface-2); color: var(--text); border-color: var(--line-strong); }
 
       .btn.lg{ height: 48px; padding: 0 var(--s-5); font-size: var(--fs-base); }
+      .btn.small{ height: 32px; padding: 0 var(--s-3); font-size: var(--fs-xs); }
 
       /* Bare buttons in body content */
       button{
