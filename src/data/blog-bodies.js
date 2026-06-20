@@ -189,7 +189,17 @@ export const bodies = {
 <h2>Why it doesn't die</h2>
 <p>Morse code is one of the only encoding systems that a human can both <em>generate and decode</em> entirely in their head, with no equipment more complex than a flashlight or a stick on a fence post. As long as that's a useful property — and it is, in any low-power, low-tech, or emergency scenario — Morse will stay alive.</p>
 
-<p>Want to learn it? <a href="/blog/how-to-learn-morse-code-in-30-days/">Start with our 30-day plan</a> or open the <a href="/practice/">Koch trainer</a>.</p>
+<h2>Frequently asked questions</h2>
+<h3>Is Morse code still used by the military?</h3>
+<p>Yes, as a backup. Most special-operations and signals units still teach CW because it works at very low power, cuts through jamming and noise, and needs no special hardware. It's not a primary mode, but it remains a trained fallback.</p>
+<h3>Do pilots still need to know Morse code?</h3>
+<p>Yes. VOR and NDB navigation beacons identify themselves in Morse, and verifying that ID by ear is still part of instrument training. See <a href="/blog/morse-code-in-aviation/">Morse code in aviation</a>.</p>
+<h3>Is Morse code still taught today?</h3>
+<p>It's no longer required for an amateur radio licence in most countries, but it's actively taught by ham clubs, the CW Operators' Club, Scouts, and a large community of self-learners — the audience this site is built for.</p>
+<h3>Will Morse code ever come back as a main mode?</h3>
+<p>For commercial use, no — faster digital modes won that race. But its niche (human-decodable, ultra-low-bandwidth, equipment-free) is permanent, so it persists rather than returns.</p>
+
+<p>Want to learn it? <a href="/blog/how-to-learn-morse-code-in-30-days/">Start with our 30-day plan</a>, open the <a href="/practice/">Koch trainer</a>, or keep a streak with the <a href="/daily/">daily challenge</a>.</p>
 `,
 
   // ============================================================
@@ -282,6 +292,16 @@ export const bodies = {
   <li><strong>Your phone's flashlight</strong> — every modern smartphone has an SOS mode that pulses this pattern.</li>
 </ul>
 <p>Try it now: open the <a href="/translate/?q=SOS">translator with SOS pre-filled</a>, hit Play, and listen to the rhythm. It's been the sound of "I need help" for over a century.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>Does SOS actually stand for anything?</h3>
+<p>No. It was chosen in 1906 purely because the rhythm <span class="k">... --- ...</span> is short, distinct, and unmistakable. "Save Our Souls" and "Save Our Ship" are backronyms invented afterward to make it memorable.</p>
+<h3>What is the SOS pattern in Morse code?</h3>
+<p>Three dots, three dashes, three dots — <span class="k">... --- ...</span> — sent as one continuous signal with no gaps between the letters, so the ear hears a single repeating shape.</p>
+<h3>How do I signal SOS with a flashlight?</h3>
+<p>Three short flashes, three long flashes, three short flashes, then pause and repeat. Our <a href="/blog/emergency-morse-code-cheat-sheet/">emergency cheat sheet</a> covers light, sound, and tapping methods.</p>
+<h3>Is SOS still an official distress signal?</h3>
+<p>It was retired as the maritime standard in 1999 (replaced by GMDSS satellite systems), but it remains the most universally recognized distress signal for flashlight, whistle, and improvised signalling worldwide.</p>
 `,
 
   // ============================================================
@@ -308,7 +328,13 @@ export const bodies = {
 <h2>6) On-air QSOs (the final exam)</h2>
 <p>Find a club or use a slow-CW practice net (most regional ham radio groups run them weekly). Real on-air conversations have signal fade, interference, and different sending styles — none of which the trainer simulates. You'll find weaknesses you didn't know you had.</p>
 
-<h2>7) Mnemonics (last resort)</h2>
+<h2>7) Practice sending, not just copying</h2>
+<p>Everything above trains your <em>ear</em>. But half of CW is your <em>fist</em> — and a sloppy fist is hard to unlearn. Use the free <a href="/keyer/">Morse keyer trainer</a> to practice sending: tap the spacebar (or screen) like a straight key and it decodes your timing live, so you get instant feedback on whether your dits, dahs, and gaps are even. Do a few minutes of sending after each copy session.</p>
+
+<h2>8) Build a daily streak</h2>
+<p>Consistency beats intensity, and the hardest part is showing up. The <a href="/daily/">Daily Morse Challenge</a> gives you one short decode puzzle a day with a streak counter — a low-friction way to keep the habit alive on days you don't feel like a full session. For structured offline practice (commute, gym, no screen), the downloadable <a href="/cw-audio-course/">Koch audio course</a> takes you lesson-by-lesson.</p>
+
+<h2>9) Mnemonics (last resort)</h2>
 <p>"For dah-dit-dit Dah-Dit-Dit dah-dah-dah" rhymes are sometimes taught to absolute beginners. They build the wrong muscle (verbal mapping instead of rhythmic recognition) and almost everyone using them hits a speed wall around 8-10 WPM. Use mnemonics only if you're memorizing for a one-time test, not for fluency.</p>
 
 <h2>What doesn't work</h2>
@@ -321,11 +347,20 @@ export const bodies = {
 <h2>The one-page action plan</h2>
 <ol>
   <li>Open the <a href="/practice/">Koch trainer</a> at 18 WPM character, 12 WPM Farnsworth.</li>
-  <li>Practice 5 minutes a day, daily. Set a phone alarm.</li>
+  <li>Practice 5 minutes a day, daily. Set a phone alarm — or use the <a href="/daily/">daily challenge</a> as your streak anchor.</li>
   <li>Add one character when you copy 10 groups at ≥ 90%.</li>
+  <li>Spend the last 2 minutes <a href="/keyer/">sending</a> what you just copied.</li>
   <li>After all characters, practice <a href="/phrases/">common phrases</a>.</li>
   <li>After 30 days, find a club, get on the air.</li>
 </ol>
+
+<h2>Frequently asked questions</h2>
+<h3>How long does it take to learn Morse code?</h3>
+<p>With the Koch method and ~15 minutes of daily practice, most people copy the full alphabet in 4–8 weeks and reach a usable 15–20 WPM in a few months. The variable isn't talent — it's consistency. Daily short sessions beat occasional long ones every time.</p>
+<h3>Should I learn to receive or send first?</h3>
+<p>Receive first. Your ear has to know what correct Morse sounds like before your hand can produce it. Start sending (on the <a href="/keyer/">keyer</a>) once you can copy a handful of characters — but let copying lead.</p>
+<h3>How many minutes a day should I practice?</h3>
+<p>Fifteen minutes, daily, is the sweet spot. Even 5 minutes every day beats an hour once a week — Morse is muscle memory, and muscle memory needs frequency, not duration.</p>
 `,
 
   // ============================================================
