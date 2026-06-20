@@ -143,6 +143,8 @@ export const bodies = {
 <h2>What to do after day 30</h2>
 <ul>
   <li>Bump character speed to 20 WPM. Lower Farnsworth (effective) gradually as your ear catches up.</li>
+  <li>Start <a href="/keyer/">sending</a>, not just copying — the keyer decodes your fist and scores your timing.</li>
+  <li>Keep the habit alive with the <a href="/daily/">Daily Morse Challenge</a>, or take structured offline lessons with the <a href="/cw-audio-course/">Koch audio course</a>.</li>
   <li>Practice <a href="/phrases/">common phrases</a> — operators rely on stock patterns, not arbitrary words.</li>
   <li>Read about <a href="/q-codes/">Q-codes</a> and <a href="/abbreviations/">CW abbreviations</a>. CW conversations are 80% shorthand.</li>
   <li>If you want to send on real radio, find a local ham club — most run weekly CW practice nets.</li>
@@ -154,6 +156,14 @@ export const bodies = {
   <li><strong>Looking at the chart while practicing.</strong> Cover it. Your eyes are not your ears.</li>
   <li><strong>Skipping days.</strong> Three skipped days resets you by a week.</li>
 </ul>
+
+<h2>Frequently asked questions</h2>
+<h3>Can you really learn Morse code in 30 days?</h3>
+<p>You can learn to <em>copy</em> the full alphabet and reach a usable 15–20 WPM in 30 days with daily Koch-method practice. Becoming fluent and fast at conversational CW takes longer, but 30 days is enough to read real text by ear.</p>
+<h3>Is Morse code hard to learn?</h3>
+<p>It's less hard than it looks — there are only 26 letters and 10 digits, and the Koch method removes the worst trap (counting dots). The challenge is consistency, not difficulty: 15 minutes a day reliably gets there.</p>
+<h3>What's the best age to learn Morse code?</h3>
+<p>Any age. Kids as young as 8 pick up the rhythm quickly (see our <a href="/teach/">teaching guide</a>), and plenty of people learn it in retirement. Pattern recognition doesn't expire.</p>
 
 <p>That's it. Open the trainer and start: <a class="k" href="/practice/">/practice/</a>.</p>
 `,
@@ -248,6 +258,14 @@ export const bodies = {
 </div>
 
 <p>So: Morse and binary aren't ancestors of each other. They're independent answers to the same question (how do you encode information with two symbols?), tuned for different transmission media — air-modulated sound versus electrical state.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>Is Morse code binary?</h3>
+<p>Not quite. Morse looks two-symbol (dot/dash), but it actually relies on <em>three</em> things — element length (dot vs dash) <em>and</em> the gaps between elements, letters, and words. True binary is a clean two-state sequence with no timing meaning. So Morse is better described as a timing-based code than a binary one.</p>
+<h3>Can you convert Morse code to binary?</h3>
+<p>Yes — you can represent a dit as 1 and a dah as 111, with 0s for the gaps (e.g. 1000111 patterns), which is how a computer stores keyed Morse. But that's an encoding choice, not an inherent equivalence.</p>
+<h3>Which came first, Morse or binary?</h3>
+<p>Morse, by a century. Morse code dates to the 1840s; modern binary information theory was formalized by Claude Shannon in 1948. They were invented independently for completely different purposes.</p>
 `,
 
   // ============================================================
@@ -408,6 +426,14 @@ export const bodies = {
 <p>Probably. Even as GPS-based navigation replaces VORs, the FAA maintains a <em>Minimum Operational Network</em> of VORs across the US specifically as a backup for GPS outages. Those VORs keep their Morse IDs. So learning Morse remains, in a small but real way, a piece of aviation safety.</p>
 
 <p>To listen to an aircraft-style identifier yourself, type a 3-letter callsign like <a href="/translate/?q=JFK">JFK</a> into our translator and hit Play.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>Do pilots still have to learn Morse code?</h3>
+<p>Yes — for identification, not communication. Instrument-rated pilots must verify VOR/NDB navaids by matching the beacon's Morse ID against the chart. They don't send Morse; they recognize a handful of slow 2–4 letter patterns.</p>
+<h3>How fast is aviation Morse code?</h3>
+<p>About 7 WPM — far slower than amateur-radio CW (15–30 WPM). The slow speed is deliberate, so a busy pilot can identify a navaid without dedicated concentration.</p>
+<h3>Why do navigation beacons use Morse instead of voice?</h3>
+<p>It's bandwidth-efficient, recognizable under heavy noise, cheap to broadcast from an unattended station, and language-independent — any pilot worldwide can read it regardless of native language.</p>
 `,
 
   // ============================================================
@@ -465,8 +491,19 @@ export const bodies = {
   <li>Don't worry about being slow. A clearly-sent slow SOS gets through; a fast garbled one doesn't.</li>
 </ul>
 
+<h2>Practice it before you need it</h2>
+<p>Muscle memory beats a cheat sheet in a real emergency. Spend two minutes on the <a href="/keyer/">keyer</a> tapping out SOS until the rhythm is automatic — short-short-short, long-long-long, short-short-short. The pattern you've practiced is the one that comes out when your hands are shaking.</p>
+
 <h2>Print this</h2>
 <p>The <a href="/chart/">printable Morse chart</a> is designed to print on one page in either light or dark mode. Stash a copy in your camping kit, glovebox, or first-aid bag. The whole International Morse Code is 36 letters and 10 digits — pre-printed is faster than memorized when you're under stress.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>What is the Morse code for SOS?</h3>
+<p>Three dots, three dashes, three dots — <span class="k">... --- ...</span> — sent as one continuous signal with no gaps between the letters.</p>
+<h3>How do I signal SOS without a radio?</h3>
+<p>Any on/off signal works: a flashlight (three short, three long, three short flashes), a whistle (same rhythm), or banging on metal. Most phones also have a built-in SOS flashlight that pulses the pattern automatically.</p>
+<h3>What's the most important emergency Morse signal to know?</h3>
+<p>Just SOS. It's universally recognized and works with light, sound, or taps. If you learn one thing in Morse, learn this rhythm.</p>
 `,
 
   "best-morse-code-keys-buyers-guide": `
