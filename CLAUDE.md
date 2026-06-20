@@ -2,6 +2,10 @@
 
 Guidance for AI agents (and humans) working in this repo. Read this first.
 
+> **Resuming the project?** Read [`docs/STATUS.md`](./docs/STATUS.md) first —
+> current state, what's shipped, the owner-action blockers, and the ranked
+> backlog. This file is *how the codebase works*; STATUS is *where we are*.
+
 ---
 
 ## 1. What this is
