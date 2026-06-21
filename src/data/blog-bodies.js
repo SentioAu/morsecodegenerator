@@ -10,6 +10,44 @@
 //  - Use <a class="k"> or <span class="k"> for inline Morse code.
 
 export const bodies = {
+  "morse-code-for-kids": `
+<p>Morse code is one of the best small projects you can hand a child. It's a <strong>complete, closed system</strong> — 26 letters and 10 digits, no more — so a kid can genuinely <em>master</em> it, which is rare and deeply motivating. And it doubles as a secret code they can tap to a friend across a quiet classroom. Here are eight activities that actually work, at home, in class, or at a Scout meeting.</p>
+
+<h2>First, the one trick that makes it click</h2>
+<p>Don't teach kids to count dots and dashes — teach them <strong>rhythm</strong>. The mnemonic alphabet turns each letter into a spoken phrase with the same beat as its code: S is "si-si-si", O is "OOO-LOOONG-HOOOLE". Said aloud, the rhythm sticks in one sitting. The full mnemonic table and a 45-minute lesson plan are on our <a href="/teach/">teach Morse code</a> page.</p>
+
+<h2>8 games &amp; activities</h2>
+<h3>1. The SOS flashlight hook</h3>
+<p>Flash <span class="k">... --- ...</span> on a torch and ask, "What's the secret message?" The rhythm is unmistakable and instantly gets buy-in. It's the perfect opener.</p>
+<h3>2. Tap your name</h3>
+<p>Each child learns to send their own initials. It's short, personal, and they'll practice it endlessly. Look up any letter on the <a href="/morse-code/">alphabet pages</a> to hear it.</p>
+<h3>3. Partner sending</h3>
+<p>Pair kids up with a torch, whistle, or buzzer and a <a href="/chart/">printable chart</a>. They take turns sending three-letter words while their partner copies. Move around helping with timing.</p>
+<h3>4. Secret-note relay</h3>
+<p>Hand out short messages in dots and dashes; kids decode them with the chart to find the next clue. A Morse treasure hunt is a guaranteed win.</p>
+<h3>5. Beat the buzzer (decode race)</h3>
+<p>Play a short word from the <a href="/translate/">translator</a> audio; first to write it correctly scores a point. Start slow (5 WPM) and speed up.</p>
+<h3>6. Make a name bracelet</h3>
+<p>Turn a child's name into a beaded <a href="/morse-bracelet/">Morse bracelet</a> — a craft project that doubles as a wearable cheat sheet. Great for a quieter session.</p>
+<h3>7. The daily challenge</h3>
+<p>For older kids, the <a href="/daily/">Daily Morse Challenge</a> is a Wordle-style decode puzzle — one a day, with a streak to keep.</p>
+<h3>8. Worksheet drills</h3>
+<p>Generate free decode/encode <a href="/worksheets/">worksheets</a> (with answer keys) for homework or a quiet ten minutes. Print as many as you need.</p>
+
+<h2>Why it's good for them (beyond fun)</h2>
+<ul>
+  <li><strong>Ear training</strong> — decoding rhythm under noise is real listening practice that carries into music and language.</li>
+  <li><strong>A closed win</strong> — a 9-year-old can fluently send their name within an hour. Few subjects offer that.</li>
+  <li><strong>A bridge to electronics &amp; radio</strong> — a buzzer, a battery, and a key on cardboard is a working signalling system.</li>
+  <li><strong>Accessibility awareness</strong> — single-switch Morse is still a real way people with motor disabilities type.</li>
+</ul>
+
+<h2>Free printables to send home</h2>
+<p>Everything you need is free: the <a href="/chart/">one-page chart</a>, the <a href="/worksheets/">worksheet generator</a>, and a complete <a href="/printables/">printable pack</a> (chart + mnemonic alphabet + worksheets + flashcards + a teacher's guide). Print, hand out, done.</p>
+
+<p>Ready to run a session? Start with the <a href="/teach/">lesson plan</a> and keep the <a href="/translate/">translator</a> open to play letters on demand.</p>
+`,
+
   "morse-code-tattoo-ideas": `
 <p>A Morse code tattoo is a message hidden in plain sight: a line of dots and dashes that looks abstract to everyone except you. No script, no language barrier — just a rhythm that means something. That quiet, personal quality is exactly why they've become so popular.</p>
 
