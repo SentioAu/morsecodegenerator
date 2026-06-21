@@ -20,6 +20,23 @@
 
 export const posts = [
   {
+    slug: "morse-code-for-kids",
+    title: "Morse code for kids: 8 games & activities that actually work",
+    excerpt:
+      "Morse code is a perfect kids' project — a closed, masterable system they can use as a secret code. Eight tested games for home, classroom, and Scouts, plus free printables and the mnemonic trick.",
+    published: "2026-06-21",
+    kind: "how-to",
+    minutes: 7,
+    tags: ["kids", "teaching", "scouts", "activities"],
+    steps: [
+      { name: "Hook them with SOS", text: "Flash SOS on a torch and ask them to guess the secret message. The unmistakable rhythm grabs attention instantly." },
+      { name: "Teach by sound, not sight", text: "Use the mnemonic alphabet so each letter is a rhythm they say aloud, not dots to count." },
+      { name: "Start with their initials", text: "Have each child learn to send their own initials — fast, personal, motivating." },
+      { name: "Play in pairs", text: "Give pairs a torch or buzzer and a chart; they take turns sending short words while the partner copies." },
+      { name: "Print and practice", text: "Send them home with the free printable chart and worksheets to keep the streak going." },
+    ],
+  },
+  {
     slug: "morse-code-tattoo-ideas",
     title: "Morse code tattoo ideas & meanings (with a free design tool)",
     excerpt:
