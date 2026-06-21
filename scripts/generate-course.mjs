@@ -24,6 +24,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import lame from "@breezystack/lamejs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -35,6 +36,8 @@ const FARNSWORTH = Number(process.env.FARNSWORTH || 10); // overall speed (<= WP
 const MINUTES = Number(process.env.MINUTES || 5);
 const TONE = Number(process.env.TONE || 600);
 const RATE = Number(process.env.RATE || 8000);
+const FORMAT = (process.env.FORMAT || "mp3").toLowerCase(); // "mp3" | "wav"
+const MP3_KBPS = Number(process.env.MP3_KBPS || 40);        // plenty for a single tone
 const OUT = process.env.OUT || path.join(ROOT, "course-output");
 
 // Standard Koch character order.
@@ -103,6 +106,29 @@ function wav(samples) {
   return buf;
 }
 
+function toInt16(samples) {
+  const pcm = new Int16Array(samples.length);
+  for (let i = 0; i < samples.length; i++) {
+    const v = Math.max(-1, Math.min(1, samples[i]));
+    pcm[i] = v < 0 ? v * 0x8000 : v * 0x7fff;
+  }
+  return pcm;
+}
+
+function mp3(samples) {
+  const enc = new lame.Mp3Encoder(1, RATE, MP3_KBPS);
+  const pcm = toInt16(samples);
+  const out = [];
+  const block = 1152;
+  for (let i = 0; i < pcm.length; i += block) {
+    const buf = enc.encodeBuffer(pcm.subarray(i, i + block));
+    if (buf.length) out.push(Buffer.from(buf));
+  }
+  const end = enc.flush();
+  if (end.length) out.push(Buffer.from(end));
+  return Buffer.concat(out);
+}
+
 function randGroups(chars, count) {
   const g = [];
   for (let i = 0; i < count; i++) {
@@ -161,7 +187,8 @@ function main() {
     const groups = randGroups(chars, groupsPerLesson);
     const samples = renderGroups(groups, t);
     const id = String(lesson).padStart(2, "0");
-    fs.writeFileSync(path.join(OUT, `lesson-${id}.wav`), wav(samples));
+    const ext = FORMAT === "wav" ? "wav" : "mp3";
+    fs.writeFileSync(path.join(OUT, `lesson-${id}.${ext}`), FORMAT === "wav" ? wav(samples) : mp3(samples));
     fs.writeFileSync(
       path.join(OUT, `lesson-${id}.txt`),
       `Koch CW Course — Lesson ${lesson}\nNew character set: ${chars.join(" ")}\nSpeed: ${WPM} WPM character / ${FARNSWORTH} WPM overall (Farnsworth)\n\nGroups sent (check your copy against this):\n\n${groups.join(" ")}\n`
@@ -191,6 +218,12 @@ WHY KOCH + FARNSWORTH
 - Koch: learn at full target speed from day one, one character at a time.
 - Farnsworth: characters are sent fast, but spaced out, so you never learn
   to "count" — you learn the rhythm. The gaps shrink as you speed up.
+
+ABOUT THESE FILES
+- ${LESSONS} lessons as ${FORMAT.toUpperCase()} audio + a matching .txt answer
+  key for each. Tone: ${TONE} Hz. Want longer lessons or higher speed? They
+  regenerate from MorseCodeGenerator.com's open-source generator
+  (npm run course; env: MINUTES, WPM, FARNSWORTH, FORMAT, MP3_KBPS).
 
 More free practice tools: https://morsecodegenerator.com/practice/
 `;
