@@ -20,6 +20,23 @@
 
 export const posts = [
   {
+    slug: "morse-code-bracelet-ideas",
+    title: "Morse code bracelet ideas (and how to make your own)",
+    excerpt:
+      "A Morse code bracelet hides a word in beads — a name, a date, \"I love you\". Here are the best word ideas, how to read the dot-and-dash bead pattern, and a step-by-step way to design and make one free.",
+    published: "2026-06-21",
+    kind: "how-to",
+    minutes: 7,
+    tags: ["gifts", "bracelet", "jewelry", "craft"],
+    steps: [
+      { name: "Pick a meaningful word", text: "Choose a short word, name, or date — the shorter it is, the cleaner the bracelet. \"LOVE\", a child's name, or a wedding date all work." },
+      { name: "Turn it into Morse", text: "Use the free bracelet generator to convert your word into a bead pattern: small beads for dots, long beads for dashes." },
+      { name: "Choose your beads", text: "Pick one bead style for dots (round) and one for dashes (a longer bead or three rounds), plus a spacer bead to separate letters." },
+      { name: "String and space it", text: "Thread the beads in order, leaving a spacer between letters and a larger gap between words so the message stays readable." },
+      { name: "Finish and wear it", text: "Knot or crimp the ends onto a cord or elastic. Download the PNG/SVG pattern first so you can follow it bead by bead." },
+    ],
+  },
+  {
     slug: "farnsworth-timing-explained",
     title: "Farnsworth timing explained: the right way to learn Morse fast",
     excerpt:

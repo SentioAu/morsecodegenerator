@@ -10,6 +10,54 @@
 //  - Use <a class="k"> or <span class="k"> for inline Morse code.
 
 export const bodies = {
+  "morse-code-bracelet-ideas": `
+<p>A Morse code bracelet spells a hidden message in beads: small beads for dots, long beads for dashes. From across the room it's just a pretty pattern — but you know it says your daughter's name, your anniversary, or "I love you." That quiet secret is exactly why they make such good gifts.</p>
+
+<p>This guide covers the best word ideas, how the bead pattern actually maps to Morse, and a simple way to design and make one (free), whether you're beading it yourself or sending the design to a jeweler.</p>
+
+<h2>What is a Morse code bracelet?</h2>
+<p>It's a beaded bracelet where each letter of a word is rendered in International Morse code. A <strong>dot</strong> is a small round bead; a <strong>dash</strong> is a longer bead (or three small ones in a row); a slightly larger <strong>spacer</strong> bead separates the letters. Read left to right, the beads decode straight back to your word.</p>
+<p>The same idea works as a necklace, an anklet, or — without the beads — a clean dot-and-dash <a href="/morse-code/">tattoo or print</a>. The encoding is identical; only the medium changes.</p>
+
+<h2>Best word ideas (with the Morse already done)</h2>
+<p>Short words make the cleanest bracelets. Each link below opens a page with the exact dots and dashes, audio, and a one-click "make a bracelet" button:</p>
+<ul>
+  <li><strong>Love &amp; romance:</strong> <a href="/love-in-morse-code/">LOVE</a>, <a href="/i-love-you-in-morse-code/">I LOVE YOU</a>, <a href="/soulmate-in-morse-code/">SOULMATE</a>, <a href="/forever-in-morse-code/">FOREVER</a>, <a href="/always-in-morse-code/">ALWAYS</a></li>
+  <li><strong>Family:</strong> <a href="/mom-in-morse-code/">MOM</a>, <a href="/dad-in-morse-code/">DAD</a>, <a href="/family-in-morse-code/">FAMILY</a>, or any <a href="/names-in-morse-code/">name</a> — a child's name is the most popular bracelet of all.</li>
+  <li><strong>Strength &amp; meaning:</strong> <a href="/hope-in-morse-code/">HOPE</a>, <a href="/faith-in-morse-code/">FAITH</a>, <a href="/strength-in-morse-code/">STRENGTH</a>, <a href="/courage-in-morse-code/">COURAGE</a>, <a href="/believe-in-morse-code/">BELIEVE</a></li>
+  <li><strong>Dates:</strong> a wedding or birth date in digits (e.g. 6 14 26) makes a subtle, personal piece.</li>
+</ul>
+<p>Browse the full <a href="/phrases/">phrase library</a> or the <a href="/names-in-morse-code/">A–Z name list</a> for more.</p>
+
+<h2>How to read the bead pattern</h2>
+<p>Morse uses two signal lengths and the gaps between them:</p>
+<ul>
+  <li><strong>Dot (·)</strong> — one small bead.</li>
+  <li><strong>Dash (−)</strong> — one long bead (or three small beads).</li>
+  <li><strong>Gap between letters</strong> — one spacer bead.</li>
+  <li><strong>Gap between words</strong> — a larger spacer or a charm.</li>
+</ul>
+<p>So "LOVE" — <span class="k">.-.. --- ...- .</span> — becomes: small-long-small-small · spacer · long-long-long · spacer · small-small-small-long · spacer · small. Keeping those gaps consistent is what makes the bracelet actually <em>readable</em> as Morse rather than a random bead string.</p>
+
+<h2>Design it free in 30 seconds</h2>
+<p>Rather than count dots by hand, use our <a href="/morse-bracelet/">Morse code bracelet generator</a>. Type your word and it draws the bead pattern instantly — choose the bead style, colors, and layout, then download a <strong>PNG or SVG</strong> to follow while you string it (or to hand to a jeweler or print for a tattoo stencil).</p>
+
+<h2>How to make one (step by step)</h2>
+<ol>
+  <li><strong>Pick a meaningful word</strong> — shorter is cleaner. A name, "LOVE", or a date.</li>
+  <li><strong>Generate the pattern</strong> in the <a href="/morse-bracelet/">bracelet maker</a> and download it.</li>
+  <li><strong>Gather beads</strong> — one style for dots, a longer bead for dashes, and a contrasting spacer for letter gaps. A simple bead bracelet kit has everything you need.</li>
+  <li><strong>String in order</strong>, following the pattern, with a spacer between every letter and a larger gap between words.</li>
+  <li><strong>Finish</strong> on elastic cord (no clasp needed) or crimp onto wire with a clasp. Done.</li>
+</ol>
+
+<h2>Gift occasions that work</h2>
+<p>Morse bracelets land especially well for anniversaries (the date or "I do"), new babies (the name), graduations and recovery milestones ("STRENGTH", "BELIEVE"), and best-friend pairs (matching words). Because the message is hidden, it feels personal without being loud.</p>
+
+<h2>Make yours now</h2>
+<p>Start with the <a href="/morse-bracelet/">free bracelet &amp; tattoo generator</a> — type a word, pick a style, download the pattern. Want to hear your word too? The <a href="/translate/">translator</a> plays any text as Morse audio.</p>
+`,
+
   "farnsworth-timing-explained": `
 <p>Almost every Morse learner stalls at 8–10 WPM. The reason is almost always the same: they're sending the characters slowly. Slow characters teach you to <em>count</em> dits and dahs, and counting doesn't scale. Once you can count individual elements, your brain locks into that strategy and refuses to switch to pattern recognition — which is the only way to reach 20 WPM and beyond.</p>
 
