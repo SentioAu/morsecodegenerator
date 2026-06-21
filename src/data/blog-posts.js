@@ -20,6 +20,23 @@
 
 export const posts = [
   {
+    slug: "morse-code-tattoo-ideas",
+    title: "Morse code tattoo ideas & meanings (with a free design tool)",
+    excerpt:
+      "Dots and dashes make a tattoo only you can read. Word ideas and meanings, how to keep it accurate, placement tips, and how to generate a clean, scalable design to hand your artist — free.",
+    published: "2026-06-21",
+    kind: "how-to",
+    minutes: 7,
+    tags: ["tattoo", "gifts", "design", "ideas"],
+    steps: [
+      { name: "Choose the word or date", text: "Pick something short and meaningful — a name, a single word, or a date. Shorter reads cleaner as dots and dashes." },
+      { name: "Generate a clean design", text: "Use the free generator's dot-and-dash style on a transparent background to render the exact pattern." },
+      { name: "Download a scalable SVG", text: "Export an SVG so your artist can resize it to any placement with zero blur." },
+      { name: "Double-check the spacing", text: "Confirm the gaps between letters are clear — even spacing is what keeps it readable as real Morse." },
+      { name: "Confirm with your artist", text: "Bring the file and the decoded word so the artist can verify dot vs dash sizing before inking." },
+    ],
+  },
+  {
     slug: "morse-code-bracelet-ideas",
     title: "Morse code bracelet ideas (and how to make your own)",
     excerpt:

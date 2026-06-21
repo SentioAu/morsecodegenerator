@@ -10,6 +10,46 @@
 //  - Use <a class="k"> or <span class="k"> for inline Morse code.
 
 export const bodies = {
+  "morse-code-tattoo-ideas": `
+<p>A Morse code tattoo is a message hidden in plain sight: a line of dots and dashes that looks abstract to everyone except you. No script, no language barrier — just a rhythm that means something. That quiet, personal quality is exactly why they've become so popular.</p>
+
+<p>Here are word and meaning ideas, how to keep your tattoo <em>accurate</em> (the part most people skip), placement tips, and how to generate a clean, scalable design to hand your artist — for free.</p>
+
+<h2>How a Morse code tattoo works</h2>
+<p>Each letter becomes International Morse: a <strong>dot</strong> (a small filled circle) or a <strong>dash</strong> (a short bar three times as long), with even spacing between letters. Most tattoos use a single horizontal line — clean, minimal, and easy to place along a wrist, collarbone, or spine. Some add a small heart or star as a word separator.</p>
+
+<h2>Word &amp; meaning ideas</h2>
+<p>Short and meaningful reads best. Each link shows the exact dots and dashes (and a one-click design button):</p>
+<ul>
+  <li><strong>Love &amp; connection:</strong> <a href="/love-in-morse-code/">LOVE</a>, <a href="/i-love-you-in-morse-code/">I LOVE YOU</a>, <a href="/soulmate-in-morse-code/">SOULMATE</a>, <a href="/forever-in-morse-code/">FOREVER</a></li>
+  <li><strong>Family &amp; names:</strong> <a href="/mom-in-morse-code/">MOM</a>, <a href="/dad-in-morse-code/">DAD</a>, <a href="/family-in-morse-code/">FAMILY</a>, or a loved one's <a href="/names-in-morse-code/">name</a> or initials.</li>
+  <li><strong>Strength &amp; recovery:</strong> <a href="/hope-in-morse-code/">HOPE</a>, <a href="/faith-in-morse-code/">FAITH</a>, <a href="/strength-in-morse-code/">STRENGTH</a>, <a href="/believe-in-morse-code/">BELIEVE</a>, <a href="/courage-in-morse-code/">COURAGE</a> — popular as milestone and memorial pieces.</li>
+  <li><strong>Dates:</strong> a birth, wedding, or sobriety date in digits makes a subtle, unmistakable mark.</li>
+</ul>
+<p>More in the <a href="/phrases/">phrase library</a> and the <a href="/names-in-morse-code/">A–Z name list</a>.</p>
+
+<h2>Accuracy: don't get inked with a typo</h2>
+<p>The #1 regret with Morse tattoos is a wrong dot or dash — and once it's on skin, it's permanent. Two rules:</p>
+<ul>
+  <li><strong>Verify the code yourself.</strong> Cross-check your word on the <a href="/translate/">translator</a> and against the <a href="/morse-code/">alphabet chart</a>. Don't trust a Pinterest image.</li>
+  <li><strong>Keep dot vs dash obviously different.</strong> A dash should be clearly ~3× a dot, with even gaps. If dots and dashes look similar, the tattoo becomes unreadable (and ambiguous).</li>
+</ul>
+
+<h2>Design it free (and give your artist a real file)</h2>
+<p>Use our <a href="/morse-bracelet/">Morse code generator</a> (it does tattoos too): type your word, switch to the clean <strong>dot-and-dash</strong> style on a transparent background, and download a <strong>scalable SVG</strong>. An SVG resizes to any placement with zero blur — exactly what a tattoo artist wants as a stencil, far better than a screenshot.</p>
+
+<h2>Placement ideas</h2>
+<ul>
+  <li><strong>Inner wrist / forearm</strong> — the classic single-line spot.</li>
+  <li><strong>Collarbone or spine</strong> — a longer word flows naturally along the line.</li>
+  <li><strong>Ribcage or ankle</strong> — discreet, easy to hide.</li>
+  <li><strong>Matching pair</strong> — two people, two halves of a phrase.</li>
+</ul>
+
+<h2>Make your design now</h2>
+<p>Start with the <a href="/morse-bracelet/">free generator</a> — type your word, pick the clean tattoo style, download the SVG. Want to hear it first? The <a href="/translate/">translator</a> plays any word as Morse audio so you can feel the rhythm before you commit.</p>
+`,
+
   "morse-code-bracelet-ideas": `
 <p>A Morse code bracelet spells a hidden message in beads: small beads for dots, long beads for dashes. From across the room it's just a pretty pattern — but you know it says your daughter's name, your anniversary, or "I love you." That quiet secret is exactly why they make such good gifts.</p>
 
