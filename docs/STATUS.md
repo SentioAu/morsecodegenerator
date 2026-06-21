@@ -37,9 +37,10 @@ cheat-sheet, embed, API.
 **Content / SEO:** names-in-Morse cluster (~210 pages) + `/names-in-morse-code/`
 hub; gift/phrase cluster; per-page letter-breakdowns on all
 `-in-morse-code` pages; `/translate/` deepened (FAQ + internal links);
-all 13 blog posts enriched to ≥595 words with FAQs + funnel links;
-titles trimmed for SERP; 39 orphans fixed; duplicate punctuation aliases
-removed.
+all 13 original blog posts enriched to ≥595 words with FAQs + funnel
+links; **3 new Track-B funnel posts** (bracelet ideas, tattoo ideas,
+kids' activities) → 16 posts total; titles trimmed for SERP; 39 orphans
+fixed; duplicate punctuation aliases removed.
 
 **i18n:** Spanish `/es/`, `/es/traductor/`, `/es/alfabeto-morse/` with
 reciprocal hreflang (path-based).
@@ -72,8 +73,10 @@ the owner's accounts):
    so: DXZone + directory submits + email outreach to CW resource pages
    now; age Reddit/PH/HN accounts ~3 weeks, then post the drafts in
    `DISTRIBUTION.md`).
-3. **Ship the paid product:** `npm run course` → zip `course-output/` →
-   upload to Gumroad → set `GUMROAD_URL`/`PRODUCT_PRICE`.
+3. **Ship the paid product:** the audio course was **generated and handed
+   to the owner** (`morse-code-koch-audio-course.zip`, 39 MP3 lessons +
+   answer keys). Owner just uploads it to Gumroad → sets `GUMROAD_URL`/
+   `PRODUCT_PRICE`. Regenerate anytime: `npm run course` (MP3 by default).
 4. **GSC:** confirm sitemap submitted; Request Indexing on `/`,
    `/translate/`, `/keyer/`, `/morse-bracelet/`. Re-check in 3–4 weeks.
 
@@ -85,11 +88,8 @@ Ranked by value. **Do not add thin programmatic pages** — that hurt
 indexing before; deepen/enrich instead. Visual changes: push to the
 branch and have the owner review the Cloudflare preview before merge.
 
-1. **Track B funnel blog posts** (new, high commercial-intent, not filler):
-   "Morse code bracelet ideas (+ how to make one)" → `/morse-bracelet/` +
-   jewelry affiliate; "Morse code tattoo ideas & meanings"; "Morse code
-   for kids: games & activities" → `/teach/` + worksheets. Each must route
-   into a tool/product.
+1. ✅ **DONE — Track B funnel blog posts**: bracelet ideas, tattoo ideas,
+   and kids' games are live (PRs #81–#83), each routing into a tool/product.
 2. **Spanish expansion**, then French: localize the gift/phrase + key
    reference pages (reciprocal hreflang, native-quality copy only). Biggest
    cheap-traffic lever; non-English competition is weak.
