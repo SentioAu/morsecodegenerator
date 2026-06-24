@@ -11,6 +11,12 @@ const site =
 
 const canonical = `${site}/morse-code/numbers/`;
 
+// Reciprocal hreflang with the Spanish counterpart.
+const alternates = [
+  { lang: "en", href: canonical },
+  { lang: "es", href: `${site}/es/numeros-en-codigo-morse/` },
+];
+
 // Normalize map: uppercase keys, ignore " " key if present
 const rawMap = data?.morseMap ?? {};
 const map = Object.fromEntries(
@@ -59,7 +65,7 @@ const jsonLd = {
 };
 ---
 
-<Layout title={title} description={description} canonical={canonical} robots={robots}>
+<Layout title={title} description={description} canonical={canonical} robots={robots} alternates={alternates}>
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>

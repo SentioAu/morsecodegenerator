@@ -63,6 +63,9 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 - [Código Morse (inicio)](https://morsecodegenerator.com/es/): Spanish hub.
 - [Traductor de código Morse](https://morsecodegenerator.com/es/traductor/): text ⇄ Morse with audio, in Spanish.
 - [Alfabeto en código Morse](https://morsecodegenerator.com/es/alfabeto-morse/): full A–Z and 0–9 reference, in Spanish.
+- [SOS en código Morse](https://morsecodegenerator.com/es/sos-en-codigo-morse/): what SOS means and how to send it, in Spanish.
+- [Números en código Morse](https://morsecodegenerator.com/es/numeros-en-codigo-morse/): digits 0–9 with a memory trick, in Spanish.
+- [Te amo en código Morse](https://morsecodegenerator.com/es/te-amo-en-codigo-morse/): "I love you" in Morse, with a bracelet/tattoo generator, in Spanish.
 
 ## Phrases
 
