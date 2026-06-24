@@ -2,7 +2,8 @@
 
 **Last updated:** 2026-06-24. Read this to pick up the work. For *how the
 codebase works* see [`/CLAUDE.md`](../CLAUDE.md); for *strategy* see
-[`ROADMAP.md`](./ROADMAP.md); for *getting traffic* see
+[`ROADMAP.md`](./ROADMAP.md); for the *full unfinished-work list* see
+[`BACKLOG.md`](./BACKLOG.md); for *getting traffic* see
 [`DISTRIBUTION.md`](./DISTRIBUTION.md) + [`LAUNCH-KIT.md`](./LAUNCH-KIT.md).
 
 ---
