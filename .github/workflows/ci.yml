@@ -30,7 +30,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # Node 22 runs the TS unit tests directly (built-in runner, type stripping).
+          node-version: "22"
           cache: npm
 
       - name: Install dependencies
@@ -38,6 +39,9 @@ jobs:
 
       - name: Type check
         run: npm run typecheck
+
+      - name: Unit tests (core Morse logic)
+        run: npm test
 
       - name: Build + verify + link check
         run: npm run build

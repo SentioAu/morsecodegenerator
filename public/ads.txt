@@ -1,0 +1,8 @@
+# ads.txt — IAB Authorized Digital Sellers
+# Declares which ad systems are allowed to sell this site's inventory.
+# Google AdSense requires this file at the domain root once ad units are live.
+#
+# The publisher id below mirrors the ADSENSE_CLIENT default in
+# src/components/Layout.astro. If you set a different ADSENSE_CLIENT on
+# Cloudflare Pages, update the pub-… id here to match (strip the "ca-" prefix).
+google.com, pub-7616383336440831, DIRECT, f08c47fec0942fa0
