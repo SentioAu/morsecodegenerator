@@ -1,0 +1,237 @@
+---
+import Layout from "../../components/Layout.astro";
+import morsePayload from "../../data/morse.json";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const title = "Te amo en código Morse: cómo se escribe (· − · ·)";
+const description =
+  "«Te amo» en código Morse es − · / ·− −− −−−. Cópialo, escúchalo y conviértelo en una pulsera, collar o tatuaje con nuestro generador gratuito.";
+const canonical = `${site}/es/te-amo-en-codigo-morse/`;
+const keywords =
+  "te amo en código morse, te quiero en código morse, amor código morse, te amo morse, pulsera te amo morse, tatuaje te amo morse";
+
+const enUrl = `${site}/i-love-you-in-morse-code/`;
+const alternates = [
+  { lang: "en", href: enUrl },
+  { lang: "es", href: canonical },
+];
+
+// Build "TE AMO" from morse.json (single source of truth).
+const map = morsePayload?.morseMap ?? {};
+const words = ["TE", "AMO"].map((w) => ({
+  w,
+  chars: w.split("").map((c) => ({ c, m: map[c] ?? "" })),
+}));
+const teAmoMorse = words
+  .map((wd) => wd.chars.map((x) => x.m).join(" "))
+  .join(" / ");
+const braceletHref = `/morse-bracelet/?text=${encodeURIComponent("TE AMO")}`;
+
+const crumbs = [
+  { name: "Inicio", url: `${site}/es/` },
+  { name: "Te amo en código Morse", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      inLanguage: "es",
+      isPartOf: { "@id": `${site}#website` },
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  keywords={keywords}
+  lang="es"
+  alternates={alternates}
+>
+  <nav class="crumbs" aria-label="Ruta de navegación">
+    <a class="crumb" href="/es/">Inicio</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Te amo en código Morse</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Mensaje · Regalo · Pulsera</p>
+    <h1 class="page-hero-title">Te amo en código Morse</h1>
+    <p class="muted page-hero-sub">
+      Copia el código Morse de <strong>«te amo»</strong>, escúchalo, o
+      conviértelo en una pulsera, un collar o un diseño de tatuaje con nuestro
+      generador gratuito.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={braceletHref}>Convertir «te amo» en pulsera o tatuaje →</a>
+      <a class="btn ghost" href="/es/traductor/">Abrir el traductor</a>
+    </div>
+  </header>
+
+  <section class="word-show">
+    <div class="word-show-row">
+      <span class="word-show-text">TE AMO</span>
+      <span class="word-show-arrow" aria-hidden="true">→</span>
+    </div>
+    <div class="word-show-morse mono" id="ta-morse">{teAmoMorse}</div>
+    <div class="word-show-actions">
+      <button id="copy" type="button" class="btn primary">Copiar Morse</button>
+      <button id="play" type="button" class="btn ghost">▶ Reproducir</button>
+      <a class="btn ghost" href="/es/traductor/">Abrir el traductor →</a>
+    </div>
+  </section>
+
+  <section class="al-section">
+    <h2 class="al-h">Letra por letra</h2>
+    {words.map((wd) => (
+      <div class="bd-word">
+        <span class="bd-word-label">{wd.w}</span>
+        <div class="al-grid">
+          {wd.chars.map((x) => (
+            <div class="al-cell">
+              <span class="al-char">{x.c}</span>
+              <span class="al-morse mono">{x.m}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+    <p class="muted" style="margin-top: var(--s-3);">
+      La barra <span class="mono">/</span> marca la separación entre las dos
+      palabras. Entre las letras se deja una pausa corta y entre «te» y «amo»
+      una pausa más larga.
+    </p>
+  </section>
+
+  <section class="card name-gift">
+    <h2>Convierte «te amo» en algo que se pueda llevar</h2>
+    <p>
+      Los puntos y rayas de <strong>«te amo»</strong> forman un diseño discreto
+      y muy personal. Nuestro generador gratuito lo convierte en un
+      <strong>patrón de cuentas</strong> para una pulsera o un collar, o en un
+      <strong>diseño limpio de puntos y rayas</strong> para un tatuaje, y lo
+      descarga como PNG o SVG.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href={braceletHref}>Abrir el generador de pulseras y tatuajes →</a>
+      <a class="btn ghost" href="/morse-bracelet/">Ver todos los estilos</a>
+    </div>
+  </section>
+
+  <section class="card t-card">
+    <h2>¿«Te amo» o «te quiero»?</h2>
+    <p>
+      Las dos frases funcionan igual de bien en código Morse — solo cambian las
+      letras. Si prefieres <strong>«te quiero»</strong>, escríbelo en el
+      <a href="/es/traductor/">traductor</a> y obtendrás su código al instante,
+      listo para copiar o convertir en pulsera. Otras ideas con la misma
+      intención: «mi amor», «por siempre» o el nombre de tu pareja.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Sigue explorando</h2>
+    <ul>
+      <li><a href="/morse-bracelet/">Generador de pulseras y tatuajes</a> — cualquier palabra, descargable.</li>
+      <li><a href="/es/traductor/">Traductor de código Morse</a> — escribe cualquier mensaje y escúchalo.</li>
+      <li><a href="/es/alfabeto-morse/">Alfabeto Morse completo</a> — todas las letras y números.</li>
+    </ul>
+    <p class="muted">Looking for the English version? See <a href="/i-love-you-in-morse-code/">I love you in Morse code</a>.</p>
+  </section>
+
+  <script is:inline define:vars={{ MORSE: teAmoMorse }}>
+    (function () {
+      "use strict";
+      const copyBtn = document.getElementById("copy");
+      const playBtn = document.getElementById("play");
+
+      copyBtn?.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(MORSE);
+          const old = copyBtn.textContent;
+          copyBtn.textContent = "¡Copiado!";
+          setTimeout(() => (copyBtn.textContent = old), 1100);
+        } catch {}
+      });
+
+      let ctx;
+      function getCtx() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === "suspended") ctx.resume();
+        return ctx;
+      }
+      playBtn?.addEventListener("click", () => {
+        const seq = MORSE.replace(/[^.\-/\s]/g, "").trim();
+        if (!seq) return;
+        const c = getCtx();
+        const unit = 1.2 / 18; // 18 WPM
+        let t = c.currentTime + 0.05;
+        for (const group of seq.split(/\s+/)) {
+          if (group === "/") { t += unit * 7; continue; }
+          for (const sym of group) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            const osc = c.createOscillator(), g = c.createGain();
+            osc.type = "sine"; osc.frequency.value = 600;
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.3, t + 0.008);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            osc.connect(g); g.connect(c.destination);
+            osc.start(t); osc.stop(t + dur + 0.02);
+            t += dur + unit;
+          }
+          t += unit * 2;
+        }
+        window.mcgEvent?.("play_audio", { lang: "es", page: "te-amo" });
+      });
+      document.addEventListener("visibilitychange", () => { if (document.hidden && ctx) { ctx.close(); ctx = null; } });
+    })();
+  </script>
+
+  <style>
+    .word-show{
+      margin: var(--s-3) 0 var(--s-6);
+      padding: var(--s-6);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl, 18px);
+    }
+    .word-show-row{ display: flex; align-items: center; gap: var(--s-3); }
+    .word-show-text{ font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); font-weight: 700; }
+    .word-show-arrow{ color: var(--text-muted); font-size: var(--fs-lg); }
+    .word-show-morse{
+      margin-top: var(--s-4); padding: var(--s-4);
+      background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md, 10px);
+      color: var(--accent); font-size: clamp(18px, 3vw, 26px); letter-spacing: 0.12em; word-break: break-all;
+    }
+    .word-show-actions{ margin-top: var(--s-5); display: flex; gap: var(--s-2); flex-wrap: wrap; align-items: center; }
+    .al-section{ margin-bottom: var(--s-6); }
+    .al-h{ font-size: var(--fs-lg); margin: 0 0 var(--s-3); padding-bottom: var(--s-2); border-bottom: 1px solid var(--line); }
+    .bd-word{ margin-bottom: var(--s-4); }
+    .bd-word-label{
+      display: block; font-family: var(--font-mono); font-size: var(--fs-xs);
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: var(--s-2);
+    }
+    .al-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--s-2); }
+    .al-cell{
+      display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-2);
+      padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-md, 10px); background: var(--surface-2);
+    }
+    .al-char{ font-family: var(--font-display); font-weight: 700; font-size: var(--fs-lg); }
+    .al-morse{ color: var(--text-muted); letter-spacing: 0.12em; }
+  </style>
+</Layout>

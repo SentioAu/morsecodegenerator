@@ -64,6 +64,9 @@ export function sourcesForUrl(urlPath) {
   if (urlPath === "/es/") return ["src/pages/es/index.astro"];
   if (urlPath === "/es/traductor/") return ["src/pages/es/traductor.astro", "src/data/morse.json"];
   if (urlPath === "/es/alfabeto-morse/") return ["src/pages/es/alfabeto-morse.astro", "src/data/morse.json"];
+  if (urlPath === "/es/sos-en-codigo-morse/") return ["src/pages/es/sos-en-codigo-morse.astro", "src/data/morse.json"];
+  if (urlPath === "/es/numeros-en-codigo-morse/") return ["src/pages/es/numeros-en-codigo-morse.astro", "src/data/morse.json"];
+  if (urlPath === "/es/te-amo-en-codigo-morse/") return ["src/pages/es/te-amo-en-codigo-morse.astro", "src/data/morse.json"];
 
   // Names hub — static page (must be matched before the generic
   // /<word>-in-morse-code/ rule below, which would otherwise claim it).

@@ -204,6 +204,21 @@ function pageSlugValidForThisRoute(s) {
   return (isNamed || isShortPhrase) && !isSingleLetter && !isNumber;
 }
 
+// Reciprocal hreflang: a few high-value slugs have a hand-written
+// Spanish counterpart under /es/. Declare the EN⇄ES alternates so Google
+// links the pair (must match the `alternates` on the ES page exactly).
+const ES_ALTERNATES = {
+  "sos": "/es/sos-en-codigo-morse/",
+  "i-love-you": "/es/te-amo-en-codigo-morse/",
+};
+const esAltPath = ES_ALTERNATES[slug];
+const alternates = esAltPath
+  ? [
+      { lang: "en", href: `${site}/${slug}-in-morse-code/` },
+      { lang: "es", href: `${site}${esAltPath}` },
+    ]
+  : undefined;
+
 const valid = pageSlugValidForThisRoute(slug);
 const term = termFromSlug(slug);
 const morse = valid ? textToMorse(term.value) : "";
@@ -283,7 +298,7 @@ const jsonLd = {
 };
 ---
 
-<Layout title={pageTitle} description={description} robots={robots} canonical={canonicalRef}>
+<Layout title={pageTitle} description={description} robots={robots} canonical={canonicalRef} alternates={alternates}>
   <nav class="crumbs" aria-label="Breadcrumb">
     <a class="crumb" href="/">Home</a>
     <span class="sep" aria-hidden="true">›</span>

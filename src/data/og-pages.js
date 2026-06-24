@@ -55,6 +55,9 @@ export function OG_KICKER_BY_SECTION(p) {
   if (p === "/es/") return "Código Morse";
   if (p === "/es/traductor/") return "Traductor";
   if (p === "/es/alfabeto-morse/") return "Alfabeto Morse";
+  if (p === "/es/sos-en-codigo-morse/") return "Señal SOS";
+  if (p === "/es/numeros-en-codigo-morse/") return "Números";
+  if (p === "/es/te-amo-en-codigo-morse/") return "Te amo";
   if (p.startsWith("/morse-code/") || p === "/phrases/") return "Learn";
   return "MorseCodeGenerator.com";
 }
@@ -129,6 +132,9 @@ export const OG_PAGES = new Set([
   "/es/",
   "/es/traductor/",
   "/es/alfabeto-morse/",
+  "/es/sos-en-codigo-morse/",
+  "/es/numeros-en-codigo-morse/",
+  "/es/te-amo-en-codigo-morse/",
 
   // Site / meta
   "/about/",

@@ -1,0 +1,230 @@
+---
+import Layout from "../../components/Layout.astro";
+import morsePayload from "../../data/morse.json";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const title = "SOS en código Morse: qué significa y cómo se escribe";
+const description =
+  "SOS en código Morse es · · · − − − · · · (tres cortos, tres largos, tres cortos). Qué significa la señal SOS, su historia y cómo enviarla con luz o sonido.";
+const canonical = `${site}/es/sos-en-codigo-morse/`;
+const keywords =
+  "sos en código morse, sos código morse, qué significa sos, señal de socorro morse, sos morse, código morse sos";
+
+const enUrl = `${site}/sos-in-morse-code/`;
+const alternates = [
+  { lang: "en", href: enUrl },
+  { lang: "es", href: canonical },
+];
+
+// Single source of truth: build the Morse for SOS from morse.json.
+const map = morsePayload?.morseMap ?? {};
+const letters = ["S", "O", "S"].map((c) => ({ c, m: map[c] ?? "" }));
+const sosMorse = letters.map((x) => x.m).join(" ");
+
+const crumbs = [
+  { name: "Inicio", url: `${site}/es/` },
+  { name: "SOS en código Morse", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      inLanguage: "es",
+      isPartOf: { "@id": `${site}#website` },
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  keywords={keywords}
+  lang="es"
+  alternates={alternates}
+>
+  <nav class="crumbs" aria-label="Ruta de navegación">
+    <a class="crumb" href="/es/">Inicio</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">SOS en código Morse</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Señal de socorro · Referencia</p>
+    <h1 class="page-hero-title">SOS en código Morse</h1>
+    <p class="muted page-hero-sub">
+      <strong>SOS</strong> es la señal de socorro más conocida del mundo. En
+      código Morse se escribe <span class="mono">· · · − − − · · ·</span>:
+      tres señales cortas (puntos), tres largas (rayas) y tres cortas otra vez,
+      enviadas como un único grupo continuo.
+    </p>
+  </header>
+
+  <section class="word-show">
+    <div class="word-show-row">
+      <span class="word-show-text">SOS</span>
+      <span class="word-show-arrow" aria-hidden="true">→</span>
+    </div>
+    <div class="word-show-morse mono" id="sos-morse">{sosMorse}</div>
+    <div class="word-show-actions">
+      <button id="copy" type="button" class="btn primary">Copiar Morse</button>
+      <button id="play" type="button" class="btn ghost">▶ Reproducir</button>
+      <a class="btn ghost" href="/es/traductor/">Abrir el traductor →</a>
+    </div>
+  </section>
+
+  <section class="al-section">
+    <h2 class="al-h">Letra por letra</h2>
+    <div class="al-grid">
+      {letters.map((x) => (
+        <div class="al-cell">
+          <span class="al-char">{x.c}</span>
+          <span class="al-morse mono">{x.m}</span>
+        </div>
+      ))}
+    </div>
+    <p class="muted" style="margin-top: var(--s-3);">
+      La <strong>S</strong> son tres puntos (<span class="mono">· · ·</span>) y la
+      <strong>O</strong> son tres rayas (<span class="mono">− − −</span>). Por eso
+      el ritmo de SOS es tan fácil de recordar: corto-corto-corto,
+      largo-largo-largo, corto-corto-corto.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>¿Qué significa SOS?</h2>
+    <p>
+      Aunque mucha gente cree que SOS son las iniciales de «Save Our Souls»
+      (salvad nuestras almas) o «Save Our Ship» (salvad nuestro barco), en
+      realidad <strong>no es una sigla</strong>. Se eligió en 1905 precisamente
+      porque su secuencia Morse — <span class="mono">· · · − − − · · ·</span> —
+      es inconfundible, rítmica y muy difícil de confundir con cualquier otra
+      señal, incluso con interferencias o una transmisión débil. Esos
+      significados se inventaron después como reglas mnemotécnicas.
+    </p>
+    <p>
+      SOS se adoptó como señal internacional de socorro en la Convención
+      Radiotelegráfica de Berlín y entró en vigor el 1 de julio de 1908.
+      Sustituyó a la antigua señal «CQD» y se convirtió en el estándar mundial
+      para pedir auxilio por radio.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Cómo enviar SOS</h2>
+    <p>
+      Lo importante es el <strong>ritmo</strong>, no el medio. Puedes enviar SOS
+      con casi cualquier cosa que produzca señales cortas y largas:
+    </p>
+    <ul>
+      <li><strong>Con sonido:</strong> tres pitidos cortos, tres largos y tres cortos. Pulsa «Reproducir» arriba para oír el patrón.</li>
+      <li><strong>Con luz:</strong> tres destellos cortos, tres largos y tres cortos con una linterna o el móvil. Es la forma más útil para pedir ayuda a distancia.</li>
+      <li><strong>Por escrito o golpeando:</strong> tres toques cortos, tres largos y tres cortos sobre una superficie o una tubería.</li>
+    </ul>
+    <p>
+      Tras enviar el grupo completo, haz una pausa y repítelo. La señal se manda
+      siempre como una sola unidad continua, <em>sin separar las letras</em>,
+      para que se reconozca como SOS y no como las letras S, O, S sueltas.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Sigue aprendiendo</h2>
+    <ul>
+      <li><a href="/es/alfabeto-morse/">Alfabeto Morse completo</a> — todas las letras y números.</li>
+      <li><a href="/es/traductor/">Traductor de código Morse</a> — convierte cualquier palabra y escúchala.</li>
+      <li><a href="/morse-bracelet/">Pulsera y tatuaje</a> — convierte una palabra en un diseño descargable.</li>
+    </ul>
+    <p class="muted">Looking for the English version? See <a href="/sos-in-morse-code/">SOS in Morse code</a>.</p>
+  </section>
+
+  <script is:inline define:vars={{ MORSE: sosMorse }}>
+    (function () {
+      "use strict";
+      const copyBtn = document.getElementById("copy");
+      const playBtn = document.getElementById("play");
+
+      copyBtn?.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(MORSE);
+          const old = copyBtn.textContent;
+          copyBtn.textContent = "¡Copiado!";
+          setTimeout(() => (copyBtn.textContent = old), 1100);
+        } catch {}
+      });
+
+      let ctx;
+      function getCtx() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === "suspended") ctx.resume();
+        return ctx;
+      }
+      playBtn?.addEventListener("click", () => {
+        const seq = MORSE.replace(/[^.\-/\s]/g, "").trim();
+        if (!seq) return;
+        const c = getCtx();
+        const unit = 1.2 / 18; // 18 WPM
+        let t = c.currentTime + 0.05;
+        for (const group of seq.split(/\s+/)) {
+          if (group === "/") { t += unit * 7; continue; }
+          for (const sym of group) {
+            const dur = sym === "-" ? unit * 3 : unit;
+            const osc = c.createOscillator(), g = c.createGain();
+            osc.type = "sine"; osc.frequency.value = 600;
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.3, t + 0.008);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            osc.connect(g); g.connect(c.destination);
+            osc.start(t); osc.stop(t + dur + 0.02);
+            t += dur + unit;
+          }
+          t += unit * 2;
+        }
+        window.mcgEvent?.("play_audio", { lang: "es", page: "sos" });
+      });
+      document.addEventListener("visibilitychange", () => { if (document.hidden && ctx) { ctx.close(); ctx = null; } });
+    })();
+  </script>
+
+  <style>
+    .word-show{
+      margin: var(--s-3) 0 var(--s-6);
+      padding: var(--s-6);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl, 18px);
+    }
+    .word-show-row{ display: flex; align-items: center; gap: var(--s-3); }
+    .word-show-text{ font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); font-weight: 700; }
+    .word-show-arrow{ color: var(--text-muted); font-size: var(--fs-lg); }
+    .word-show-morse{
+      margin-top: var(--s-4); padding: var(--s-4);
+      background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md, 10px);
+      color: var(--accent); font-size: clamp(18px, 3vw, 26px); letter-spacing: 0.12em; word-break: break-all;
+    }
+    .word-show-actions{ margin-top: var(--s-5); display: flex; gap: var(--s-2); flex-wrap: wrap; align-items: center; }
+    .al-section{ margin-bottom: var(--s-6); }
+    .al-h{ font-size: var(--fs-lg); margin: 0 0 var(--s-3); padding-bottom: var(--s-2); border-bottom: 1px solid var(--line); }
+    .al-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--s-2); }
+    .al-cell{
+      display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-2);
+      padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-md, 10px); background: var(--surface-2);
+    }
+    .al-char{ font-family: var(--font-display); font-weight: 700; font-size: var(--fs-lg); }
+    .al-morse{ color: var(--text-muted); letter-spacing: 0.12em; }
+  </style>
+</Layout>

@@ -1,0 +1,140 @@
+---
+import Layout from "../../components/Layout.astro";
+import morsePayload from "../../data/morse.json";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const title = "Números en código Morse (0–9): tabla y cómo recordarlos";
+const description =
+  "Los números del 0 al 9 en código Morse con su patrón de puntos y rayas. Tabla clara, truco para memorizarlos en minutos y enlace para practicar. Gratis.";
+const canonical = `${site}/es/numeros-en-codigo-morse/`;
+const keywords =
+  "números en código morse, números código morse, código morse números, números morse, 0 al 9 en morse, cifras código morse";
+
+const enUrl = `${site}/morse-code/numbers/`;
+const alternates = [
+  { lang: "en", href: enUrl },
+  { lang: "es", href: canonical },
+];
+
+const map = morsePayload?.morseMap ?? {};
+const digits = "0123456789".split("").map((c) => ({ c, m: map[c] ?? "" }));
+
+const crumbs = [
+  { name: "Inicio", url: `${site}/es/` },
+  { name: "Números en código Morse", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "WebPage",
+      name: title,
+      description,
+      url: canonical,
+      inLanguage: "es",
+      isPartOf: { "@id": `${site}#website` },
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  keywords={keywords}
+  lang="es"
+  alternates={alternates}
+>
+  <nav class="crumbs" aria-label="Ruta de navegación">
+    <a class="crumb" href="/es/">Inicio</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Números en código Morse</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Referencia · 0–9</p>
+    <h1 class="page-hero-title">Números en código Morse</h1>
+    <p class="muted page-hero-sub">
+      Cada cifra del 0 al 9 se forma con <strong>exactamente cinco señales</strong>
+      entre puntos (<span class="mono">·</span>) y rayas (<span class="mono">−</span>).
+      Eso hace que los números sean de lo más fácil de aprender: siguen un patrón
+      muy regular.
+    </p>
+  </header>
+
+  <section class="al-section">
+    <h2 class="al-h">Tabla de números (0–9)</h2>
+    <div class="al-grid">
+      {digits.map((x) => (
+        <div class="al-cell">
+          <span class="al-char">{x.c}</span>
+          <span class="al-morse mono">{x.m}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="card t-card">
+    <h2>El truco para memorizarlos</h2>
+    <p>
+      Los números siguen una lógica sencilla que se aprende en minutos:
+    </p>
+    <ul>
+      <li>Del <strong>1 al 5</strong>, empieza con puntos y vas añadiendo rayas al final: 1 es <span class="mono">·−−−−</span>, 2 es <span class="mono">··−−−</span>, y así hasta el <strong>5</strong>, que son <span class="mono">·····</span> (cinco puntos).</li>
+      <li>Del <strong>6 al 0</strong>, ocurre lo contrario: empieza con rayas y vas añadiendo puntos. El <strong>6</strong> es <span class="mono">−····</span> y el <strong>0</strong> son <span class="mono">−−−−−</span> (cinco rayas).</li>
+      <li>En el punto medio, el <strong>5</strong> es todo puntos y el <strong>0</strong> es todo rayas: los dos extremos del patrón.</li>
+    </ul>
+    <p>
+      Dicho de otro modo: cuenta cuántas rayas hay al final. El 1 tiene cuatro
+      rayas, el 2 tres, el 3 dos, el 4 una, el 5 ninguna; luego el patrón «se da
+      la vuelta» y las rayas pasan al principio.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Practica con estos números</h2>
+    <p>Pruébalos en el traductor para verlos y escucharlos:</p>
+    <div class="pill-grid">
+      <a href="/es/traductor/">2026</a>
+      <a href="/es/traductor/">112</a>
+      <a href="/es/traductor/">12345</a>
+      <a href="/es/traductor/">007</a>
+    </div>
+    <p class="muted" style="margin-top: var(--s-3);">
+      Consejo: los números largos se separan dígito a dígito, igual que las
+      letras de una palabra. Entre cada cifra se deja una pausa corta.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>Sigue aprendiendo</h2>
+    <ul>
+      <li><a href="/es/alfabeto-morse/">Alfabeto Morse completo</a> — todas las letras y números juntos.</li>
+      <li><a href="/es/traductor/">Traductor de código Morse</a> — escribe cualquier número o palabra y escúchalo.</li>
+      <li><a href="/es/sos-en-codigo-morse/">SOS en código Morse</a> — la señal de socorro más famosa.</li>
+    </ul>
+    <p class="muted">Looking for the English version? See <a href="/morse-code/numbers/">numbers in Morse code</a>.</p>
+  </section>
+
+  <style>
+    .al-section{ margin-bottom: var(--s-6); }
+    .al-h{ font-size: var(--fs-lg); margin: 0 0 var(--s-3); padding-bottom: var(--s-2); border-bottom: 1px solid var(--line); }
+    .al-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--s-2); }
+    .al-cell{
+      display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-2);
+      padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-md, 10px); background: var(--surface-2);
+    }
+    .al-char{ font-family: var(--font-display); font-weight: 700; font-size: var(--fs-lg); }
+    .al-morse{ color: var(--text-muted); letter-spacing: 0.12em; }
+  </style>
+</Layout>

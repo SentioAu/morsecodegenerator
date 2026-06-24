@@ -90,9 +90,14 @@ branch and have the owner review the Cloudflare preview before merge.
 
 1. ✅ **DONE — Track B funnel blog posts**: bracelet ideas, tattoo ideas,
    and kids' games are live (PRs #81–#83), each routing into a tool/product.
-2. **Spanish expansion**, then French: localize the gift/phrase + key
-   reference pages (reciprocal hreflang, native-quality copy only). Biggest
-   cheap-traffic lever; non-English competition is weak.
+2. **Spanish expansion** (in progress), then French: localize the gift/phrase
+   + key reference pages (reciprocal hreflang, native-quality copy only).
+   Biggest cheap-traffic lever; non-English competition is weak.
+   - ✅ Shipped: `/es/sos-en-codigo-morse/`, `/es/numeros-en-codigo-morse/`,
+     `/es/te-amo-en-codigo-morse/` (reciprocal hreflang with their EN
+     counterparts; the "te amo" page funnels into `/morse-bracelet/`).
+   - Next ES candidates: `mayday`, `feliz cumpleaños`, `te quiero`, `ayuda`,
+     a learning guide (`/es/aprender-codigo-morse/`), and signos/puntuación.
 3. **Data-driven content loop:** once GSC has data, mine queries the site
    ranks #8–20 for and write/deepen toward them. Let data pick, not hunches.
 4. **Newsletter automation** (RSS→email via the ESP) once
