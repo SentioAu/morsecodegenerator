@@ -4,6 +4,7 @@ import morsePayload from "../data/morse.json";
 import slugs from "../data/seo-slugs.json";
 import { NAME_SLUGS, isNameSlug } from "../data/names.js";
 import { GIFT_PHRASE_SLUGS, isGiftSlug } from "../data/gift-phrases.js";
+import { affiliateForSlug } from "../data/affiliate-products.js";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -231,6 +232,10 @@ const isGift = valid && !isSingleLetter && !isNumber && !isName && isGiftSlug(sl
 const showGift = isName || isGift;
 const braceletHref = `/morse-bracelet/?text=${encodeURIComponent(term.display)}`;
 
+// A curated ready-made product for this exact phrase, if one exists
+// (e.g. "i love you"). Shown as a "buy one" option next to the free maker.
+const aff = (valid && !isSingleLetter && !isNumber) ? affiliateForSlug(slug) : null;
+
 // Per-character breakdown — genuinely useful (shows how to build the word
 // letter by letter) AND unique per page, which lifts these template pages
 // above the "thin content" threshold that keeps them out of Google's index.
@@ -425,6 +430,18 @@ const jsonLd = {
             <a class="btn primary" href={braceletHref}>Open the bracelet &amp; tattoo maker →</a>
             <a class="btn ghost" href="/morse-bracelet/">See all styles</a>
           </div>
+        </section>
+      )}
+
+      {aff && (
+        <section class="card aff-card">
+          <h2>Prefer to buy one ready-made?</h2>
+          <p>{aff.note}</p>
+          <div class="page-hero-actions">
+            <a class="btn primary" href={aff.url} target="_blank" rel="sponsored nofollow noopener" data-aff={aff.id}>{aff.cta} →</a>
+            <a class="btn ghost" href={braceletHref}>Or make your own free</a>
+          </div>
+          <p class="aff-note">Affiliate link — we may earn a commission at no extra cost to you. It never affects what we feature. <a href="/disclosure/">Full disclosure</a>.</p>
         </section>
       )}
 
@@ -627,6 +644,8 @@ const jsonLd = {
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
+    .aff-card{ margin-top: var(--s-4); }
+    .aff-note{ margin: var(--s-3) 0 0; font-size: var(--fs-sm); color: var(--text-muted); }
     .bd-section{ margin-top: var(--s-6); }
     .bd-intro{ max-width: var(--content); margin: 0 0 var(--s-4); line-height: 1.6; }
     .bd-word{ margin-bottom: var(--s-4); }
