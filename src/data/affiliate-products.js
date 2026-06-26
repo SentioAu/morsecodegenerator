@@ -16,6 +16,33 @@
 // Keyed by the EN phrase slug (the same slug the /<slug>-in-morse-code/
 // route uses). Spanish counterparts reuse the entry via affiliateForSlug().
 
+// Amazon Associates tracking ID. Public by design (it shows in every
+// outbound affiliate link), so we ship a sensible default and let the
+// Cloudflare Pages env var override it — same pattern as ADSENSE_CLIENT.
+// This is the single source of truth for the tag across the whole site
+// (gear.js re-imports amazonSearch from here).
+const TAG = import.meta.env?.AMAZON_ASSOC_TAG || "mcg0d2-20";
+
+// Tagged Amazon search URL. Search links never 404 (unlike specific
+// product/ASIN links that die when a listing changes hands), so they're
+// the safe default for the long tail of gift/phrase/name pages.
+export function amazonSearch(query) {
+  const base = `https://www.amazon.com/s?k=${encodeURIComponent(query)}`;
+  return TAG ? `${base}&tag=${encodeURIComponent(TAG)}` : base;
+}
+
+// Build a "shop ready-made on Amazon" link for a gift/phrase/name page.
+// Names → a personalized (custom-word) necklace; phrases → a bracelet for
+// that phrase.
+export function amazonGiftSearch(term, { kind = "phrase" } = {}) {
+  const t = String(term || "").trim();
+  const query =
+    kind === "name"
+      ? `${t} personalized morse code necklace`
+      : `${t} morse code bracelet`;
+  return amazonSearch(query);
+}
+
 export const AFFILIATE_PRODUCTS = {
   "i-love-you": {
     id: "aff-i-love-you-bracelet",

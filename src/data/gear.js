@@ -18,12 +18,11 @@
 
 export const GEAR_UPDATED = "2026-06-12";
 
-const TAG = import.meta.env?.AMAZON_ASSOC_TAG || "";
-
-export function amazonSearch(query) {
-  const base = `https://www.amazon.com/s?k=${encodeURIComponent(query)}`;
-  return TAG ? `${base}&tag=${encodeURIComponent(TAG)}` : base;
-}
+// amazonSearch (and the AMAZON_ASSOC_TAG default) now live in
+// affiliate-products.js so the tag is single-sourced across the site.
+// Re-exported here so existing importers of gear.js keep working.
+import { amazonSearch } from "./affiliate-products.js";
+export { amazonSearch };
 
 export const straightKeys = [
   {
