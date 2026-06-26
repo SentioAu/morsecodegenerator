@@ -4,7 +4,7 @@ import morsePayload from "../data/morse.json";
 import slugs from "../data/seo-slugs.json";
 import { NAME_SLUGS, isNameSlug } from "../data/names.js";
 import { GIFT_PHRASE_SLUGS, isGiftSlug } from "../data/gift-phrases.js";
-import { affiliateForSlug } from "../data/affiliate-products.js";
+import { affiliateForSlug, amazonGiftSearch } from "../data/affiliate-products.js";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -236,6 +236,13 @@ const braceletHref = `/morse-bracelet/?text=${encodeURIComponent(term.display)}`
 // (e.g. "i love you"). Shown as a "buy one" option next to the free maker.
 const aff = (valid && !isSingleLetter && !isNumber) ? affiliateForSlug(slug) : null;
 
+// For gift/name pages without a hand-picked product, offer a tagged Amazon
+// SEARCH link (never 404s) — names → personalized necklace, phrases →
+// a bracelet for that phrase.
+const amazonGiftHref = (showGift && !aff)
+  ? amazonGiftSearch(term.display, { kind: isName ? "name" : "phrase" })
+  : null;
+
 // Per-character breakdown — genuinely useful (shows how to build the word
 // letter by letter) AND unique per page, which lifts these template pages
 // above the "thin content" threshold that keeps them out of Google's index.
@@ -442,6 +449,22 @@ const jsonLd = {
             <a class="btn ghost" href={braceletHref}>Or make your own free</a>
           </div>
           <p class="aff-note">Affiliate link — we may earn a commission at no extra cost to you. It never affects what we feature. <a href="/disclosure/">Full disclosure</a>.</p>
+        </section>
+      )}
+
+      {amazonGiftHref && (
+        <section class="card aff-card">
+          <h2>Prefer to buy one ready-made?</h2>
+          <p>
+            {isName
+              ? <>Shop personalized Morse code necklaces and bracelets on Amazon, or make a free <strong>{term.display}</strong> design above.</>
+              : <>Shop ready-made <strong>{term.display}</strong> Morse code bracelets on Amazon, or make your own free design above.</>}
+          </p>
+          <div class="page-hero-actions">
+            <a class="btn primary" href={amazonGiftHref} target="_blank" rel="sponsored nofollow noopener" data-aff={`amazon-${slug}`}>Shop on Amazon →</a>
+            <a class="btn ghost" href={braceletHref}>Make your own free</a>
+          </div>
+          <p class="aff-note">Affiliate link — we may earn a commission at no extra cost to you. <a href="/disclosure/">Disclosure</a>.</p>
         </section>
       )}
 

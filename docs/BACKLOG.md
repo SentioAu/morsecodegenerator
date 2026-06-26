@@ -18,8 +18,11 @@ feature (not started) · ✅ done this engagement.
 
 ## A. Owner-action / config — dormant, blocking revenue & data
 
-- ⛔ **`AMAZON_ASSOC_TAG` unset** → all `/gear/` + bracelet affiliate links
-  earn $0. Highest-value, lowest-effort switch.
+- ✅ **`AMAZON_ASSOC_TAG`** — now defaulted in code (`mcg0d2-20`, in
+  `affiliate-products.js`, overridable by the Cloudflare env var). Gear
+  pages + every gift/phrase + name page now emit tagged Amazon search
+  links (never-404) and earn on next deploy. Hand-picked `amzn.to` product
+  links take precedence where set.
 - ⛔ **AdSense dormant** — `ADSENSE_SLOT_ARTICLE/_GLOSSARY/_FAQ` unset, so
   `<AdSlot>` renders nothing. Also confirm AdSense **account approval**
   (client id `ca-pub-7616383336440831` is the hardcoded default in
