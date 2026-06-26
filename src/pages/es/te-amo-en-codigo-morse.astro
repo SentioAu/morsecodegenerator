@@ -1,6 +1,10 @@
 ---
 import Layout from "../../components/Layout.astro";
 import morsePayload from "../../data/morse.json";
+import { affiliateForSlug } from "../../data/affiliate-products.js";
+
+// "te amo" === "I love you" — reuse the EN product entry.
+const aff = affiliateForSlug("i-love-you");
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -133,6 +137,22 @@ const jsonLd = {
     </div>
   </section>
 
+  {aff && (
+    <section class="card aff-card">
+      <h2>¿Prefieres comprar una ya hecha?</h2>
+      <p>
+        Una pulsera de cuentas que deletrea «te amo» (<em>I love you</em>) en
+        código Morse — un regalo rápido si prefieres comprarla en vez de
+        hacerla tú.
+      </p>
+      <div class="page-hero-actions">
+        <a class="btn primary" href={aff.url} target="_blank" rel="sponsored nofollow noopener" data-aff={aff.id}>Verla en Amazon →</a>
+        <a class="btn ghost" href={braceletHref}>O crea la tuya gratis</a>
+      </div>
+      <p class="aff-note">Enlace de afiliado — podemos ganar una comisión sin coste adicional para ti. No influye en lo que recomendamos. <a href="/disclosure/">Más información</a>.</p>
+    </section>
+  )}
+
   <section class="card t-card">
     <h2>¿«Te amo» o «te quiero»?</h2>
     <p>
@@ -203,6 +223,8 @@ const jsonLd = {
   </script>
 
   <style>
+    .aff-card{ margin-bottom: var(--s-6); }
+    .aff-note{ margin: var(--s-3) 0 0; font-size: var(--fs-sm); color: var(--text-muted); }
     .word-show{
       margin: var(--s-3) 0 var(--s-6);
       padding: var(--s-6);
