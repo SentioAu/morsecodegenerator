@@ -66,6 +66,8 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 - [SOS en código Morse](https://morsecodegenerator.com/es/sos-en-codigo-morse/): what SOS means and how to send it, in Spanish.
 - [Números en código Morse](https://morsecodegenerator.com/es/numeros-en-codigo-morse/): digits 0–9 with a memory trick, in Spanish.
 - [Te amo en código Morse](https://morsecodegenerator.com/es/te-amo-en-codigo-morse/): "I love you" in Morse, with a bracelet/tattoo generator, in Spanish.
+- [Te quiero en código Morse](https://morsecodegenerator.com/es/te-quiero-en-codigo-morse/): "I love you / I want you" in Morse + bracelet funnel, in Spanish.
+- [Cómo aprender código Morse](https://morsecodegenerator.com/es/aprender-codigo-morse/): step-by-step Koch-method learning guide, in Spanish.
 
 ## Phrases
 

@@ -1,0 +1,134 @@
+---
+import Layout from "../../components/Layout.astro";
+
+const site =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
+
+const title = "Cómo aprender código Morse: guía paso a paso (método Koch)";
+const description =
+  "Aprende código Morse de forma rápida y duradera: el método Koch, los errores que debes evitar, un plan diario realista y herramientas gratis para practicar.";
+const canonical = `${site}/es/aprender-codigo-morse/`;
+const keywords =
+  "cómo aprender código morse, aprender código morse, método koch, aprender morse rápido, practicar código morse, código morse principiantes";
+
+const crumbs = [
+  { name: "Inicio", url: `${site}/es/` },
+  { name: "Cómo aprender código Morse", url: canonical },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem", position: i + 1, name: c.name, item: c.url,
+      })),
+    },
+    {
+      "@type": "HowTo",
+      name: "Cómo aprender código Morse",
+      description,
+      inLanguage: "es",
+      step: [
+        { "@type": "HowToStep", name: "Aprende a oír, no a contar", text: "Aprende cada letra por su ritmo (sonido), no contando puntos y rayas." },
+        { "@type": "HowToStep", name: "Usa el método Koch", text: "Empieza con dos letras a velocidad real y añade una nueva cuando aciertes el 90%." },
+        { "@type": "HowToStep", name: "Practica poco y a menudo", text: "15–20 minutos al día rinden mucho más que una sesión larga semanal." },
+        { "@type": "HowToStep", name: "Escribe lo que oyes", text: "Copia en grupos de 5 caracteres y corrige con la solución." },
+      ],
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  keywords={keywords}
+  lang="es"
+>
+  <nav class="crumbs" aria-label="Ruta de navegación">
+    <a class="crumb" href="/es/">Inicio</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="crumb-current">Cómo aprender código Morse</span>
+  </nav>
+
+  <header class="page-hero">
+    <p class="page-hero-kicker">Guía · Principiantes</p>
+    <h1 class="page-hero-title">Cómo aprender código Morse</h1>
+    <p class="muted page-hero-sub">
+      Aprender Morse es más fácil de lo que parece si lo haces bien desde el
+      principio. La clave es aprender el <strong>ritmo</strong> de cada letra de
+      oído, no memorizar puntos y rayas en una tabla. Esta es la forma más
+      rápida y duradera, con herramientas gratis para practicar.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn primary" href="/es/traductor/">Abrir el traductor</a>
+      <a class="btn ghost" href="/es/alfabeto-morse/">Ver el alfabeto</a>
+    </div>
+  </header>
+
+  <section class="card t-card">
+    <h2>El error que comete casi todo el mundo</h2>
+    <p>
+      La trampa más común es aprenderse una <strong>tabla</strong> de letras y
+      luego, al oír el código, ir contando «punto, punto, raya…» para
+      descifrarlo. Funciona a velocidades muy lentas, pero crea un techo: por
+      encima de 7–10 palabras por minuto el cerebro no da abasto contando, y hay
+      que <em>desaprenderlo</em> todo. Por eso conviene empezar bien.
+    </p>
+  </section>
+
+  <section class="card t-card">
+    <h2>El método Koch (la forma rápida)</h2>
+    <p>
+      El método Koch, probado desde los años 30, es hoy el estándar para
+      aprender Morse de oído:
+    </p>
+    <ul>
+      <li><strong>Velocidad real desde el primer día.</strong> Cada letra se envía rápida (≈20 PPM) para que aprendas su sonido como una sola pieza, no como una suma de puntos. El espacio entre letras se alarga al principio (timing Farnsworth) para darte tiempo a pensar.</li>
+      <li><strong>Empieza con dos letras.</strong> Practica solo con dos caracteres hasta acertar alrededor del 90%.</li>
+      <li><strong>Añade una letra cada vez.</strong> Cuando domines las que llevas, suma una nueva. Así hasta el alfabeto completo, los números y la puntuación.</li>
+    </ul>
+  </section>
+
+  <section class="card t-card">
+    <h2>Tu plan paso a paso</h2>
+    <ol class="steps">
+      <li><strong>Escucha, no cuentes.</strong> Asóciale a cada letra su ritmo. La E es un punto corto (<span class="mono">·</span>); la T, una raya (<span class="mono">−</span>).</li>
+      <li><strong>Practica 15–20 minutos al día.</strong> La constancia gana a las sesiones maratonianas. Todos los días vale más que tres horas el domingo.</li>
+      <li><strong>Escribe lo que oyes</strong> en grupos de cinco caracteres y compara con la solución. Cuando aciertes ~90%, añade una letra.</li>
+      <li><strong>Pasa a palabras y frases reales</strong> en cuanto tengas unas cuantas letras. Prueba tu nombre o palabras cortas en el <a href="/es/traductor/">traductor</a> y escúchalas.</li>
+      <li><strong>No tengas prisa con la velocidad.</strong> Primero precisión, luego velocidad. La velocidad llega sola con las repeticiones.</li>
+    </ol>
+  </section>
+
+  <section class="card t-card">
+    <h2>Herramientas gratis para practicar</h2>
+    <ul>
+      <li><a href="/es/traductor/">Traductor de código Morse</a> — escribe cualquier texto, escúchalo en audio y ajusta la velocidad.</li>
+      <li><a href="/es/alfabeto-morse/">Alfabeto Morse completo</a> — todas las letras y números para consultar.</li>
+      <li><a href="/es/numeros-en-codigo-morse/">Números en Morse</a> — las cifras 0–9 con un truco para memorizarlas.</li>
+      <li><a href="/practice/">Entrenador Koch interactivo</a> — practica de oído letra a letra (en inglés, pero funciona en cualquier idioma).</li>
+      <li><a href="/es/sos-en-codigo-morse/">SOS en código Morse</a> — la señal que todo el mundo debería reconocer.</li>
+    </ul>
+  </section>
+
+  <section class="card t-card">
+    <h2>¿Cuánto se tarda?</h2>
+    <p>
+      Con 15–20 minutos al día y el método Koch, mucha gente reconoce el
+      alfabeto completo en <strong>unas pocas semanas</strong> y empieza a copiar
+      texto real al poco tiempo. No es cuestión de talento, sino de repeticiones
+      diarias y de no caer en la trampa de contar. Empieza ahora con el
+      <a href="/es/traductor/">traductor</a> y vuelve cada día.
+    </p>
+    <p class="muted">Looking for the English version? See <a href="/practice/">how to practice Morse code</a>.</p>
+  </section>
+
+  <style>
+    .steps{ max-width: var(--content); }
+    .steps li{ margin-bottom: var(--s-3); line-height: 1.6; }
+  </style>
+</Layout>
