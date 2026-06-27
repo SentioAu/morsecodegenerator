@@ -25,10 +25,30 @@ codebase works* see [`/CLAUDE.md`](../CLAUDE.md); for *strategy* see
   Audio Course at `gumroad.com/l/cw-audio-course`, $12. The `/cw-audio-course/`
   buy button is wired to it (default points at the product permalink).
 
-**The one thing that matters now: TRAFFIC.** Search Console showed ~3
-clicks / 3 months. The build is done for this stage; the constraint is
-off-page (distribution + authority). Monetization is now partly switched
-on (product live; affiliate/newsletter still need env vars). See §3.
+- **📊 First real search data (Bing WMT, 2026-06-27)** — overturns the old
+  "~0 traffic" story. Actual: **~226 clicks, ~15k impressions, ~1.4% CTR per
+  month**, steady daily. Key findings:
+  - **CTR, not traffic, is the bottleneck.** "morse code generator" =
+    3,117 impr at position ~4 but only **1.28% CTR**. The win is harvesting
+    impressions we already get (title/meta), not new pages.
+  - **Big wasted impression pools:** `/nato/` (1,869 impr, 0.11% CTR, pos 8);
+    "morse code sheet" (231, 0 clicks); `/translate/` + converter terms
+    (pos 7–9, ~0 clicks).
+  - **What converts:** tools/reference/ham — `/worksheets/` (28% CTR),
+    `/gear/best-morse-code-keys/` (18.6%), `/keyer/` (12%), copy-paste cluster.
+  - **Strategic mismatch:** the gift/bracelet/jewelry cluster we monetized
+    gets ~0 search traffic; the **gear** affiliate cluster aligns with real
+    traffic and converts. Tilt affiliate toward gear; treat bracelets as a
+    Pinterest/off-search play, not an SEO one.
+  - **Done 2026-06-27:** CTR title/meta rewrites for `/`, `/nato/`,
+    `/translate/`. Next: converter-intent depth on `/translate/`+`/decoder/`,
+    a "morse code sheet/PDF" target, more gear depth. NOTE: this is **Bing**;
+    Google (GSC) data is still minimal — pull both before big bets.
+
+**The one thing that matters now: convert the traffic we already have, then
+grow it.** Monetization is live (product + affiliate). The constraint is
+on-page CTR (immediate, in our control) and off-page authority/distribution
+(slower, human-gated). See §3 and the data note above.
 
 ---
 
