@@ -42,6 +42,7 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 ## Articles (long-form)
 
 - [Blog index](https://morsecodegenerator.com/blog/) — all articles.
+- [Morse code gift ideas](https://morsecodegenerator.com/blog/morse-code-gift-ideas/) (bracelets, tattoos, jewelry, gear)
 - [How to learn Morse code in 30 days](https://morsecodegenerator.com/blog/how-to-learn-morse-code-in-30-days/)
 - [Why Morse code is still used today](https://morsecodegenerator.com/blog/why-morse-code-is-still-used-today/)
 - [Morse code vs binary](https://morsecodegenerator.com/blog/morse-code-vs-binary/)

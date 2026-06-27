@@ -10,6 +10,54 @@
 //  - Use <a class="k"> or <span class="k"> for inline Morse code.
 
 export const bodies = {
+  "morse-code-gift-ideas": `
+<p>The best gifts say something personal without shouting it. Morse code does exactly that: it turns a name, a date, or three small words into a quiet pattern of dots and dashes that only the two of you can read. From across the room it's just a pretty design — but the wearer knows it says "I love you," or their child's name, or the day everything changed. Here are twelve ideas, from things you can make in an afternoon to things you can buy ready-made, plus a free tool to design any of them.</p>
+
+<h2>Jewelry: the classics</h2>
+<h3>1. A Morse code bracelet</h3>
+<p>The most popular Morse gift by far. Small beads are dots, long beads are dashes, and a spacer bead separates each letter. Type any word into the <a href="/morse-bracelet/">free bracelet generator</a> and it draws the exact bead pattern to follow. For word ideas and a step-by-step build, see our <a href="/blog/morse-code-bracelet-ideas/">bracelet ideas guide</a>.</p>
+<h3>2. A personalized necklace</h3>
+<p>The same dot-and-dash code reads beautifully as a necklace — a row of beads or engraved marks spelling a name or a single word like <a href="/love-in-morse-code/">LOVE</a> or <a href="/hope-in-morse-code/">HOPE</a>. Custom-word Morse necklaces are a whole category on their own; pick the word, and the meaning travels with it.</p>
+<h3>3. A matching pair</h3>
+<p>Two bracelets that read the same word — <a href="/best-friend-in-morse-code/">BEST FRIEND</a>, <a href="/soulmate-in-morse-code/">SOULMATE</a>, or a shared inside joke — make a quietly perfect pair gift for couples, siblings, or best friends.</p>
+
+<h2>Words that make great gifts</h2>
+<p>Short words make the cleanest designs. Each link opens a page with the exact Morse, audio, and a one-click "make it" button:</p>
+<ul>
+  <li><strong>Love:</strong> <a href="/i-love-you-in-morse-code/">I LOVE YOU</a>, <a href="/love-in-morse-code/">LOVE</a>, <a href="/forever-in-morse-code/">FOREVER</a>, <a href="/always-in-morse-code/">ALWAYS</a></li>
+  <li><strong>Family:</strong> <a href="/mom-in-morse-code/">MOM</a>, <a href="/dad-in-morse-code/">DAD</a>, <a href="/family-in-morse-code/">FAMILY</a>, or any <a href="/names-in-morse-code/">name</a> — a child's name is the most-gifted of all.</li>
+  <li><strong>Meaning:</strong> <a href="/hope-in-morse-code/">HOPE</a>, <a href="/faith-in-morse-code/">FAITH</a>, <a href="/strength-in-morse-code/">STRENGTH</a>, <a href="/believe-in-morse-code/">BELIEVE</a></li>
+  <li><strong>Dates:</strong> a wedding or birth date in digits (e.g. 6 14 26) is subtle and deeply personal.</li>
+</ul>
+
+<h2>Beyond jewelry</h2>
+<h3>4. A Morse code tattoo</h3>
+<p>For a gift that's truly permanent (with their enthusiastic consent!), a clean dot-and-dash tattoo of a meaningful word is striking. Generate a scalable design to hand the artist with our <a href="/blog/morse-code-tattoo-ideas/">tattoo ideas guide</a>.</p>
+<h3>5. Wall art &amp; the alphabet chart</h3>
+<p>A framed Morse alphabet chart suits an office, a nursery, or a maker's workshop. Print our free <a href="/chart/">Morse code chart</a>, or gift a hidden-message print of a special word.</p>
+<h3>6. An engraved keepsake</h3>
+<p>Dots and dashes engrave cleanly onto a ring, a watch case, a guitar pick, or a keyring — a hidden message on something they already carry every day.</p>
+<h3>7. A printable card or framed message</h3>
+<p>Run your message through the <a href="/translate/">translator</a>, copy the dots and dashes, and drop them into a card or a framed print. Free, instant, and unmistakably personal.</p>
+
+<h2>For the ham radio or CW fan</h2>
+<p>If they're learning Morse for real, the gear world has great gifts:</p>
+<ul>
+  <li><strong>A first straight key or paddle</strong> — see our <a href="/gear/best-morse-code-keys/">best Morse keys</a> and <a href="/gear/best-cw-paddles-for-beginners/">best beginner paddles</a> guides.</li>
+  <li><strong>A QRP transceiver</strong> for portable on-air CW — our <a href="/gear/qrp-cw-transceivers/">QRP rigs guide</a> compares the popular options.</li>
+  <li><strong>Structured practice</strong> — the downloadable <a href="/cw-audio-course/">Koch-method audio course</a> for learning by ear on the go.</li>
+</ul>
+
+<h2>Make it or buy it?</h2>
+<p><strong>Make it:</strong> the most meaningful option, and free. Use the <a href="/morse-bracelet/">bracelet &amp; tattoo generator</a> to design the exact pattern, then bead it yourself or hand the file to a jeweler. A basic bead kit is all you need.</p>
+<p><strong>Buy it:</strong> short on time? Ready-made Morse bracelets and necklaces are widely available — you can <a href="https://www.amazon.com/s?k=morse+code+bracelet&amp;tag=mcg0d2-20" target="_blank" rel="sponsored nofollow noopener" data-aff="amazon-gift-ideas-post">browse them on Amazon</a> and have one shipped. <em>(That's an affiliate link — we may earn a small commission at no extra cost to you; see our <a href="/disclosure/">disclosure</a>.)</em></p>
+
+<h2>Match the gift to the occasion</h2>
+<p>Anniversaries (the date, or "I do"), Valentine's Day and Mother's/Father's Day (a name or "I love you"), new babies (the name), graduations and recovery milestones ("STRENGTH", "BELIEVE"), and weddings (matching bands) all suit a hidden Morse message. Because the meaning is concealed in the pattern, it feels intimate without being loud.</p>
+
+<h2>Start designing</h2>
+<p>Pick a word and see it come to life: open the <a href="/morse-bracelet/">free bracelet &amp; tattoo generator</a>, or hear any message as Morse audio in the <a href="/translate/">translator</a>. Whatever you make, it'll mean something only the two of you fully read.</p>
+`,
   "morse-code-for-kids": `
 <p>Morse code is one of the best small projects you can hand a child. It's a <strong>complete, closed system</strong> — 26 letters and 10 digits, no more — so a kid can genuinely <em>master</em> it, which is rare and deeply motivating. And it doubles as a secret code they can tap to a friend across a quiet classroom. Here are eight activities that actually work, at home, in class, or at a Scout meeting.</p>
 

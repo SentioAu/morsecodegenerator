@@ -20,6 +20,16 @@
 
 export const posts = [
   {
+    slug: "morse-code-gift-ideas",
+    title: "Morse code gift ideas: 12 meaningful presents (and how to make them)",
+    excerpt:
+      "Morse code turns any word into a hidden message — which makes it a perfect personal gift. Twelve ideas from bracelets to tattoos to ham-radio gear, plus a free tool to design your own.",
+    published: "2026-06-26",
+    kind: "explainer",
+    minutes: 7,
+    tags: ["gifts", "bracelet", "jewelry", "tattoo", "ideas"],
+  },
+  {
     slug: "morse-code-for-kids",
     title: "Morse code for kids: 8 games & activities that actually work",
     excerpt:
