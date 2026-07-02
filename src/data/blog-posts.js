@@ -20,6 +20,23 @@
 
 export const posts = [
   {
+    slug: "how-to-read-morse-code",
+    title: "How to Read Morse Code: A Beginner's Guide to Dots & Dashes",
+    excerpt:
+      "Reading Morse means turning dots and dashes back into letters. Learn the two signals, the timing that trips everyone up, and the rhythm trick that lets you read by ear — with free tools to practice.",
+    published: "2026-07-01",
+    kind: "how-to",
+    minutes: 6,
+    tags: ["learning", "beginners", "reading", "alphabet"],
+    steps: [
+      { name: "Learn the two signals", text: "A dot is one short beep; a dash is three times as long. Every letter is a small pattern of these two." },
+      { name: "Learn the gaps (timing)", text: "The silences carry meaning: 1 unit between signals, 3 between letters, 7 between words. Getting the gaps right is what makes Morse readable." },
+      { name: "Start with the easy letters", text: "Begin with E (·) and T (−), then I, M, S, O — the shortest, most common letters — and build up." },
+      { name: "Read by rhythm, not by counting", text: "Learn each letter as a sound/rhythm rather than counting dots. Counting hits a hard ceiling; rhythm scales." },
+      { name: "Practice with a tool", text: "Use flashcards, the Koch trainer, and the translator's audio to drill reading until letters come automatically." },
+    ],
+  },
+  {
     slug: "morse-code-gift-ideas",
     title: "Morse code gift ideas: 12 meaningful presents (and how to make them)",
     excerpt:

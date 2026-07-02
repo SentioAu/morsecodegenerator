@@ -10,6 +10,60 @@
 //  - Use <a class="k"> or <span class="k"> for inline Morse code.
 
 export const bodies = {
+  "how-to-read-morse-code": `
+<p>Reading Morse code means doing one thing: turning a string of dots and dashes back into letters. It looks intimidating, but the whole system is built from just <strong>two signals</strong> and the <strong>gaps between them</strong>. Once those click, everything else is practice. This guide walks you through both ways to read it — slowly from a chart, and fluently by ear — and points you at free tools to drill it.</p>
+
+<h2>The two building blocks: dot and dash</h2>
+<p>Every character in Morse is a small pattern of two signals:</p>
+<ul>
+  <li><strong>Dot</strong> (<span class="k">.</span>) — a short beep, one "unit" long. Often said as "dit".</li>
+  <li><strong>Dash</strong> (<span class="k">-</span>) — a long beep, <strong>three units</strong> long. Often said as "dah".</li>
+</ul>
+<p>That's it. The letter <strong>A</strong> is <span class="k">.-</span> (dit-dah), <strong>N</strong> is <span class="k">-.</span> (dah-dit). Reading Morse is just recognising these little patterns. You can see the whole set on the <a href="/chart/">Morse code chart</a> or the <a href="/morse-code/">alphabet reference</a>.</p>
+
+<h2>The part beginners miss: the gaps</h2>
+<p>The silence carries as much meaning as the beeps. There are three gap lengths, and getting them right is what separates readable Morse from a blur:</p>
+<ul>
+  <li><strong>1 unit</strong> — between the dots and dashes <em>inside</em> one letter.</li>
+  <li><strong>3 units</strong> — between two letters.</li>
+  <li><strong>7 units</strong> — between two words (often written with a <span class="k">/</span>).</li>
+</ul>
+<p>So <strong>SOS</strong> is <span class="k">... --- ...</span>: three quick dits, a gap, three dahs, a gap, three dits. If you ignore the gaps, "SOS" and the letters "S O S" run together into nonsense. When you read, listen for those spaces as much as the tones.</p>
+
+<h2>Reading from a chart (the slow way)</h2>
+<p>The simplest way to start is by sight. Take the dots and dashes one letter at a time and look each pattern up:</p>
+<ol>
+  <li>Split the sequence at the gaps into individual letters.</li>
+  <li>Match each pattern on the <a href="/chart/">chart</a> or <a href="/cheat-sheet/">cheat sheet</a>.</li>
+  <li>Write the letter and move on.</li>
+</ol>
+<p>Try decoding <span class="k">.... . .-.. .-.. ---</span> — five letters: H, E, L, L, O. To check your answer instantly, paste any dots and dashes into the <a href="/translate/">Morse code translator</a> and it decodes them for you.</p>
+
+<h2>The right way: read by rhythm, not by counting</h2>
+<p>Chart-reading works, but it has a hard ceiling. The moment Morse speeds up, you can't count "dot-dot-dash" fast enough — every experienced operator will tell you the counters hit a wall around 7–10 words per minute and then have to <em>unlearn</em> the habit.</p>
+<p>The fix is to learn each letter as a <strong>sound and rhythm</strong>, not a set of symbols. <span class="k">-.-</span> (K) isn't "dash-dot-dash", it's a single rhythm: <em>dah-di-dah</em>. Say the letters out loud with their rhythm and they start to feel like syllables. This is the core of the <a href="/practice/">Koch method</a>, and it's why we recommend learning by ear from day one.</p>
+
+<h2>Start with the easiest letters</h2>
+<p>Don't try to memorise all 26 at once. Begin with the shortest, most common letters and add from there:</p>
+<ul>
+  <li><strong>E</strong> <span class="k">.</span> and <strong>T</strong> <span class="k">-</span> — the two single-signal letters.</li>
+  <li><strong>I</strong> <span class="k">..</span>, <strong>M</strong> <span class="k">--</span>, <strong>S</strong> <span class="k">...</span>, <strong>O</strong> <span class="k">---</span> — clean, repeating patterns.</li>
+  <li>Then A, N, D, U — and you can already read a surprising number of words.</li>
+</ul>
+<p>Look up any single letter (with audio) on the <a href="/morse-code/">alphabet pages</a>, and try short real words on the <a href="/morse-code/words/">words list</a>.</p>
+
+<h2>Practice reading until it's automatic</h2>
+<p>Reading is a skill of recognition, so drill it in short, daily sessions:</p>
+<ul>
+  <li><strong><a href="/flashcards/">Flashcards</a></strong> — see or hear a letter, recall it, flip. Fast reps for the alphabet.</li>
+  <li><strong><a href="/practice/">Koch trainer</a></strong> — trains you to read by ear at real speed, adding one letter at a time.</li>
+  <li><strong><a href="/translate/">Translator</a></strong> — type a word, play the audio, and read along until the sound maps to letters without effort.</li>
+  <li><strong><a href="/daily/">Daily puzzle</a></strong> — one short decode a day keeps the streak (and the skill) alive.</li>
+</ul>
+
+<h2>Next: from reading to sending</h2>
+<p>Once you can read, the natural next step is to <em>send</em>. Reading and sending reinforce each other — see <a href="/blog/how-to-send-morse-code/">how to send Morse code</a>, and if you want a structured plan, <a href="/blog/how-to-learn-morse-code-in-30-days/">how to learn Morse code in 30 days</a>. Keep the <a href="/cheat-sheet/">cheat sheet</a> handy while it all sinks in.</p>
+`,
   "morse-code-gift-ideas": `
 <p>The best gifts say something personal without shouting it. Morse code does exactly that: it turns a name, a date, or three small words into a quiet pattern of dots and dashes that only the two of you can read. From across the room it's just a pretty design — but the wearer knows it says "I love you," or their child's name, or the day everything changed. Here are twelve ideas, from things you can make in an afternoon to things you can buy ready-made, plus a free tool to design any of them.</p>
 
