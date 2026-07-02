@@ -10,6 +10,86 @@
 //  - Use <a class="k"> or <span class="k"> for inline Morse code.
 
 export const bodies = {
+  "how-to-write-your-name-in-morse-code": `
+<p>Of everything you could put into Morse code, your <strong>name</strong> is the most personal — which is exactly why it's the most popular first project and the most-gifted design. The good news: spelling a name in dots and dashes takes about a minute once you know the two small rules. Here's how, with free tools to hear it and turn it into something you can keep.</p>
+
+<h2>Step 1 — Convert it letter by letter</h2>
+<p>A name is just its letters in Morse, one after another. Look each one up on the <a href="/morse-code/">alphabet reference</a> or the <a href="/chart/">chart</a>, or paste the whole name into the <a href="/translate/">translator</a> and it does it instantly. For example, <strong>SAM</strong> is:</p>
+<ul>
+  <li><strong>S</strong> = <span class="k">...</span></li>
+  <li><strong>A</strong> = <span class="k">.-</span></li>
+  <li><strong>M</strong> = <span class="k">--</span></li>
+</ul>
+<p>…which written together is <span class="k">... .- --</span>.</p>
+
+<h2>Step 2 — Get the spacing right</h2>
+<p>Spacing is what makes it readable as real Morse rather than a random run of dots:</p>
+<ul>
+  <li>Leave <strong>one space between letters</strong> (a 3-unit gap).</li>
+  <li>For a first <em>and</em> last name, separate them with a <strong>slash</strong> <span class="k">/</span> (a 7-unit word gap).</li>
+</ul>
+<p>So "SAM MORSE" becomes <span class="k">... .- -- / -- --- .-. ... .</span>. If you're new to reading it back, our guide on <a href="/blog/how-to-read-morse-code/">how to read Morse code</a> explains the gaps in depth.</p>
+
+<h2>Step 3 — Hear it (and learn to send it)</h2>
+<p>Type your name into the <a href="/translate/">translator</a> and hit play — you'll hear its rhythm, which is the fastest way to actually memorise it. Want to send it yourself? Tap it out on the <a href="/keyer/">keyer</a> and it'll decode your timing.</p>
+
+<h2>Step 4 — Turn your name into a keepsake</h2>
+<p>Because a name in Morse is a clean pattern of dots and dashes, it makes a great design. Drop it into the free <a href="/morse-bracelet/">bracelet &amp; tattoo generator</a> to render it as a bead pattern for a bracelet or a crisp dot-and-dash graphic for a tattoo, then download a PNG or SVG. A child's name is the most popular Morse bracelet of all — see more in our <a href="/blog/morse-code-bracelet-ideas/">bracelet ideas</a> and <a href="/blog/morse-code-gift-ideas/">gift ideas</a> guides.</p>
+
+<h2>Popular names, already done</h2>
+<p>We've pre-built pages for hundreds of first names with the exact Morse, audio, and a one-click design button — browse the <a href="/names-in-morse-code/">A–Z names list</a> to find yours (or a friend's).</p>
+`,
+  "who-invented-morse-code": `
+<p>Morse code is named after <strong>Samuel F. B. Morse</strong> — but the real answer to "who invented it" is more interesting than one name on a plaque. The system we use today was shaped by at least two people, changed substantially after its debut, and looks quite different from Morse's original. Here's who actually did what.</p>
+
+<h2>Samuel Morse: the telegraph and the name</h2>
+<p>Samuel Morse (1791–1872) was a successful <em>painter</em> before he turned to invention. In the 1830s he became obsessed with the idea of an electric telegraph, and he built the system — the wires, the electromagnetic receiver, and the concept of encoding letters as electrical pulses — that made long-distance instant messaging possible. His name stuck to the code because it was his telegraph that carried it.</p>
+
+<h2>Alfred Vail: the co-author history under-credits</h2>
+<p>Morse had the vision, but <strong>Alfred Vail</strong> — his younger partner and a skilled machinist — did much of the practical work that made it usable. Vail is widely credited with refining the code itself: assigning the <strong>shortest sequences to the most common letters</strong> (which is why E is a single dot and T a single dash), reportedly by counting the letters in a printer's type case. That frequency-based design is a big reason Morse is efficient enough to have lasted 180 years. Vail also built much of the hardware, including the key.</p>
+
+<h2>The 1844 message that launched it</h2>
+<p>On May 24, 1844, Morse sent the famous first official message — <em>"What hath God wrought"</em> — from Washington, D.C. to Baltimore. The telegraph era had begun, and Morse code was its language.</p>
+
+<h2>The twist: today's code isn't Morse's original</h2>
+<p>The original American Morse code had some awkward features (extra-long dashes and internal spaces inside letters) that worked on paper tape but were hard to send by sound. In the 1850s, Friedrich Clemens Gerke reworked it in Europe into a cleaner version, which — with small tweaks — became <strong>International Morse code</strong>, the standard used worldwide today. So the "Morse code" almost everyone learns now is really a European redesign of Morse and Vail's original. We break down the differences in <a href="/blog/international-vs-american-morse/">International vs American Morse</a>.</p>
+
+<h2>So, who invented Morse code?</h2>
+<p>The honest answer: <strong>Samuel Morse and Alfred Vail together</strong> created the original code and telegraph in the 1840s, and <strong>Friedrich Gerke</strong> reshaped it into the international version we use today. Morse got the name; Vail and Gerke deserve much of the credit for how well it actually works.</p>
+<p>Want more origin stories? Read <a href="/blog/the-story-behind-sos/">the story behind SOS</a> or the full <a href="/history/">history of Morse code</a> — then try the code yourself in the <a href="/translate/">translator</a>.</p>
+`,
+  "how-to-call-cq-morse-code": `
+<p>You've learned the code — now you want to actually <em>use</em> it on the air. Making your first CW (Morse) contact feels intimidating, but a contact follows a simple, predictable script. Learn the script, practice sending it once or twice, and you'll be having real QSOs (contacts) in an afternoon. Here's exactly how.</p>
+
+<h2>Before you key up</h2>
+<p>You'll need three things: an amateur radio <strong>license</strong> (Morse is used on the ham bands), an <strong>HF transceiver</strong>, and a <strong>key or paddle</strong>. If you're choosing gear, see our guides to the <a href="/gear/best-morse-code-keys/">best straight keys</a> and <a href="/gear/best-cw-paddles-for-beginners/">best beginner paddles</a>. Most important: <strong>practice sending first</strong> so your "fist" (your timing) is readable — tap out a few calls on our <a href="/keyer/">keyer</a>, which decodes your sending and scores your timing, before you go live.</p>
+
+<h2>The essentials you need to know</h2>
+<ul>
+  <li><strong>CQ</strong> — "calling any station." It's how you invite a contact.</li>
+  <li><strong>DE</strong> — "from" (separates the called station from yours).</li>
+  <li><strong>K</strong> — "go ahead, over to you."</li>
+  <li><strong>Your callsign</strong> — sent clearly; know its rhythm cold.</li>
+  <li><strong>RST</strong> — a signal report (Readability, Strength, Tone), e.g. "599".</li>
+  <li>A few <a href="/q-codes/">Q-codes</a> (QTH = location, QRZ = who's calling) and <a href="/abbreviations/">CW abbreviations</a> (73 = best regards).</li>
+</ul>
+
+<h2>Step 1 — Call CQ</h2>
+<p>Find a clear frequency, listen first, then send:</p>
+<p><span class="k">CQ CQ CQ DE &lt;your call&gt; &lt;your call&gt; K</span></p>
+<p>Send at a speed you can also <em>copy</em> — there's no point calling at 25 WPM if you can't read a reply that fast. Slower is completely fine.</p>
+
+<h2>Step 2 — Run the exchange</h2>
+<p>When someone answers with your callsign and theirs, a basic QSO exchanges three things: a <strong>signal report</strong>, your <strong>name</strong>, and your <strong>QTH</strong> (location). A minimal round looks like:</p>
+<p><span class="k">&lt;their call&gt; DE &lt;your call&gt; UR RST 599 599 NAME ... QTH ... K</span></p>
+<p>Keep it short and standard the first few times; you can get chatty once the pattern is automatic. Practice copying random calls and reports with our <a href="/random-cw/">random CW generator</a>.</p>
+
+<h2>Step 3 — Sign off and log it</h2>
+<p>Close with <strong>73</strong> (best regards) and <strong>SK</strong> (end of contact), then write the QSO in your log (callsign, date, time, band, report). That's it — you've made your first CW contact.</p>
+
+<h2>Keep improving</h2>
+<p>The two skills that matter are copying by ear and sending cleanly. Drill copying with the <a href="/practice/">Koch trainer</a> and sending with the <a href="/keyer/">keyer</a>, and study on-air conventions on our <a href="/operating/">CW operating</a> page. Every op was nervous on their first call — the script is your safety net. 73!</p>
+`,
   "how-to-read-morse-code": `
 <p>Reading Morse code means doing one thing: turning a string of dots and dashes back into letters. It looks intimidating, but the whole system is built from just <strong>two signals</strong> and the <strong>gaps between them</strong>. Once those click, everything else is practice. This guide walks you through both ways to read it — slowly from a chart, and fluently by ear — and points you at free tools to drill it.</p>
 

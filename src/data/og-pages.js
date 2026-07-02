@@ -113,6 +113,9 @@ export const OG_PAGES = new Set([
 
   // Blog index + every post
   "/blog/",
+  "/blog/how-to-write-your-name-in-morse-code/",
+  "/blog/who-invented-morse-code/",
+  "/blog/how-to-call-cq-morse-code/",
   "/blog/how-to-read-morse-code/",
   "/blog/morse-code-gift-ideas/",
   "/blog/morse-code-for-kids/",
