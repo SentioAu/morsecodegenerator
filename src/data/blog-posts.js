@@ -20,6 +20,50 @@
 
 export const posts = [
   {
+    slug: "how-to-write-your-name-in-morse-code",
+    title: "How to Write Your Name in Morse Code (Free, Step by Step)",
+    excerpt:
+      "Your name is the most personal thing to put in Morse — and the perfect first project or gift. Here's how to spell any name in dots and dashes, get the spacing right, and turn it into a bracelet or tattoo.",
+    published: "2026-07-02",
+    kind: "how-to",
+    minutes: 5,
+    tags: ["names", "gifts", "beginners", "how-to"],
+    steps: [
+      { name: "Look up each letter", text: "Convert your name one letter at a time using the alphabet chart or the translator." },
+      { name: "Mind the gaps", text: "Leave a clear space between letters (3 units) so the name stays readable as Morse, not one long blur." },
+      { name: "Write it out", text: "String the letters together with single spaces between letters; use a slash for a space between first and last name." },
+      { name: "Hear it", text: "Play your name as audio in the translator to check the rhythm and learn to send it." },
+      { name: "Turn it into a keepsake", text: "Drop the name into the free bracelet/tattoo generator to make a design you can wear or gift." },
+    ],
+  },
+  {
+    slug: "who-invented-morse-code",
+    title: "Who Invented Morse Code? Samuel Morse & Alfred Vail",
+    excerpt:
+      "Morse code is named after Samuel Morse — but he didn't do it alone. The real story includes Alfred Vail, a much-changed code, and the 1844 message that started it all. Here's who did what.",
+    published: "2026-07-02",
+    kind: "explainer",
+    minutes: 6,
+    tags: ["history", "origins", "explainer"],
+  },
+  {
+    slug: "how-to-call-cq-morse-code",
+    title: "How to Call CQ: Your First Morse Code (CW) Contact",
+    excerpt:
+      "Ready to get on the air in Morse? Here's exactly how a CW contact works — calling CQ, the callsign exchange, the Q-codes and RST report you need, and how to practice sending first so you don't freeze up.",
+    published: "2026-07-02",
+    kind: "how-to",
+    minutes: 7,
+    tags: ["ham radio", "cw", "operating", "how-to"],
+    steps: [
+      { name: "Get set up", text: "You need a license, an HF rig, and a key or paddle. Practice sending on a keyer first so your fist is readable." },
+      { name: "Learn the essentials", text: "Know CQ, DE, K, the phonetic of your callsign, the RST report, and a handful of Q-codes and abbreviations." },
+      { name: "Call CQ", text: "Send 'CQ CQ CQ DE <your callsign> <your callsign> K' at a speed you can also copy." },
+      { name: "Run the exchange", text: "Swap RST report, name, and QTH (location). Keep it short and standard your first few times." },
+      { name: "Sign off and log it", text: "End with 73 and 'SK', then log the contact. Congratulations — you're a CW operator." },
+    ],
+  },
+  {
     slug: "how-to-read-morse-code",
     title: "How to Read Morse Code: A Beginner's Guide to Dots & Dashes",
     excerpt:

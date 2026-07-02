@@ -42,6 +42,9 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 ## Articles (long-form)
 
 - [Blog index](https://morsecodegenerator.com/blog/) — all articles.
+- [How to write your name in Morse code](https://morsecodegenerator.com/blog/how-to-write-your-name-in-morse-code/) (step-by-step + bracelet funnel)
+- [Who invented Morse code?](https://morsecodegenerator.com/blog/who-invented-morse-code/) (Samuel Morse, Alfred Vail, Gerke)
+- [How to call CQ (first CW contact)](https://morsecodegenerator.com/blog/how-to-call-cq-morse-code/) (ham radio CW QSO guide)
 - [How to read Morse code](https://morsecodegenerator.com/blog/how-to-read-morse-code/) (beginner guide: dots, dashes, timing, rhythm)
 - [Morse code gift ideas](https://morsecodegenerator.com/blog/morse-code-gift-ideas/) (bracelets, tattoos, jewelry, gear)
 - [How to learn Morse code in 30 days](https://morsecodegenerator.com/blog/how-to-learn-morse-code-in-30-days/)
