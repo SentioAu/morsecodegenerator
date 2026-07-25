@@ -1,10 +1,86 @@
 # Project Status & Handoff
 
-**Last updated:** 2026-06-24. Read this to pick up the work. For *how the
+**Last updated:** 2026-07-02. Read this to pick up the work. For *how the
 codebase works* see [`/CLAUDE.md`](../CLAUDE.md); for *strategy* see
 [`ROADMAP.md`](./ROADMAP.md); for the *full unfinished-work list* see
 [`BACKLOG.md`](./BACKLOG.md); for *getting traffic* see
 [`DISTRIBUTION.md`](./DISTRIBUTION.md) + [`LAUNCH-KIT.md`](./LAUNCH-KIT.md).
+
+---
+
+## 0. ⛔ ACTIVE BLOCKER — read first (2026-07-02)
+
+**The owner's GitHub account (`SentioAu`) was SUSPENDED** by GitHub's
+automated abuse detection. This is the single thing gating all progress.
+
+- **Root cause (NOT this repo):** a *different* project, `playersb.com`, ran
+  a GitHub Actions cron that **committed regenerated data every few minutes**
+  during live sports matches, plus PR bursts and large commits during a
+  restructure. That high-frequency automated-commit pattern tripped GitHub's
+  spam/abuse detection. `morsecodegenerator` is clean (CI only runs on PRs).
+- **Effect:** GitHub Actions disabled account-wide **and** the Cloudflare
+  Pages ↔ GitHub deploy integration went dark at the same time. So:
+  **production has NOT deployed since ~2026-06-27.** The live site serves a
+  stale build. Confirmed: `/blog/how-to-read-morse-code/` returns 404 in
+  production even though it's merged to `main`.
+- **Status:** owner filed GitHub Support reinstatement ticket **#4528743**
+  ("Reinstate SentioAu — account flagged as spammy in error"). Support (Noah)
+  asked "how do you plan to use GitHub?"; owner replied with legit-use +
+  remediation (cut the cron to daily, stop committing generated data).
+
+### ✅ Resume checklist (do these when the account is reinstated)
+1. **Confirm reinstatement** (`mcp__github__get_me` works, repo visible).
+2. **Force a deploy:** Cloudflare → Pages → morsecodegenerator →
+   Deployments → **Retry deployment** (or push a trivial commit). This brings
+   ALL merged-but-undeployed work live in one build.
+3. **Verify live:** `/blog/how-to-read-morse-code/` loads (not 404); homepage
+   `<title>` = "Morse Code Generator – Free Translator, Audio & Copy/Paste".
+4. **Re-enable GitHub Actions** (Settings → Actions) — CI stopped with the
+   suspension; confirm the next PR triggers "Build, typecheck & verify".
+5. **Fix `playersb.com`** (separate repo, not in this session's scope) so the
+   suspension can't recur: cron → daily, stop committing build artifacts.
+6. Then resume the content backlog (§0.2 below) and the CTR measurement (§0.3).
+
+### 0.1 Merged to `main` but NOT yet deployed (will go live on first deploy)
+- CTR title/meta rewrites: `/`, `/nato/`, `/translate/` (PR #92)
+- Spanish pages: `/es/te-quiero-...`, `/es/aprender-codigo-morse/` (PR #90)
+- Blog: `morse-code-gift-ideas` (#91), `how-to-read-morse-code` (#93),
+  and **name / who-invented / call-CQ** (#94)
+- Affiliate: site-wide tagged Amazon search links + default tag `mcg0d2-20`
+  (PR #89) — `/gear/*` + every gift/name page + gift blog post.
+
+### 0.2 Content backlog (topics, ranked — Tier 1 shipped in #94)
+- **Tier 1 (DONE, in #94):** write-your-name, who-invented, call-CQ.
+- **Tier 2 (NEXT):** how-to-memorize-morse (mnemonics) → flashcards/practice;
+  morse-code-speed/WPM explainer → timing-calculator; straight-key-vs-paddle-
+  vs-bug → /gear/; how-to-signal-SOS-with-a-flashlight → translator/emergency.
+- **Tier 3 (link magnets):** songs-with-hidden-morse-code; copy-&-paste-morse;
+  generate-morse-with-code (JS/Python) + /api/.
+- Do NOT add more bracelet/gift posts — search data shows ~0 organic demand
+  for that cluster (it's a Pinterest play, not SEO).
+
+### 0.3 What the search data told us (Bing WMT; GSC minimal) — act on this
+First real data (analyzed 2026-06-27, 7-day recheck 2026-07-01). NOTE: owner
+asked to **pause data/stats analysis until end of July** — then re-measure.
+- Site gets **~226 clicks / ~15k impressions / ~1.4% CTR per month**, steady.
+  It's an *under-converted*, not a pre-traffic, site.
+- **CTR is the #1 lever.** "morse code generator" = pos ~4 but 1.28% CTR →
+  the title rewrites (#92) target exactly this. Re-measure ~mid/late July.
+- **Gear ≫ bracelets.** Real audience = tools/reference/ham. `/gear/best-
+  morse-code-keys/` converts 18.6%; "morse code paddles for beginners" ranks
+  pos 2.4. The gift/bracelet affiliate cluster gets ~0 search traffic. When
+  resuming code work, **deepen `/gear/`** (the one data-justified investment).
+- **Spanish is working** — `/es/` pages rank pos 3–7 within days and are
+  starting to earn clicks ("metodo koch gratis", `/es/sos` first click).
+
+### 0.4 The honest meta-lesson for the next agent
+The product is an **A- build and is over-built for its traffic** (see the
+full audit in the session log / BACKLOG). The bottleneck is **distribution +
+authority (human/account-gated) and CTR (on-page)** — NOT features or more
+pages. Resist the reflex to "build more" when handed the wheel; the highest-
+leverage moves are off-code: get the account reinstated, deploy, do Track-A
+distribution (`LAUNCH-KIT.md`), and let the CTR experiment run before scaling
+it. Ship content only where data shows demand (tools/ham/gear/Spanish).
 
 ---
 
