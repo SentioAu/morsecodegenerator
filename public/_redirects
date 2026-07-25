@@ -11,6 +11,233 @@
 /sitemap-0.xml           /sitemap.xml                301
 
 # =======================================================
+# Legacy URLs that still hold search impressions but 404
+# -------------------------------------------------------
+# Found 2026-07-25 by cross-checking Bing page-impression data against
+# the built site: 44 indexed URLs were returning 404, stranding 11,550
+# impressions and ~126 clicks. /alphabet and /learn alone accounted for
+# 10,797 of those impressions — /alphabet was the single most-shown URL
+# on the site after the homepage.
+#
+# /morse-code/ is titled "Learn Morse Code – Alphabet, Numbers,
+# Punctuation", so it is the correct destination for both.
+# =======================================================
+/alphabet                /morse-code/                301
+/alphabet/               /morse-code/                301
+/learn                   /morse-code/                301
+/learn/                  /morse-code/                301
+/numbers                 /morse-code/numbers/        301
+/numbers/                /morse-code/numbers/        301
+/popular-words           /morse-code/words/          301
+/popular-words/          /morse-code/words/          301
+/morse-code-punctuation  /morse-code/punctuation/    301
+/morse-code-punctuation/ /morse-code/punctuation/    301
+/morse-code-sound-generator   /translate/            301
+/morse-code-sound-generator/  /translate/            301
+/blog/morse-code-sound-generator   /translate/       301
+/blog/morse-code-sound-generator/  /translate/       301
+/blog/best-morse-code-apps-tools-2025   /blog/       301
+/blog/best-morse-code-apps-tools-2025/  /blog/       301
+
+# "dot"/"dash" pages were deliberately never built (duplicate aliases of
+# period/hyphen — see the comment in [slug]-in-morse-code.astro), but they
+# were indexed once and still take impressions. Point them at the canonical
+# symbol pages rather than leaving them dead.
+/dot-in-morse-code       /period-in-morse-code/      301
+/dot-in-morse-code/      /period-in-morse-code/      301
+/dash-in-morse-code      /hyphen-in-morse-code/      301
+/dash-in-morse-code/     /hyphen-in-morse-code/      301
+/space-in-morse-code     /morse-code/                301
+/space-in-morse-code/    /morse-code/                301
+
+# Multi-digit numbers: seo-slugs.json lists 0-100, but the [slug] route
+# excludes every number 0-100 as 'canonical elsewhere' while /morse-code/{ch}/
+# only covers single digits 0-9. So 10-100 were listed, never built, and 404.
+# Send them to the numbers reference rather than generating 91 thin pages.
+
+/10-in-morse-code         /morse-code/numbers/        301
+/10-in-morse-code/        /morse-code/numbers/        301
+/11-in-morse-code         /morse-code/numbers/        301
+/11-in-morse-code/        /morse-code/numbers/        301
+/12-in-morse-code         /morse-code/numbers/        301
+/12-in-morse-code/        /morse-code/numbers/        301
+/13-in-morse-code         /morse-code/numbers/        301
+/13-in-morse-code/        /morse-code/numbers/        301
+/14-in-morse-code         /morse-code/numbers/        301
+/14-in-morse-code/        /morse-code/numbers/        301
+/15-in-morse-code         /morse-code/numbers/        301
+/15-in-morse-code/        /morse-code/numbers/        301
+/16-in-morse-code         /morse-code/numbers/        301
+/16-in-morse-code/        /morse-code/numbers/        301
+/17-in-morse-code         /morse-code/numbers/        301
+/17-in-morse-code/        /morse-code/numbers/        301
+/18-in-morse-code         /morse-code/numbers/        301
+/18-in-morse-code/        /morse-code/numbers/        301
+/19-in-morse-code         /morse-code/numbers/        301
+/19-in-morse-code/        /morse-code/numbers/        301
+/20-in-morse-code         /morse-code/numbers/        301
+/20-in-morse-code/        /morse-code/numbers/        301
+/21-in-morse-code         /morse-code/numbers/        301
+/21-in-morse-code/        /morse-code/numbers/        301
+/22-in-morse-code         /morse-code/numbers/        301
+/22-in-morse-code/        /morse-code/numbers/        301
+/23-in-morse-code         /morse-code/numbers/        301
+/23-in-morse-code/        /morse-code/numbers/        301
+/24-in-morse-code         /morse-code/numbers/        301
+/24-in-morse-code/        /morse-code/numbers/        301
+/25-in-morse-code         /morse-code/numbers/        301
+/25-in-morse-code/        /morse-code/numbers/        301
+/26-in-morse-code         /morse-code/numbers/        301
+/26-in-morse-code/        /morse-code/numbers/        301
+/27-in-morse-code         /morse-code/numbers/        301
+/27-in-morse-code/        /morse-code/numbers/        301
+/28-in-morse-code         /morse-code/numbers/        301
+/28-in-morse-code/        /morse-code/numbers/        301
+/29-in-morse-code         /morse-code/numbers/        301
+/29-in-morse-code/        /morse-code/numbers/        301
+/30-in-morse-code         /morse-code/numbers/        301
+/30-in-morse-code/        /morse-code/numbers/        301
+/31-in-morse-code         /morse-code/numbers/        301
+/31-in-morse-code/        /morse-code/numbers/        301
+/32-in-morse-code         /morse-code/numbers/        301
+/32-in-morse-code/        /morse-code/numbers/        301
+/33-in-morse-code         /morse-code/numbers/        301
+/33-in-morse-code/        /morse-code/numbers/        301
+/34-in-morse-code         /morse-code/numbers/        301
+/34-in-morse-code/        /morse-code/numbers/        301
+/35-in-morse-code         /morse-code/numbers/        301
+/35-in-morse-code/        /morse-code/numbers/        301
+/36-in-morse-code         /morse-code/numbers/        301
+/36-in-morse-code/        /morse-code/numbers/        301
+/37-in-morse-code         /morse-code/numbers/        301
+/37-in-morse-code/        /morse-code/numbers/        301
+/38-in-morse-code         /morse-code/numbers/        301
+/38-in-morse-code/        /morse-code/numbers/        301
+/39-in-morse-code         /morse-code/numbers/        301
+/39-in-morse-code/        /morse-code/numbers/        301
+/40-in-morse-code         /morse-code/numbers/        301
+/40-in-morse-code/        /morse-code/numbers/        301
+/41-in-morse-code         /morse-code/numbers/        301
+/41-in-morse-code/        /morse-code/numbers/        301
+/42-in-morse-code         /morse-code/numbers/        301
+/42-in-morse-code/        /morse-code/numbers/        301
+/43-in-morse-code         /morse-code/numbers/        301
+/43-in-morse-code/        /morse-code/numbers/        301
+/44-in-morse-code         /morse-code/numbers/        301
+/44-in-morse-code/        /morse-code/numbers/        301
+/45-in-morse-code         /morse-code/numbers/        301
+/45-in-morse-code/        /morse-code/numbers/        301
+/46-in-morse-code         /morse-code/numbers/        301
+/46-in-morse-code/        /morse-code/numbers/        301
+/47-in-morse-code         /morse-code/numbers/        301
+/47-in-morse-code/        /morse-code/numbers/        301
+/48-in-morse-code         /morse-code/numbers/        301
+/48-in-morse-code/        /morse-code/numbers/        301
+/49-in-morse-code         /morse-code/numbers/        301
+/49-in-morse-code/        /morse-code/numbers/        301
+/50-in-morse-code         /morse-code/numbers/        301
+/50-in-morse-code/        /morse-code/numbers/        301
+/51-in-morse-code         /morse-code/numbers/        301
+/51-in-morse-code/        /morse-code/numbers/        301
+/52-in-morse-code         /morse-code/numbers/        301
+/52-in-morse-code/        /morse-code/numbers/        301
+/53-in-morse-code         /morse-code/numbers/        301
+/53-in-morse-code/        /morse-code/numbers/        301
+/54-in-morse-code         /morse-code/numbers/        301
+/54-in-morse-code/        /morse-code/numbers/        301
+/55-in-morse-code         /morse-code/numbers/        301
+/55-in-morse-code/        /morse-code/numbers/        301
+/56-in-morse-code         /morse-code/numbers/        301
+/56-in-morse-code/        /morse-code/numbers/        301
+/57-in-morse-code         /morse-code/numbers/        301
+/57-in-morse-code/        /morse-code/numbers/        301
+/58-in-morse-code         /morse-code/numbers/        301
+/58-in-morse-code/        /morse-code/numbers/        301
+/59-in-morse-code         /morse-code/numbers/        301
+/59-in-morse-code/        /morse-code/numbers/        301
+/60-in-morse-code         /morse-code/numbers/        301
+/60-in-morse-code/        /morse-code/numbers/        301
+/61-in-morse-code         /morse-code/numbers/        301
+/61-in-morse-code/        /morse-code/numbers/        301
+/62-in-morse-code         /morse-code/numbers/        301
+/62-in-morse-code/        /morse-code/numbers/        301
+/63-in-morse-code         /morse-code/numbers/        301
+/63-in-morse-code/        /morse-code/numbers/        301
+/64-in-morse-code         /morse-code/numbers/        301
+/64-in-morse-code/        /morse-code/numbers/        301
+/65-in-morse-code         /morse-code/numbers/        301
+/65-in-morse-code/        /morse-code/numbers/        301
+/66-in-morse-code         /morse-code/numbers/        301
+/66-in-morse-code/        /morse-code/numbers/        301
+/67-in-morse-code         /morse-code/numbers/        301
+/67-in-morse-code/        /morse-code/numbers/        301
+/68-in-morse-code         /morse-code/numbers/        301
+/68-in-morse-code/        /morse-code/numbers/        301
+/69-in-morse-code         /morse-code/numbers/        301
+/69-in-morse-code/        /morse-code/numbers/        301
+/70-in-morse-code         /morse-code/numbers/        301
+/70-in-morse-code/        /morse-code/numbers/        301
+/71-in-morse-code         /morse-code/numbers/        301
+/71-in-morse-code/        /morse-code/numbers/        301
+/72-in-morse-code         /morse-code/numbers/        301
+/72-in-morse-code/        /morse-code/numbers/        301
+/73-in-morse-code         /morse-code/numbers/        301
+/73-in-morse-code/        /morse-code/numbers/        301
+/74-in-morse-code         /morse-code/numbers/        301
+/74-in-morse-code/        /morse-code/numbers/        301
+/75-in-morse-code         /morse-code/numbers/        301
+/75-in-morse-code/        /morse-code/numbers/        301
+/76-in-morse-code         /morse-code/numbers/        301
+/76-in-morse-code/        /morse-code/numbers/        301
+/77-in-morse-code         /morse-code/numbers/        301
+/77-in-morse-code/        /morse-code/numbers/        301
+/78-in-morse-code         /morse-code/numbers/        301
+/78-in-morse-code/        /morse-code/numbers/        301
+/79-in-morse-code         /morse-code/numbers/        301
+/79-in-morse-code/        /morse-code/numbers/        301
+/80-in-morse-code         /morse-code/numbers/        301
+/80-in-morse-code/        /morse-code/numbers/        301
+/81-in-morse-code         /morse-code/numbers/        301
+/81-in-morse-code/        /morse-code/numbers/        301
+/82-in-morse-code         /morse-code/numbers/        301
+/82-in-morse-code/        /morse-code/numbers/        301
+/83-in-morse-code         /morse-code/numbers/        301
+/83-in-morse-code/        /morse-code/numbers/        301
+/84-in-morse-code         /morse-code/numbers/        301
+/84-in-morse-code/        /morse-code/numbers/        301
+/85-in-morse-code         /morse-code/numbers/        301
+/85-in-morse-code/        /morse-code/numbers/        301
+/86-in-morse-code         /morse-code/numbers/        301
+/86-in-morse-code/        /morse-code/numbers/        301
+/87-in-morse-code         /morse-code/numbers/        301
+/87-in-morse-code/        /morse-code/numbers/        301
+/88-in-morse-code         /morse-code/numbers/        301
+/88-in-morse-code/        /morse-code/numbers/        301
+/89-in-morse-code         /morse-code/numbers/        301
+/89-in-morse-code/        /morse-code/numbers/        301
+/90-in-morse-code         /morse-code/numbers/        301
+/90-in-morse-code/        /morse-code/numbers/        301
+/91-in-morse-code         /morse-code/numbers/        301
+/91-in-morse-code/        /morse-code/numbers/        301
+/92-in-morse-code         /morse-code/numbers/        301
+/92-in-morse-code/        /morse-code/numbers/        301
+/93-in-morse-code         /morse-code/numbers/        301
+/93-in-morse-code/        /morse-code/numbers/        301
+/94-in-morse-code         /morse-code/numbers/        301
+/94-in-morse-code/        /morse-code/numbers/        301
+/95-in-morse-code         /morse-code/numbers/        301
+/95-in-morse-code/        /morse-code/numbers/        301
+/96-in-morse-code         /morse-code/numbers/        301
+/96-in-morse-code/        /morse-code/numbers/        301
+/97-in-morse-code         /morse-code/numbers/        301
+/97-in-morse-code/        /morse-code/numbers/        301
+/98-in-morse-code         /morse-code/numbers/        301
+/98-in-morse-code/        /morse-code/numbers/        301
+/99-in-morse-code         /morse-code/numbers/        301
+/99-in-morse-code/        /morse-code/numbers/        301
+/100-in-morse-code         /morse-code/numbers/        301
+/100-in-morse-code/        /morse-code/numbers/        301
+# =======================================================
 # Enforce trailing slash on key hubs (Astro trailingSlash:"always")
 # =======================================================
 /translate               /translate/                  301
