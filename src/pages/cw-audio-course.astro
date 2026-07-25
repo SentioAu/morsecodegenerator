@@ -44,6 +44,10 @@ const jsonLd = {
       brand: { "@type": "Brand", name: "MorseCodeGenerator.com" },
       category: "Audio course (downloadable)",
       url: canonical,
+      // Required by Google's merchant-listing structured data (it was the one
+      // "critical" issue in the Merchant listings report). Reuses the page's
+      // own OG card, which postbuild-og.mjs renders at 1200x630.
+      image: `${site}/og/cw-audio-course/index.png`,
       offers: {
         "@type": "Offer",
         price: PRICE,
