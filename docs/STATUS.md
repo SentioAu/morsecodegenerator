@@ -27,6 +27,20 @@ npx.cmd wrangler pages deploy C:\Projects\morsecodegenerator-site --project-name
 4. Owner extracts it over `C:\Projects\morsecodegenerator-site` and runs the
    wrangler command above. That single upload ships everything merged so far.
 
+**⚠️ Consequence — IndexNow must now be fired by hand.** Step 8 of the build
+pipeline only pings on a Cloudflare `main` build, so it has been silently
+dead since the switch to wrangler uploads — Bing/Yandex/Seznam were not being
+told anything had changed. **After the owner confirms each deploy is live**,
+run from the repo (NOT before — submitting URLs that aren't live yet is worse
+than not submitting):
+```
+INDEXNOW_FORCE=1 node scripts/indexnow-ping.mjs
+```
+It submits only URLs whose sources changed since `HEAD~1` (43 on 2026-07-25,
+accepted 200 OK), so it stays well clear of anything that looks like
+automated spam. `INDEXNOW_FULL=1` forces a full 761-URL resubmit — don't,
+except after a genuine site-wide change.
+
 **Consequence — env vars:** Cloudflare Pages *build* env vars no longer apply,
 because the build now happens here, not on Cloudflare. Verified 2026-07-25
 that this costs nothing today: the live site has **no** verification meta tags,
