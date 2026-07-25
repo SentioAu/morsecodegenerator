@@ -87,13 +87,75 @@ automated abuse detection.
 - Do NOT add more bracelet/gift posts — search data shows ~0 organic demand
   for that cluster (it's a Pinterest play, not SEO).
 
-### 0.3 What the search data told us (Bing WMT; GSC minimal) — act on this
-First real data (analyzed 2026-06-27, 7-day recheck 2026-07-01). NOTE: owner
-asked to **pause data/stats analysis until end of July** — then re-measure.
+### 0.3 📊 THE JULY RE-MEASURE (2026-07-25) — the current, authoritative read
+
+Sources: full Bing WMT API pull (site/query/page/crawl, weekly, 275 days) +
+GSC 6-month export. Agents now have a **Bing WMT API key** — data can be
+re-pulled on demand rather than waiting on CSV exports. Endpoints that work:
+`GetRankAndTrafficStats`, `GetQueryStats`, `GetPageStats`, `GetPageQueryStats`
+(needs `&page=`), `GetCrawlStats`. Key is account-wide over 6 sites — **only
+ever query `morsecodegenerator.com`.**
+
+**1. The title rewrite WORKED — and §0.1 was wrong to list it as undeployed.**
+Verified 2026-07-25: live HTML for `/`, `/nato/`, `/translate/` already matches
+the current build, i.e. PR #92 deployed before the outage. The deploy cut off
+*after* #92, *before* #93 (that's why `/blog/how-to-read-morse-code/` 404s).
+Readout on "morse code generator" (Bing, weekly):
+- 6 weeks pre (May 15–Jun 26): **1.43% CTR** (78 clicks / 5,458 impr)
+- 4 weeks post (Jul 3–Jul 24): **2.67% CTR** (75 / 2,814) — **+86%, z=3.95,
+  p<0.001**. Most recent week: 4.17%. Position flat at ~4 throughout, so this
+  is a snippet effect, not a ranking effect.
+Homepage page-level tracks it: 1.18% → 2.20%. **Conclusion: rewriting
+title/meta on a high-impression page is a proven, repeatable lever here.**
+
+**2. But only the homepage rewrite worked. `/nato/` and `/translate/` did
+not.** `/nato/` is still ~0.1% CTR post-rewrite and its pool collapsed 6,458 →
+1,044 impr/5wk (pos 8→10). `/translate/` sits at 0.0% CTR on 12–172 impr/wk.
+Don't assume a rewrite works — measure each one.
+
+**3. ⚠️ The real story is an impression collapse, and it is CTR-driven.**
+Site impressions **-64%** (39.3k → 14.2k per 5 weeks, Apr/May vs Jun/Jul), but
+clicks only **-24%** (351 → 267) because CTR doubled (0.89% → 1.88%). Split by
+prior CTR:
+- pages that had **<1% CTR**: impressions **-69%**
+- pages that had **≥3% CTR**: impressions **+14%**
+Bing is reallocating impressions away from pages that don't earn clicks. So
+**CTR work is not an optimization here, it is defensive** — any page parked at
+position 6–9 with ~0% CTR will lose its impression pool. Monthly Bing totals:
+Apr 294 clicks/27.1k impr → May 265/34.8k → Jun 238/16.6k → Jul 256/12.6k
+(23 days). Clicks are holding; the impression base is not.
+
+**4. Google is a different problem entirely — it is authority-gated.**
+GSC, last 6 months: **7 clicks, ~1,000 impressions, 106 of ~765 pages with any
+impression at all.** Head terms sit on page 7–9: "morse code generator" pos
+**81**, "morse code creator" pos 78, homepage avg pos 72 — versus **position 4
+on Bing for the same query**. Bing reports **6 inbound links**. Nothing on-page
+moves position 81; this is links + time. The only Google bright spots are
+long-tail where competition is nil: name pages (`ryan`/`laura`/`emma`
+`-in-morse-code` at pos 4–10) and `/apostrophe-in-morse-code/` (pos 8.7).
+**Owner action needed:** pull the GSC → Indexing → Pages report; if most of the
+765 pages are "Crawled/Discovered – currently not indexed", that reframes
+everything about Google.
+
+**5. Best concrete CTR targets, from the data** (Bing, last 8 weeks):
+| page / query | impr | CTR | pos | note |
+|---|---|---|---|---|
+| `/cheat-sheet/` ← "morse code sheet" | 309 | **0.0%** | 6.8 | but pos **1.7 / 5.2% CTR** for "morse code *cheat* sheet", and "…cheat sheet pdf" converts **23%** → the page is titled for the wrong query |
+| `/chart/` ← "morse code chart" | 369 | 0.8% | 9.6 | |
+| `/history/` | 1,145 | 0.5% | 6.7 | |
+| `/nato/` ← "nato alphabet" | 351 | 0.0% | 9.0 | rewrite already failed once |
+| "morse code converter" | 153 | 0.7% | 8.7 | |
+| "morse code maker" | 512 | 2.0% | 3.9 | second-biggest head term |
+What already converts (protect it): "morse code generator copy and paste" 42%,
+`/worksheets/` 12%, `/gear/best-morse-code-keys/` 14%, `/keyer/` 10%,
+`/blog/morse-code-for-kids/` 16%.
+
+### 0.3.1 Prior read (2026-06-27 / 07-01) — superseded by §0.3 above
 - Site gets **~226 clicks / ~15k impressions / ~1.4% CTR per month**, steady.
   It's an *under-converted*, not a pre-traffic, site.
 - **CTR is the #1 lever.** "morse code generator" = pos ~4 but 1.28% CTR →
-  the title rewrites (#92) target exactly this. Re-measure ~mid/late July.
+  the title rewrites (#92) target exactly this. ✅ Re-measured 2026-07-25:
+  it worked (+86%). See §0.3.
 - **Gear ≫ bracelets.** Real audience = tools/reference/ham. `/gear/best-
   morse-code-keys/` converts 18.6%; "morse code paddles for beginners" ranks
   pos 2.4. The gift/bracelet affiliate cluster gets ~0 search traffic. When
