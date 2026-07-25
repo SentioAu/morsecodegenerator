@@ -54,6 +54,14 @@ const jsonLd = {
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
         url: GUMROAD_URL,
+        // Instant download, so all sales are final. Declared here to clear the
+        // Merchant listings warning, and stated on the page next to the buy
+        // button so the structured data matches what a buyer actually sees.
+        hasMerchantReturnPolicy: {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "US",
+          returnPolicyCategory: "https://schema.org/MerchantReturnNotPermitted",
+        },
       },
     },
   ],
@@ -82,6 +90,11 @@ const jsonLd = {
       <a class="btn primary" href={GUMROAD_URL} target="_blank" rel="noopener" data-aff="cw-audio-course">Get the course — ${PRICE}</a>
       <a class="btn ghost" href="/practice/">Try the free browser trainer</a>
     </div>
+    <p class="muted cc-terms">
+      Instant download — all sales are final, no refunds. Try the
+      <a href="/practice/">free browser trainer</a> first to see if the
+      Koch method suits you.
+    </p>
   </header>
 
   <section class="card t-card">
@@ -117,6 +130,7 @@ const jsonLd = {
   </section>
 
   <style>
+    .cc-terms{ max-width: var(--content); font-size: var(--fs-sm); margin-top: var(--s-3); }
     .cc-list, .cc-steps{ max-width: var(--content); }
     .cc-list li{ margin-bottom: var(--s-3); line-height: 1.6; }
     .cc-steps li{ margin-bottom: var(--s-2); line-height: 1.6; }

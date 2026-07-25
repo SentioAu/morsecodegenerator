@@ -2,83 +2,188 @@
 # Site:    https://morsecodegenerator.com
 # AI policy: https://morsecodegenerator.com/ai.txt
 # LLM map:   https://morsecodegenerator.com/llms.txt
+#
+# ⚠️ DO NOT "de-duplicate" the Disallow lines below.
+# A crawler obeys exactly ONE group — the most specific one matching its
+# name — and ignores every other group, including "User-agent: *". So a
+# named group containing only "Allow: /" silently exempts that crawler from
+# every rule in the "*" group. That is a real bug we shipped: Googlebot and
+# Bingbot were never subject to the ?q= disallows, and Google crawled ~220
+# /translate/?q=… URLs as a result (GSC: 144 "Alternate page with proper
+# canonical tag" + ~75 "Crawled - currently not indexed").
+# Every named group must therefore repeat the crawl rules verbatim.
 
 User-agent: *
 Allow: /
 Disallow: /translate/?
 Disallow: /*?q=
 Disallow: /*?lang=
+Disallow: /*?text=
 
-# Major search crawlers (explicit allow)
+# Major search crawlers (explicit allow + the same crawl rules)
 User-agent: Googlebot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Googlebot-Image
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Bingbot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: DuckDuckBot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Yandex
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Baiduspider
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Applebot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
-# AI / LLM crawlers — explicit allow with attribution required (see /ai.txt)
+# AI / LLM crawlers — explicit allow with attribution required (see /ai.txt).
+# Same crawl rules: the query-param URLs are duplicates of the canonical
+# tool pages, so there is nothing there worth training on or citing either.
 User-agent: GPTBot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Claude-Web
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: CCBot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Amazonbot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Bytespider
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Meta-ExternalAgent
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: cohere-ai
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: Mistral-AI
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 User-agent: DeepSeekBot
 Allow: /
+Disallow: /translate/?
+Disallow: /*?q=
+Disallow: /*?lang=
+Disallow: /*?text=
 
 # Crawl host hints
 Host: morsecodegenerator.com
