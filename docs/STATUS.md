@@ -8,10 +8,43 @@ codebase works* see [`/CLAUDE.md`](../CLAUDE.md); for *strategy* see
 
 ---
 
-## 0. ⛔ ACTIVE BLOCKER — read first (2026-07-02)
+## 0. 🚚 DEPLOYMENT — read first (updated 2026-07-25)
+
+**GitHub reinstatement did NOT come through.** The Cloudflare Pages ↔ GitHub
+integration stays dark, so **git-push no longer deploys anything.** Production
+is now shipped by **manual direct upload** from the owner's machine:
+
+```
+npx.cmd wrangler pages deploy C:\Projects\morsecodegenerator-site --project-name morsecodegenerator
+```
+
+**Agent workflow (this is the new normal):**
+1. Do the work on a `claude/*` branch, commit + push as usual (the session's
+   git access still works — it does not depend on the owner's account).
+2. Run `npm run build` + `npm run typecheck` (both must be green).
+3. **Zip the CONTENTS of `dist/`** (so `index.html` is at the archive root,
+   not nested under `dist/`) and hand the zip to the owner.
+4. Owner extracts it over `C:\Projects\morsecodegenerator-site` and runs the
+   wrangler command above. That single upload ships everything merged so far.
+
+**Consequence — env vars:** Cloudflare Pages *build* env vars no longer apply,
+because the build now happens here, not on Cloudflare. Verified 2026-07-25
+that this costs nothing today: the live site has **no** verification meta tags,
+**no** ad slots and **no** newsletter form action, i.e. those vars were never
+set anyway. Everything that *is* live has a code default and survives a local
+build: GA4 `G-1K9JZ9ZQ2L`, Amazon tag `mcg0d2-20`, Gumroad
+`gumroad.com/l/cw-audio-course`. GSC/Bing verification is via DNS/file, not the
+meta tag, so it is unaffected. **If a revenue env var is ever wanted, it must
+now be passed into the build here (or hard-defaulted in code) — setting it in
+the Cloudflare dashboard will do nothing.**
+
+Everything else that was previously blocked (merged-but-undeployed work in
+§0.1) goes live with the first wrangler upload.
+
+### Historical: the GitHub suspension (2026-07-02)
 
 **The owner's GitHub account (`SentioAu`) was SUSPENDED** by GitHub's
-automated abuse detection. This is the single thing gating all progress.
+automated abuse detection.
 
 - **Root cause (NOT this repo):** a *different* project, `playersb.com`, ran
   a GitHub Actions cron that **committed regenerated data every few minutes**
@@ -28,18 +61,13 @@ automated abuse detection. This is the single thing gating all progress.
   asked "how do you plan to use GitHub?"; owner replied with legit-use +
   remediation (cut the cron to daily, stop committing generated data).
 
-### ✅ Resume checklist (do these when the account is reinstated)
-1. **Confirm reinstatement** (`mcp__github__get_me` works, repo visible).
-2. **Force a deploy:** Cloudflare → Pages → morsecodegenerator →
-   Deployments → **Retry deployment** (or push a trivial commit). This brings
-   ALL merged-but-undeployed work live in one build.
-3. **Verify live:** `/blog/how-to-read-morse-code/` loads (not 404); homepage
+### ✅ Post-deploy verification (after each wrangler upload)
+1. **Verify live:** `/blog/how-to-read-morse-code/` loads (not 404); homepage
    `<title>` = "Morse Code Generator – Free Translator, Audio & Copy/Paste".
-4. **Re-enable GitHub Actions** (Settings → Actions) — CI stopped with the
-   suspension; confirm the next PR triggers "Build, typecheck & verify".
-5. **Fix `playersb.com`** (separate repo, not in this session's scope) so the
-   suspension can't recur: cron → daily, stop committing build artifacts.
-6. Then resume the content backlog (§0.2 below) and the CTR measurement (§0.3).
+2. **Spot-check a page from the newest work** (whatever shipped in that zip).
+3. Note that **CI does not run** while the account is suspended — the agent's
+   local `npm run build` + `npm run typecheck` IS the gate now. Never hand over
+   a zip from a build that was not green.
 
 ### 0.1 Merged to `main` but NOT yet deployed (will go live on first deploy)
 - CTR title/meta rewrites: `/`, `/nato/`, `/translate/` (PR #92)
