@@ -68,11 +68,29 @@ const isNumber = /^[0-9]$/.test(CH);
 // original content beyond the bare Morse pattern.
 const mnemonic = mnemonicFor(CH);
 
-// Title/description (SEO)
-const title = code ? `${CH} in Morse Code (${code})` : `${CH} in Morse Code`;
+// Title/description (SEO).
+//
+// These pages rank ~position 4 on Bing for "{ch} in morse code" but convert
+// at 0.76% — the worst CTR of any page type on the site. The old title,
+// "G in Morse Code (--.)", was 21 characters and answered the query without
+// giving anyone a reason to click. We keep the answer visible (hiding it to
+// force a click would be user-hostile, and these are answer queries) and
+// spend the remaining title space on what the page offers beyond the code:
+// audio, one-tap copy, and the mnemonic. The code is parenthesised mid-
+// sentence so it never sits next to punctuation — "the code is --.." would
+// read as Z's pattern rather than G's followed by a full stop.
+const isDigitCh = /^[0-9]$/.test(CH);
+const chNoun = isDigitCh ? "digit" : "letter";
+const memoryHook = isDigitCh
+  ? "learn the counting pattern behind it"
+  : "learn the memory trick that makes it stick";
+
+const title = code
+  ? `${CH} in Morse Code (${code}) — Hear It, Copy It, Memorize It`
+  : `${CH} in Morse Code — Hear It, Copy It, Memorize It`;
 const description = code
-  ? `Learn how to write ${CH} in Morse code (${code}). Copy it, listen to it, and practice with examples.`
-  : `Learn how to write ${CH} in Morse code. Copy it, listen to it, and practice with examples.`;
+  ? `Hear the ${chNoun} ${CH} in Morse code (${code}) at any speed, copy it in one tap, and ${memoryHook}.`
+  : `Hear the ${chNoun} ${CH} in Morse code at any speed, copy it in one tap, and ${memoryHook}.`;
 
 // Canonical (Layout uses trailingSlash:"always")
 const canonical = `${site}/morse-code/${CH.toLowerCase()}/`;

@@ -5,9 +5,19 @@ import { qcodes } from "../data/q-codes.js";
 import { abbrs } from "../data/cw-abbreviations.js";
 import { prosigns } from "../data/prosigns.js";
 
-const title = "Morse Code Cheat Sheet — One-Page Printable Reference";
+// Retitled 2026-07-25 off Bing query data for this exact page:
+//   "morse code sheet"            309 impr, 0 clicks, pos 6.8
+//   "morse code cheat sheet"       77 impr, 4 clicks, pos 1.7  (5.2% CTR)
+//   "morse code cheat sheet pdf"   13 impr, 3 clicks, pos 2.0  (23% CTR)
+//   "morse code printable sheet"   19 impr, 0 clicks, pos 6.3
+// The page was winning "cheat sheet" and losing the four-times-larger
+// "sheet" pool because the exact phrase was not in the title. Leads with
+// "Morse Code Sheet" while keeping "Cheat Sheet" (protects the pos-1.7
+// ranking) and adds the two modifiers that convert best, free and PDF.
+// The PDF claim is honest: the page has a "Print / save as PDF" button.
+const title = "Morse Code Sheet — Free Printable Cheat Sheet (PDF)";
 const description =
-  "The complete Morse code cheat sheet on one printable page: alphabet, numbers, punctuation, prosigns, top Q-codes and CW abbreviations, timing rules, and a quick history. Browser-print friendly.";
+  "A complete one-page Morse code sheet: alphabet, numbers, punctuation, prosigns, Q-codes and timing rules. Print it free or save as PDF — no sign-up.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -15,7 +25,7 @@ const site =
 const canonical = `${site}/cheat-sheet/`;
 const robots = "index,follow";
 const keywords =
-  "morse code cheat sheet, morse code printable, morse code chart pdf, ham radio cheat sheet, cw quick reference";
+  "morse code sheet, morse code cheat sheet, morse code cheat sheet pdf, morse code printable sheet, morse code guide sheet, ham radio cheat sheet, cw quick reference";
 
 const crumbs = [
   { name: "Home", url: `${site}/` },

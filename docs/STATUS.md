@@ -150,6 +150,28 @@ What already converts (protect it): "morse code generator copy and paste" 42%,
 `/worksheets/` 12%, `/gear/best-morse-code-keys/` 14%, `/keyer/` 10%,
 `/blog/morse-code-for-kids/` 16%.
 
+### 0.3.0 🔬 RUNNING EXPERIMENT — CTR pass #2 (shipped 2026-07-25)
+
+Two snippet changes are live. **Do not touch these pages until measured** —
+re-pull Bing around **2026-08-22** (4 weeks) and compare against the baselines
+below. Positions were stable pre-change, so any CTR move is a snippet effect.
+
+| target | baseline (8wk to 2026-07-24) | change |
+|---|---|---|
+| `/cheat-sheet/` | 1,636 impr, 24 clicks, **1.5% CTR**, pos 6.4 | title now leads with "Morse Code Sheet" + free/PDF |
+| ↳ query "morse code sheet" | 309 impr, **0 clicks**, pos 6.8 | the specific pool being targeted |
+| ↳ query "morse code cheat sheet" | 77 impr, 4 clicks, 5.2%, pos 1.7 | **guardrail — must not regress** |
+| `/morse-code/{ch}` (36 pages) | 528 impr, 4 clicks, **0.76% CTR** | titles 20→51-55 chars, descs 91→114-120 |
+
+Precedent for what "worked" looks like: the homepage rewrite moved
+"morse code generator" from 1.43% to 2.67% over 4 weeks (§0.3).
+
+**Caveat on `/morse-code/{ch}`:** these are answer queries ("g in morse
+code"), and the answer is in the title by design — hiding it to force clicks
+would be user-hostile. The ceiling here may simply be low. If CTR is still
+under ~1.5% at the recheck, conclude the page type is capped and stop
+investing in it rather than iterating further.
+
 ### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
 
 **`Crawled – currently not indexed` has doubled: 102 → 220 pages** since late
