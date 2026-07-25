@@ -1,9 +1,20 @@
 ---
 import Layout from "../components/Layout.astro";
 
-const title = "Morse Code Decoder – Decode Dots and Dashes to Text";
+// Retargeted 2026-07-25 at the reverse-lookup cluster: 94 queries, 3,650
+// impressions, 3 clicks. People paste a pattern they saw on a tattoo, a
+// bracelet or in a film and want to know what it says — ".-.-.- in morse
+// code" alone is 1,272 impressions. Bing has been answering those with the
+// homepage (814 impr, position 7.4) while this page, which is built for
+// exactly that job, took 4 impressions in nine months.
+//
+// The patterns themselves can't be targeted as keywords, so the lever is
+// on-page: the "what does this pattern mean" section below carries the
+// actually-searched strings and explains the two things that confuse people
+// most — punctuation patterns, and how spacing changes the reading.
+const title = "Morse Code Decoder – What Does This Morse Code Mean?";
 const description =
-  "Free Morse code decoder. Paste dots and dashes and instantly get plain text. Auto-detect, audio playback, copy and share — runs in your browser.";
+  "Paste dots and dashes, get plain text instantly. Plus what the most-looked-up patterns mean — .-.-.-, ...---..., .-.-. — and why spacing changes it.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -50,6 +61,39 @@ const jsonLd = {
     },
   ],
 };
+
+// The patterns people actually paste into search engines, in order of
+// search volume. Punctuation dominates because it's the part of Morse
+// nobody memorises — and because engraved jewellery and tattoos are full
+// of it. Two entries have genuinely dual readings; saying so is the whole
+// value of the section.
+const lookups = [
+  {
+    code: ".-.-.-",
+    means: "Period ( . )",
+    note: "The single most-looked-up pattern. Six symbols, strictly alternating dot-dash.",
+  },
+  { code: "--..--", means: "Comma ( , )", note: "" },
+  { code: "..--..", means: "Question mark ( ? )", note: "" },
+  { code: ".----.", means: "Apostrophe ( ' )", note: "" },
+  { code: "-....-", means: "Hyphen ( - )", note: "" },
+  { code: "-..-.", means: "Slash ( / )", note: "" },
+  {
+    code: ".-.-.",
+    means: "Plus ( + ) — or the prosign AR",
+    note: "Same symbols, two readings. As punctuation it's a plus sign; between operators it means \"end of message\".",
+  },
+  {
+    code: "-...-",
+    means: "Equals ( = ) — or the prosign BT",
+    note: "As punctuation it's an equals sign; inside a message it marks a paragraph break.",
+  },
+  {
+    code: "...---...",
+    means: "SOS",
+    note: "Written closed up because it's sent as one unbroken string with no letter gaps. That's what makes it a distress signal rather than the three letters S O S.",
+  },
+];
 
 const examples = [
   ["... --- ...", "SOS"],
@@ -242,6 +286,84 @@ const examples = [
     <p class="muted" style="margin-top: var(--s-4);">
       The decoder also accepts middle-dot (<span class="k">·</span>), bullet (<span class="k">•</span>),
       en-dash (<span class="k">–</span>), em-dash (<span class="k">—</span>), and pipe (<span class="k">|</span>) as separators.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">Pattern lookup</p>
+        <h2 class="section-title">What does this pattern mean?</h2>
+      </div>
+      <p class="section-sub muted">
+        The patterns people look up most, and the two that mean more than one thing.
+      </p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Pattern</th><th>Means</th><th>Worth knowing</th></tr>
+        </thead>
+        <tbody>
+          {lookups.map((l) => (
+            <tr>
+              <td class="k">{l.code}</td>
+              <td><strong>{l.means}</strong></td>
+              <td class="muted">{l.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted dec-note">
+      Full sets: <a href="/morse-code/punctuation/">punctuation in Morse code</a> and
+      the <a href="/prosigns/">prosign reference</a>.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <p class="page-hero-kicker">The usual trap</p>
+        <h2 class="section-title">Why spacing changes the answer</h2>
+      </div>
+    </div>
+    <p class="dec-prose">
+      Most Morse that gets copied off a bracelet, a tattoo or a film still
+      decodes wrong, and it is almost always spacing rather than the dots
+      themselves. The same four dots are one letter or four letters
+      depending entirely on the gaps:
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Written</th><th>Reads as</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">....</td>
+            <td><strong>H</strong></td>
+            <td class="muted">Four dots, no gaps — a single letter.</td>
+          </tr>
+          <tr>
+            <td class="k">.. ..</td>
+            <td><strong>I I</strong></td>
+            <td class="muted">One letter gap in the middle, so it's two letters.</td>
+          </tr>
+          <tr>
+            <td class="k">. . . .</td>
+            <td><strong>E E E E</strong></td>
+            <td class="muted">A gap after every dot — four separate letters.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted dec-prose">
+      This is why jewellery and tattoo designs are so often ambiguous: engraved
+      dots rarely preserve the 3-unit letter gap, so a design meant to read as
+      one word can decode as several. If a pattern above looks wrong, try
+      pasting it with different spacing — the decoder will show you each
+      reading.
     </p>
   </section>
 
@@ -607,6 +729,9 @@ const examples = [
   </script>
 
   <style>
+    .dec-prose{ max-width: var(--content); line-height: 1.7; }
+    .dec-prose + .tablewrap{ margin-top: var(--s-4); }
+    .dec-note{ max-width: var(--content); margin-top: var(--s-4); }
     .decoder{
       background: var(--surface);
       border: 1px solid var(--line);

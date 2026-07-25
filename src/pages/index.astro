@@ -3,7 +3,18 @@ import Layout from "../components/Layout.astro";
 
 const title = "Morse Code Generator – Free Translator, Audio & Copy/Paste";
 const description =
-  "Free online Morse code generator & translator: convert text to Morse and back, play it as audio, and copy-paste the result instantly — no sign-up. Plus a full Morse code reference.";
+  // Rewritten 2026-07-25 for translator intent. The translator/converter
+  // query cluster is the site's largest (36,865 impr) and worst-converting
+  // (0.52% at avg position 7.8), while the generator cluster converts at
+  // 4.64%. The homepage holds 28,722 of those translator impressions, so its
+  // snippet is where that pool is won or lost.
+  //
+  // The TITLE is deliberately untouched — it earns 1,084 clicks on "morse
+  // code generator" at position 3.4 and that is not worth risking. Only the
+  // description changes: it now leads with "translator", names both
+  // directions explicitly (decode Morse to text is its own query cluster),
+  // and is short enough not to be truncated in the SERP.
+  "Free Morse code translator and generator: turn text into Morse or decode Morse back to text, hear it as audio, copy it in one tap. No sign-up.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";

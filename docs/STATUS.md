@@ -186,6 +186,35 @@ would be user-hostile. The ceiling here may simply be low. If CTR is still
 under ~1.5% at the recheck, conclude the page type is capped and stop
 investing in it rather than iterating further.
 
+### 0.3.0b 🔬 RUNNING EXPERIMENT — CTR pass #3 (shipped 2026-07-25)
+
+Second pair of snippet changes, from the full site audit. Measure with pass
+#2 at the **2026-08-22** checkpoint.
+
+| target | baseline | change |
+|---|---|---|
+| homepage ← translator cluster | 36,865 impr, 191 clicks, **0.52% CTR**, pos 7.8 | description rewritten for translator intent; **title deliberately unchanged** |
+| ↳ query "morse code translator" | 28,722 impr, 58 clicks, **0.20%**, pos 8.0 | the specific pool |
+| ↳ query "morse code generator" | 27,326 impr, 1,084 clicks, **3.97%**, pos 3.4 | **GUARDRAIL — must not regress** |
+| `/decoder/` ← reverse-lookup cluster | 3,650 impr, **3 clicks**, 0.08%, pos 7.1 | retitled + new pattern-lookup and spacing sections |
+
+**Why the homepage title was not touched:** it earns 1,084 clicks at position
+3.4 on "morse code generator". The translator pool is bigger but converts 8×
+worse; risking a working ranking to chase it would be a bad trade. Only the
+description changed. If the generator guardrail moves at all, revert first
+and ask questions after.
+
+**The `/decoder/` play is content, not keywords.** The queries *are* Morse
+patterns (".-.-.- in morse code" = 1,272 impr), which can't be targeted as
+keywords, and Bing was answering them with the homepage. The page now carries
+the actually-searched strings plus the two things that confuse people:
+punctuation patterns, and how spacing changes the reading. Page went from
+~560 to 781 words, all of it original.
+
+**Ceiling to be honest about:** at position 7–8 no snippet gets you to
+position 3. These changes harvest the pool we already have. Moving position
+needs links, and the site has 6.
+
 ### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
 
 **`Crawled – currently not indexed` has doubled: 102 → 220 pages** since late
