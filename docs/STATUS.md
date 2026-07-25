@@ -150,6 +150,70 @@ What already converts (protect it): "morse code generator copy and paste" 42%,
 `/worksheets/` 12%, `/gear/best-morse-code-keys/` 14%, `/keyer/` 10%,
 `/blog/morse-code-for-kids/` 16%.
 
+### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
+
+**`Crawled – currently not indexed` has doubled: 102 → 220 pages** since late
+April (peak 228). That is the number to watch. What's in it:
+
+| count | what | read |
+|---|---|---|
+| 103 | `/{word\|name}-in-morse-code/` | **Google crawled the programmatic cluster and declined to index it.** This is Google's verdict on 533 template pages, and it is the single most important fact about our Google position. |
+| ~75 | `/translate/?q=…` | crawl waste — see the robots.txt bug below |
+| 19 | `/morse-code/{ch}/` | same template-thinness signal |
+| 18 | `/phrases/*` | same |
+| 8 | `llms.txt`, `ai.txt`, `morse.json`, `rss.xml`, `sitemap.xml`, `manifest.webmanifest` | harmless noise; non-HTML files GSC counts anyway |
+
+**`Alternate page with proper canonical tag` went 0 → 160 in three months** —
+144 `/translate/?q=…`, 14 `/morse-bracelet/?text=…`. Canonicals are doing
+their job, but Google should never have been crawling these at all.
+
+**🐛 Root cause found and fixed (2026-07-25): the robots.txt disallows were
+never applied to Googlebot or Bingbot.** A crawler obeys exactly ONE group —
+the most specific one matching its name — and ignores all others, including
+`User-agent: *`. Every named crawler had a group containing only `Allow: /`,
+so all of them were exempt from the `?q=` / `?lang=` rules; only *unnamed*
+crawlers ever obeyed them. Fixed by repeating the rules in all 23 named
+groups (+ `?text=`). **Do not refactor that repetition away** — see the
+comment in `public/robots.txt`. Expect the ~220 query-param entries to drain
+out of GSC over the following weeks.
+
+**`Page with redirect` = 14 — ignore it.** It's www/http variants plus the
+intentional letter/digit consolidation redirects. Working as designed. Two
+entries (`?ref=Launchtory`, `?ref=producthunt`) are evidence of real referral
+links, not a problem.
+
+**⚠️ The open strategic question this raises.** 533 programmatic word/name
+pages, of which Google has already refused 103; they earn 3.8% of Bing
+impressions; and the site has 6 inbound links with head terms at position 81.
+The cluster is a plausible contributor to a site-wide quality assessment.
+Options are (a) leave it and build authority, (b) consolidate the weakest
+pages into richer hubs, (c) noindex the tail. **Not yet decided — do not act
+on this unilaterally.** Note it argues strongly against Bing's "expand all
+533 titles" recommendation (§0.3.3).
+
+### 0.3.3 Bing's WMT recommendations — verified, mostly NOT worth acting on
+
+Bing flags "titles too short" (635 of 763 pages, median 20 chars) and
+"descriptions too short" (390 pages). Both are factually true. Sized against
+traffic, they are close to irrelevant:
+
+| page type | pages | Bing impr (8wk) | CTR |
+|---|---|---|---|
+| hand-written / hub | 58 | **21,922** | 1.72% |
+| `/morse-code/{ch}` | 30 | 528 | **0.76%** |
+| `/{word\|name}-in-morse-code/` | 55 | 261 | **6.13%** |
+| `/phrases/*` | 15 | 54 | 5.56% |
+| `/abbreviations/*` | 2 | 18 | 11.11% |
+
+All template pages together = **3.8% of impressions at 2.90% CTR**, i.e.
+*better* than the hand-written pages at 1.72%. The 533 word/name pages Bing
+complains about have the best CTR on the site with 19-character titles —
+direct evidence against "longer title = more clicks" for that page type.
+**Worth doing: `/morse-code/{ch}` only** (39 pages, 0.76% CTR, one template).
+**Not worth doing: the 533-page expansion.** The impressions live in the 58
+hand-written pages, whose titles are already ~51 chars — their problem is
+persuasion, not length.
+
 ### 0.3.1 Prior read (2026-06-27 / 07-01) — superseded by §0.3 above
 - Site gets **~226 clicks / ~15k impressions / ~1.4% CTR per month**, steady.
   It's an *under-converted*, not a pre-traffic, site.
