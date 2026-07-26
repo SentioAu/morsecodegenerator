@@ -272,10 +272,14 @@ const pageTitle =
 const description =
   (isSingleLetter || isNumber)
     ? `The canonical reference page for ${term.display} in Morse code is available. Copy, practice, and translate instantly.`
+    // The Morse string is wrapped in parentheses rather than left to butt up
+    // against a full stop. "HI is .... .." followed by "." renders as
+    // ".... ..." in the SERP — a different, wrong pattern. Any word or name
+    // ending in a dit hit this, which is most of them.
     : isName && morse
-        ? `${term.display} in Morse code is ${morse}. Copy it, hear it played, or turn it into a free bracelet or tattoo design.`
+        ? `${term.display} in Morse code (${morse}) — copy it, hear it played, or turn it into a free bracelet or tattoo design.`
     : (valid && morse
-        ? `Learn how to write ${term.display} in Morse code: ${morse}. Copy, practice, and translate instantly.`
+        ? `How to write ${term.display} in Morse code (${morse}) — copy it, hear it at any speed, and practice with the translator.`
         : `Learn how to write terms in Morse code. Copy, practice, and translate instantly.`);
 
 // Breadcrumb + WebPage JSON-LD (use canonicalRef to avoid dupes)

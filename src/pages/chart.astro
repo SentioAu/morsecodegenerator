@@ -2,9 +2,20 @@
 import Layout from "../components/Layout.astro";
 import data from "../data/morse.json";
 
-const title = "Printable Morse Code Chart (A–Z, 0–9, Punctuation) – PDF-Ready";
+// ⚠️ TERRITORY SPLIT with /cheat-sheet/ — keep these two apart.
+// Both pages were ranking for the same pools and splitting the signal
+// ("morse code chart": /chart/ pos 8.0, /cheat-sheet/ pos 9.9;
+//  "morse code sheet": /cheat-sheet/ pos 6.8, /chart/ pos 8.8).
+//   • /chart/       owns CHART / TABLE / ALPHABET CHART  ← this page
+//   • /cheat-sheet/ owns SHEET / CHEAT SHEET / PRINTABLE SHEET
+// Leads with the exact phrase this page should win, and picks up "morse
+// code table" (44 impr) and "morse code alphabet chart" (78 impr), which
+// nothing on the site was targeting. "Printable" moves to /cheat-sheet/,
+// but PDF stays here — "morse code pdf" is this page's best converter
+// (55 impr, 3 clicks).
+const title = "Morse Code Chart – Alphabet & Numbers Table, Free PDF";
 const description =
-  "Free printable Morse code chart — alphabet, numbers, and punctuation. Print or save as PDF, light/dark print friendly, with copyable codes.";
+  "The full Morse code chart: every letter, number and punctuation mark in one table. Copy any code, or save the whole chart as a PDF to print. Free, no sign-up.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";

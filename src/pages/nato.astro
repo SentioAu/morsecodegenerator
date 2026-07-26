@@ -1,9 +1,22 @@
 ---
 import Layout from "../components/Layout.astro";
 
-const title = "NATO Phonetic Alphabet Chart (Alpha to Zulu) + Morse Code";
+// "Military alphabet" is a keyword gap, not a new topic: it's the same
+// alphabet under the name most people actually search for.
+//   "military alphabet"            1,155 impr, 0 clicks, pos 8.6
+//   "military alphabet code"         216 impr, 1 click,  pos 7.8
+//   "military phonetic alphabet"      89 impr, 0 clicks, pos 7.6
+// The word appeared exactly once on the page, in a list item, and not at
+// all in the title.
+//
+// Expectations here are deliberately low: /nato/ lost 84% of its impression
+// pool between April and July and slipped from position 8 to 10, and a
+// previous rewrite (PR #92) moved its CTR not at all. This is a cheap bet on
+// a real 1,460-impression gap, not a rescue plan. If it does nothing by the
+// August checkpoint, stop investing in this page.
+const title = "Military & NATO Phonetic Alphabet – Alpha to Zulu + Morse";
 const description =
-  "The full NATO phonetic alphabet — Alpha, Bravo, Charlie … to Zulu — with pronunciation and the Morse code for each letter. A clear chart to read, learn, or print free.";
+  "The full NATO phonetic alphabet — also called the military alphabet — from Alpha and Bravo to Zulu, with pronunciation and the Morse code for every letter.";
 
 const site =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://morsecodegenerator.com";
@@ -94,7 +107,8 @@ const jsonLd = {
     <p class="page-hero-kicker">Reference • Aviation • Maritime • Ham radio</p>
     <h1 class="page-hero-title">NATO phonetic alphabet</h1>
     <p class="muted page-hero-sub">
-      The official ICAO/NATO spelling alphabet — Alpha through Zulu — with pronunciation guide and the
+      The official ICAO/NATO spelling alphabet — widely known as the military
+      alphabet — Alpha through Zulu, with a pronunciation guide and the
       Morse code for each letter on one page.
     </p>
     <div class="page-hero-actions">

@@ -215,6 +215,40 @@ punctuation patterns, and how spacing changes the reading. Page went from
 position 3. These changes harvest the pool we already have. Moving position
 needs links, and the site has 6.
 
+### 0.3.0c CTR pass #4 + audit follow-ups (shipped 2026-07-25)
+
+- **`/nato/` — "military alphabet" keyword gap.** 1,460 impressions across
+  "military alphabet" (1,155), "military alphabet code" (216) and "military
+  phonetic alphabet" (89), all at ~0% CTR, and the word appeared once on the
+  page and never in the title. Title now leads with it. **Low expectations
+  on purpose** — this page lost 84% of its pool and a prior rewrite did
+  nothing. If the August checkpoint shows no movement, stop investing here.
+- **`/chart/` ↔ `/cheat-sheet/` territory split.** They were splitting the
+  same pools. Now: **`/chart/` owns chart / table / alphabet chart**,
+  **`/cheat-sheet/` owns sheet / cheat sheet / printable sheet**. PDF stays
+  on `/chart/` ("morse code pdf" is its best converter). Comments in both
+  files say so — don't recreate the overlap.
+- **6 missing word pages added** (`hi`, `egg`, `thanks`, `friend`, `phone`,
+  `bff`). All were 404ing with real demand — `/hi-in-morse-code` alone had
+  351 impressions. 765 → 771 pages.
+- **🐛 Snippet defect fixed across ~530 word/name pages.** The description
+  put the Morse string immediately before a full stop, so "HI is `.... ..`"
+  rendered as "`.... ...`" in the SERP — a different, wrong pattern. Any word
+  ending in a dit was affected, which is most of them. Now parenthesised.
+  This is a correctness fix, not the title expansion Bing asked for (§0.3.3
+  still stands: do not bulk-expand this cluster).
+
+### ⚠️ 0.3.0d Correction: `/gear/` is NOT the data-justified investment
+
+Earlier handoffs (and my own first pass) called `/gear/` "the one
+data-justified investment" off its 32.93% CTR. **Checked properly: that CTR
+is on 82 impressions across nine months — about 9/month.** `/gear/` itself
+draws ~25 impressions, `/gear/best-morse-code-keys/` ~50. It converts
+beautifully and has almost nothing to convert. **More gear content will not
+create gear demand.** If gear is worth anything it is via better monetisation
+of the few high-intent visitors who do arrive, not more pages. Treat the old
+"deepen /gear/" recommendation as retired.
+
 ### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
 
 **`Crawled – currently not indexed` has doubled: 102 → 220 pages** since late
