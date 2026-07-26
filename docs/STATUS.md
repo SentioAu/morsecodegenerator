@@ -369,6 +369,17 @@ touch. The address was already public; only the link was broken.
 and every remaining address is wrapped in Cloudflare's `<!--email_off-->`
 markers. Confirmed on the live site that Cloudflare honours them.
 
+**✅ Owner turned Email Address Obfuscation OFF in Cloudflare (2026-07-26)** —
+the complete root fix. Verified live: `email-decode.min.js` is no longer
+injected on any page, zero `/cdn-cgi/` links remain, and addresses render as
+plain text. Side benefit: one fewer third-party script site-wide.
+
+**Keep the `<!--email_off-->` markers.** They are inert now, but if
+obfuscation is ever re-enabled (a Cloudflare default on some plans, and easy
+to flip back by accident) they stop the bug returning. Do not "clean them
+up". No privacy cost either way: the address was always public in the
+Organization JSON-LD, which the obfuscation never covered.
+
 **⚠️ Lesson for future audits — build checks are not enough.** The first pass
 verified "no unprotected `mailto:`" against `dist/` and passed. It missed
 `/contact/`, which shows the address as *text*, not a link — Cloudflare
