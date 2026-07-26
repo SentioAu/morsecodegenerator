@@ -127,9 +127,12 @@ const hasUnknown = morse.includes("?");
 const robots = phrase && morse && !hasUnknown ? "index,follow" : "noindex,follow";
 
 const title = phrase ? `${phrase} in Morse code` : "Phrase in Morse code";
+// Was ~93 chars, which wasted most of the SERP snippet and had all 56 pages
+// flagged "meta description too short". Now describes what the page actually
+// gained in the enrichment pass: the breakdown and the send-time table.
 const description = phrase
-  ? `See how to write ${phrase} in Morse code. Copy it instantly and practice with the translator.`
-  : `See how to write common phrases in Morse code. Copy them instantly and practice.`;
+  ? `How to write “${phrase}” in Morse code: the full pattern, a letter-by-letter breakdown, send times at 5, 13 and 20 WPM, plus one-tap copy and audio.`
+  : `Common phrases in Morse code, each with the full pattern, a letter-by-letter breakdown and send times. Copy any of them in one tap, or hear them played back.`;
 
 const translatorHref = phrase
   ? `/translate/?q=${encodeURIComponent(phrase)}`

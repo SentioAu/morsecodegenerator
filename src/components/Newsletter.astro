@@ -64,12 +64,14 @@ const CONTACT_EMAIL = "morsecodegenerator@gmail.com";
       <button type="submit" class="btn primary">Subscribe</button>
     </form>
   ) : (
+    <!--email_off-->
     <a
       class="btn primary newsletter-mailto"
       href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Add me to the MorseGen newsletter")}&body=${encodeURIComponent("Hi — please add me to your weekly Morse tip email. Thanks!")}`}
     >
       Email to subscribe
     </a>
+    <!--/email_off-->
   )}
 
   <p class="newsletter-fine">

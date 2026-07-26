@@ -23,7 +23,19 @@ const canonical = `${site}/prosigns/${p.slug}/`;
 const robots = "index,follow";
 
 const title = `${p.sign} prosign in Morse code – ${p.meaning}`;
-const description = `${p.sign}: ${p.summary} Full prosign reference for CW operators.`;
+// Length-aware, same reason as the abbreviation pages: use the full snippet
+// without letting a long `summary` overflow it.
+const description = (() => {
+  const base = `${p.sign} in Morse code — ${p.summary}`.replace(/\s+/g, " ").trim();
+  const tails = [
+    " How it's sent, when operators use it, and what it means in a real QSO.",
+    " How it's sent and when operators use it.",
+    " How it's sent.",
+    "",
+  ];
+  const tail = tails.find((t) => (base + t).length <= 158) ?? "";
+  return base + tail;
+})();
 const keywords = `${p.sign}, ${p.slug} prosign, ${p.meaning.toLowerCase()}, ham radio ${p.sign}, morse code prosign`;
 
 const related = prosigns

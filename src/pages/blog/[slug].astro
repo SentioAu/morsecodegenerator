@@ -82,11 +82,26 @@ const jsonLd = {
 // headline (Google appends the site name in results anyway).
 const BRAND = " — MorseGen";
 const pageTitle = post.title.length + BRAND.length <= 60 ? post.title + BRAND : post.title;
+
+// `excerpt` does double duty: the blog-index sub-line (where ~180 chars reads
+// fine) and this page's meta description (where Google cuts around 160). Most
+// excerpts overshoot, which is why the blog dominated the "meta description
+// too long" list. Trim on a sentence boundary where possible, then a word
+// boundary, so the snippet always ends cleanly rather than mid-word.
+const metaDescription = (() => {
+  const text = String(post.excerpt || "").replace(/\s+/g, " ").trim();
+  if (text.length <= 158) return text;
+  const window = text.slice(0, 158);
+  const lastStop = Math.max(window.lastIndexOf(". "), window.lastIndexOf("! "), window.lastIndexOf("? "));
+  if (lastStop >= 110) return window.slice(0, lastStop + 1);
+  const lastSpace = window.lastIndexOf(" ");
+  return (lastSpace > 0 ? window.slice(0, lastSpace) : window).trimEnd() + "…";
+})();
 ---
 
 <Layout
   title={pageTitle}
-  description={post.excerpt}
+  description={metaDescription}
   canonical={canonical}
   robots={robots}
   ogType="article"

@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node ./scripts/postbuild-glossary-links.mjs && node ./scripts/postbuild-sitemap.mjs && node ./scripts/postbuild-news-sitemap.mjs && node ./scripts/postbuild-og.mjs && node ./scripts/verify-build.mjs && node ./scripts/check-links.mjs && node ./scripts/indexnow-ping.mjs",
+    "build": "astro build && node ./scripts/postbuild-glossary-links.mjs && node ./scripts/postbuild-sitemap.mjs && node ./scripts/postbuild-news-sitemap.mjs && node ./scripts/postbuild-og.mjs && node ./scripts/postbuild-schema-image.mjs && node ./scripts/verify-build.mjs && node ./scripts/check-links.mjs && node ./scripts/indexnow-ping.mjs",
     "verify": "node ./scripts/verify-build.mjs && node ./scripts/check-links.mjs",
     "test": "node --test \"src/**/*.test.ts\"",
     "indexnow": "node ./scripts/indexnow-ping.mjs",

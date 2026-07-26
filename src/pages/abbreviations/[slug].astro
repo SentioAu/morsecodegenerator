@@ -75,7 +75,22 @@ const secsAt = (units, wpm) => (units * (1200 / wpm)) / 1000;
 const showSaving = savesUnits > 0 && spelledOut.length > a.code.length;
 
 const title = `${a.code} in Morse code – ${a.meaning}`;
-const description = `${a.code}: ${a.summary} Plain-English CW abbreviation reference.`;
+// Extended to use the SERP snippet properly (28 of 30 were flagged too
+// short) and to surface the airtime comparison these pages now carry.
+// Length-aware so a long `summary` can't push it past ~158 characters.
+const description = (() => {
+  const base = `${a.code} in Morse code — ${a.summary}`.replace(/\s+/g, " ").trim();
+  // Longest tail that still fits. Picking from a ladder (rather than
+  // truncating) keeps every description a complete sentence.
+  const tails = [
+    " With on-air examples, and how much keying time it saves over spelling it out.",
+    " With on-air examples and the keying time it saves.",
+    " With on-air examples.",
+    "",
+  ];
+  const tail = tails.find((t) => (base + t).length <= 158) ?? "";
+  return base + tail;
+})();
 const keywords = `${a.code}, ${a.slug} cw abbreviation, ${a.meaning.toLowerCase()}, ham radio ${a.code}, morse code ${a.code}`;
 
 const related = abbrs

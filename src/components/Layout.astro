@@ -608,7 +608,19 @@ const jsonLd = {
             © {new Date().getFullYear()} MorseCodeGenerator.com — the hub of Morse code.
           </small>
           <small class="foot-brand">
-            <a class="foot-link" href={`mailto:${CONTACT_EMAIL}`}>Email</a>
+            {/* Links to /contact/ rather than mailto:. Cloudflare's Scrape
+                Shield rewrites every mailto: into /cdn-cgi/l/email-protection#…
+                and relies on JS to restore it — that URL returns 404 to any
+                crawler that doesn't run scripts. Since this sits in the footer,
+                it was the ONLY 404 on the site and made all 769 pages "link to
+                a broken page" in Ahrefs.
+                Note the obfuscation was protecting nothing anyway: CONTACT_EMAIL
+                is emitted in plain text in the Organization JSON-LD on every
+                page. Turning Email Address Obfuscation off in the Cloudflare
+                dashboard is the complete fix (it would also clean up the two
+                remaining obfuscated links on /contact/); this change makes the
+                site correct without depending on that. */}
+            <a class="foot-link" href="/contact/">Email</a>
             <span class="dot" aria-hidden="true">•</span>
             Project by
             {/* nofollow on both site-wide external footer links (this and the
