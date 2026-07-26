@@ -135,6 +135,53 @@ const translatorHref = phrase
   ? `/translate/?q=${encodeURIComponent(phrase)}`
   : "/translate/";
 
+// ---------------------------------------------------------------------
+// Per-phrase breakdown + timing.
+//
+// These 56 pages were the thinnest indexable cluster on the site: 150-160
+// words, of which almost all was navigation. 18 of them sit in GSC's
+// "Crawled – currently not indexed", which is what that profile earns. The
+// word pages (/{word}-in-morse-code/) carry a letter breakdown and are
+// noticeably healthier, so this ports the same proven pattern rather than
+// inventing filler.
+//
+// Everything here is computed from morse.json, so it stays correct if the
+// data changes and it is genuinely unique per phrase.
+// ---------------------------------------------------------------------
+const breakdown = (phrase && morse && !hasUnknown)
+  ? String(phrase).toUpperCase().split(/\s+/).filter(Boolean).map((word) => ({
+      word,
+      chars: word.split("").map((ch) => ({ ch, code: map[ch] || "" })).filter((x) => x.code),
+    })).filter((w) => w.chars.length)
+  : [];
+
+const allChars = breakdown.flatMap((w) => w.chars);
+const ditCount = allChars.reduce((n, c) => n + (c.code.match(/\./g) || []).length, 0);
+const dahCount = allChars.reduce((n, c) => n + (c.code.match(/-/g) || []).length, 0);
+
+// Duration in dot-units, using the standard spacing the whole site uses:
+// dit 1, dah 3, intra-character gap 1, inter-character gap 3, word gap 7.
+const totalUnits = (() => {
+  if (!allChars.length) return 0;
+  let units = 0;
+  breakdown.forEach((w, wi) => {
+    w.chars.forEach((c, ci) => {
+      const symbols = c.code.split("");
+      symbols.forEach((sym, si) => {
+        units += sym === "-" ? 3 : 1;
+        if (si < symbols.length - 1) units += 1;   // intra-character gap
+      });
+      if (ci < w.chars.length - 1) units += 3;      // letter gap
+    });
+    if (wi < breakdown.length - 1) units += 7;      // word gap
+  });
+  return units;
+})();
+
+// unit = 1200/wpm ms (site-wide convention, see CLAUDE.md §11)
+const secondsAt = (wpm) => (totalUnits * (1200 / wpm)) / 1000;
+const timings = [5, 13, 20].map((wpm) => ({ wpm, secs: secondsAt(wpm) }));
+
 // Related phrases
 const phraseList = normalizePhraseList(data?.phrases ?? []);
 const related = phraseList.filter((p) => p.slug !== slug).slice(0, 10);
@@ -239,6 +286,78 @@ const jsonLd = {
   ) : (
     <section class="card">
       <p class="muted">This phrase isn't available. Try the <a href="/phrases/">phrase list</a> or the <a href="/translate/">translator</a>.</p>
+    </section>
+  )}
+
+  {breakdown.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="page-hero-kicker">Letter by letter</p>
+          <h2 class="section-title">How “{phrase}” is built</h2>
+        </div>
+        <p class="section-sub muted">
+          {allChars.length} characters · {ditCount} dits · {dahCount} dahs
+        </p>
+      </div>
+      <div class="ph-breakdown">
+        {breakdown.map((w) => (
+          <div class="ph-word">
+            <p class="ph-word-label">{w.word}</p>
+            <div class="ph-chars">
+              {w.chars.map((c) => (
+                <div class="ph-char">
+                  <span class="ph-char-letter">{c.ch}</span>
+                  <span class="ph-char-code mono">{c.code}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="muted ph-note">
+        Each letter is separated by a gap three dot-units long, and each word by
+        a gap of seven. That spacing is what keeps
+        {" "}<span class="k">{allChars.map((c) => c.code).join("")}</span>{" "}
+        readable as “{phrase}” instead of one run-on string — the most common
+        reason hand-copied Morse decodes wrong. The
+        {" "}<a href="/decoder/">decoder</a> shows the difference if you paste
+        it with and without the gaps.
+      </p>
+    </section>
+  )}
+
+  {totalUnits > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="page-hero-kicker">Timing</p>
+          <h2 class="section-title">How long “{phrase}” takes to send</h2>
+        </div>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Speed</th><th>Dot length</th><th>Time to send</th></tr>
+          </thead>
+          <tbody>
+            {timings.map((t) => (
+              <tr>
+                <td><strong>{t.wpm} WPM</strong></td>
+                <td class="k">{Math.round(1200 / t.wpm)} ms</td>
+                <td>{t.secs < 10 ? t.secs.toFixed(1) : Math.round(t.secs)} seconds</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="muted ph-note">
+        The whole phrase is {totalUnits} dot-units long including the gaps. 5 WPM
+        is a beginner's copying speed, 13 WPM was the old US licence requirement,
+        and 20 WPM is comfortable conversational CW. Work out any other speed
+        with the <a href="/timing-calculator/">timing calculator</a>, or hear it
+        at your own pace on the <a href="/practice/">practice trainer</a>.
+      </p>
     </section>
   )}
 
@@ -421,6 +540,22 @@ const jsonLd = {
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 
   <style>
+    .ph-breakdown{ display: grid; gap: var(--s-4); }
+    .ph-word-label{
+      font-weight: 600; margin: 0 0 var(--s-2);
+      letter-spacing: .04em; color: var(--text-muted);
+      font-size: var(--fs-sm); text-transform: uppercase;
+    }
+    .ph-chars{ display: flex; flex-wrap: wrap; gap: var(--s-2); }
+    .ph-char{
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      min-width: 3.25rem; padding: var(--s-2) var(--s-3);
+      border: 1px solid var(--line); border-radius: var(--r-md);
+      background: var(--surface-2);
+    }
+    .ph-char-letter{ font-weight: 700; font-size: var(--fs-md); }
+    .ph-char-code{ font-size: var(--fs-sm); color: var(--text-muted); white-space: nowrap; }
+    .ph-note{ max-width: var(--content); margin-top: var(--s-4); line-height: 1.7; }
     /* Phrase showcase */
     .phrase-show{
       margin-top: var(--s-3);

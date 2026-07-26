@@ -268,6 +268,62 @@ create gear demand.** If gear is worth anything it is via better monetisation
 of the few high-intent visitors who do arrive, not more pages. Treat the old
 "deepen /gear/" recommendation as retired.
 
+### 0.3.0e Full live-site audit (2026-07-25) — pre-outreach health check
+
+Crawled all 767 sitemap URLs live, then analysed the build structurally.
+
+**Clean — no action needed.** All 767 URLs return 200. Zero orphan pages,
+zero duplicate titles, zero duplicate descriptions, zero pages missing an
+`<h1>`, zero missing canonicals, zero `<img>` without alt, zero internal links
+to a redirect, zero internal links to a non-existent path, zero noindex pages
+in the sitemap, zero indexable pages missing from it. hreflang is reciprocal
+across all 6 ES↔EN pairs. Affiliate compliance is correct: all 265 Amazon
+links carry `rel="sponsored nofollow noopener"` + `data-aff`. Page weight
+~12KB, TTFB 0.26–0.52s.
+
+**Fixed in this pass:**
+- **Site-wide external link equity leak.** `ko-fi.com` and `sentioaurum.com`
+  were followed links in the footer of all 769 pages — 1,538 followed
+  outbound links bleeding equity from a domain with **6 inbound links**.
+  Both now `nofollow`. Matters specifically because outreach is next: you
+  want equity retained before links start arriving.
+- **`/phrases/*` was the thinnest cluster on the site** — 56 pages at a
+  median 158 words, nearly all navigation, and 18 of them sit in GSC's
+  "Crawled – currently not indexed". Ported the letter-breakdown pattern the
+  word pages already use, plus a computed send-time table (dot-units → real
+  seconds at 5/13/20 WPM). **Median 158 → 334 words, none under 200.** All
+  computed from `morse.json`, so it can't drift.
+
+**Remaining thin clusters (not yet done, ranked):**
+| cluster | pages <200w | median | note |
+|---|---|---|---|
+| `/abbreviations/*` | 28 of 30 | 174w | same fix shape: expansion + on-air usage |
+| `/prosigns/*` | 11 of 14 | 195w | borderline; several already near 200 |
+| `/{word\|name}-in-morse-code/` | 97 of 539 | 223w | only the tail is under; cluster median is fine |
+| `/embed/`, `/contact/` | 2 | 143w | utility pages, thinness is appropriate |
+
+**Judgment call on the remaining 195→139 thin pages:** the case for fixing
+them is *not* traffic (these clusters draw ~54 impressions per 8 weeks). It's
+that ~140 near-empty pages may be dragging the domain-level quality
+assessment that keeps Google at position 81. That is a plausible hypothesis,
+**not a proven one** — treat it as a cheap bet, not a certainty.
+
+### 0.3.0f Blog: the data does not support writing for search traffic
+
+**20 posts have produced 372 impressions and 35 clicks all-time** — 0.8% of
+site impressions. CTR is the site's best at 9.41%, so posts convert when
+shown; they are simply never shown. A 21st post written for search volume
+would reasonably be expected to earn ~20 impressions.
+
+Informational demand overall is 150 queries / **444 impressions** across the
+whole dataset. The one real gap is **"q code example" (97 impr, pos 6.9,
+0 clicks)**.
+
+**So blog posts should be selected as linkable assets for outreach, not for
+search volume.** Criterion: would a ham club, teacher, or hobby site link to
+it? That is a different question from "does it rank", and it is the right one
+while the site has 6 inbound links.
+
 ### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
 
 **`Crawled – currently not indexed` has doubled: 102 → 220 pages** since late

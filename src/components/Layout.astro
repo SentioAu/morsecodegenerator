@@ -596,7 +596,7 @@ const jsonLd = {
               <li><a href="/terms/">Terms</a></li>
               <li><a href="/disclosure/">Disclosure</a></li>
               <li><a href="/sponsor/">Sponsor</a></li>
-              <li><a href={DONATE_URL} target="_blank" rel="noopener">Support the site</a></li>
+              <li><a href={DONATE_URL} target="_blank" rel="nofollow noopener">Support the site</a></li>
               <li><a href="#" data-open-consent>Cookie preferences</a></li>
               <li><a href="/sitemap/">Sitemap</a></li>
             </ul>
@@ -611,11 +611,17 @@ const jsonLd = {
             <a class="foot-link" href={`mailto:${CONTACT_EMAIL}`}>Email</a>
             <span class="dot" aria-hidden="true">•</span>
             Project by
+            {/* nofollow on both site-wide external footer links (this and the
+                donate link above). They appear on all 769 pages, so without it
+                every page on the site passes link equity outward — which is
+                the opposite of what we want on a domain with 6 inbound links.
+                The credit and the donate route still work exactly the same for
+                humans. */}
             <a
               class="foot-link"
               href="https://sentioaurum.com/"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow noopener noreferrer"
             >SentioAurum</a>
           </small>
         </div>
