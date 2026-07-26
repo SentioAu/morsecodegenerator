@@ -41,6 +41,25 @@ accepted 200 OK), so it stays well clear of anything that looks like
 automated spam. `INDEXNOW_FULL=1` forces a full 761-URL resubmit — don't,
 except after a genuine site-wide change.
 
+**⚠️ Sanity-check the count before firing.** The script's "changed since
+HEAD~1" rule assumes a commit touches a few pages. A *template* edit breaks
+that assumption: the 2026-07-25 word-page description fix touched one file
+and marked **545 URLs (71% of the site)** as changed, for what was a minor
+snippet correction. Submitting that share of the site is indistinguishable
+from "resubmit everything" and dilutes the signal. In that case, submit only
+the materially-changed pages by hand (8 were submitted, 200 OK) and let the
+template-wide edits get picked up on normal recrawl. Dry-run first:
+
+```
+node --input-type=module -e "import {execFileSync} from 'node:child_process';
+import fs from 'node:fs'; import {sourcesForUrl} from './scripts/url-sources.mjs';
+const since=Date.parse(execFileSync('git',['log','-1','--format=%cI','HEAD~1'],{encoding:'utf8'}).trim());
+const urls=Array.from(fs.readFileSync('dist/sitemap.xml','utf8').matchAll(/<loc>([^<]+)<\/loc>/g)).map(m=>m[1]);
+console.log(urls.filter(u=>{const s=sourcesForUrl(new URL(u).pathname).filter(f=>fs.existsSync(f));
+if(!s.length)return true; const t=execFileSync('git',['log','-1','--format=%cI','--',...s],{encoding:'utf8'}).trim();
+return t?Date.parse(t)>since:true}).length)"
+```
+
 **Consequence — env vars:** Cloudflare Pages *build* env vars no longer apply,
 because the build now happens here, not on Cloudflare. Verified 2026-07-25
 that this costs nothing today: the live site has **no** verification meta tags,
