@@ -349,6 +349,53 @@ while the site has 6 inbound links.
    deliberately withheld — they'd expose site performance to competitors. If
    the owner wants absolutes published, that's their call, not a default.
 
+### 0.3.0g Ahrefs audit resolved (2026-07-26) — verified live
+
+Ahrefs reported 26 issues, headlined by **"Page has links to broken page" on
+769 pages**. The internal-URL export narrowed it to a single cause.
+
+**🐛 Root cause: Cloudflare Scrape Shield's email obfuscation.** It rewrites
+`mailto:` links — *and plain-text addresses* — into
+`/cdn-cgi/l/email-protection#…`, relying on JS to restore them. That URL
+**404s** for any crawler that doesn't run scripts. It was the **only 404 on
+the entire site**, and because the footer carried it, all 769 pages "linked
+to a broken page".
+
+The obfuscation was protecting nothing: `CONTACT_EMAIL` is emitted in plain
+text in the Organization JSON-LD on every page, which Cloudflare does not
+touch. The address was already public; only the link was broken.
+
+**Fixed and verified live: 769 → 0.** Footer Email now points at `/contact/`,
+and every remaining address is wrapped in Cloudflare's `<!--email_off-->`
+markers. Confirmed on the live site that Cloudflare honours them.
+
+**⚠️ Lesson for future audits — build checks are not enough.** The first pass
+verified "no unprotected `mailto:`" against `dist/` and passed. It missed
+`/contact/`, which shows the address as *text*, not a link — Cloudflare
+obfuscates those too. **The rewrite happens at Cloudflare's edge and does not
+exist in `dist/`, so only a sweep of live URLs can catch it.** That page was
+also functionally broken: its Copy button reads `textContent` and was copying
+Cloudflare's placeholder. **Sweep live, not just the build.**
+
+**Other findings:**
+- **Structured data (102 pages):** 82 `Article` + 16 `HowTo` nodes had no
+  `image`, which Google requires. Fixed by `postbuild-schema-image.mjs`,
+  which injects each page's own OG PNG (36 pages) or the homepage render
+  (65). Raster only — Google rejects SVG here. It deliberately does **not**
+  invent `datePublished`; several are undated reference pages.
+- **Meta descriptions:** >160 chars 44 → 20; <110 chars 130 → 61.
+- **robots.txt is correct: 0 of 769 sitemap URLs are blocked.** The 1,157
+  "blocked links" Ahrefs reports are all `?q=` / `?text=` prefill variants —
+  intended behaviour, do not "fix" them.
+
+**False positives — do not chase:**
+- **External 5XX (126):** Amazon returns 503 to datacenter crawlers.
+- **Ko-fi 403 (771):** same bot-blocking; owner confirmed the link works
+  normally in a browser (2026-07-26). Both are already `nofollow`.
+
+**Live verification after the final deploy:** all 769 URLs return 200, zero
+pages emit the broken email link, `/contact/` serves a plain address.
+
 ### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
 
 **`Crawled – currently not indexed` has doubled: 102 → 220 pages** since late
