@@ -36,6 +36,44 @@ const morseMap = Object.fromEntries(
 const codeForMorse = a.code.replace(/[?\s]/g, "");
 const morse = textToMorse(codeForMorse, morseMap, " ");
 
+// ---------------------------------------------------------------------
+// "What it saves you" — the reason CW abbreviations exist at all.
+//
+// These pages were the second-thinnest cluster on the site (28 of 30 under
+// 200 words). Rather than pad them, this computes the thing the page is
+// actually about: sending "73" instead of "BEST REGARDS" is the entire
+// point, so show the airtime saved. Everything is derived from morse.json
+// using the site-wide timing convention (CLAUDE.md §11): dit 1 unit, dah 3,
+// intra-character gap 1, letter gap 3, word gap 7, unit = 1200/wpm ms.
+// ---------------------------------------------------------------------
+function unitsFor(text) {
+  const words = String(text).toUpperCase().split(/\s+/).filter(Boolean);
+  let units = 0;
+  words.forEach((word, wi) => {
+    const chars = word.split("").map((ch) => morseMap[ch]).filter(Boolean);
+    chars.forEach((code, ci) => {
+      const syms = code.split("");
+      syms.forEach((sym, si) => {
+        units += sym === "-" ? 3 : 1;
+        if (si < syms.length - 1) units += 1;
+      });
+      if (ci < chars.length - 1) units += 3;
+    });
+    if (wi < words.length - 1) units += 7;
+  });
+  return units;
+}
+
+// Compare the abbreviation against the plain-English phrase it replaces.
+// Strip any trailing parenthetical gloss so we time the phrase, not the note.
+const spelledOut = String(a.meaning).replace(/\s*\([^)]*\)\s*/g, " ").trim();
+const shortUnits = unitsFor(codeForMorse);
+const longUnits = unitsFor(spelledOut);
+const savesUnits = longUnits - shortUnits;
+const savesPct = longUnits > 0 ? Math.round((savesUnits / longUnits) * 100) : 0;
+const secsAt = (units, wpm) => (units * (1200 / wpm)) / 1000;
+const showSaving = savesUnits > 0 && spelledOut.length > a.code.length;
+
 const title = `${a.code} in Morse code – ${a.meaning}`;
 const description = `${a.code}: ${a.summary} Plain-English CW abbreviation reference.`;
 const keywords = `${a.code}, ${a.slug} cw abbreviation, ${a.meaning.toLowerCase()}, ham radio ${a.code}, morse code ${a.code}`;
@@ -136,6 +174,39 @@ const nextUrl = next ? `${site}/abbreviations/${next.slug}/` : undefined;
     <p class="ab-morse" aria-label={`Morse rendering of ${a.code}`}>{morse}</p>
     <p class="muted micro">Sent letter-by-letter with standard inter-letter gaps.</p>
   </section>
+
+  {showSaving && (
+    <section class="card ab-card">
+      <h2 class="ab-h">What it saves you on the air</h2>
+      <p class="ab-line">
+        This is the whole reason CW abbreviations exist. Sending
+        <strong class="k"> {a.code} </strong> instead of spelling out
+        “{spelledOut}” cuts <strong>{savesPct}%</strong> of the airtime —
+        {" "}{savesUnits} dot-units of keying saved every time you send it.
+      </p>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Speed</th><th class="k">{a.code}</th><th>“{spelledOut}”</th><th>Saved</th></tr>
+          </thead>
+          <tbody>
+            {[13, 20, 25].map((wpm) => (
+              <tr>
+                <td><strong>{wpm} WPM</strong></td>
+                <td>{secsAt(shortUnits, wpm).toFixed(1)}s</td>
+                <td>{secsAt(longUnits, wpm).toFixed(1)}s</td>
+                <td><strong>{secsAt(savesUnits, wpm).toFixed(1)}s</strong></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="muted micro">
+        Timed with standard spacing: dit 1 unit, dah 3, letter gap 3, word gap 7.
+        Work out any other speed on the <a href="/timing-calculator/">timing calculator</a>.
+      </p>
+    </section>
+  )}
 
   <section class="card ab-card">
     <h2 class="ab-h">Meaning</h2>

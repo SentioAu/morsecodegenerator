@@ -313,4 +313,24 @@ export const posts = [
       { name: "Get on the air with a slow-speed net", text: "Once you can send a clean call sign and RST at 13 WPM, find a SKCC (Straight Key Century Club) sked or a slow-speed net. Real on-air time accelerates fluency more than any drill." },
     ],
   },
+  {
+    slug: "why-morse-code-jewelry-is-usually-wrong",
+    title: "Why Morse Code Jewelry Is Usually Wrong (And How to Check Yours)",
+    excerpt:
+      "Engraved dots almost never keep the letter gaps, and without them the message stops being readable Morse. The word LOVE, run together, has 612 valid readings. Here's how to check a design before it's permanent.",
+    published: "2026-07-26",
+    kind: "explainer",
+    minutes: 7,
+    tags: ["jewelry", "bracelets", "tattoos", "spacing", "explainer"],
+  },
+  {
+    slug: "what-people-search-for-in-morse-code",
+    title: "What People Actually Search For in Morse Code",
+    excerpt:
+      "We looked at 2,094 distinct Morse code searches. Barely anyone wants to learn it — over half want it translated for them. And the most-looked-up pattern of all isn't SOS, it's a full stop.",
+    published: "2026-07-26",
+    kind: "explainer",
+    minutes: 6,
+    tags: ["data", "research", "explainer"],
+  },
 ];

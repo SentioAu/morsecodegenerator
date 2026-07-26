@@ -294,12 +294,20 @@ links carry `rel="sponsored nofollow noopener"` + `data-aff`. Page weight
   seconds at 5/13/20 WPM). **Median 158 → 334 words, none under 200.** All
   computed from `morse.json`, so it can't drift.
 
-**Remaining thin clusters (not yet done, ranked):**
+- **`/abbreviations/*` enriched** (2026-07-26). Added a computed "what it
+  saves you on the air" section — the airtime of the abbreviation vs the
+  phrase it replaces, at 13/20/25 WPM. Sending `73` instead of "Best regards"
+  cuts **69%** of keying time. This is the *reason* CW abbreviations exist,
+  so it's on-topic content rather than padding. **Median 174 → 256 words.**
+
+**Thin-page progress: 195 → 112 pages under 200 words.**
+
 | cluster | pages <200w | median | note |
 |---|---|---|---|
-| `/abbreviations/*` | 28 of 30 | 174w | same fix shape: expansion + on-air usage |
-| `/prosigns/*` | 11 of 14 | 195w | borderline; several already near 200 |
-| `/{word\|name}-in-morse-code/` | 97 of 539 | 223w | only the tail is under; cluster median is fine |
+| ✅ `/phrases/*` | 0 (was 56) | 334w | done |
+| ✅ `/abbreviations/*` | 1 (was 28) | 256w | done |
+| `/{word\|name}-in-morse-code/` | 97 of 540 | 223w | only the tail is under; cluster median is fine. **Leave it** — this cluster has the site's best CTR (6.13%) and churning it has repeatedly been the wrong call |
+| `/prosigns/*` | 11 of 14 | 195w | borderline — all sit within ~30 words of the line. Lowest-value remaining fix |
 | `/embed/`, `/contact/` | 2 | 143w | utility pages, thinness is appropriate |
 
 **Judgment call on the remaining 195→139 thin pages:** the case for fixing
@@ -323,6 +331,23 @@ whole dataset. The one real gap is **"q code example" (97 impr, pos 6.9,
 search volume.** Criterion: would a ham club, teacher, or hobby site link to
 it? That is a different question from "does it rank", and it is the right one
 while the site has 6 inbound links.
+
+**Two written on that basis (2026-07-26), both outreach ammunition:**
+1. **`/blog/why-morse-code-jewelry-is-usually-wrong/`** (1,200 words) — the
+   letter-gap problem, with **computed** counts of how many valid readings a
+   run-together word has. LOVE = **612**, SOS = 220, ANNA = 110, MOM = 49,
+   HI = 31 (exhaustive split of each unspaced string into valid Morse
+   characters). Targets craft / jewelry / tattoo communities — audiences that
+   don't know the site exists. The `.. ..` and `. . . . -` search patterns
+   (45% of all pattern lookups) are people hitting exactly this problem.
+2. **`/blog/what-people-search-for-in-morse-code/`** (1,085 words) — original
+   analysis of 2,094 queries. Headline: **27.6% want a translator, 24.8% a
+   generator, 0.5% want to learn it** — roughly 100:1. And the most-looked-up
+   pattern is not SOS (0.5%) but `.-.-.` — a full stop (35.3%).
+   **⚠️ Disclosure note:** published as *percentages only*, plus the query
+   count and a methodology caveat. Absolute impressions/clicks were
+   deliberately withheld — they'd expose site performance to competitors. If
+   the owner wants absolutes published, that's their call, not a default.
 
 ### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
 

@@ -1334,4 +1334,127 @@ export const bodies = {
 
 <p>Buy a straight key, anchor it well, send at 12–15 WPM with clean rhythm, drill in Koch order, check yourself against the decoder, and check into a slow-speed net within a month. That's the whole sport.</p>
 `,
+
+  "why-morse-code-jewelry-is-usually-wrong": `
+<p>Morse code jewelry has one job: to say something. Most of it doesn't. Not because the dots and dashes are wrong — usually they're taken straight from a correct chart — but because the <strong>gaps</strong> get lost somewhere between the design and the metal. And in Morse, the gaps carry as much meaning as the marks.</p>
+
+<p>This is worth understanding before you buy a piece, commission an engraver, or sit down for a tattoo. Once it's on metal or skin, it's not a typo you can fix.</p>
+
+<h2>Morse has three gaps, and jewelry usually keeps none of them</h2>
+<p>International Morse is built on a strict timing ratio. A dot is one unit. A dash is three. And the spaces are not decoration — they're part of the code:</p>
+<ul>
+  <li><strong>1 unit</strong> — between the dots and dashes <em>inside</em> one letter</li>
+  <li><strong>3 units</strong> — between one letter and the next</li>
+  <li><strong>7 units</strong> — between words</li>
+</ul>
+<p>A jeweller laying out beads or an engraver spacing marks will almost always space everything evenly, because evenly spaced looks better. That single aesthetic decision destroys the letter boundaries — and without letter boundaries, the string stops being decodable.</p>
+
+<h2>What "LOVE" becomes without gaps</h2>
+<p>Written properly, LOVE is <span class="k">.-.. --- ...- .</span> — four letters, clearly separated.</p>
+<p>Run the same marks together with even spacing and you get <span class="k">.-..---...-.</span>. That string is still valid Morse. The problem is that it's valid in <strong>612 different ways</strong>. A decoder — human or software — has no way to know which one you meant. ENAGER is as legitimate a reading as LOVE.</p>
+<p>It isn't just long words. We counted every valid way to split each string into real Morse characters:</p>
+<div class="tablewrap">
+  <table>
+    <thead><tr><th>Word</th><th>Correct Morse</th><th>Run together</th><th>Possible readings</th></tr></thead>
+    <tbody>
+      <tr><td><strong>HI</strong></td><td class="k">.... ..</td><td class="k">......</td><td><strong>31</strong></td></tr>
+      <tr><td><strong>MOM</strong></td><td class="k">-- --- --</td><td class="k">-------</td><td><strong>49</strong></td></tr>
+      <tr><td><strong>ANNA</strong></td><td class="k">.- -. -. .-</td><td class="k">.--.-..-</td><td><strong>110</strong></td></tr>
+      <tr><td><strong>SOS</strong></td><td class="k">... --- ...</td><td class="k">...---...</td><td><strong>220</strong></td></tr>
+      <tr><td><strong>LOVE</strong></td><td class="k">.-.. --- ...- .</td><td class="k">.-..---...-.</td><td><strong>612</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Even <strong>HI</strong> — two letters, six dots — has 31 readings once the gap between H and I disappears. Five of those dots in a row is the digit 5, so <span class="k">......</span> reads just as happily as "5E" or "EEEEEE".</p>
+
+<h3>The one exception: SOS</h3>
+<p>You'll notice SOS in that table with 220 readings, which seems to contradict the fact that SOS is genuinely written closed up as <span class="k">...---...</span>. Both are true. SOS is a <em>prosign</em> — it's deliberately sent as one unbroken string with no letter gaps, and it's recognised by convention rather than by parsing. That's exactly what makes it a distress signal instead of the three letters S, O and S. It's the exception that proves the rule: it only works because everyone already agrees what it means.</p>
+
+<h2>How to get a design right</h2>
+<p>The fix is not complicated. It's just usually skipped.</p>
+<ol>
+  <li><strong>Make the letter gap visibly bigger than the symbol gap.</strong> If your dots inside a letter sit 1mm apart, letters should sit at least 3mm apart, and words 7mm. Proportion matters more than exact size.</li>
+  <li><strong>Use two clearly different mark shapes.</strong> A dash should read as three times a dot, not slightly longer. Round bead for a dot, long bar for a dash is the clearest convention.</li>
+  <li><strong>Don't let a clasp or a curve eat a gap.</strong> On a bracelet, the join is where letters most often get swallowed. Design the layout flat first, then check where it wraps.</li>
+  <li><strong>Decode it back before you commit.</strong> This is the step that catches everything.</li>
+</ol>
+
+<h2>Check a design before it's permanent</h2>
+<p>Paste the pattern into the <a href="/decoder/">Morse code decoder</a> exactly as it will appear on the piece — including the spacing. If it comes back as your word, the spacing works. If it comes back as something else, or the decoder offers you a different reading, the design is ambiguous and a jeweller will not catch it for you.</p>
+<p>Two things worth trying while you're there: paste it <em>with</em> the gaps and then <em>without</em>, and compare. The difference is usually startling, and it's the fastest way to see whether your layout is carrying the letter boundaries.</p>
+<p>If you're designing from scratch rather than checking someone else's work, the <a href="/morse-bracelet/">bracelet generator</a> lays out the correct gap ratios automatically and exports a PNG or SVG you can hand to a maker. For a tattoo, generate the artwork the same way and take the file to the artist rather than a hand-drawn sketch — freehand dots drift, and drift is exactly what breaks the code.</p>
+
+<h2>A quick checklist</h2>
+<ul>
+  <li>Are letter gaps about <strong>three times</strong> the gaps inside a letter?</li>
+  <li>Are word gaps about <strong>seven times</strong>?</li>
+  <li>Are dashes clearly <strong>three times</strong> the length of dots?</li>
+  <li>Does the <a href="/decoder/">decoder</a> return your exact word from the spacing as drawn?</li>
+  <li>If it wraps or curves, do the gaps survive the bend?</li>
+</ul>
+<p>Get those five right and the piece says what you meant it to say — to anyone who can read Morse, not just to the person who commissioned it. Get them wrong and you have attractive jewelry that technically reads ENAGER.</p>
+<p>Need the underlying patterns? The full <a href="/chart/">Morse code chart</a> has every letter, number and punctuation mark, and the <a href="/translate/">translator</a> will spell out any word or name with the gaps already correct.</p>
+`,
+
+  "what-people-search-for-in-morse-code": `
+<p>We run a Morse code site, which means we get to see something most people writing about Morse don't: what the public actually types into a search box when Morse code is on their mind. Not what enthusiasts think is interesting — what strangers genuinely want.</p>
+<p>We pulled every distinct query that reached this site over nine months. <strong>2,094 of them.</strong> The picture that came back was not the one we expected.</p>
+
+<h2>Almost nobody wants to learn Morse code</h2>
+<p>Here's the share of all Morse searches by what the person was actually trying to do:</p>
+<div class="tablewrap">
+  <table>
+    <thead><tr><th>What they wanted</th><th>Share of searches</th></tr></thead>
+    <tbody>
+      <tr><td>A <strong>translator</strong> — turn this into Morse, or Morse into text</td><td><strong>27.6%</strong></td></tr>
+      <tr><td>A <strong>generator</strong> or maker</td><td><strong>24.8%</strong></td></tr>
+      <tr><td>The <strong>alphabet</strong> or a chart</td><td>8.0%</td></tr>
+      <tr><td>The <strong>NATO / military</strong> alphabet</td><td>4.2%</td></tr>
+      <tr><td>To <strong>decode a specific pattern</strong> they'd seen</td><td>2.7%</td></tr>
+      <tr><td>A specific <strong>word or name</strong> in Morse</td><td>2.6%</td></tr>
+      <tr><td>To <strong>learn or practice</strong> it</td><td><strong>0.5%</strong></td></tr>
+      <tr><td>SOS or emergency use</td><td>0.1%</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Over <strong>half of all Morse code searches</strong> are someone asking a machine to do it for them. Half a percent are people who want to learn.</p>
+<p>That ratio — roughly <strong>100 to 1</strong> — is the single most striking thing in the data. Morse code has a thriving amateur radio community with clubs, contests and decades of teaching material, and that entire world accounts for a rounding error in search demand. The public relationship with Morse is not "a skill to acquire". It's "a thing to convert".</p>
+
+<h2>The most-looked-up pattern isn't SOS. It's a full stop.</h2>
+<p>A small but revealing slice of searches are people pasting in a pattern they've seen somewhere and asking what it means. Ranked by volume, here's what they're holding:</p>
+<div class="tablewrap">
+  <table>
+    <thead><tr><th>Pattern</th><th>Share of pattern lookups</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td class="k">.-.-.-</td><td><strong>35.3%</strong></td><td>Period / full stop</td></tr>
+      <tr><td class="k">.. ..</td><td>24.4%</td><td>Two letter Is</td></tr>
+      <tr><td class="k">. . . . -</td><td>20.4%</td><td>Spaced dots — usually meant as the digit 4</td></tr>
+      <tr><td class="k">.- - -</td><td>8.8%</td><td>Ambiguous without gaps</td></tr>
+      <tr><td class="k">.-.-.</td><td>2.8%</td><td>Plus sign, or the prosign AR</td></tr>
+      <tr><td class="k">...---...</td><td>0.5%</td><td>SOS</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>SOS — the one piece of Morse everyone claims to know — is <strong>0.5%</strong> of pattern lookups. The winner, by a mile, is punctuation. <span class="k">.-.-.-</span> is a period, and it accounts for more than a third of everything people paste in.</p>
+<p>That makes sense once you think about where people <em>encounter</em> Morse. Not on the air — on jewelry, tattoos, album art, film props and puzzle games. And engraved designs are full of punctuation and short fragments, not distress calls. The people looking things up aren't operators. They're decoding a gift.</p>
+<p>Look closely at the second and third entries and you'll spot the other half of that story: <span class="k">.. ..</span> and <span class="k">. . . . -</span> are both <strong>spacing problems</strong>. Someone is trying to read marks whose letter gaps didn't survive the design. We wrote about <a href="/blog/why-morse-code-jewelry-is-usually-wrong/">why Morse code jewelry is usually wrong</a> because the data kept pointing at it.</p>
+
+<h2>People search for words, and the words are small</h2>
+<p>Searches for a specific word or name in Morse are a small share of the total, but they're the most human part of the dataset. The most-searched, in order: <strong>help</strong>, <strong>hello</strong>, <strong>egg</strong>, <strong>numbers</strong>, <strong>sos</strong>, <strong>yes</strong>, <strong>one</strong>, <strong>sorry</strong>, <strong>chris</strong>, <strong>period</strong>, <strong>why</strong>.</p>
+<p>"Help" and "sorry" and "why" sit next to "egg" and a first name. Some of these are homework. Some are a message someone wants to give to a specific person. It's a strange, oddly touching list, and it's a good reminder that most Morse searches are not technical at all.</p>
+
+<h2>What this means if you write about Morse code</h2>
+<p>Three things we'd take from it:</p>
+<ul>
+  <li><strong>Lead with the tool, not the history.</strong> Half your audience wants a conversion completed, not a story about Samuel Morse. The story is worth telling — but it isn't why they arrived.</li>
+  <li><strong>Punctuation is under-served.</strong> Every Morse chart shows A–Z prominently and buries the punctuation. The search data says punctuation is what people can't identify.</li>
+  <li><strong>Spacing is the real beginner problem.</strong> Not memorising letters — reading marks whose gaps have been flattened. Almost nothing written about Morse addresses it.</li>
+</ul>
+
+<h3>Method and caveats</h3>
+<p>This is one site's search data over nine months, from Bing Webmaster Tools, covering 2,094 distinct queries. It's a real sample but not a neutral one: a site called <em>morsecodegenerator.com</em> will naturally over-collect people looking for a generator, and under-collect people searching for ham radio clubs or licence exams. Read the ratios as indicative of general-public interest in Morse, not of the amateur radio community, which mostly doesn't need to search for any of this.</p>
+<p>The "possible readings" counts in our <a href="/blog/why-morse-code-jewelry-is-usually-wrong/">jewelry piece</a> were computed by exhaustively splitting each unspaced string into every valid sequence of Morse characters.</p>
+<p>Want to try any of it yourself? The <a href="/translate/">translator</a> handles both directions, the <a href="/decoder/">decoder</a> takes a pasted pattern, and the <a href="/chart/">full chart</a> has the punctuation everyone's looking for.</p>
+`,
+
 };
