@@ -1457,4 +1457,82 @@ export const bodies = {
 <p>Want to try any of it yourself? The <a href="/translate/">translator</a> handles both directions, the <a href="/decoder/">decoder</a> takes a pasted pattern, and the <a href="/chart/">full chart</a> has the punctuation everyone's looking for.</p>
 `,
 
+  "q-code-examples-real-cw-qso": `
+<p>Q-codes are easy to look up and hard to actually use. A reference table tells you that <span class="k">QTH</span> means location — it doesn't tell you that <span class="k">QTH?</span> and <span class="k">QTH BOSTON</span> are the same code doing two opposite jobs, or that sending <span class="k">QRL?</span> before you call is the difference between a polite operator and one everybody groans at.</p>
+<p>This page is the examples. A full contact, annotated line by line, then the codes you'll genuinely hear and how they're used in practice. For the plain definitions, the <a href="/q-codes/">Q-code reference</a> has all of them.</p>
+
+<h2>The one rule that makes Q-codes click</h2>
+<p>Every Q-code is <strong>both a question and an answer</strong>. Add a question mark and it asks; leave it off and it tells.</p>
+<div class="tablewrap">
+  <table>
+    <thead><tr><th>Sent as</th><th>Means</th></tr></thead>
+    <tbody>
+      <tr><td class="k">QTH?</td><td>Where are you?</td></tr>
+      <tr><td class="k">QTH BOSTON</td><td>I'm in Boston.</td></tr>
+      <tr><td class="k">QRS?</td><td>Shall I send slower?</td></tr>
+      <tr><td class="k">QRS</td><td>Send slower.</td></tr>
+      <tr><td class="k">QSL?</td><td>Can you confirm you received that?</td></tr>
+      <tr><td class="k">QSL</td><td>Confirmed, I got it.</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Get that one distinction and roughly half the confusion disappears. It's also the mistake that most marks out a new operator: sending <span class="k">QRZ</span> when you meant <span class="k">QRZ?</span> tells the band you're calling someone rather than asking who called you.</p>
+
+<h2>A real QSO, line by line</h2>
+<p>Here's an ordinary short contact. Nothing exotic — this is what most CW exchanges actually look like.</p>
+<div class="tablewrap">
+  <table>
+    <thead><tr><th>Sent</th><th>What it means</th></tr></thead>
+    <tbody>
+      <tr><td class="k">QRL?</td><td>"Is this frequency in use?" Always send this before calling on a clear-sounding frequency. Someone may be there and you simply can't hear them.</td></tr>
+      <tr><td class="k">CQ CQ CQ DE W1ABC W1ABC K</td><td>A general call. <span class="k">DE</span> is "from", <span class="k">K</span> is "over to you".</td></tr>
+      <tr><td class="k">W1ABC DE K2XYZ K</td><td>K2XYZ answers, naming who they're calling first.</td></tr>
+      <tr><td class="k">K2XYZ DE W1ABC = UR RST 579 = QTH BOSTON MA = NAME JIM = HW? K</td><td>Signal report, location, name, then "how do you copy?" The <span class="k">=</span> is the BT prosign, used as a separator.</td></tr>
+      <tr><td class="k">W1ABC DE K2XYZ = QSL = UR RST 559 = QTH DENVER CO = NAME SUE = QRM HR = K</td><td>"Got all that." Report back, and a note that there's interference here.</td></tr>
+      <tr><td class="k">K2XYZ DE W1ABC = QSL = TNX QSO SUE = 73 = SK</td><td>Acknowledged, thanks for the contact, best regards, end of contact.</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Six lines, and only five Q-codes in the whole thing: <a href="/q-codes/qrl/">QRL</a>, <a href="/q-codes/qth/">QTH</a>, <a href="/q-codes/qsl/">QSL</a>, <a href="/q-codes/qrm/">QRM</a> and <a href="/q-codes/qso/">QSO</a>. That's typical. Q-codes are seasoning, not the meal — the bulk of a contact is call signs, signal reports and <a href="/abbreviations/">plain CW abbreviations</a>.</p>
+
+<h2>The ten you'll actually hear</h2>
+<div class="tablewrap">
+  <table>
+    <thead><tr><th>Code</th><th>In practice</th><th>Typical use</th></tr></thead>
+    <tbody>
+      <tr><td class="k"><a href="/q-codes/qrl/">QRL?</a></td><td>Is this frequency in use?</td><td>Before every call. Non-negotiable courtesy.</td></tr>
+      <tr><td class="k"><a href="/q-codes/qth/">QTH</a></td><td>Location</td><td><span class="k">QTH DENVER CO</span></td></tr>
+      <tr><td class="k"><a href="/q-codes/qsl/">QSL</a></td><td>Received / confirmed</td><td><span class="k">QSL</span> to acknowledge; also means a confirmation card.</td></tr>
+      <tr><td class="k"><a href="/q-codes/qrz/">QRZ?</a></td><td>Who is calling me?</td><td>When you catch a call but not the sign.</td></tr>
+      <tr><td class="k"><a href="/q-codes/qrs/">QRS</a></td><td>Send slower</td><td><span class="k">QRS PSE</span> — the most useful code a learner can send.</td></tr>
+      <tr><td class="k"><a href="/q-codes/qrm/">QRM</a></td><td>Man-made interference</td><td>Another station, a heterodyne, electrical noise.</td></tr>
+      <tr><td class="k"><a href="/q-codes/qrn/">QRN</a></td><td>Atmospheric noise</td><td>Lightning static. Not the same as QRM.</td></tr>
+      <tr><td class="k"><a href="/q-codes/qsb/">QSB</a></td><td>Fading</td><td><span class="k">QSB HR</span> — your signal is rising and falling.</td></tr>
+      <tr><td class="k"><a href="/q-codes/qsy/">QSY</a></td><td>Change frequency</td><td><span class="k">QSY 7030</span></td></tr>
+      <tr><td class="k"><a href="/q-codes/qrt/">QRT</a></td><td>Closing down</td><td><span class="k">QRT</span> — I'm going off the air.</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Two pairs are worth keeping straight because they sound similar and mean different things. <span class="k">QRM</span> is interference a human caused; <span class="k">QRN</span> is noise the sky caused. <span class="k">QRS</span> asks for slower; <span class="k">QRQ</span> asks for faster — and <span class="k">QRP</span> (low power) is not a speed code at all, it's a whole style of operating.</p>
+
+<h2>Q-codes, abbreviations and prosigns aren't the same thing</h2>
+<p>Three different systems get lumped together, and knowing which is which makes a transcript far easier to read:</p>
+<ul>
+  <li><strong>Q-codes</strong> — three letters starting with Q, each a question or an answer. <span class="k">QTH</span>, <span class="k">QSL</span>. <a href="/q-codes/">Full list</a>.</li>
+  <li><strong><a href="/abbreviations/">Abbreviations</a></strong> — shorthand for ordinary words. <span class="k">TNX</span> (thanks), <span class="k">OM</span> (old man), <span class="k">HW?</span> (how do you copy?), <span class="k">73</span> (best regards).</li>
+  <li><strong><a href="/prosigns/">Prosigns</a></strong> — run-together letters that punctuate rather than spell. <span class="k">AR</span> (end of message), <span class="k">BT</span> (paragraph break, written <span class="k">=</span>), <span class="k">SK</span> (end of contact).</li>
+</ul>
+<p>In the QSO above, <span class="k">QSL</span> is a Q-code, <span class="k">TNX</span> and <span class="k">73</span> are abbreviations, and <span class="k">=</span> and <span class="k">SK</span> are prosigns. All three in one line is completely normal.</p>
+
+<h2>Three mistakes worth avoiding</h2>
+<ol>
+  <li><strong>Calling without sending <span class="k">QRL?</span> first.</strong> The station you can't hear can usually hear you.</li>
+  <li><strong>Using the question form when you mean the answer.</strong> <span class="k">QSL?</span> asks; <span class="k">QSL</span> confirms.</li>
+  <li><strong>Over-seasoning.</strong> Stacking six Q-codes into one line reads as showing off and is harder to copy. Real operators use a handful.</li>
+</ol>
+
+<h2>Practice them before you transmit</h2>
+<p>The fastest way to get comfortable is to hear these at speed rather than read them. Drop any of the exchanges above into the <a href="/translate/">translator</a> to hear the rhythm, or generate endless realistic exchanges — call signs, reports, Q-codes and all — with the <a href="/random-cw/">random CW generator</a>. When you can copy a full QSO without pausing, you're ready for the real thing; <a href="/blog/how-to-call-cq-morse-code/">calling CQ</a> walks through your first contact end to end.</p>
+`,
+
 };

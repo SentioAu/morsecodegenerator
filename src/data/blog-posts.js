@@ -333,4 +333,14 @@ export const posts = [
     minutes: 6,
     tags: ["data", "research", "explainer"],
   },
+  {
+    slug: "q-code-examples-real-cw-qso",
+    title: "Q-Code Examples: What They Look Like in a Real CW Contact",
+    excerpt:
+      "A reference table tells you QTH means location. It doesn't tell you that QTH? and QTH BOSTON are the same code doing opposite jobs. Here's a full QSO annotated line by line, and the ten Q-codes you'll actually hear.",
+    published: "2026-07-26",
+    kind: "explainer",
+    minutes: 7,
+    tags: ["q-codes", "cw", "operating", "ham radio", "explainer"],
+  },
 ];
