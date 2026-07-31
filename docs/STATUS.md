@@ -407,6 +407,25 @@ Cloudflare's placeholder. **Sweep live, not just the build.**
 **Live verification after the final deploy:** all 769 URLs return 200, zero
 pages emit the broken email link, `/contact/` serves a plain address.
 
+### 0.3.0h 📈 The CTR thesis is validated (Bing, month-end July 2026)
+
+| month | clicks | impressions | CTR |
+|---|---|---|---|
+| 2026-04 | 294 | 27,089 | 1.09% |
+| 2026-05 | 265 | 34,779 | 0.76% |
+| 2026-06 | 238 | 16,587 | 1.43% |
+| **2026-07** | **347** | **15,520** | **2.24%** |
+
+**July is the best month in the entire dataset** — clicks **+46% MoM** on
+**fewer** impressions, and CTR nearly tripled from the May low. Impressions
+are still shrinking (Bing pruning low-CTR pools, §0.3), but the site is now
+converting the pool it keeps. That is exactly the outcome the CTR work was
+aimed at, and it means **clicks can grow while impressions fall**.
+
+Also visible: **"morse code sheet" went 67 → 398 impressions** in six weeks,
+i.e. the `/cheat-sheet/` retitle is pulling in its target pool ahead of the
+2026-08-22 readout.
+
 ### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
 
 **`Crawled – currently not indexed` has doubled: 102 → 220 pages** since late
@@ -494,6 +513,41 @@ distribution (`LAUNCH-KIT.md`), and let the CTR experiment run before scaling
 it. Ship content only where data shows demand (tools/ham/gear/Spanish).
 
 ---
+
+## 0.5 💰 AMAZON ASSOCIATES APPROVED (2026-07-30) — 180-day clock running
+
+Store ID **`mcg0d2-20`** approved. Verified live: that exact tag is on **260
+links**, and the required "As an Amazon Associate, we earn from qualifying
+purchases" disclosure is present. **No code change was needed** — the tag was
+already the hardcoded default. Affiliate revenue is now live.
+
+### ⏳ The deadline that matters
+The US Associates programme closes accounts that don't refer **3 qualifying
+sales within 180 days** of approval. Approved 2026-07-30 → **~2027-01-26**.
+*(Verify exact terms in Associates Central — programme rules change.)*
+Everything below is aimed at that number.
+
+### 🔴 The links are pointed at the wrong pages
+| where the 260 links are | share | traffic reality |
+|---|---|---|
+| `/{word}-in-morse-code/` (gift/bracelet cluster) | **245** | the cluster gets **6 impressions in 9 months** |
+| `/gear/*` (real buying intent) | **5** | `/gear/best-morse-code-keys/` converts at **14% CTR** |
+
+**94% of the affiliate inventory sits on pages nobody visits, and the pages
+with actual purchase intent carry 5 links between them.** This was harmless
+while the programme was dormant. With a 180-day clock it is the single
+biggest fixable problem.
+
+### 🟠 Every link is a search link, not a product link
+All 260 are `amazon.com/s?k=…`. Those carry the tag and are allowed, but the
+visitor lands on a search page and has to choose — materially worse
+conversion than a direct product link. The `amazonSearch()` helper was chosen
+deliberately to avoid stale ASINs, which is a fair trade *normally*; with 3
+sales to find, the top gear recommendations are worth direct ASINs plus a
+periodic link check.
+
+**Do NOT** revive the gift/bracelet affiliate push to fix this — that cluster
+has no search demand (§0.3.3). Concentrate on `/gear/`.
 
 ## 1. Current state (snapshot)
 
