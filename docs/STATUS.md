@@ -426,6 +426,64 @@ Also visible: **"morse code sheet" went 67 → 398 impressions** in six weeks,
 i.e. the `/cheat-sheet/` retitle is pulling in its target pool ahead of the
 2026-08-22 readout.
 
+### 0.3.0i 🔑 CTR-BY-POSITION — the rule that should drive prioritisation
+
+Measured from this site's own Bing data (last ~12 weeks, all queries):
+
+| position | impressions | clicks | CTR |
+|---|---|---|---|
+| 1 | 153 | 98 | **64.1%** |
+| 2 | 216 | 92 | **42.6%** |
+| 3 | 1,749 | 139 | 7.9% |
+| 4 | 8,605 | 201 | 2.3% |
+| 5 | 463 | 28 | 6.1% |
+| 6–7 | 2,106 | 42 | 2.0% |
+| **8–10** | **8,189** | **45** | **0.55%** |
+
+**50% of the site's impressions sit at position 5+ and produce 18% of the
+clicks.** Below ~7 the CTR floor is ~0.5% and the snippet barely matters.
+
+**The rule: snippet work only pays above position ~5. Below that, the
+constraint is ranking, not wording.**
+
+This explains the split results of the CTR passes:
+- Homepage, "morse code generator", **position 3.5** → snippet rewrite took it
+  from 33 to **115 clicks** in 4 weeks. Leverage zone.
+- `/cheat-sheet/`, "morse code sheet", **position 6.7** → the retitle worked
+  at *ranking* (298 impressions pulled in) but has earned **0 clicks**. Dead
+  zone. The same page converts at **42.9%** for "morse code cheat sheet" at
+  position 1.3, so the page is fine — the position isn't.
+- `/chart/`, "morse code chart", **position 9.9** → impressions 16 → 342, 2
+  clicks. Dead zone.
+- `/nato/`, position ~8 → confirms the earlier "stop investing" call.
+
+**Stop iterating snippets on anything below position 5.** Those pages need
+links, and no amount of title rewriting substitutes. Caveat: the position-4
+band is dominated by one query and the position-5 band is a small sample, so
+read the *shape* (a cliff below 7), not the exact percentages.
+
+### 0.3.0j 📈 July 2026 — breakout month
+
+| month | clicks | impressions | CTR |
+|---|---|---|---|
+| 2026-05 | 265 | 34,779 | 0.76% |
+| 2026-06 | 238 | 16,587 | 1.43% |
+| **2026-07** | **435** | **17,753** | **2.45%** |
+
+**Clicks +83% month-on-month**, and impressions rose for the first time since
+May. The last four days of July ran 24–36 clicks/day at 3.5–4.4% CTR against
+10–13/day mid-month.
+
+Almost all of it is one query: **"morse code generator" went 33 → 115 clicks
+on flat impressions** (2,901 → 2,778), i.e. CTR 1.1% → 4.1% at a stable
+position 3.5. That is the homepage snippet rewrite, and it is the single
+highest-return change of the engagement.
+
+⚠️ **Page- and query-level Bing data lags the daily totals by about a week**
+(daily through 07-31, page/query through 07-24). Don't attribute at page
+level until the buckets catch up — the 2026-08-22 checkpoint is the honest
+read.
+
 ### 0.3.2 Google indexing diagnosis (GSC exports, 2026-07-25)
 
 **`Crawled – currently not indexed` has doubled: 102 → 220 pages** since late
