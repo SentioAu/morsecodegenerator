@@ -1,6 +1,7 @@
 ---
 import Layout from "../components/Layout.astro";
 import GearPick from "../components/GearPick.astro";
+import { TAGS } from "../data/affiliate-products.js";
 import { straightKeys, paddles } from "../data/gear.js";
 
 const title = "Morse Code Practice – Koch Method Trainer & Quiz";
@@ -175,6 +176,7 @@ const jsonLd = {
   </section>
 
   <GearPick
+    tag={TAGS.tools}
     picks={[straightKeys[0], paddles[0]]}
     heading="When copying starts to click"
     intro="Copying by ear is only half of CW — most people add sending once the Koch set stops feeling like work. You don't need to spend much to start: a basic key teaches clean timing, and a paddle is the natural next step once you're past about 15 WPM."

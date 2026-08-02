@@ -1,4 +1,5 @@
 ---
+import { withTag } from "../data/affiliate-products.js";
 /**
  * GearPick — one contextual gear recommendation, for the CW-audience pages.
  *
@@ -31,6 +32,8 @@ interface Props {
   /** Where to send readers for the full comparison. */
   guideHref?: string;
   guideLabel?: string;
+  /** Amazon tracking ID for this placement, so Amazon's own report attributes it. */
+  tag?: string;
 }
 const {
   picks = [],
@@ -38,6 +41,7 @@ const {
   heading = "If you're ready for real hardware",
   guideHref = "/gear/",
   guideLabel = "Compare all the picks",
+  tag = "",
 } = Astro.props;
 ---
 
@@ -56,7 +60,7 @@ const {
           </div>
           <a
             class="btn ghost gearpick-cta"
-            href={p.href}
+            href={tag ? withTag(p.href, tag) : p.href}
             target="_blank"
             rel="sponsored nofollow noopener"
             data-aff={p.id}

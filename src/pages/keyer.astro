@@ -1,6 +1,7 @@
 ---
 import Layout from "../components/Layout.astro";
 import GearPick from "../components/GearPick.astro";
+import { TAGS } from "../data/affiliate-products.js";
 import { straightKeys } from "../data/gear.js";
 import morse from "../data/morse.json";
 
@@ -162,6 +163,7 @@ const jsonLd = {
   </section>
 
   <GearPick
+    tag={TAGS.tools}
     picks={[straightKeys[0], straightKeys[1]]}
     heading="Ready for a real key?"
     intro="A spacebar has no adjustable gap, no tension and no weight, so it can teach a rhythm that falls apart the moment you touch real hardware. These are the two keys we'd point a new sender at — one to find out whether straight-key sending suits you, one to keep."

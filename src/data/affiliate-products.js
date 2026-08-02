@@ -23,12 +23,47 @@
 // (gear.js re-imports amazonSearch from here).
 const TAG = import.meta.env?.AMAZON_ASSOC_TAG || "mcg0d2-20";
 
+// ---------------------------------------------------------------------
+// Per-placement tracking IDs — how we find out WHICH pages earn.
+//
+// Amazon's reports break down by tracking ID, not by page. With one ID for
+// the whole site its report can tell you 69 clicks and 4 sales, but never
+// which section produced them. GA4 does record the page (the affiliate_click
+// event carries it), but that is consent-gated — visitors who don't accept
+// cookies fire nothing, so it undercounts by an unknown amount.
+//
+// Separate tracking IDs fix both problems: Amazon attributes the sale itself,
+// with no consent dependency and no undercounting.
+//
+// TO ENABLE: create the extra IDs in Associates Central (Account Settings →
+// Manage Tracking IDs; up to 100 are allowed), then replace the fallbacks
+// below. Until then every one resolves to the main tag, so behaviour is
+// unchanged and nothing can break.
+//
+// Keep `mcg0d2-20` as the default so existing links and reporting history
+// stay continuous.
+// ---------------------------------------------------------------------
+export const TAGS = {
+  // Tool pages — /keyer/, /practice/. Highest-intent CW audience.
+  tools: import.meta.env?.AMAZON_TAG_TOOLS || TAG,
+  // /gear/* buying guides.
+  gear: import.meta.env?.AMAZON_TAG_GEAR || TAG,
+  // Reference hubs — /q-codes/, /prosigns/, /abbreviations/.
+  reference: import.meta.env?.AMAZON_TAG_REFERENCE || TAG,
+  // The word/name/gift cluster. Worth isolating: it holds 245 of the links
+  // but the search data says it has almost no traffic — a separate ID
+  // settles whether that read is right.
+  words: import.meta.env?.AMAZON_TAG_WORDS || TAG,
+  // Blog posts.
+  blog: import.meta.env?.AMAZON_TAG_BLOG || TAG,
+};
+
 // Tagged Amazon search URL. Search links never 404 (unlike specific
 // product/ASIN links that die when a listing changes hands), so they're
 // the safe default for the long tail of gift/phrase/name pages.
-export function amazonSearch(query) {
+export function amazonSearch(query, tag = TAG) {
   const base = `https://www.amazon.com/s?k=${encodeURIComponent(query)}`;
-  return TAG ? `${base}&tag=${encodeURIComponent(TAG)}` : base;
+  return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
 }
 
 // Direct product link when we have an ASIN, tagged search link when we don't.
@@ -44,11 +79,26 @@ export function amazonSearch(query) {
 //
 // ASINs die when a listing changes hands — re-check them when GEAR_UPDATED
 // is bumped.
-export function amazonProduct(asin, fallbackQuery) {
+export function amazonProduct(asin, fallbackQuery, tag = TAG) {
   const id = String(asin || "").trim().toUpperCase();
-  if (!/^[A-Z0-9]{10}$/.test(id)) return amazonSearch(fallbackQuery);
+  if (!/^[A-Z0-9]{10}$/.test(id)) return amazonSearch(fallbackQuery, tag);
   const base = `https://www.amazon.com/dp/${id}`;
-  return TAG ? `${base}?tag=${encodeURIComponent(TAG)}` : base;
+  return tag ? `${base}?tag=${encodeURIComponent(tag)}` : base;
+}
+
+// Re-tag an already-built Amazon URL for a specific placement. Lets a
+// component attribute a shared product list to its own tracking ID without
+// the data file needing to know where it will be rendered.
+export function withTag(url, tag) {
+  if (!url || !tag) return url;
+  try {
+    const u = new URL(url);
+    if (!/(^|\.)amazon\.[a-z.]+$/.test(u.hostname)) return url; // leave amzn.to short links alone
+    u.searchParams.set("tag", tag);
+    return u.toString();
+  } catch {
+    return url;
+  }
 }
 
 // Build a "shop ready-made on Amazon" link for a gift/phrase/name page.
@@ -60,7 +110,7 @@ export function amazonGiftSearch(term, { kind = "phrase" } = {}) {
     kind === "name"
       ? `${t} personalized morse code necklace`
       : `${t} morse code bracelet`;
-  return amazonSearch(query);
+  return amazonSearch(query, TAGS.words);
 }
 
 export const AFFILIATE_PRODUCTS = {

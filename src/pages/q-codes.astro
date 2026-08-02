@@ -1,6 +1,7 @@
 ---
 import Layout from "../components/Layout.astro";
 import GearPick from "../components/GearPick.astro";
+import { TAGS } from "../data/affiliate-products.js";
 import { books } from "../data/gear.js";
 import { qcodes } from "../data/q-codes.js";
 
@@ -111,6 +112,7 @@ const jsonLd = {
   </section>
 
   <GearPick
+    tag={TAGS.reference}
     picks={[books[0], books[1]]}
     heading="Going further on the air"
     intro="Q-codes are the vocabulary; operating practice is the grammar. These two are the books CW operators actually recommend to each other — one on building speed and technique, one on how a real contact runs."

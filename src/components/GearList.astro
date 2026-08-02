@@ -8,7 +8,8 @@
  * Layout.astro. Buttons say "Check price" — never a hard-coded price
  * promise — because the data file only stores approximate ranges.
  */
-const { items = [] } = Astro.props;
+import { withTag, TAGS } from "../data/affiliate-products.js";
+const { items = [], tag = TAGS.gear } = Astro.props;
 ---
 
 <div class="gear-list">
@@ -33,7 +34,7 @@ const { items = [] } = Astro.props;
       <p class="gear-buy">
         <a
           class="btn primary"
-          href={p.href}
+          href={p.direct ? p.href : withTag(p.href, tag)}
           target="_blank"
           rel="sponsored nofollow noopener"
           data-aff={p.id}
