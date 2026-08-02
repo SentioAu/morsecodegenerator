@@ -124,10 +124,17 @@ export function amazonGiftSearch(term, { kind = "phrase" } = {}) {
 export const AFFILIATE_PRODUCTS = {
   "i-love-you": {
     id: "aff-i-love-you-bracelet",
-    title: "“I love you” Morse code bracelet",
+    title: "“I love you” Morse code couples bracelets",
+    // Was an amzn.to short link, which cannot be re-tagged — its tracking ID
+    // is baked in server-side, so this page's sales kept filing under
+    // mcg0d2-20 while the rest of the word cluster moved to mcgword-20.
+    // A direct ASIN link fixes the attribution and is taggable from now on.
+    //
+    // Copy corrected at the same time: the listing is a matching PAIR for
+    // couples, not the single beaded bracelet the old note described.
     note:
-      "A ready-made beaded bracelet that spells “I love you” in Morse code — a quick gift if you'd rather buy one than make it.",
-    url: "https://amzn.to/4g754Ay",
+      "A ready-made matching pair that spells “I love you” in Morse code — one for each of you, if you'd rather buy than make your own.",
+    url: amazonProduct("B08DD4L9FY", "i love you morse code couples bracelet", TAGS.words),
     cta: "See it on Amazon",
   },
 };
