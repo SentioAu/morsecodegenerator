@@ -1,5 +1,7 @@
 ---
 import Layout from "../components/Layout.astro";
+import GearPick from "../components/GearPick.astro";
+import { straightKeys, paddles } from "../data/gear.js";
 
 const title = "Morse Code Practice – Koch Method Trainer & Quiz";
 const description =
@@ -171,6 +173,14 @@ const jsonLd = {
       <li>Switch up the tone (around 600–700 Hz) so you don’t over-fit to one frequency.</li>
     </ol>
   </section>
+
+  <GearPick
+    picks={[straightKeys[0], paddles[0]]}
+    heading="When copying starts to click"
+    intro="Copying by ear is only half of CW — most people add sending once the Koch set stops feeling like work. You don't need to spend much to start: a basic key teaches clean timing, and a paddle is the natural next step once you're past about 15 WPM."
+    guideHref="/gear/"
+    guideLabel="See all the gear picks"
+  />
 
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 

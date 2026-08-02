@@ -31,6 +31,26 @@ export function amazonSearch(query) {
   return TAG ? `${base}&tag=${encodeURIComponent(TAG)}` : base;
 }
 
+// Direct product link when we have an ASIN, tagged search link when we don't.
+//
+// Search links never 404, which is why they're the default everywhere. But
+// they drop the visitor on a results page still holding a decision, so they
+// convert worse than a link straight to the item. For the handful of gear
+// picks we actually stand behind, a direct link is worth the maintenance.
+//
+// Usage: give a product an `asin` in gear.js and it upgrades automatically;
+// leave `asin` empty and it stays a search link. No code change either way,
+// so ASINs can be filled in one at a time.
+//
+// ASINs die when a listing changes hands — re-check them when GEAR_UPDATED
+// is bumped.
+export function amazonProduct(asin, fallbackQuery) {
+  const id = String(asin || "").trim().toUpperCase();
+  if (!/^[A-Z0-9]{10}$/.test(id)) return amazonSearch(fallbackQuery);
+  const base = `https://www.amazon.com/dp/${id}`;
+  return TAG ? `${base}?tag=${encodeURIComponent(TAG)}` : base;
+}
+
 // Build a "shop ready-made on Amazon" link for a gift/phrase/name page.
 // Names → a personalized (custom-word) necklace; phrases → a bracelet for
 // that phrase.

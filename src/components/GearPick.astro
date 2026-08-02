@@ -1,0 +1,107 @@
+---
+/**
+ * GearPick — one contextual gear recommendation, for the CW-audience pages.
+ *
+ * Why this exists
+ * ---------------
+ * 245 of the site's 260 affiliate links sat on the gift/word cluster, which
+ * draws ~6 impressions in nine months, while the /gear/ pages that convert at
+ * 14% carried 5 links between them. Meanwhile the CW-audience pages (/keyer/,
+ * /practice/, /q-codes/ …) pull 4x the clicks and 10x the impressions of the
+ * gear pages themselves — and someone practising send timing on a spacebar is
+ * the single most qualified buyer of a real key on the whole site.
+ *
+ * So this puts a *relevant* pick where the qualified traffic already is,
+ * rather than more links where nobody goes.
+ *
+ * Placement rule: BELOW the tool, in the supporting content — never inside
+ * the interactive area. CLAUDE.md §7 bans ad units inside tools; the same
+ * spirit applies here even though this is an affiliate link, not an ad unit.
+ *
+ * Compliance: rel="sponsored nofollow noopener" + data-aff (fires the GA4
+ * affiliate_click event), and a visible disclosure next to the link — Amazon
+ * requires it to be clear and conspicuous, not buried on /disclosure/.
+ */
+interface Props {
+  /** Product objects from src/data/gear.js */
+  picks: Array<{ id: string; name: string; price?: string; verdict?: string; href: string }>;
+  /** Why this recommendation belongs on THIS page. Page-specific, not generic. */
+  intro: string;
+  heading?: string;
+  /** Where to send readers for the full comparison. */
+  guideHref?: string;
+  guideLabel?: string;
+}
+const {
+  picks = [],
+  intro,
+  heading = "If you're ready for real hardware",
+  guideHref = "/gear/",
+  guideLabel = "Compare all the picks",
+} = Astro.props;
+---
+
+{picks.length > 0 && (
+  <section class="gearpick" aria-labelledby="gearpick-h">
+    <h2 class="gearpick-h" id="gearpick-h">{heading}</h2>
+    <p class="gearpick-intro">{intro}</p>
+
+    <ul class="gearpick-list">
+      {picks.map((p) => (
+        <li class="gearpick-item">
+          <div class="gearpick-meta">
+            <span class="gearpick-name">{p.name}</span>
+            {p.verdict && <span class="gearpick-verdict">{p.verdict}</span>}
+            {p.price && <span class="gearpick-price">{p.price}</span>}
+          </div>
+          <a
+            class="btn ghost gearpick-cta"
+            href={p.href}
+            target="_blank"
+            rel="sponsored nofollow noopener"
+            data-aff={p.id}
+          >View on Amazon</a>
+        </li>
+      ))}
+    </ul>
+
+    <p class="gearpick-fine muted">
+      Amazon links are affiliate links — we earn a commission on qualifying
+      purchases at no extra cost to you, and it never changes which gear we
+      recommend. <a href={guideHref}>{guideLabel}</a> ·
+      <a href="/disclosure/">Full disclosure</a>
+    </p>
+  </section>
+)}
+
+<style>
+  .gearpick {
+    max-width: var(--content);
+    margin-top: var(--s-6);
+    padding: var(--s-5);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--surface-2);
+  }
+  .gearpick-h { margin: 0 0 var(--s-2); font-size: var(--fs-lg); }
+  .gearpick-intro { margin: 0 0 var(--s-4); line-height: 1.7; }
+  .gearpick-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+  .gearpick-item {
+    display: flex; flex-wrap: wrap; gap: var(--s-3);
+    align-items: center; justify-content: space-between;
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--surface);
+  }
+  .gearpick-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-2) var(--s-3); }
+  .gearpick-name { font-weight: 600; }
+  .gearpick-verdict {
+    font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .05em;
+    color: var(--text-muted); border: 1px solid var(--line);
+    border-radius: var(--r-sm); padding: 1px 6px;
+  }
+  .gearpick-price { font-size: var(--fs-sm); color: var(--text-muted); }
+  .gearpick-cta { white-space: nowrap; }
+  .gearpick-fine { margin: var(--s-4) 0 0; font-size: var(--fs-sm); line-height: 1.6; }
+</style>
