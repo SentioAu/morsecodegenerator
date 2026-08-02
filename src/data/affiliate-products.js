@@ -45,16 +45,24 @@ const TAG = import.meta.env?.AMAZON_ASSOC_TAG || "mcg0d2-20";
 // ---------------------------------------------------------------------
 export const TAGS = {
   // Tool pages — /keyer/, /practice/. Highest-intent CW audience.
-  tools: import.meta.env?.AMAZON_TAG_TOOLS || TAG,
+  tools: import.meta.env?.AMAZON_TAG_TOOLS || "mcgtool-20",
   // /gear/* buying guides.
-  gear: import.meta.env?.AMAZON_TAG_GEAR || TAG,
+  gear: import.meta.env?.AMAZON_TAG_GEAR || "mcggear-20",
   // Reference hubs — /q-codes/, /prosigns/, /abbreviations/.
-  reference: import.meta.env?.AMAZON_TAG_REFERENCE || TAG,
-  // The word/name/gift cluster. Worth isolating: it holds 245 of the links
-  // but the search data says it has almost no traffic — a separate ID
-  // settles whether that read is right.
-  words: import.meta.env?.AMAZON_TAG_WORDS || TAG,
-  // Blog posts.
+  reference: import.meta.env?.AMAZON_TAG_REFERENCE || "mcgref-20",
+  // The word/name/gift cluster — 245 of the ~265 links on the site.
+  //
+  // This is the ID that settles an open argument. The search data says this
+  // cluster is worthless (about 6 impressions in nine months) and that read
+  // has driven several decisions, including declining to expand it. But it
+  // still holds the overwhelming majority of the affiliate inventory, and
+  // the first 4 sales came in before any of the placement work — so some of
+  // them may have come from here. If mcgword-20 earns, the read is wrong and
+  // the cluster deserves investment. If it stays flat, the read holds.
+  // Measured, not assumed.
+  words: import.meta.env?.AMAZON_TAG_WORDS || "mcgword-20",
+  // Blog posts stay on the original tag: only one post carries an Amazon
+  // link, so a dedicated ID would report almost nothing.
   blog: import.meta.env?.AMAZON_TAG_BLOG || TAG,
 };
 

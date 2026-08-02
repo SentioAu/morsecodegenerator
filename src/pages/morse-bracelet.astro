@@ -2,6 +2,7 @@
 import Layout from "../components/Layout.astro";
 import morse from "../data/morse.json";
 import { amazonSearch } from "../data/gear.js";
+import { TAGS } from "../data/affiliate-products.js";
 import { GIFT_PHRASES } from "../data/gift-phrases.js";
 
 // Link every gift-phrase page here (internal links so they get crawled
@@ -25,8 +26,8 @@ for (const [ch, code] of Object.entries(morse.morseMap)) {
   if (/^[A-Z0-9]$/.test(ch)) DESIGN_MAP[ch] = code;
 }
 
-const braceletKits = amazonSearch("morse code bracelet making kit beads");
-const jewelry = amazonSearch("morse code bracelet");
+const braceletKits = amazonSearch("morse code bracelet making kit beads", TAGS.words);
+const jewelry = amazonSearch("morse code bracelet", TAGS.words);
 
 const crumbs = [
   { name: "Home", url: `${site}/` },

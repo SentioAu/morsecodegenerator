@@ -2,6 +2,7 @@
 import Layout from "../../components/Layout.astro";
 import Newsletter from "../../components/Newsletter.astro";
 import { straightKeys, paddles, qrpRigs, books, GEAR_UPDATED } from "../../data/gear.js";
+import { withTag, TAGS } from "../../data/affiliate-products.js";
 
 const title = "Morse Code Gear Guide: keys, paddles & QRP radios";
 const description =
@@ -125,7 +126,7 @@ const jsonLd = {
     <ul class="gear-books">
       {books.map((b) => (
         <li>
-          <a href={b.href} target="_blank" rel="sponsored nofollow noopener" data-aff={b.id}><strong>{b.name}</strong></a>
+          <a href={withTag(b.href, TAGS.gear)} target="_blank" rel="sponsored nofollow noopener" data-aff={b.id}><strong>{b.name}</strong></a>
           — {b.note}
         </li>
       ))}
