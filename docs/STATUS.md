@@ -521,6 +521,19 @@ links**, and the required "As an Amazon Associate, we earn from qualifying
 purchases" disclosure is present. **No code change was needed** — the tag was
 already the hardcoded default. Affiliate revenue is now live.
 
+### ✅ Tag audit (2026-08-02) — swept all 770 live pages
+**268 Amazon links, 268 earning to `mcg0d2-20`. Zero leakage, zero foreign
+tags.** 265 carry `tag=mcg0d2-20` in the URL; the remaining 3 are the
+`amzn.to/4g754Ay` short link on the "i love you" pages, which resolves with
+`tag=mcg0d2-20` embedded — verified by following the redirect, not assumed.
+Re-run this sweep after any change that touches affiliate links: an untagged
+Amazon link is a sale that earns nothing.
+
+**Owner reported 4 sales in the first month** (dashboard: $7.04 commission,
+69 clicks / 30 days), so the 3-sale threshold below is almost certainly
+already cleared. Confirm in Associates Central and then stop treating it as
+a deadline.
+
 ### ⏳ The deadline that matters
 The US Associates programme closes accounts that don't refer **3 qualifying
 sales within 180 days** of approval. Approved 2026-07-30 → **~2027-01-26**.
