@@ -146,7 +146,82 @@ function main() {
     mustNotExist(path.join(legacyDir, "index.html"), `legacy digit page /${d}-in-morse-code/`);
   }
 
+  verifyAffiliateTags(webRoot);
+
   console.log("✅ verify-build: all checks passed");
+}
+
+/**
+ * Affiliate tag guard — fails the build on a stray Amazon tracking ID.
+ *
+ * The owner runs several Amazon Associates sites from one account
+ * (espressofit-20, playersb, …). A tracking ID from another project pasted
+ * in here would silently send this site's commissions to the wrong place,
+ * and nothing else in the pipeline would notice — the link still works, the
+ * page still builds, the sale just lands somewhere else.
+ *
+ * So the allowlist is explicit: only IDs belonging to THIS site may appear
+ * in the build. Adding a new placement means adding its ID here too, which
+ * is the point — it forces the decision to be deliberate.
+ *
+ * Also catches the opposite failure: an Amazon link with no tag at all,
+ * which earns nothing.
+ */
+function verifyAffiliateTags(webRoot) {
+  const ALLOWED = new Set([
+    "mcg0d2-20",   // main / legacy
+    "mcgtool-20",  // /keyer/, /practice/
+    "mcggear-20",  // /gear/*
+    "mcgref-20",   // reference hubs
+    "mcgword-20",  // word / gift cluster
+  ]);
+
+  const files = [];
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) walk(full);
+      else if (e.name.endsWith(".html")) files.push(full);
+    }
+  })(webRoot);
+
+  const foreign = new Map();
+  const untagged = [];
+  let total = 0;
+
+  for (const f of files) {
+    const html = readFileSafe(f);
+    if (!html.includes("amazon.com")) continue;
+    const rel = "/" + path.relative(webRoot, f).replace(/index\.html$/, "");
+    for (const raw of html.match(/https:\/\/www\.amazon\.com\/[^"'\s<>]+/g) || []) {
+      const url = raw.replace(/&amp;/g, "&");
+      total += 1;
+      const m = url.match(/[?&]tag=([A-Za-z0-9_-]+)/);
+      if (!m) {
+        untagged.push(`${rel}  ${url.slice(0, 90)}`);
+      } else if (!ALLOWED.has(m[1])) {
+        if (!foreign.has(m[1])) foreign.set(m[1], []);
+        foreign.get(m[1]).push(rel);
+      }
+    }
+  }
+
+  if (foreign.size > 0) {
+    console.error("❌ FOREIGN Amazon tracking ID in build — commissions would go to the wrong account:");
+    for (const [tag, pages] of foreign) {
+      console.error(`   tag=${tag} on ${pages.length} page(s), e.g. ${pages.slice(0, 3).join(", ")}`);
+    }
+    console.error(`   Allowed for this site: ${[...ALLOWED].join(", ")}`);
+    process.exit(1);
+  }
+
+  if (untagged.length > 0) {
+    console.error(`❌ ${untagged.length} Amazon link(s) with NO tracking tag — these earn nothing:`);
+    for (const u of untagged.slice(0, 5)) console.error(`   ${u}`);
+    process.exit(1);
+  }
+
+  console.log(`✅ affiliate tags: ${total} Amazon links, all tagged, no foreign tracking IDs`);
 }
 
 main();
