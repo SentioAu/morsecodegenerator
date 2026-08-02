@@ -534,6 +534,27 @@ Amazon link is a sale that earns nothing.
 already cleared. Confirm in Associates Central and then stop treating it as
 a deadline.
 
+### ⚠️ PROCESS RULE — new tracking IDs need 24h before they ship
+
+**Amazon: "The new tracking ID will take up to 24 hours to get enabled."**
+A click on an ID that is not yet active can go uncredited, so a link shipped
+inside that window may earn nothing.
+
+**Rule: never ship a build containing a tracking ID created less than 24
+hours ago.** Confirm the ID is active in Associates Central first. This costs
+nothing to obey — the existing links keep earning on the old ID meanwhile.
+
+This was missed on 2026-08-02: the IDs were wired and three zips were shipped
+without flagging the window, and it was only raised after the owner asked
+whether the switch would lose sales. Exposure turned out to be negligible
+(~2.3 affiliate clicks/day → ~0.13 expected sales across a full 24h), but the
+warning should have accompanied the first zip, not followed a question.
+
+**Generalise it:** any change that touches how money is attributed — tracking
+IDs, tags, affiliate URLs, payment links — gets its risk stated *in the
+handover message*, not just in the commit. A silent change to a revenue path
+is the one class of change the owner cannot verify by looking at the site.
+
 ### ⏳ The deadline that matters
 The US Associates programme closes accounts that don't refer **3 qualifying
 sales within 180 days** of approval. Approved 2026-07-30 → **~2027-01-26**.
