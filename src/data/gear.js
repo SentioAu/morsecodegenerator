@@ -26,15 +26,15 @@ export { amazonSearch, amazonProduct };
 
 export const straightKeys = [
   {
-    id: "cwmorse-pocket",
-    name: "CW Morse Pocket Straight Key",
-    price: "≈ $20–30",
+    id: "xiegu-vk5",
+    name: "Xiegu VK-5 Mini Straight Key",
+    price: "",
     verdict: "Best first key",
     summary:
-      "3D-printed, ball-bearing pivot, surprisingly crisp action for the price. Light enough that you'll want to tape it down or hold it, but as a first key to find out whether straight-key sending suits you, nothing touches it at this price.",
-    pros: ["Cheapest decent action available new", "Adjustable gap and tension", "Made by an active ham-owned shop"],
-    cons: ["Too light for desk use without fixing it down", "Plastic feel"],
-    href: amazonProduct("", "CW Morse straight key"),
+      "A compact CNC-aluminium straight key with silver-plated copper contacts and a standard 3.5 mm plug. Xiegu build it to pair with their own radios (G90, X6100, X6200, X5105, G106), but the 3.5 mm jack is universal — it will key anything that takes a straight key, including a PC interface for practice.",
+    pros: ["Machined metal base, not plastic", "Silver-plated contacts", "Standard 3.5 mm jack works with any rig"],
+    cons: ["Small footprint means a light key — anchor it for heavy sending", "Marketed for Xiegu rigs, so check your own connector"],
+    href: amazonProduct("B0F7X43K4L", "Xiegu VK-5 mini morse code straight key"),
   },
   {
     id: "kent-handkey",
@@ -73,15 +73,15 @@ export const straightKeys = [
 
 export const paddles = [
   {
-    id: "cwmorse-sp4",
-    name: "CW Morse SP4 Paddle",
-    price: "≈ $35–50",
+    id: "putikeeg-mini-paddle",
+    name: "Putikeeg Mini Dual Paddle (magnetic)",
+    price: "",
     verdict: "Best first paddle",
     summary:
-      "The default recommendation for a first iambic paddle. 3D-printed with ball bearings and magnetic return, fully adjustable. Good enough that plenty of operators never upgrade; cheap enough that upgrading later costs nothing in regret.",
-    pros: ["Unbeatable price for a real dual-lever paddle", "Magnetic tension feels clean", "Light for portable/SOTA use"],
-    cons: ["Light base needs holding or sticking down", "Plastic flex at very high speeds"],
-    href: amazonProduct("", "CW Morse SP4 paddle"),
+      "A small dual-lever (iambic) paddle using magnetic return instead of springs, on a magnetic base that holds it to any steel surface. Magnetic return is the mechanism most modern budget paddles have moved to — fewer parts to wear, and tension that stays where you set it.",
+    pros: ["Magnetic return, no springs to fatigue", "Magnetic base helps it stay put without clamping", "Small enough for portable/SOTA use"],
+    cons: ["A mini paddle is light — a steel plate or desk mat helps", "Short levers suit fingertip sending more than wrist sending"],
+    href: amazonProduct("B0DNLYTRQ8", "Putikeeg mini morse code dual paddle"),
   },
   {
     id: "bencher-by1",
@@ -92,7 +92,8 @@ export const paddles = [
       "The most-sold iambic paddle ever made, now produced by Vibroplex. Chrome-and-black, heavy base, crisp contacts. Tens of thousands of operators learned on a BY-1 and the used market is deep if you ever sell.",
     pros: ["Industry-standard feel", "Heavy enough to stay planted", "Parts and service still available"],
     cons: ["Needs occasional contact cleaning", "Some find the pivot feel dated next to magnetic designs"],
-    href: amazonProduct("", "Bencher BY-1 iambic paddle"),
+    direct: true,
+    href: "https://www.vibroplex.com/",
   },
   {
     id: "kent-twin",
@@ -129,7 +130,7 @@ export const qrpRigs = [
       "An open-source five-band QRP transceiver the size of a deck of cards. Compromises everywhere — audio is thin, power is honest-five-watts-ish — but it transmits real CW on real bands for the price of a restaurant dinner.",
     pros: ["Five bands, shockingly cheap", "Open-source hardware and firmware", "Huge community of builders"],
     cons: ["Receiver audio is the weak point", "Quality varies between kit suppliers — buy from a reputable one"],
-    href: amazonProduct("", "truSDX QRP transceiver"),
+    href: amazonProduct("B0FD9JGBWL", "truSDX QRP transceiver"),
   },
   {
     id: "xiegu-g90",
@@ -140,7 +141,7 @@ export const qrpRigs = [
       "20 watts, built-in automatic antenna tuner, real SSB alongside CW. Heavier and thirstier than true QRP rigs, but as one radio that does CW practice today and everything else later, it's the budget sweet spot.",
     pros: ["Built-in ATU is a genuine luxury at this price", "20W closes contacts QRP can't", "Full HF coverage incl. SSB"],
     cons: ["Power-hungry for battery field use", "Keyer/menu ergonomics are workmanlike"],
-    href: amazonProduct("", "Xiegu G90 HF transceiver"),
+    href: amazonProduct("B0CCKY82WN", "Xiegu G90 HF transceiver"),
   },
   {
     id: "elecraft-kx2",
@@ -162,7 +163,7 @@ export const books = [
     id: "art-skill-radiotelegraphy",
     name: "The Art and Skill of Radio-Telegraphy (Bill Pierpont, N0HFF)",
     note: "The classic deep text on learning and mastering CW. Also free as PDF — link to print for people who want paper.",
-    href: amazonProduct("", "Art and Skill of Radio-Telegraphy"),
+    href: amazonProduct("1300608706", "Art and Skill of Radio-Telegraphy"),
   },
   {
     id: "morse-code-operating",
