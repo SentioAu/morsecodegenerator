@@ -426,6 +426,31 @@ Also visible: **"morse code sheet" went 67 → 398 impressions** in six weeks,
 i.e. the `/cheat-sheet/` retitle is pulling in its target pool ahead of the
 2026-08-22 readout.
 
+### 0.3.0h ⏸️ HOLD UNTIL 2026-08-31 — deliberately measuring, not building
+
+**Owner's call (2026-08-03): pause changes until the end of August**, then
+pull Bing **and** GSC together. A reminder is scheduled for 2026-08-31 09:00
+UTC with the full brief and every baseline.
+
+**Why this is the right call, not idleness.** Changes shipped 2026-07-25 →
+08-02, so August is the first clean full month with no mid-month edits
+muddying attribution. July already looks like a breakout (§0.3.0j) but nearly
+all of it traces to one query, and Bing's page-level data lags the daily
+totals by about a week. Shipping more now would make the August read
+uninterpretable.
+
+**What still counts as in-scope during the hold:** bugs, anything broken,
+and the owner-side items below. Not new pages, not more snippet rewrites.
+
+**Owner-side, unblocked and still open:**
+1. `NEWSLETTER_ACTION` — unset. At 435 clicks/month the site now loses a
+   meaningful number of visitors permanently, and the free `/printables/`
+   lead magnet already exists to capture them. Highest-value 5-minute task.
+2. **Track C1 outreach** (`LAUNCH-KIT.md`) — 9 named craft prospects, emails
+   drafted. Still 6 inbound links, and §0.3.0i says that is now the binding
+   constraint on half the site's impressions.
+3. `ADSENSE_SLOT_*` — optional, small money, zero effort.
+
 ### 0.3.0i 🔑 CTR-BY-POSITION — the rule that should drive prioritisation
 
 Measured from this site's own Bing data (last ~12 weeks, all queries):
