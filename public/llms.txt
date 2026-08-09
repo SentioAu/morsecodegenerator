@@ -42,6 +42,7 @@ Standards: ITU-R M.1677-1, ARRL CW abbreviations, Q-codes (ITU-T)
 ## Articles (long-form)
 
 - [Blog index](https://morsecodegenerator.com/blog/) — all articles.
+- [Why your Morse code won't decode](https://morsecodegenerator.com/blog/why-morse-code-wont-decode/) (6 failure modes: lost gaps, over-long groups, substituted symbols, prosigns)
 - [Q-code examples in a real CW contact](https://morsecodegenerator.com/blog/q-code-examples-real-cw-qso/) (annotated QSO; question vs answer form)
 - [Why Morse code jewelry is usually wrong](https://morsecodegenerator.com/blog/why-morse-code-jewelry-is-usually-wrong/) (letter-gap spacing; counts of valid readings for run-together words)
 - [What people actually search for in Morse code](https://morsecodegenerator.com/blog/what-people-search-for-in-morse-code/) (original analysis of 2,094 search queries)

@@ -1535,4 +1535,65 @@ export const bodies = {
 <p>The fastest way to get comfortable is to hear these at speed rather than read them. Drop any of the exchanges above into the <a href="/translate/">translator</a> to hear the rhythm, or generate endless realistic exchanges — call signs, reports, Q-codes and all — with the <a href="/random-cw/">random CW generator</a>. When you can copy a full QSO without pausing, you're ready for the real thing; <a href="/blog/how-to-call-cq-morse-code/">calling CQ</a> walks through your first contact end to end.</p>
 `,
 
+  "why-morse-code-wont-decode": `
+<p>You've got a string of dots and dashes — off a bracelet, a tattoo, a game, a note someone left you — and you've pasted it into a decoder. It came back as gibberish, or as nothing at all.</p>
+<p>That is almost never because the decoder is broken. Morse is a small, rigid system, and there are only a handful of ways a pattern can fail. Here they are, in the order they actually happen, with how to fix each one.</p>
+
+<h2>1. The gaps are gone</h2>
+<p>By far the most common cause. In Morse the silence carries as much meaning as the marks: one unit between symbols inside a letter, <strong>three</strong> between letters, <strong>seven</strong> between words. Strip those out and the string stops being decodable — not because it's wrong, but because it becomes ambiguous.</p>
+<p><span class="k">....</span> is <strong>H</strong>. <span class="k">.. ..</span> is <strong>I I</strong>. <span class="k">. . . .</span> is <strong>E E E E</strong>. Same four dots, three different messages, and only the spacing separates them.</p>
+<p><strong>The fix:</strong> if you're copying from something physical, look at the original again and mark where the bigger gaps fall. Engraved and beaded designs often lose them entirely — that's <a href="/blog/why-morse-code-jewelry-is-usually-wrong/">why so much Morse jewelry is unreadable</a>. Try the <a href="/decoder/">decoder</a> with different spacings and see which reading makes sense.</p>
+
+<h2>2. A group is too long to be a character</h2>
+<p>This one is quick to check and immediately conclusive. In standard International Morse, <strong>no character is longer than seven symbols</strong> — and only one, the dollar sign (<span class="k">...-..-</span>), even reaches seven. Almost everything is five or fewer.</p>
+<p>So if you're looking at a run of eight, ten, twelve symbols with no break, it is <em>not</em> one character. It's several characters whose gaps were lost, and you're back to problem 1.</p>
+<p><strong>The fix:</strong> count the symbols in each group. Anything over seven needs splitting. Anything over five is worth a second look.</p>
+
+<h2>3. The symbols aren't really dots and dashes</h2>
+<p>Text picks up substitutions as it travels between apps, fonts and keyboards. What looks like a dash to you may not be a hyphen to a decoder:</p>
+<div class="tablewrap">
+  <table>
+    <thead><tr><th>What you may have</th><th>What it should be</th></tr></thead>
+    <tbody>
+      <tr><td>· • ● ∙ (middle dot, bullet)</td><td class="k">.</td></tr>
+      <tr><td>– — ‒ (en dash, em dash)</td><td class="k">-</td></tr>
+      <tr><td>_ (underscore)</td><td class="k">-</td></tr>
+      <tr><td>1 and 0, or O and I</td><td class="k">. and -</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Autocorrect is the usual culprit: type two hyphens in many editors and you get a single em dash. The pattern still <em>looks</em> right and no longer parses.</p>
+<p><strong>The fix:</strong> our <a href="/decoder/">decoder</a> already accepts middle-dot, bullet, en-dash, em-dash and pipe as stand-ins, so paste it as-is first. If it still fails, retype the string using only <span class="k">.</span> and <span class="k">-</span>.</p>
+
+<h2>4. There's a stray character in the middle</h2>
+<p>A colon, comma, bracket or stray letter inside the pattern will stop a decode dead. We see this constantly in real searches — patterns arriving with punctuation baked in, usually because the source was a timestamp, a filename or a line of code rather than clean Morse.</p>
+<p><strong>The fix:</strong> strip everything that isn't a dot, a dash, a space or a slash. If removing a character makes the rest decode cleanly, it was noise.</p>
+
+<h2>5. It's a prosign, not a letter</h2>
+<p>Some sequences are deliberately sent as one unbroken run and are <em>not</em> single characters. <span class="k">...---...</span> is the classic: written closed up, it's SOS — a <a href="/prosigns/">prosign</a>, recognised by convention rather than parsed letter by letter. Feed it to a strict decoder as one group and it will refuse, because no character is nine symbols long.</p>
+<p>Others behave the same way. <span class="k">.-.-.</span> is both a plus sign and the prosign AR ("end of message"); <span class="k">-...-</span> is both an equals sign and BT, a paragraph break. Both readings are legitimate — <a href="/blog/q-code-examples-real-cw-qso/">context decides which</a>.</p>
+<p><strong>The fix:</strong> check the <a href="/prosigns/">prosign list</a> before assuming a long group is broken.</p>
+
+<h2>6. It isn't Morse at all</h2>
+<p>Worth ruling out. Dots-and-dashes notation gets used for things that have nothing to do with Morse:</p>
+<ul>
+  <li><strong>Binary</strong> written with dots and dashes for 0 and 1 — see <a href="/blog/morse-code-vs-binary/">Morse vs binary</a>.</li>
+  <li><strong>Braille</strong> transcribed as dot patterns.</li>
+  <li><strong>A substitution cipher</strong> that borrows the look of Morse but not the code.</li>
+  <li><strong>Decorative "Morse-style" designs</strong> that were never encoded from anything. This is common on mass-produced jewelry.</li>
+</ul>
+<p>If a pattern decodes to something like <span class="k">EEETTE</span> — plausible letters, meaningless output — that's usually the tell. Real Morse decodes to real words.</p>
+
+<h2>A two-minute checklist</h2>
+<ol>
+  <li>Paste it into the <a href="/decoder/">decoder</a> exactly as you have it.</li>
+  <li>No luck? Count the symbols per group — anything over seven is a spacing problem.</li>
+  <li>Retype using only <span class="k">.</span> and <span class="k">-</span>, with single spaces between letters and <span class="k">/</span> between words.</li>
+  <li>Strip any stray punctuation from inside the pattern.</li>
+  <li>Check the <a href="/prosigns/">prosigns</a> for long unbroken runs.</li>
+  <li>Still nothing? It probably isn't Morse.</li>
+</ol>
+<p>If you'd rather work it out by eye, the <a href="/chart/">full chart</a> has every letter, number and punctuation mark, and <a href="/blog/how-to-read-morse-code/">how to read Morse code</a> covers the timing from scratch.</p>
+`,
+
 };

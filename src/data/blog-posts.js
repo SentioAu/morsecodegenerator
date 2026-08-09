@@ -343,4 +343,14 @@ export const posts = [
     minutes: 7,
     tags: ["q-codes", "cw", "operating", "ham radio", "explainer"],
   },
+  {
+    slug: "why-morse-code-wont-decode",
+    title: "Why Your Morse Code Won't Decode (6 Reasons, and the Fixes)",
+    excerpt:
+      "Pasted a string of dots and dashes and got gibberish back? Morse is a small, rigid system, so there are only a handful of ways a pattern can fail. Here's each one, and how to fix it.",
+    published: "2026-08-07",
+    kind: "explainer",
+    minutes: 6,
+    tags: ["decoding", "troubleshooting", "spacing", "explainer"],
+  },
 ];
