@@ -24,45 +24,40 @@
 const TAG = import.meta.env?.AMAZON_ASSOC_TAG || "mcg0d2-20";
 
 // ---------------------------------------------------------------------
-// Per-placement tracking IDs — how we find out WHICH pages earn.
+// Per-placement tracking IDs — ⏸️ CURRENTLY OFF (2026-08-08, owner's call).
 //
-// Amazon's reports break down by tracking ID, not by page. With one ID for
-// the whole site its report can tell you 69 clicks and 4 sales, but never
-// which section produced them. GA4 does record the page (the affiliate_click
-// event carries it), but that is consent-gated — visitors who don't accept
-// cookies fire nothing, so it undercounts by an unknown amount.
+// Every placement below resolves to `mcg0d2-20`, so the whole site reports
+// under one tracking ID again. The mechanism still works; only the fallbacks
+// changed. To re-enable a split, put a real ID back in place of TAG.
 //
-// Separate tracking IDs fix both problems: Amazon attributes the sale itself,
-// with no consent dependency and no undercounting.
+// The IDs exist in Associates Central and remain valid:
+//   mcgtool-20   /keyer/, /practice/
+//   mcggear-20   /gear/*
+//   mcgref-20    reference hubs
+//   mcgword-20   word / gift cluster
 //
-// TO ENABLE: create the extra IDs in Associates Central (Account Settings →
-// Manage Tracking IDs; up to 100 are allowed), then replace the fallbacks
-// below. Until then every one resolves to the main tag, so behaviour is
-// unchanged and nothing can break.
+// Why it was turned off. Per-ID reporting only means something with traffic
+// to divide, and the pages carrying affiliate links draw about 2 visitors a
+// day between them — so the split produced four near-empty reports instead
+// of one small one, and made "no clicks" harder to interpret rather than
+// easier.
 //
-// Keep `mcg0d2-20` as the default so existing links and reporting history
-// stay continuous.
+// The bigger issue found at the same time is geographic, not attributional:
+// roughly 53% of the audience is in countries with their own Amazon store
+// (Spain, UK, Australia, Canada, Mexico, Netherlands, India, Italy), where a
+// .com tag earns nothing no matter which ID is on it. That needs Amazon
+// OneLink, not more tracking IDs.
 // ---------------------------------------------------------------------
 export const TAGS = {
   // Tool pages — /keyer/, /practice/. Highest-intent CW audience.
-  tools: import.meta.env?.AMAZON_TAG_TOOLS || "mcgtool-20",
+  tools: import.meta.env?.AMAZON_TAG_TOOLS || TAG,
   // /gear/* buying guides.
-  gear: import.meta.env?.AMAZON_TAG_GEAR || "mcggear-20",
+  gear: import.meta.env?.AMAZON_TAG_GEAR || TAG,
   // Reference hubs — /q-codes/, /prosigns/, /abbreviations/.
-  reference: import.meta.env?.AMAZON_TAG_REFERENCE || "mcgref-20",
-  // The word/name/gift cluster — 245 of the ~265 links on the site.
-  //
-  // This is the ID that settles an open argument. The search data says this
-  // cluster is worthless (about 6 impressions in nine months) and that read
-  // has driven several decisions, including declining to expand it. But it
-  // still holds the overwhelming majority of the affiliate inventory, and
-  // the first 4 sales came in before any of the placement work — so some of
-  // them may have come from here. If mcgword-20 earns, the read is wrong and
-  // the cluster deserves investment. If it stays flat, the read holds.
-  // Measured, not assumed.
-  words: import.meta.env?.AMAZON_TAG_WORDS || "mcgword-20",
-  // Blog posts stay on the original tag: only one post carries an Amazon
-  // link, so a dedicated ID would report almost nothing.
+  reference: import.meta.env?.AMAZON_TAG_REFERENCE || TAG,
+  // The word/name/gift cluster — the bulk of the links on the site.
+  words: import.meta.env?.AMAZON_TAG_WORDS || TAG,
+  // Blog posts.
   blog: import.meta.env?.AMAZON_TAG_BLOG || TAG,
 };
 
@@ -126,9 +121,10 @@ export const AFFILIATE_PRODUCTS = {
     id: "aff-i-love-you-bracelet",
     title: "“I love you” Morse code couples bracelets",
     // Was an amzn.to short link, which cannot be re-tagged — its tracking ID
-    // is baked in server-side, so this page's sales kept filing under
-    // mcg0d2-20 while the rest of the word cluster moved to mcgword-20.
-    // A direct ASIN link fixes the attribution and is taggable from now on.
+    // is baked in server-side. Swapped for a direct ASIN link so the tag is
+    // set from TAGS like every other link, rather than being frozen inside a
+    // shortener. Keep it that way even though everything currently points at
+    // one ID: a short link would silently ignore any future change here.
     //
     // Copy corrected at the same time: the listing is a matching PAIR for
     // couples, not the single beaded bracelet the old note described.

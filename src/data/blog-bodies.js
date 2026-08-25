@@ -184,7 +184,7 @@ export const bodies = {
 
 <h2>Make it or buy it?</h2>
 <p><strong>Make it:</strong> the most meaningful option, and free. Use the <a href="/morse-bracelet/">bracelet &amp; tattoo generator</a> to design the exact pattern, then bead it yourself or hand the file to a jeweler. A basic bead kit is all you need.</p>
-<p><strong>Buy it:</strong> short on time? Ready-made Morse bracelets and necklaces are widely available — you can <a href="https://www.amazon.com/s?k=morse+code+bracelet&amp;tag=mcgword-20" target="_blank" rel="sponsored nofollow noopener" data-aff="amazon-gift-ideas-post">browse them on Amazon</a> and have one shipped. <em>(That's an affiliate link — we may earn a small commission at no extra cost to you; see our <a href="/disclosure/">disclosure</a>.)</em></p>
+<p><strong>Buy it:</strong> short on time? Ready-made Morse bracelets and necklaces are widely available — you can <a href="https://www.amazon.com/s?k=morse+code+bracelet&amp;tag=mcg0d2-20" target="_blank" rel="sponsored nofollow noopener" data-aff="amazon-gift-ideas-post">browse them on Amazon</a> and have one shipped. <em>(That's an affiliate link — we may earn a small commission at no extra cost to you; see our <a href="/disclosure/">disclosure</a>.)</em></p>
 
 <h2>Match the gift to the occasion</h2>
 <p>Anniversaries (the date, or "I do"), Valentine's Day and Mother's/Father's Day (a name or "I love you"), new babies (the name), graduations and recovery milestones ("STRENGTH", "BELIEVE"), and weddings (matching bands) all suit a hidden Morse message. Because the meaning is concealed in the pattern, it feels intimate without being loud.</p>
